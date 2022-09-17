@@ -5,7 +5,7 @@ bible_mapping = Mapping(
     {
         "properties": {
             "book": {
-                "type": "keyword"
+                "type": "text"
             },
             "chapter": {
                 "type": "integer"
@@ -17,4 +17,4 @@ bible_mapping = Mapping(
                 "type": "text"
             }
         }
-        })
+    })

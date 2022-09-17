@@ -8,12 +8,10 @@ def get_elastic_single_data_from_sog_bible(verse_data: str, identifier: int):
     [book, chapter, verse_num, verse_content] = verse_data.split('\t', maxsplit=3)
     return {
         "_id": identifier,
-        "doc": {
-            "book": book,
-            "chapter": int(chapter),
-            "verse_number": int(verse_num),
-            "verse_content": verse_content.strip()
-        }
+        "book": book,
+        "chapter": int(chapter),
+        "verse_number": int(verse_num),
+        "verse_content": verse_content.strip()
     }
 
 
