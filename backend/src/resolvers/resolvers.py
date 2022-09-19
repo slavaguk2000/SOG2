@@ -1,4 +1,5 @@
 from ariadne import convert_kwargs_to_snake_case, ObjectType, QueryType
+from src.services.elasticsearch.search.bible import bible_search
 
 query = QueryType()
 
@@ -6,7 +7,7 @@ query = QueryType()
 @query.field("search")
 @convert_kwargs_to_snake_case
 def resolve_search(*_, search_pattern: str):
-    return [search_pattern + " " + str(i) for i in range(5)]
+    return bible_search(search_pattern)
 
 
 slide = ObjectType("Slide")

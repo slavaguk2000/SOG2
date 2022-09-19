@@ -1,2 +1,3 @@
 pip install ariadne
 pip install uvicorn
+pip install singleton-decorator
