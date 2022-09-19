@@ -1,23 +1,30 @@
-import logo from './logo.svg';
 import './App.css';
+import {useState} from "react";
+import {useQuery} from "@apollo/client";
+import {search} from "./utils/gql/queries";
+import { v4 } from 'uuid';
 
 function App() {
+  const [searchPattern, setSearchPattern] = useState('бегущий');
+  const { data } = useQuery(search, {
+    variables: {
+        searchPattern,
+    },
+    fetchPolicy: "cache-first",
+  })
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <div>
+          <input value={searchPattern} onChange={({ target }) => setSearchPattern(target.value)}/>
+      </div>
+      <div style={{
+        marginTop: '50px',
+        display: 'flex',
+        flexDirection: 'column'
+      }}>
+        {data?.search.map(({ content }) => (<div style={{ margin: '10px', border: '3px solid black', borderRadius: '5px'}} key={v4()}>{content}</div>))}
+      </div>
     </div>
   );
 }
