@@ -1,3 +1,3 @@
 #!/bin/bash
 
-uvicorn main:app
+python3 -m uvicorn main:app
