@@ -12,15 +12,17 @@ This project will be used to show Bible and psalm slides on projectros in church
 
 `https://www.python.org/downloads/`
 
-3. Run elasticsearch and ensure it works.
+3. Install JDK and add JAVA_HOME enviroment variable
+
+4. Run elasticsearch and ensure it works.
 
 `https://www.youtube.com/watch?v=qgjsD5kCrFo&t=390s&ab_channel=CodeWithArjun`
 
-4. Run `simple_parser.py` in `development helper scripts` folder.
+5. Run `simple_parser.py` in `development helper scripts` folder.
 
-5. Run `install.sh` or `install.bat` in `backend/` folder.
+6. Run `install.sh` or `install.bat` in `backend/` folder.
 
-6. Run `npm i` in `frontend/react/sog2/` folder.
+7. Run `npm i` in `frontend/react/sog2/` folder.
 
 ## dev run
 
