@@ -1,3 +1,4 @@
 pip3 install ariadne
 pip3 install uvicorn
 pip3 install singleton-decorator
+pip3 install elasticsearch

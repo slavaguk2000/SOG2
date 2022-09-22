@@ -5,7 +5,7 @@ from src.services.elasticsearch.mappings import bible_mapping
 
 elastic_address = 'http://localhost:9200'
 user = 'elastic'
-password = 'q1Z3ArlE7ky=4eoxB*cn'
+password = 'bImowJgx6JPkWKcfTcjM'
 
 
 @singleton
