@@ -1,0 +1,1 @@
+ pip3 install ariadne starlette elasticsearch singleton_decorator uvicorn
