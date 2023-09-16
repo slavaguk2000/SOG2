@@ -4,8 +4,14 @@ bible_mapping = Mapping(
     'bible',
     {
         "properties": {
+            "bible_id": {
+                "type": "keyword"
+            },
             "book": {
-                "type": "text"
+                "type": "keyword"
+            },
+            "book_order": {
+                "type": "integer"
             },
             "chapter": {
                 "type": "integer"
@@ -14,7 +20,8 @@ bible_mapping = Mapping(
                 "type": "integer"
             },
             "verse_content": {
-                "type": "text"
+                "type": "text",
+                "analyzer": "russian"
             }
         }
     })
