@@ -1,1 +1,5 @@
 **/.idea/*
+ frontend/react/.DS_Store
+ **/__pycache__/**
+  */**/venv/**
+  backend/venv

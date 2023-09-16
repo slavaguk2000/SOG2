@@ -2,7 +2,7 @@ from elasticsearch import Elasticsearch, helpers
 from elasticSearchServise.mappings import bible_mapping
 from uuid import uuid4
 
-elastic_address = 'http://localhost:9200'
+elastic_address = 'http://192.168.100.7:9200'
 user = 'elastic'
 password = 'q1Z3ArlE7ky=4eoxB*cn'
 
@@ -57,3 +57,7 @@ class Elastic:
     def bulk_create(self, data: [dict], index: str):
         print(helpers.bulk(self.es, actions=data, index=index))
         # print(self.es.bulk(operations=actions, refresh=True))
+
+    def clear_index(self, index):
+        if self.index_exist(index):
+            self.es.indices.delete(index=index)
