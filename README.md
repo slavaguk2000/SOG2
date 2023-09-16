@@ -18,6 +18,19 @@ This project will be used to show Bible and psalm slides on projectros in church
 
 `https://www.youtube.com/watch?v=qgjsD5kCrFo&t=390s&ab_channel=CodeWithArjun`
 
+5. Go to `elasticsearch_folder/config` and change in `elasticsearch.yml` from
+```
+xpack.security.enabled: true
+
+xpack.security.enrollment.enabled: true
+```
+to 
+```
+xpack.security.enabled: false
+
+xpack.security.enrollment.enabled: false
+```
+
 5. Run `simple_parser.py` in `development helper scripts` folder.
 
 6. Run `install.sh` or `install.bat` in `backend/` folder.

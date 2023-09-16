@@ -3,7 +3,7 @@ from singleton_decorator import singleton
 
 from src.services.elasticsearch.mappings import bible_mapping
 
-elastic_address = 'http://localhost:9200'
+elastic_address = 'http://192.168.100.7:9200'
 user = 'elastic'
 password = 'q1Z3ArlE7ky=4eoxB*cn'
 
@@ -19,7 +19,7 @@ class Elastic:
     def bulk_create(self, index: str, data: [dict]):
         print(helpers.bulk(self.es, actions=data, index=index))
 
-    def search(self, index: str, query: dict, fields=None):
+    def search(self, index: str, fields=None, **kwargs):
         if fields is None:
             fields = []
-        return self.es.search(index=index, query=query, fields=fields)
+        return self.es.search(index=index, fields=fields, **kwargs)
