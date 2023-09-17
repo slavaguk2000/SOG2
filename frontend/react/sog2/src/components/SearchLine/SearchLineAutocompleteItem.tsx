@@ -6,10 +6,22 @@ import { SearchLineAutocompleteItemWrapper } from './styled';
 
 interface SearchLineAutocompleteItemProps {
   slide: Slide;
+  onClick: () => void;
+  selected: boolean;
+  setSelected: () => void;
 }
 
-const SearchLineAutocompleteItem = ({ slide: { content } }: SearchLineAutocompleteItemProps) => {
-  return <SearchLineAutocompleteItemWrapper>{content}</SearchLineAutocompleteItemWrapper>;
+const SearchLineAutocompleteItem = ({
+  slide: { content },
+  onClick,
+  selected,
+  setSelected,
+}: SearchLineAutocompleteItemProps) => {
+  return (
+    <SearchLineAutocompleteItemWrapper onClick={onClick} selected={selected} onMouseEnter={setSelected}>
+      {content}
+    </SearchLineAutocompleteItemWrapper>
+  );
 };
 
 export default SearchLineAutocompleteItem;

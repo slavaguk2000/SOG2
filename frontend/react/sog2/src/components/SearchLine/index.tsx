@@ -8,6 +8,8 @@ import { debounceInputDelay, minimumSearchLength } from 'src/constants/behaviorC
 import { search } from 'src/utils/gql/queries';
 import { Query, QuerySearchArgs, Slide } from 'src/utils/gql/types';
 
+import { useBibleData } from '../../providers/bibleDataProvider';
+
 import SearchLineAutocompleteItem from './SearchLineAutocompleteItem';
 import { SearchLineAutocomplete, SearchLineWrapper } from './styled';
 
@@ -21,6 +23,7 @@ const SearchLine = () => {
   const [debouncedSearchText, setDebouncedSearchText] = useState<string>('');
   const [searchText, setSearchText] = useState<string>('');
   const [autocompleteActive, setAutocompleteActive] = useState<boolean>(false);
+  const [selectedProposeIdx, setSelectedProposeIdx] = useState<number>(0);
 
   const { data } = useQuery<Pick<Query, 'search'>, QuerySearchArgs>(search, {
     variables: {
@@ -32,11 +35,52 @@ const SearchLine = () => {
 
   const options: Slide[] = data?.search ?? [];
 
+  const clearSearchLine = () => {
+    setDebouncedSearchText('');
+    setSearchText('');
+    setSelectedProposeIdx(0);
+  };
+
+  const { handleUpdateSlide } = useBibleData();
+
   const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
     if (e.key === 'Escape') {
       e.preventDefault();
-      setDebouncedSearchText('');
-      setSearchText('');
+      clearSearchLine();
+    }
+
+    if (e.key === 'Enter') {
+      e.stopPropagation();
+      e.preventDefault();
+      if (options.length) {
+        const newSlide = options[selectedProposeIdx];
+        if (newSlide) {
+          handleUpdateSlide(newSlide);
+          clearSearchLine();
+        }
+      }
+    }
+
+    if (options.length) {
+      if (e.key === 'ArrowDown') {
+        setSelectedProposeIdx((prev) => {
+          if (prev < options.length - 1) {
+            return prev + 1;
+          }
+
+          return prev;
+        });
+      }
+
+      if (e.key === 'ArrowUp') {
+        setSelectedProposeIdx((prev) => {
+          if (prev > 0) {
+            return prev - 1;
+          }
+
+          return prev;
+        });
+      }
     }
   };
 
@@ -46,6 +90,12 @@ const SearchLine = () => {
   };
 
   const autocompleteOpen = Boolean(autocompleteActive && debouncedSearchText && options.length);
+
+  const handleClickOption = (newSlide: Slide) => {
+    clearSearchLine();
+
+    handleUpdateSlide(newSlide);
+  };
 
   return (
     <SearchLineWrapper>
@@ -64,7 +114,24 @@ const SearchLine = () => {
         renderInput={(params) => (
           <TextField {...params} size="small" label="Search the Bible" onKeyDown={handleKeyDown} />
         )}
-        renderOption={(_, option) => <SearchLineAutocompleteItem slide={option as Slide} />}
+        renderOption={(props, option) => {
+          // eslint-disable-next-line react/prop-types
+          const dataOptionIdx = (props as { 'data-option-index'?: number })['data-option-index'];
+          // eslint-disable-next-line react/prop-types
+          const key = (props as { id: string }).id;
+
+          const selected = dataOptionIdx === selectedProposeIdx;
+
+          return (
+            <SearchLineAutocompleteItem
+              key={key}
+              onClick={() => handleClickOption(option as Slide)}
+              slide={option as Slide}
+              selected={selected}
+              setSelected={() => dataOptionIdx !== undefined && setSelectedProposeIdx(dataOptionIdx)}
+            />
+          );
+        }}
       />
     </SearchLineWrapper>
   );

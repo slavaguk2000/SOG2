@@ -6,4 +6,5 @@ export const MainViewWrapper = styled(Box)`
   flex-direction: column;
   width: 100%;
   height: 100%;
+  box-sizing: border-box;
 `;

@@ -14,14 +14,18 @@ export const SearchLineAutocomplete = styled(Autocomplete)`
   }
 `;
 
-export const SearchLineAutocompleteItemWrapper = styled(Box)`
+type SearchLineAutocompleteItemWrapperProps = {
+  selected: boolean;
+};
+
+export const SearchLineAutocompleteItemWrapper = styled(Box, {
+  shouldForwardProp: (prop) => prop !== 'selected',
+})<SearchLineAutocompleteItemWrapperProps>`
   display: flex;
   border: 1px solid #ddd;
   border-radius: 3px;
   margin: 1px 0 0;
   padding: 0 4px;
-
-  :hover {
-    background: ${({ theme }) => theme.palette.action.hover};
-  }
+  background: ${({ theme, selected }) => (selected ? theme.palette.action.hover : 'none')};
+  cursor: pointer;
 `;

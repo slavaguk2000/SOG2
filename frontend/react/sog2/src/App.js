@@ -5,15 +5,18 @@ import { ThemeProvider } from '@mui/material';
 
 import { theme } from 'src/theme';
 
+import BibleDataProvider from './providers/bibleDataProvider/provider';
 import { AppRoot } from './styled';
 import MainView from './views/MainView/MainView';
 
 function App() {
   return (
     <ThemeProvider theme={theme}>
-      <AppRoot>
-        <MainView />
-      </AppRoot>
+      <BibleDataProvider bibleId="0">
+        <AppRoot>
+          <MainView />
+        </AppRoot>
+      </BibleDataProvider>
     </ThemeProvider>
   );
 }
