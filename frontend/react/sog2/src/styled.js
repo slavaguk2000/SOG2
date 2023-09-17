@@ -4,4 +4,6 @@ export const AppRoot = styled(Box)`
   display: flex;
   height: 100vh;
   width: 100vw;
+  background: ${({ theme }) => theme.palette.background.default};
+  color: ${({ theme }) => theme.palette.primary.contrastText};
 `;

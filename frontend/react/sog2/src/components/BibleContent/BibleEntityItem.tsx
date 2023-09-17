@@ -5,10 +5,15 @@ import { BibleEntityItemWrapper } from './styled';
 interface BibleEntityItemProps {
   name: string;
   onClick: () => void;
+  selected: boolean;
 }
 
-const BibleEntityItem = ({ name, onClick }: BibleEntityItemProps) => {
-  return <BibleEntityItemWrapper onClick={onClick}>{name}</BibleEntityItemWrapper>;
+const BibleEntityItem = ({ name, onClick, selected }: BibleEntityItemProps) => {
+  return (
+    <BibleEntityItemWrapper selected={selected} onClick={onClick}>
+      {name}
+    </BibleEntityItemWrapper>
+  );
 };
 
 export default BibleEntityItem;

@@ -8,7 +8,7 @@ import { Query, QueryBibleVersesArgs, Slide } from 'src/utils/gql/types';
 
 import BibleEntityItem from './BibleEntityItem';
 
-interface ValidBibleVerseSelect {
+interface ValidBibleVerseSelectProps {
   bibleId: string;
   bookId: string;
   chapter: number;
@@ -19,7 +19,7 @@ const verseModifier = ({ content, location }: Slide) => ({
   location,
 });
 
-const ValidBibleVerseSelect = ({ bibleId, bookId, chapter }: ValidBibleVerseSelect) => {
+const ValidBibleVerseSelect = ({ bibleId, bookId, chapter }: ValidBibleVerseSelectProps) => {
   const { data } = useQuery<Pick<Query, 'bibleVerses'>, QueryBibleVersesArgs>(bibleVerses, {
     variables: {
       bibleId,
@@ -34,7 +34,7 @@ const ValidBibleVerseSelect = ({ bibleId, bookId, chapter }: ValidBibleVerseSele
   return (
     <Box>
       {verses?.map(({ text, location }) => (
-        <BibleEntityItem key={location[location.length - 1]} name={text} onClick={() => true} />
+        <BibleEntityItem key={location[location.length - 1]} name={text} onClick={() => true} selected={false} />
       ))}
     </Box>
   );

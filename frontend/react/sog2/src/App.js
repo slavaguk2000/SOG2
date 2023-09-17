@@ -1,14 +1,20 @@
 import './App.css';
 import React from 'react';
 
+import { ThemeProvider } from '@mui/material';
+
+import { theme } from 'src/theme';
+
 import { AppRoot } from './styled';
 import MainView from './views/MainView/MainView';
 
 function App() {
   return (
-    <AppRoot>
-      <MainView />
-    </AppRoot>
+    <ThemeProvider theme={theme}>
+      <AppRoot>
+        <MainView />
+      </AppRoot>
+    </ThemeProvider>
   );
 }
 

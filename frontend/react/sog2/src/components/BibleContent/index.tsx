@@ -11,13 +11,13 @@ import BibleVersesSelect from './BibleVerseSelect';
 import { BibleContentWrapper } from './styled';
 
 export interface ChapterSelector {
-  bookId?: number;
+  bookIdx?: number;
   chapterId?: number;
 }
 
 const BibleContent = () => {
   const [currentChapter, setCurrentChapter] = useState<ChapterSelector>({
-    bookId: undefined,
+    bookIdx: undefined,
     chapterId: undefined,
   });
 
@@ -30,7 +30,7 @@ const BibleContent = () => {
 
   const bibleBooksData = data?.bibleBooks;
   const currentBook =
-    bibleBooksData && currentChapter.bookId !== undefined ? bibleBooksData[currentChapter.bookId] : undefined;
+    bibleBooksData && currentChapter.bookIdx !== undefined ? bibleBooksData[currentChapter.bookIdx] : undefined;
 
   const chaptersCount = currentBook?.chapterCount ?? 0;
 
@@ -39,14 +39,14 @@ const BibleContent = () => {
       return;
     }
 
-    const bookId = bibleBooksData.findIndex(({ id }) => id === selectedId);
+    const bookIdx = bibleBooksData.findIndex(({ id }) => id === selectedId);
 
-    if (bookId < 0) {
+    if (bookIdx < 0) {
       return;
     }
 
     setCurrentChapter({
-      bookId,
+      bookIdx,
       chapterId: undefined,
     });
   };
@@ -60,8 +60,12 @@ const BibleContent = () => {
 
   return (
     <BibleContentWrapper>
-      <BibleBookSelect books={bibleBooksData} currentBook={currentChapter.bookId} onBookSelect={handleBookSelect} />
-      <BibleChapterSelect chaptersCount={chaptersCount} onChapterSelect={handleChapterSelect} />
+      <BibleBookSelect books={bibleBooksData} currentBookIdx={currentChapter.bookIdx} onBookSelect={handleBookSelect} />
+      <BibleChapterSelect
+        chaptersCount={chaptersCount}
+        onChapterSelect={handleChapterSelect}
+        currentChapter={currentChapter.chapterId}
+      />
       <BibleVersesSelect chapter={currentChapter.chapterId} bookId={currentBook?.id} />
     </BibleContentWrapper>
   );

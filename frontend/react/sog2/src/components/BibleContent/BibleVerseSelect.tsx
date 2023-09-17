@@ -3,8 +3,6 @@ import React from 'react';
 import { BibleVersesWrapper } from './styled';
 import ValidBibleVerseSelect from './ValidBibleVerseSelect';
 
-import { ChapterSelector } from './index';
-
 interface BibleVersesSelectProps {
   chapter?: number;
   bookId?: string;
