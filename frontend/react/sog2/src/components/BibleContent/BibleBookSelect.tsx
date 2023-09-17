@@ -7,15 +7,15 @@ import { BibleBookSelectWrapper } from './styled';
 
 interface BibleBookSelectProps {
   books?: BibleBook[];
-  currentBook?: number;
+  currentBookIdx?: number;
   onBookSelect: (id: string) => void;
 }
 
-const BibleBookSelect = ({ books, onBookSelect }: BibleBookSelectProps) => {
+const BibleBookSelect = ({ books, onBookSelect, currentBookIdx }: BibleBookSelectProps) => {
   return (
     <BibleBookSelectWrapper>
-      {books?.map(({ name, id }) => (
-        <BibleEntityItem key={name} name={name} onClick={() => onBookSelect(id)} />
+      {books?.map(({ name, id }, idx) => (
+        <BibleEntityItem key={name} name={name} onClick={() => onBookSelect(id)} selected={idx === currentBookIdx} />
       ))}
     </BibleBookSelectWrapper>
   );

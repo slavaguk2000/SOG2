@@ -9,13 +9,18 @@ interface BibleChapterSelectProps {
   onChapterSelect: (chapter: number) => void;
 }
 
-const BibleChapterSelect = ({ chaptersCount, onChapterSelect }: BibleChapterSelectProps) => {
+const BibleChapterSelect = ({ chaptersCount, onChapterSelect, currentChapter }: BibleChapterSelectProps) => {
   const chapters = useMemo(() => Array.from({ length: chaptersCount }).map((_, idx) => idx + 1), [chaptersCount]);
 
   return (
     <BibleChapterSelectWrapper>
       {chapters.map((chapter) => (
-        <BibleEntityItem key={chapter} name={String(chapter)} onClick={() => onChapterSelect(chapter)} />
+        <BibleEntityItem
+          key={chapter}
+          name={String(chapter)}
+          onClick={() => onChapterSelect(chapter)}
+          selected={currentChapter === chapter}
+        />
       ))}
     </BibleChapterSelectWrapper>
   );
