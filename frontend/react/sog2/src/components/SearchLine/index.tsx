@@ -87,6 +87,7 @@ const SearchLine = () => {
   const handleSearchTextChange = (newValue: string) => {
     setSearchText(newValue);
     handleSearch(newValue, setDebouncedSearchText);
+    setSelectedProposeIdx(0);
   };
 
   const autocompleteOpen = Boolean(autocompleteActive && debouncedSearchText && options.length);
