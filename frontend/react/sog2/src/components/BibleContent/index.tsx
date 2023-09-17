@@ -13,7 +13,7 @@ const BibleContent = () => {
   const currentBook =
     bibleBooksData && currentChapter.bookIdx !== undefined ? bibleBooksData[currentChapter.bookIdx] : undefined;
 
-  const chaptersCount = currentBook?.chapterCount ?? 0;
+  const chaptersCount = currentBook?.chapterCount ?? bibleBooksData?.[0].chapterCount ?? 0;
 
   const handleChapterSelect = (selectedId: number) => {
     setCurrentChapter((prev) => ({
@@ -30,7 +30,7 @@ const BibleContent = () => {
         onChapterSelect={handleChapterSelect}
         currentChapter={currentChapter.chapterId}
       />
-      <BibleVersesSelect chapter={currentChapter.chapterId} bookId={currentBook?.id} />
+      <BibleVersesSelect chapter={currentChapter.chapterId} bookId={currentBook?.id ?? bibleBooksData?.[0].id} />
     </BibleContentWrapper>
   );
 };
