@@ -1,4 +1,4 @@
-import React, { KeyboardEvent, useState } from 'react';
+import React, { KeyboardEvent, useEffect, useRef, useState } from 'react';
 
 import { useQuery } from '@apollo/client';
 import TextField from '@mui/material/TextField';
@@ -24,6 +24,7 @@ const SearchLine = () => {
   const [searchText, setSearchText] = useState<string>('');
   const [autocompleteActive, setAutocompleteActive] = useState<boolean>(false);
   const [selectedProposeIdx, setSelectedProposeIdx] = useState<number>(0);
+  const searchLineRef = useRef<HTMLInputElement>(null);
 
   const { data } = useQuery<Pick<Query, 'search'>, QuerySearchArgs>(search, {
     variables: {
@@ -43,7 +44,7 @@ const SearchLine = () => {
 
   const { handleUpdateSlide } = useBibleData();
 
-  const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Escape') {
       e.preventDefault();
       clearSearchLine();
@@ -57,6 +58,7 @@ const SearchLine = () => {
         if (newSlide) {
           handleUpdateSlide(newSlide);
           clearSearchLine();
+          (e.target as HTMLInputElement).blur();
         }
       }
     }
@@ -98,6 +100,30 @@ const SearchLine = () => {
     handleUpdateSlide(newSlide);
   };
 
+  useEffect(() => {
+    const handleGlobalKeyDown = (event: WindowEventMap['keydown']) => {
+      console.log(event.key, /[^\s\d\W]/.test(event.key), event.key.length);
+      const isLetter = event.key.length === 1 && /[a-zA-Zа-яА-ЯёЁ]/.test(event.key);
+
+      const isSpace = event.key === ' ';
+      if (isLetter || isSpace) {
+        if (searchLineRef.current && document.activeElement !== searchLineRef.current) {
+          searchLineRef.current.focus();
+        }
+      }
+
+      if (event.key === 'Escape') {
+        setSearchText('');
+      }
+    };
+
+    window.addEventListener('keydown', handleGlobalKeyDown);
+
+    return () => {
+      window.removeEventListener('keydown', handleGlobalKeyDown);
+    };
+  }, []);
+
   return (
     <SearchLineWrapper>
       <SearchLineAutocomplete
@@ -113,7 +139,13 @@ const SearchLine = () => {
         onFocus={() => setAutocompleteActive(true)}
         onBlur={() => setAutocompleteActive(false)}
         renderInput={(params) => (
-          <TextField {...params} size="small" label="Search the Bible" onKeyDown={handleKeyDown} />
+          <TextField
+            {...params}
+            size="small"
+            label="Search the Bible"
+            onKeyDown={handleKeyDown}
+            inputRef={searchLineRef}
+          />
         )}
         renderOption={(props, option) => {
           // eslint-disable-next-line react/prop-types
