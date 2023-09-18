@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Presentation</title>
+    <style>
+        body {
+            margin: 0;
+            background-color: black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            width: 100vw;
+            color: white;
+            font-size: 48px;
+            text-align: center;
+            white-space: pre-wrap;
+            overflow: hidden;
+        }
+
+        #text {
+            width: 100%;
+            height: 90%;
+            display: flex;
+        }
+
+        #location {
+            width: 100%;
+            height: 10%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 5vh;
+        }
+
+        #slide {
+            height: 100%;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+    </style>
+    <script type="text/javascript" src="receiver.js"></script>
+  </head>
+  <body>
+    <div id="slide">
+      <div id="text"></div>
+      <div id="location"><div></div></div>
+    </div>
+  </body>
+</html>

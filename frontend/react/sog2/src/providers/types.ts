@@ -13,6 +13,13 @@ export interface BibleContextType {
   setCurrentChapter: Dispatch<SetStateAction<ChapterSelector>>;
   bibleBooksData?: BibleBook[];
   currentSlide?: Slide;
-  handleUpdateSlide: (newSlide: Slide) => void;
+  handleUpdateSlide: (newSlide?: Slide) => void;
   handleBookSelect: (selectedId: string) => void;
+}
+
+export interface PresentationContextType {
+  setText: (text: string, location: string) => void;
+  captureTextScreen: () => void;
+  releaseTextScreen: () => void;
+  validSession: boolean;
 }

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Presentation</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: black;
+            color: white;
+            font-size: 24px;
+        }
+
+        .abc {
+            text-wrap: normal;
+            width: 100vw;
+            font-size: 8pt;
+        }
+    </style>
+  </head>
+  <body>
+    <div id="content"><ul id="connectionview"></ul><button onclick='f()'>aaaa</button></div>
+
+    <script>
+      let listElem = document.getElementById("connectionview");
+
+
+      function f() {
+        listElem.innerHTML += `<li><div class='abc'>${Object.keys(this).join('; ')}</div></li>`;
+        listElem.innerHTML += `<li>${JSON.stringify(sessionStorage)}</li>`;
+        listElem.innerHTML += `<li>${String(this.onmessage)}</li>`;
+        listElem.innerHTML += `<li>${String(this.onmessageerror)}</li>`;
+      }
+
+      onmessage = f;
+      onmessageerror = f;
+
+      addEventListener('onmessage', f);
+      addEventListener('onmessageerror', f);
+
+      navigator.presentation.receiver.connectionList.then((connections) => {
+        connections.forEach((aConnection) => {
+          listElem.innerHTML += `<li>${aConnection.id}</li>`;
+        });
+      });
+    </script>
+  </body>
+</html>
