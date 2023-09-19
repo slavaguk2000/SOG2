@@ -3,11 +3,15 @@ from src.services.elasticsearch.mappings import bible_mapping
 
 el = Elastic()
 
-default_slide_source = ["book", "book_order", "chapter", "verse_number", "verse_content"]
+default_slide_source = ["book", "book_order", "chapter", "verse_number", "verse_content", "search_content"]
 
 
 def bible_source_to_content_string(source: dict):
     return source['verse_content']
+
+
+def bible_source_to_search_content_string(source: dict):
+    return source['search_content']
 
 
 def bible_source_to_location(source: dict):
@@ -17,6 +21,7 @@ def bible_source_to_location(source: dict):
 def bible_hit_to_slide(hit: dict):
     source = hit["_source"]
     return {
+        "search_content": bible_source_to_search_content_string(source),
         "content": bible_source_to_content_string(source),
         "location": bible_source_to_location(source)
     }

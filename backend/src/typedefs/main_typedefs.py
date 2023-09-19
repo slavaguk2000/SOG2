@@ -10,6 +10,7 @@ type_defs = gql("""
     type Slide {
         location: [String!]!
         content: String!
+        searchContent: String!
     }
     
     type BibleBook {

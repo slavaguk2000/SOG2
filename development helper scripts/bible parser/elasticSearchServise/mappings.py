@@ -22,6 +22,10 @@ bible_mapping = Mapping(
             "verse_content": {
                 "type": "text",
                 "analyzer": "russian"
+            },
+            "search_content": {
+                "type": "text",
+                "analyzer": "russian"
             }
         }
     })

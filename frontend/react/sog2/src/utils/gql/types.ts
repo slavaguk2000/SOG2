@@ -49,4 +49,5 @@ export type Slide = {
   __typename?: 'Slide';
   content: Scalars['String']['output'];
   location: Array<Scalars['String']['output']>;
+  searchContent: Scalars['String']['output'];
 };
