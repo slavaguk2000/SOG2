@@ -111,10 +111,6 @@ const SearchLine = () => {
           searchLineRef.current.focus();
         }
       }
-
-      if (event.key === 'Escape') {
-        setSearchText('');
-      }
     };
 
     window.addEventListener('keydown', handleGlobalKeyDown);
@@ -129,7 +125,12 @@ const SearchLine = () => {
       <SearchLineAutocomplete
         open={autocompleteOpen}
         freeSolo
+        clearOnBlur
+        clearOnEscape
         fullWidth
+        filterOptions={(options) => options} //need to show popup on "Gen 2 5" for example
+        autoComplete
+        autoHighlight
         getOptionLabel={(option) => (option as Slide).content}
         inputValue={searchText}
         options={options}
