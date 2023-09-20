@@ -16,7 +16,7 @@ def get_place_by_short_write1():
 
 
 def get_place_by_short_write2():
-    get_place_by_short_write_template("Ис фарс", [[22, 23, 6]]) # "Исаии 23:6 Переселяйтесь в Фарсис, рыдайте, обитатели острова!"
+    get_place_by_short_write_template("Ис фарс", [[22, 2, 16]]) # 'Исаии 2:16 и на все корабли Фарсисские, и на все вожделенные украшения их.'
 
 
 def get_place_by_short_write3():
@@ -43,6 +43,10 @@ def get_place_by_short_write8():
     get_place_by_short_write_template("1 и 4 при", [[47, 4, 2]]) # '1 Иоанна 4:2 Духа Божия (и духа заблуждения) узнавайте так: всякий дух, который исповедует Иисуса Христа, пришедшего во плоти, есть от Бога;'
 
 
+def get_place_by_short_write9():
+    get_place_by_short_write_template("1 и 1", [[47, 1, 1], [47, 1, 2], [47, 1, 3], [47, 1, 4], [47, 1, 5]]) # verse rder
+
+
 def test_answer():
     get_place_by_short_write1()
     get_place_by_short_write2()
@@ -52,3 +56,4 @@ def test_answer():
     get_place_by_short_write6()
     get_place_by_short_write7()
     get_place_by_short_write8()
+    get_place_by_short_write9()

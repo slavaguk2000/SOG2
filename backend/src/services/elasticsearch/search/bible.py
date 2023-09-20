@@ -97,12 +97,6 @@ def bible_search(search_pattern: str, bible_id: str):
                     "query": f"{maybe_book_res['book']}*",
                     "boost": 5
                 }
-            },
-            {
-                "query_string": {
-                    "fields": ["search_content"],
-                    "query": f"*{search_pattern}*"
-                }
             }]
 
     if maybe_book_res["chapter"]:
@@ -112,6 +106,17 @@ def bible_search(search_pattern: str, bible_id: str):
                     "chapter": {
                         "value": maybe_book_res["chapter"],
                         "boost": 2
+                    }
+                }
+            }
+        ]
+
+        must_verse = [
+            {
+                "term": {
+                    "verse_number": {
+                        "value": maybe_book_res["chapter"],
+                        "boost": 1.2
                     }
                 }
             }
@@ -128,6 +133,16 @@ def bible_search(search_pattern: str, bible_id: str):
                     }
                 }
             ]
+            must_verse += [
+                {
+                    "term": {
+                        "chapter": {
+                            "value": maybe_book_res["verse_num"],
+                            "boost": 1.2
+                        }
+                    }
+                }
+            ]
 
         should += [
             {
@@ -137,7 +152,12 @@ def bible_search(search_pattern: str, bible_id: str):
                             "bool": {
                                 "must": must_chapter
                             }
-                        }
+                        },
+                        {
+                            "bool": {
+                                "must": must_verse
+                            }
+                        },
                     ]
                 }
             }
