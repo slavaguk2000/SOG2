@@ -7,7 +7,7 @@ from src.services.elasticsearch.search.bible import get_bible_books_by_bible_id,
 from src.typedefs.main_typedefs import type_defs
 from src.resolvers.resolvers import resolvers
 
-print(bible_search("Ирод"))
+print(bible_search("Ирод", "0"))
 print(get_bible_books_by_bible_id("0"))
 print(get_chapter_verses('0', '0', 1))
 

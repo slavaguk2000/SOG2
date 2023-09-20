@@ -20,6 +20,7 @@ def get_elastic_single_data_from_sog_bible(verse_data: str, identifier: int):
     return {
         "_id": identifier,
         "book": book,
+        "book_name": book,
         "book_order": book_order,
         "bible_id": "0",
         "chapter": int(chapter),

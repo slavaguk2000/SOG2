@@ -7,7 +7,7 @@ query = QueryType()
 @query.field("search")
 @convert_kwargs_to_snake_case
 def resolve_search(*_, search_pattern: str):
-    return bible_search(search_pattern)
+    return bible_search(search_pattern, "0")
 
 
 @query.field("bibleBooks")

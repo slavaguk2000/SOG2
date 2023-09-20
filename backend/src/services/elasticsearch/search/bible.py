@@ -4,6 +4,28 @@ from src.services.elasticsearch.mappings import bible_mapping
 el = Elastic()
 
 default_slide_source = ["book", "book_order", "chapter", "verse_number", "verse_content", "search_content"]
+sort_priority = [
+    {
+        "_score": {
+            "order": "desc"
+        }
+    },
+    {
+        "book_order": {
+            "order": "asc"
+        }
+    },
+    {
+        "chapter": {
+            "order": "asc"
+        }
+    },
+    {
+        "verse_number": {
+            "order": "asc"
+        }
+    }
+]
 
 
 def bible_source_to_content_string(source: dict):
@@ -27,13 +49,141 @@ def bible_hit_to_slide(hit: dict):
     }
 
 
-def bible_search(search_pattern: str):
-    result = el.search(index=bible_mapping.index, query={
-        "query_string": {
-            "fields": ["book", "verse_content"],
-            "query": f"*{search_pattern}*"
+def get_maybe_book_from_search_pattern(search_pattern: str):
+    if ' ' not in search_pattern:
+        return {"book": None, "chapter": None, "verse_num": None, "content": search_pattern}
+
+    [first_word, else_verse] = search_pattern.split(' ', 1)
+
+    book = None
+
+    if first_word.isdigit():
+        else_verse_split = else_verse.split(' ', 1)
+        book = f"{first_word} {else_verse_split[0]}"
+        if len(else_verse_split) > 1:
+            else_verse = else_verse_split[1]
+        else:
+            else_verse = ''
+    else:
+        book = first_word
+
+    maybe_chapter = None
+    maybe_verse = None
+
+    while len(else_verse):
+        else_verse_split = else_verse.split(' ', 1)
+        if else_verse_split[0].isdigit():
+            if not maybe_chapter:
+                maybe_chapter = int(else_verse_split[0])
+            elif not maybe_verse:
+                maybe_verse = int(else_verse_split[0])
+        else:
+            break
+        else_verse = else_verse_split[1] if len(else_verse_split) > 1 else ''
+
+    return {"book": book, "chapter": maybe_chapter, "verse_num": maybe_verse, "content": else_verse}
+
+
+def bible_search(search_pattern: str, bible_id: str):
+    search_pattern = search_pattern.strip()
+    maybe_book_res = get_maybe_book_from_search_pattern(search_pattern)
+
+    should = []
+
+    if maybe_book_res["book"]:
+        should += [{
+                "query_string": {
+                    "default_field": "book_name",
+                    "query": f"{maybe_book_res['book']}*",
+                    "boost": 5
+                }
+            },
+            {
+                "query_string": {
+                    "fields": ["search_content"],
+                    "query": f"*{search_pattern}*"
+                }
+            }]
+
+    if maybe_book_res["chapter"]:
+        must_chapter = [
+            {
+                "term": {
+                    "chapter": {
+                        "value": maybe_book_res["chapter"],
+                        "boost": 2
+                    }
+                }
+            }
+        ]
+
+        if maybe_book_res["verse_num"]:
+            must_chapter += [
+                {
+                    "term": {
+                        "verse_number": {
+                            "value": maybe_book_res["verse_num"],
+                            "boost": 2
+                        }
+                    }
+                }
+            ]
+
+        should += [
+            {
+                "bool": {
+                    "should": [
+                        {
+                            "bool": {
+                                "must": must_chapter
+                            }
+                        }
+                    ]
+                }
+            }
+        ]
+
+    query = {
+        "function_score": {
+            "query": {
+                "bool": {
+                    "must": [
+                        {
+                            "term": {
+                                "bible_id": bible_id
+                            },
+                        },
+                        {
+                            "query_string": {
+                                "default_field": "verse_content",
+                                "query": f"{maybe_book_res['content']}*",
+                                "boost": 1
+                            }
+                        }
+                    ],
+                    "should": should
+                }
+            },
+            "functions": [
+                {
+                    "linear": {
+                        "book_order": {
+                            "origin": 1,  # Примерный порядок книги, который вы считаете наиболее релевантным
+                            "scale": 10,  # Зависит от разброса вашего параметра book_order
+                            "offset": 5,  # Можно использовать, чтобы добавить небольшую "погрешность"
+                            "decay": 0.5  # Скорость уменьшения значения после прохождения через "origin"
+                        }
+                    },
+                    "weight": 2  # Увеличение веса для совпадений
+                }
+            ],
+            "boost_mode": "sum"  # Метод комбинирования оценки функции и базовой оценки
         }
-    }, source=default_slide_source)
+    }
+
+    print(str(query).replace("'", '"'))
+
+    result = el.search(index=bible_mapping.index, query=query, source=default_slide_source, sort=sort_priority)
 
     return [bible_hit_to_slide(hit) for hit in result["hits"]["hits"]]
 
