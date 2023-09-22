@@ -5,6 +5,7 @@ export const search = gql`
     search(searchPattern: $searchPattern) {
       content
       location
+      searchContent
     }
   }
 `;
@@ -24,6 +25,7 @@ export const bibleVerses = gql`
     bibleVerses(bibleId: $bibleId, bookId: $bookId, chapter: $chapter) {
       content
       location
+      searchContent
     }
   }
 `;

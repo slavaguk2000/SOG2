@@ -15,14 +15,18 @@ def get_elastic_single_data_from_sog_bible(verse_data: str, identifier: int):
             book_order += 1
         last_book = book
 
+    verse_content = verse_content.strip()
+
     return {
         "_id": identifier,
         "book": book,
+        "book_name": book,
         "book_order": book_order,
         "bible_id": "0",
         "chapter": int(chapter),
         "verse_number": int(verse_num),
-        "verse_content": verse_content.strip()
+        "verse_content": verse_content,
+        "search_content": f"{book} {chapter}:{verse_num} {verse_content}"
     }
 
 
