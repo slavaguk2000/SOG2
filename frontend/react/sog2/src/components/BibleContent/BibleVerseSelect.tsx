@@ -9,11 +9,7 @@ interface BibleVersesSelectProps {
 }
 
 const BibleVersesSelect = ({ bookId, chapter }: BibleVersesSelectProps) => {
-  return (
-    <BibleVersesWrapper>
-      {bookId ? <ValidBibleVerseSelect bibleId={'0'} bookId={bookId} chapter={chapter ?? 1} /> : `${bookId} ${chapter}`}
-    </BibleVersesWrapper>
-  );
+  return <BibleVersesWrapper>{bookId ? <ValidBibleVerseSelect /> : `${bookId} ${chapter}`}</BibleVersesWrapper>;
 };
 
 export default BibleVersesSelect;

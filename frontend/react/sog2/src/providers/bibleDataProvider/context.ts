@@ -8,10 +8,13 @@ const defaultValue: BibleContextType = {
     bookIdx: undefined,
     chapterId: undefined,
   },
+  currentBook: undefined,
   setCurrentChapter: () => true,
   currentSlide: undefined,
   handleUpdateSlide: () => true,
   handleBookSelect: () => true,
+  handlePrevSlide: () => true,
+  handleNextSlide: () => true,
 };
 
 const BibleContext = createContext<BibleContextType>(defaultValue);
