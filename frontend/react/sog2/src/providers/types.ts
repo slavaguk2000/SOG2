@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction } from 'react';
 
-import { BibleBook, Slide } from '../utils/gql/types';
+import { BibleBook, Query, Slide } from '../utils/gql/types';
 
 export interface ChapterSelector {
   bookIdx?: number;
@@ -10,11 +10,15 @@ export interface ChapterSelector {
 export interface BibleContextType {
   bibleId: string;
   currentChapter: ChapterSelector;
+  currentBook?: BibleBook;
   setCurrentChapter: Dispatch<SetStateAction<ChapterSelector>>;
   bibleBooksData?: BibleBook[];
+  versesData?: Pick<Query, 'bibleVerses'>;
   currentSlide?: Slide;
   handleUpdateSlide: (newSlide?: Slide) => void;
   handleBookSelect: (selectedId: string) => void;
+  handlePrevSlide: () => void;
+  handleNextSlide: () => void;
 }
 
 export interface PresentationContextType {

@@ -1,9 +1,9 @@
-import React, { PropsWithChildren, useState } from 'react';
+import React, { PropsWithChildren, useMemo, useState } from 'react';
 
 import { useQuery } from '@apollo/client';
 
-import { bibleBooks } from '../../utils/gql/queries';
-import { BibleBook, Query, QueryBibleBooksArgs, Slide } from '../../utils/gql/types';
+import { bibleBooks, bibleVerses } from '../../utils/gql/queries';
+import { BibleBook, Query, QueryBibleBooksArgs, QueryBibleVersesArgs, Slide } from '../../utils/gql/types';
 import { usePresentation } from '../presentationProvider';
 import { ChapterSelector } from '../types';
 
@@ -97,16 +97,60 @@ const BibleDataProvider = ({ bibleId = '0', children }: PropsWithChildren<BibleD
     }
   };
 
+  const currentBook = useMemo(
+    () => (bibleBooksData && currentChapter.bookIdx !== undefined ? bibleBooksData[currentChapter.bookIdx] : undefined),
+    [bibleBooksData, currentChapter.bookIdx],
+  );
+
+  const { data: versesData, loading: versesDataLoading } = useQuery<Pick<Query, 'bibleVerses'>, QueryBibleVersesArgs>(
+    bibleVerses,
+    {
+      variables: {
+        bibleId,
+        bookId: currentBook?.id ?? (bibleBooksData?.[0].id as string),
+        chapter: currentChapter?.chapterId ?? 1,
+      },
+      fetchPolicy: 'cache-first',
+      skip: !bibleBooksData,
+    },
+  );
+
+  const validVersesData = versesData && !versesDataLoading;
+
+  const handleNextSlide = () => {
+    if (validVersesData && currentSlide) {
+      const nextVerseIdx = getVerseNumberFromSlide(currentSlide); // idx from 1
+
+      if (nextVerseIdx < versesData?.bibleVerses?.length) {
+        handleUpdateSlide(versesData.bibleVerses[nextVerseIdx]);
+      }
+    }
+  };
+
+  const handlePrevSlide = () => {
+    if (validVersesData && currentSlide) {
+      const prevVerseIdx = getVerseNumberFromSlide(currentSlide) - 2; // idx from 1
+
+      if (prevVerseIdx >= 0) {
+        handleUpdateSlide(versesData.bibleVerses[prevVerseIdx]);
+      }
+    }
+  };
+
   return (
     <BibleContext.Provider
       value={{
         bibleId,
         currentChapter,
+        currentBook,
         setCurrentChapter,
         bibleBooksData,
+        versesData,
         currentSlide,
         handleUpdateSlide,
         handleBookSelect,
+        handleNextSlide,
+        handlePrevSlide,
       }}
     >
       {children}

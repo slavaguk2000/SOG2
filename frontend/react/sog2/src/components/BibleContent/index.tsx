@@ -8,10 +8,7 @@ import BibleVersesSelect from './BibleVerseSelect';
 import { BibleContentWrapper } from './styled';
 
 const BibleContent = () => {
-  const { currentChapter, setCurrentChapter, bibleBooksData, handleBookSelect } = useBibleData();
-
-  const currentBook =
-    bibleBooksData && currentChapter.bookIdx !== undefined ? bibleBooksData[currentChapter.bookIdx] : undefined;
+  const { currentChapter, currentBook, setCurrentChapter, bibleBooksData, handleBookSelect } = useBibleData();
 
   const chaptersCount = currentBook?.chapterCount ?? bibleBooksData?.[0].chapterCount ?? 0;
 
