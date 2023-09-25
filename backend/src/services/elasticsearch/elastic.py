@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from elasticsearch import Elasticsearch, helpers
 from singleton_decorator import singleton
 
@@ -23,3 +25,19 @@ class Elastic:
         if fields is None:
             fields = []
         return self.es.search(index=index, fields=fields, **kwargs)
+
+    def get_slide_by_id(self, index: str, slide_id: str):
+        return self.es.get(index=index, id=slide_id)
+
+    def update_slide_usage(self, index: str, slide_id):
+        update_script = {
+            "script": {
+                "source": "ctx._source.usages_count += 1; ctx._source.last_usage = params.current_time;",
+                "lang": "painless",
+                "params": {
+                    "current_time": datetime.utcnow()
+                }
+            }
+        }
+
+        self.es.update(index=index, id=slide_id, body=update_script)

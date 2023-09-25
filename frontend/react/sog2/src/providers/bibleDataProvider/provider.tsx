@@ -1,9 +1,18 @@
 import React, { PropsWithChildren, useMemo, useState } from 'react';
 
-import { useQuery } from '@apollo/client';
+import { useMutation, useQuery } from '@apollo/client';
 
-import { bibleBooks, bibleVerses } from '../../utils/gql/queries';
-import { BibleBook, Query, QueryBibleBooksArgs, QueryBibleVersesArgs, Slide } from '../../utils/gql/types';
+import { bibleBooks, bibleVerses, setActiveSlide } from 'src/utils/gql/queries';
+import {
+  BibleBook,
+  Mutation,
+  MutationSetActiveSlideArgs,
+  Query,
+  QueryBibleBooksArgs,
+  QueryBibleVersesArgs,
+  Slide,
+} from 'src/utils/gql/types';
+
 import { usePresentation } from '../presentationProvider';
 import { ChapterSelector } from '../types';
 
@@ -38,6 +47,10 @@ const BibleDataProvider = ({ bibleId = '0', children }: PropsWithChildren<BibleD
     fetchPolicy: 'cache-first',
   });
 
+  const [setActiveSlideMutation] = useMutation<Pick<Mutation, 'setActiveSlide'>, MutationSetActiveSlideArgs>(
+    setActiveSlide,
+  );
+
   const bibleBooksData = data?.bibleBooks;
 
   const getBookIdxById = (bookId: string) => {
@@ -69,6 +82,12 @@ const BibleDataProvider = ({ bibleId = '0', children }: PropsWithChildren<BibleD
 
   const handleUpdateSlide = (newSlide?: Slide) => {
     setCurrentSlide(newSlide);
+
+    setActiveSlideMutation({
+      variables: {
+        slideId: newSlide?.id,
+      },
+    }).catch((e) => console.error(e));
 
     if (!newSlide) {
       setText('', '');

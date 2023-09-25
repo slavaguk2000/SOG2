@@ -34,6 +34,12 @@ bible_mapping = Mapping(
             "verse_number": {
                 "type": "integer"
             },
+            "usages_count": {
+                "type": "integer"
+            },
+            "last_usage": {
+                "type": "date"
+            },
             "verse_content": {
                 "type": "text",
                 "analyzer": "russian"

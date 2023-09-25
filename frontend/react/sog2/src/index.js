@@ -1,14 +1,36 @@
 import React from 'react';
 
-import { ApolloClient, InMemoryCache, ApolloProvider, gql } from '@apollo/client';
+import { ApolloClient, InMemoryCache, ApolloProvider, gql, HttpLink, split } from '@apollo/client';
+import { getMainDefinition } from '@apollo/client/utilities';
+import { WebSocketLink } from '@apollo/link-ws';
 import ReactDOM from 'react-dom/client';
 
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
-const client = new ApolloClient({
+const httpLink = new HttpLink({
   uri: 'http://localhost:8000/',
+});
+
+const wsLink = new WebSocketLink({
+  uri: 'ws://localhost:8000/',
+  options: {
+    reconnect: true,
+  },
+});
+
+const link = split(
+  ({ query }) => {
+    const { kind, operation } = getMainDefinition(query);
+    return kind === 'OperationDefinition' && operation === 'subscription';
+  },
+  wsLink,
+  httpLink,
+);
+
+const client = new ApolloClient({
+  link,
   cache: new InMemoryCache(),
 });
 
