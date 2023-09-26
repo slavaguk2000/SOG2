@@ -4,6 +4,9 @@ import re
 
 el = Elastic()
 
+highlight_pre_tag = '<span class="highlighted">'
+highlight_post_tag = "</span>"
+
 default_slide_source = ["book", "book_order", "chapter", "verse_number", "verse_content", "search_content"]
 sort_priority = [
     {
@@ -33,9 +36,22 @@ def bible_source_to_content_string(source: dict):
     return source['verse_content']
 
 
-def bible_source_to_search_content_string(source: dict, highlight: dict):
+def bible_source_to_search_content_string(source: dict, highlight: dict, matched_queries: [str]):
     if "search_content" in source:
         search_content = source['search_content']
+        print(matched_queries)
+        if 'book' in source and ('primary_verse' in matched_queries or 'secondary_verse' in matched_queries):
+            search_content = re.sub(
+                r'^(' + re.escape(source["book"]) + r' \d+:)(\d+)(\s)',
+                r'\1' + highlight_pre_tag + r'\2' + highlight_post_tag + r'\3',
+                search_content
+            )
+        if 'book' in source and ('primary_chapter' in matched_queries or 'secondary_chapter' in matched_queries):
+            search_content = re.sub(
+                r'^(' + re.escape(source["book"]) + r' )(\d+):',
+                r'\1' + highlight_pre_tag + r'\2' + highlight_post_tag + r':',
+                search_content
+            )
         if 'book_name' in highlight and 'book' in source:
             regex_pattern = r'^' + re.escape(source["book"]) + r'\b'
             search_content = re.sub(regex_pattern, highlight['book_name'][0], search_content)
@@ -57,7 +73,8 @@ def bible_hit_to_slide(hit: dict):
         "id": hit["_id"],
         "search_content": bible_source_to_search_content_string(
             source,
-            hit["highlight"] if 'highlight' in hit else {}
+            hit["highlight"] if 'highlight' in hit else {},
+            hit["matched_queries"] if "matched_queries" in hit else []
         ),
         "content": bible_source_to_content_string(source),
         "location": bible_source_to_location(source)
@@ -118,7 +135,8 @@ def bible_search(search_pattern: str, bible_id: str):
                 "term": {
                     "chapter": {
                         "value": maybe_book_res["chapter"],
-                        "boost": 2
+                        "boost": 2,
+                        "_name": "primary_chapter"
                     }
                 }
             }
@@ -129,7 +147,8 @@ def bible_search(search_pattern: str, bible_id: str):
                 "term": {
                     "verse_number": {
                         "value": maybe_book_res["chapter"],
-                        "boost": 1.2
+                        "boost": 1.2,
+                        "_name": "secondary_verse"
                     }
                 }
             }
@@ -141,7 +160,8 @@ def bible_search(search_pattern: str, bible_id: str):
                     "term": {
                         "verse_number": {
                             "value": maybe_book_res["verse_num"],
-                            "boost": 2
+                            "boost": 2,
+                            "_name": "primary_verse"
                         }
                     }
                 }
@@ -151,7 +171,8 @@ def bible_search(search_pattern: str, bible_id: str):
                     "term": {
                         "chapter": {
                             "value": maybe_book_res["verse_num"],
-                            "boost": 1.2
+                            "boost": 1.2,
+                            "_name": "secondary_chapter"
                         }
                     }
                 }
@@ -215,8 +236,8 @@ def bible_search(search_pattern: str, bible_id: str):
     }
 
     highlight = {
-        "pre_tags": ['<span class="highlighted">'],
-        "post_tags": ["</span>"],
+        "pre_tags": [highlight_pre_tag],
+        "post_tags": [highlight_post_tag],
         "fields": {
             "verse_content": {},
             "book_name": {}
