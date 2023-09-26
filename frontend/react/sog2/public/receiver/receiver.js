@@ -1,3 +1,5 @@
+const maxFontSize = 120;
+
 function addConnection(connection) {
   connection.addEventListener('message', function (event) {
     const data = JSON.parse(event.data);
@@ -10,9 +12,11 @@ function addConnection(connection) {
 }
 
 function addMessage(text, location) {
-  const textContainer = document.getElementById('text');
-  textContainer.textContent = text;
-  resizeText();
+  const textContainer = document.getElementById('text')?.children[0];
+  if (textContainer) {
+    textContainer.textContent = text;
+    resizeText();
+  }
   const locationContainer = document.getElementById('location')?.children[0];
   if (locationContainer) {
     locationContainer.textContent = location;
@@ -31,9 +35,9 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 function resizeText() {
-  const div = document.getElementById('text');
+  const div = document.getElementById('text')?.children[0];
 
-  if (!div.textContent.length) {
+  if (!div?.textContent.length) {
     return;
   }
 
@@ -41,7 +45,7 @@ function resizeText() {
   const step = 1; // шаг изменения размера шрифта
   div.style.fontSize = `${fontSize}px`;
 
-  while (div.scrollHeight <= div.clientHeight && div.scrollWidth <= div.clientWidth) {
+  while (div.scrollHeight <= div.clientHeight && div.scrollWidth <= div.clientWidth && fontSize <= maxFontSize) {
     fontSize += step;
     div.style.fontSize = `${fontSize}px`;
   }
