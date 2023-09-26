@@ -272,7 +272,7 @@ def get_chapter_verses(bible_id: str, book_id: str, chapter: int):
                 }
             ]
         }
-    }, source=default_slide_source, size=1000)
+    }, source=default_slide_source, size=1000, sort=['verse_number'])
 
     return [bible_hit_to_slide(hit) for hit in result["hits"]["hits"]]
 
