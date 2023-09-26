@@ -102,8 +102,7 @@ const SearchLine = () => {
 
   useEffect(() => {
     const handleGlobalKeyDown = (event: WindowEventMap['keydown']) => {
-      console.log(event.key, /[^\s\d\W]/.test(event.key), event.key.length);
-      const isLetter = event.key.length === 1 && /[a-zA-Zа-яА-ЯёЁ]/.test(event.key);
+      const isLetter = event.key.length === 1 && /[1-4a-zA-Zа-яА-ЯёЁ]/.test(event.key);
 
       const isSpace = event.key === ' ';
       if (isLetter || isSpace) {
