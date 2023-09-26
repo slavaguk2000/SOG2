@@ -6,11 +6,11 @@ interface PresentationProviderProps {
   id?: string;
 }
 
-// const presUrls = ['presentation.html'];
 const presUrls = ['receiver/index.html'];
 
 export const PresentationProvider = ({ children }: PropsWithChildren<PresentationProviderProps>) => {
   const [session, setSession] = useState(null);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [presentationRequestAvailability, setPresentationRequestAvailability] = useState<boolean | undefined>(
     undefined,
   );

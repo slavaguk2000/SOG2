@@ -1,6 +1,5 @@
 import React from 'react';
 
-import { useBibleData } from '../../providers/bibleDataProvider';
 import { Slide } from '../../utils/gql/types';
 
 import { SearchLineAutocompleteItemWrapper } from './styled';
@@ -20,7 +19,7 @@ const SearchLineAutocompleteItem = ({
 }: SearchLineAutocompleteItemProps) => {
   return (
     <SearchLineAutocompleteItemWrapper onClick={onClick} selected={selected} onMouseEnter={setSelected}>
-      {searchContent}
+      <div dangerouslySetInnerHTML={{ __html: searchContent }} />
     </SearchLineAutocompleteItemWrapper>
   );
 };
