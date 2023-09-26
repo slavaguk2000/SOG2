@@ -28,4 +28,25 @@ export const SearchLineAutocompleteItemWrapper = styled(Box, {
   padding: 0 4px;
   background: ${({ theme, selected }) => (selected ? theme.palette.action.hover : 'none')};
   cursor: pointer;
+
+  * > .highlighted {
+    background: ${({
+      theme: {
+        palette: {
+          primary: { light },
+        },
+      },
+    }) => light};
+    font-weight: bold;
+    border-radius: 3px;
+    box-shadow: ${({
+        theme: {
+          palette: {
+            primary: { main },
+          },
+        },
+      }) => main}
+      3 3 5;
+    padding: 3px;
+  }
 `;

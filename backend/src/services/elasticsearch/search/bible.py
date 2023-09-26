@@ -1,5 +1,6 @@
 from src.services.elasticsearch.elastic import Elastic
 from src.services.elasticsearch.mappings import bible_mapping
+import re
 
 el = Elastic()
 
@@ -32,19 +33,32 @@ def bible_source_to_content_string(source: dict):
     return source['verse_content']
 
 
-def bible_source_to_search_content_string(source: dict):
-    return source['search_content']
+def bible_source_to_search_content_string(source: dict, highlight: dict):
+    if "search_content" in source:
+        search_content = source['search_content']
+        if 'book_name' in highlight and 'book' in source:
+            regex_pattern = r'^' + re.escape(source["book"]) + r'\b'
+            search_content = re.sub(regex_pattern, highlight['book_name'][0], search_content)
+        if 'verse_content' in highlight and 'verse_content' in source:
+            regex_pattern = r'\b' + re.escape(source["verse_content"]) + r'$'
+            search_content = re.sub(regex_pattern, highlight['verse_content'][0], search_content)
+        return search_content
+    return ''
 
 
 def bible_source_to_location(source: dict):
-    return ["0", source['book_order'], source['chapter'], source['verse_number'],]
+    return ["0", source['book_order'], source['chapter'], source['verse_number']]
 
 
 def bible_hit_to_slide(hit: dict):
     source = hit["_source"]
+    print(hit)
     return {
         "id": hit["_id"],
-        "search_content": bible_source_to_search_content_string(source),
+        "search_content": bible_source_to_search_content_string(
+            source,
+            hit["highlight"] if 'highlight' in hit else {}
+        ),
         "content": bible_source_to_content_string(source),
         "location": bible_source_to_location(source)
     }
@@ -55,8 +69,6 @@ def get_maybe_book_from_search_pattern(search_pattern: str):
         return {"book": None, "chapter": None, "verse_num": None, "content": search_pattern}
 
     [first_word, else_verse] = search_pattern.split(' ', 1)
-
-    book = None
 
     if first_word.isdigit():
         else_verse_split = else_verse.split(' ', 1)
@@ -202,9 +214,23 @@ def bible_search(search_pattern: str, bible_id: str):
         }
     }
 
+    highlight = {
+        "pre_tags": ['<span class="highlighted">'],
+        "post_tags": ["</span>"],
+        "fields": {
+            "verse_content": {},
+            "book_name": {}
+        }
+    }
     print(str(query).replace("'", '"'))
 
-    result = el.search(index=bible_mapping.index, query=query, source=default_slide_source, sort=sort_priority)
+    result = el.search(
+        index=bible_mapping.index,
+        query=query,
+        source=default_slide_source,
+        sort=sort_priority,
+        highlight=highlight,
+    )
 
     return [bible_hit_to_slide(hit) for hit in result["hits"]["hits"]]
 
