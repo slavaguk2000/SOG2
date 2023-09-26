@@ -1,5 +1,6 @@
 from elasticSearchServise.ElasticSearch import Elastic
 from elasticSearchServise.mappings import bible_mapping
+from datetime import datetime
 
 el = Elastic()
 
@@ -23,6 +24,8 @@ def get_elastic_single_data_from_sog_bible(verse_data: str, identifier: int):
         "book_name": book,
         "book_order": book_order,
         "bible_id": "0",
+        "last_usage": datetime.utcnow(),
+        "usages_count": 0,
         "chapter": int(chapter),
         "verse_number": int(verse_num),
         "verse_content": verse_content,

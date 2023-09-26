@@ -43,6 +43,7 @@ def bible_source_to_location(source: dict):
 def bible_hit_to_slide(hit: dict):
     source = hit["_source"]
     return {
+        "id": hit["_id"],
         "search_content": bible_source_to_search_content_string(source),
         "content": bible_source_to_content_string(source),
         "location": bible_source_to_location(source)
@@ -271,6 +272,14 @@ def get_chapter_verses(bible_id: str, book_id: str, chapter: int):
                 }
             ]
         }
-    }, source=default_slide_source, size=1000)
+    }, source=default_slide_source, size=1000, sort=['verse_number'])
 
     return [bible_hit_to_slide(hit) for hit in result["hits"]["hits"]]
+
+
+def get_bible_slide_by_id(slide_id: str):
+    return bible_hit_to_slide(el.get_slide_by_id(bible_mapping.index, slide_id))
+
+
+def update_bible_slide_usage(slide_id: str):
+    return el.update_slide_usage(bible_mapping.index, slide_id)

@@ -8,14 +8,27 @@ type_defs = gql("""
     }
 
     type Slide {
+        id: ID!
         location: [String!]!
         content: String!
         searchContent: String!
+    }
+
+    type SlideLocation {
+        location: [String!]!
     }
     
     type BibleBook {
         id: ID!
         name: String!
         chapterCount: Int!
+    }
+    
+    type Mutation {
+      setActiveSlide(slideId: ID): Boolean
+    }
+    
+    type Subscription {
+      activeSlideSubscription: Slide
     }
 """)
