@@ -1,4 +1,4 @@
-import React, { PropsWithChildren, useMemo, useState } from 'react';
+import React, { PropsWithChildren, SetStateAction, useMemo, useState } from 'react';
 
 import { useMutation, useQuery } from '@apollo/client';
 
@@ -33,6 +33,7 @@ export const getBookFromSlide = (slide: Slide, bibleBooksData: BibleBook[]): Bib
   bibleBooksData.find(({ id }) => id === getEntityIdFromSlide(slide, 3));
 
 const BibleDataProvider = ({ bibleId = '0', children }: PropsWithChildren<BibleDataProviderProps>) => {
+  const [silentMode, setSilentMode] = useState<boolean>(false);
   const [currentChapter, setCurrentChapter] = useState<ChapterSelector>({
     bookIdx: undefined,
     chapterId: undefined,
@@ -80,18 +81,42 @@ const BibleDataProvider = ({ bibleId = '0', children }: PropsWithChildren<BibleD
 
   const { setText } = usePresentation();
 
-  const handleUpdateSlide = (newSlide?: Slide) => {
-    setCurrentSlide(newSlide);
-
+  const sendActiveSlide = (newSlide?: Slide) => {
     setActiveSlideMutation({
       variables: {
         slideId: newSlide?.id,
       },
     }).catch((e) => console.error(e));
+  };
 
+  const updateSlideOnPresentation = (newSlide?: Slide) => {
     if (!newSlide) {
       setText('', '');
 
+      return;
+    }
+
+    if (bibleId === newSlide.location[0] && bibleBooksData) {
+      setText(
+        `${getVerseNumberFromSlide(newSlide)}. ${newSlide.content}`,
+        `${getBookFromSlide(newSlide, bibleBooksData)?.name ?? ''} ${getChapterNumberFromSlide(newSlide)}`,
+      );
+    }
+  };
+
+  const updatePresentationAndBackendSlide = (newSlide?: Slide) => {
+    sendActiveSlide(newSlide);
+    updateSlideOnPresentation(newSlide);
+  };
+
+  const handleUpdateSlide = (newSlide?: Slide) => {
+    setCurrentSlide(newSlide);
+
+    if (!silentMode) {
+      updatePresentationAndBackendSlide(newSlide);
+    }
+
+    if (!newSlide) {
       return;
     }
 
@@ -105,13 +130,6 @@ const BibleDataProvider = ({ bibleId = '0', children }: PropsWithChildren<BibleD
           bookIdx,
           chapterId: Number(slideChapter),
         });
-
-        if (bibleBooksData) {
-          setText(
-            `${getVerseNumberFromSlide(newSlide)}. ${newSlide.content}`,
-            `${getBookFromSlide(newSlide, bibleBooksData)?.name ?? ''} ${getChapterNumberFromSlide(newSlide)}`,
-          );
-        }
       }
     }
   };
@@ -156,6 +174,16 @@ const BibleDataProvider = ({ bibleId = '0', children }: PropsWithChildren<BibleD
     }
   };
 
+  const handleSetSilentMode = (setter: SetStateAction<boolean>) => {
+    setSilentMode((prev) => {
+      const newMode = typeof setter === 'function' ? setter(prev) : setter;
+
+      updatePresentationAndBackendSlide(newMode ? undefined : currentSlide);
+
+      return newMode;
+    });
+  };
+
   return (
     <BibleContext.Provider
       value={{
@@ -170,6 +198,8 @@ const BibleDataProvider = ({ bibleId = '0', children }: PropsWithChildren<BibleD
         handleBookSelect,
         handleNextSlide,
         handlePrevSlide,
+        silentMode,
+        setSilentMode: handleSetSilentMode,
       }}
     >
       {children}

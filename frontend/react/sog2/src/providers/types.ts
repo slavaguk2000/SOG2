@@ -19,6 +19,8 @@ export interface BibleContextType {
   handleBookSelect: (selectedId: string) => void;
   handlePrevSlide: () => void;
   handleNextSlide: () => void;
+  silentMode: boolean;
+  setSilentMode: Dispatch<SetStateAction<boolean>>;
 }
 
 export interface PresentationContextType {

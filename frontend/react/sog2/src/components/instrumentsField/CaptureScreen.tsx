@@ -1,7 +1,7 @@
 import React from 'react';
 
-import AirplayIcon from '@mui/icons-material/Airplay';
-import DesktopAccessDisabledIcon from '@mui/icons-material/DesktopAccessDisabled';
+import BrowserNotSupportedIcon from '@mui/icons-material/BrowserNotSupported';
+import CastIcon from '@mui/icons-material/Cast';
 import { IconButton } from '@mui/material';
 
 import { usePresentation } from 'src/providers/presentationProvider';
@@ -11,11 +11,11 @@ const CaptureScreen = () => {
 
   return validSession ? (
     <IconButton onClick={releaseTextScreen}>
-      <DesktopAccessDisabledIcon />
+      <BrowserNotSupportedIcon />
     </IconButton>
   ) : (
     <IconButton onClick={captureTextScreen}>
-      <AirplayIcon />
+      <CastIcon />
     </IconButton>
   );
 };
