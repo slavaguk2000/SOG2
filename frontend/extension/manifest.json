@@ -26,6 +26,10 @@
     {
       "matches": ["https://holychords.pro/*"],
       "js": ["holychordsProContent.js"]
+    },
+    {
+      "matches": ["https://fonki.pro/minus/*"],
+      "js": ["fonkiProContent.js"]
     }
   ],
   "icons": {
