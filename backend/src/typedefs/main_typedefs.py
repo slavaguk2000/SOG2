@@ -8,10 +8,11 @@ type_defs = gql("""
     }
 
     type Slide {
-        id: ID!
-        location: [String!]!
+        id: ID
+        location: [String!]
         content: String!
-        searchContent: String!
+        searchContent: String
+        title: String
     }
 
     type SlideLocation {
@@ -26,6 +27,7 @@ type_defs = gql("""
     
     type Mutation {
       setActiveSlide(slideId: ID): Boolean
+      setFreeSlide(text: String!, title: String!): Boolean
     }
     
     type Subscription {

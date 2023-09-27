@@ -24,11 +24,18 @@ export type BibleBook = {
 export type Mutation = {
   __typename?: 'Mutation';
   setActiveSlide?: Maybe<Scalars['Boolean']['output']>;
+  setFreeSlide?: Maybe<Scalars['Boolean']['output']>;
 };
 
 
 export type MutationSetActiveSlideArgs = {
   slideId?: InputMaybe<Scalars['ID']['input']>;
+};
+
+
+export type MutationSetFreeSlideArgs = {
+  text: Scalars['String']['input'];
+  title: Scalars['String']['input'];
 };
 
 export type Query = {
@@ -58,9 +65,10 @@ export type QuerySearchArgs = {
 export type Slide = {
   __typename?: 'Slide';
   content: Scalars['String']['output'];
-  id: Scalars['ID']['output'];
-  location: Array<Scalars['String']['output']>;
-  searchContent: Scalars['String']['output'];
+  id?: Maybe<Scalars['ID']['output']>;
+  location?: Maybe<Array<Scalars['String']['output']>>;
+  searchContent?: Maybe<Scalars['String']['output']>;
+  title?: Maybe<Scalars['String']['output']>;
 };
 
 export type SlideLocation = {

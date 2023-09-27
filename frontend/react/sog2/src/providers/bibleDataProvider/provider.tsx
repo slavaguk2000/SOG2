@@ -23,7 +23,7 @@ interface BibleDataProviderProps {
 }
 
 export const getEntityIdFromSlide = (slide: Slide, position: number): string =>
-  slide.location[slide.location.length - position];
+  slide.location ? slide.location[slide.location.length - position] : '';
 
 export const getVerseNumberFromSlide = (slide: Slide): number => Number(getEntityIdFromSlide(slide, 1));
 
@@ -96,7 +96,7 @@ const BibleDataProvider = ({ bibleId = '0', children }: PropsWithChildren<BibleD
       return;
     }
 
-    if (bibleId === newSlide.location[0] && bibleBooksData) {
+    if (bibleId === newSlide.location?.[0] && bibleBooksData) {
       setText(
         `${getVerseNumberFromSlide(newSlide)}. ${newSlide.content}`,
         `${getBookFromSlide(newSlide, bibleBooksData)?.name ?? ''} ${getChapterNumberFromSlide(newSlide)}`,
@@ -116,7 +116,7 @@ const BibleDataProvider = ({ bibleId = '0', children }: PropsWithChildren<BibleD
       updatePresentationAndBackendSlide(newSlide);
     }
 
-    if (!newSlide) {
+    if (!newSlide?.location) {
       return;
     }
 

@@ -12,14 +12,14 @@ interface SearchLineAutocompleteItemProps {
 }
 
 const SearchLineAutocompleteItem = ({
-  slide: { searchContent },
+  slide: { searchContent, content },
   onClick,
   selected,
   setSelected,
 }: SearchLineAutocompleteItemProps) => {
   return (
     <SearchLineAutocompleteItemWrapper onClick={onClick} selected={selected} onMouseEnter={setSelected}>
-      <div dangerouslySetInnerHTML={{ __html: searchContent }} />
+      {searchContent ? <div dangerouslySetInnerHTML={{ __html: searchContent }} /> : content}
     </SearchLineAutocompleteItemWrapper>
   );
 };
