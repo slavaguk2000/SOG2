@@ -62,7 +62,6 @@ def resolve_set_active_slide(*_, text: str, title: str):
 async def resolve_active_slide_subscription(*_):
     queue = Queue()
     subscribers_queues.append(queue)
-    print(current_active_slide)
     yield current_active_slide
 
     try:

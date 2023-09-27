@@ -38,6 +38,12 @@ export const setActiveSlide = gql`
   }
 `;
 
+export const setFreeSlide = gql`
+  mutation setFreeSlide($text: String!, $title: String!) {
+    setFreeSlide(text: $text, title: $title)
+  }
+`;
+
 export const ActiveSlideSubscription = gql`
   subscription ActiveSlideSubscription {
     activeSlideSubscription {
