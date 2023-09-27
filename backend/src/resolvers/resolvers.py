@@ -8,6 +8,7 @@ query = QueryType()
 mutation = MutationType()
 subscription = SubscriptionType()
 current_active_slide = None
+subscribers_queues = []
 
 
 @query.field("search")
@@ -35,18 +36,28 @@ def resolve_set_active_slide(*_, slide_id=None):
     active_slide = get_bible_slide_by_id(slide_id) if slide_id else None
     current_active_slide = active_slide
     print(current_active_slide)
-    active_slide_queue.put_nowait(active_slide)
 
     if slide_id:
         update_bible_slide_usage(slide_id)
+
+    for subscriber_queue in subscribers_queues:
+        subscriber_queue.put_nowait(active_slide)
+
     return True
 
 
 @subscription.source("activeSlideSubscription")
 async def resolve_active_slide_subscription(*_):
-    while True:
-        active_slide = await active_slide_queue.get()
-        yield active_slide
+    queue = Queue()
+    subscribers_queues.append(queue)
+    yield current_active_slide
+
+    try:
+        while True:
+            active_slide = await queue.get()
+            yield active_slide
+    finally:
+        subscribers_queues.remove(queue)
 
 
 @subscription.field("activeSlideSubscription")
