@@ -1,8 +1,8 @@
 import React, { PropsWithChildren, SetStateAction, useState } from 'react';
 
+import ExtensionListener from 'src/components/ExtensionListner';
 import FreeSlideDialog, { FreeSlideDialogContent } from 'src/components/FreeSlideDialog';
 
-import ExtensionListener from '../../components/ExtensionListner';
 import { usePresentation } from '../presentationProvider';
 
 import FreeSlideDialogContext from './context';
