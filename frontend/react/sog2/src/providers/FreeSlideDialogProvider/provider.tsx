@@ -1,5 +1,6 @@
 import React, { PropsWithChildren, SetStateAction, useState } from 'react';
 
+import ExtensionListener from 'src/components/ExtensionListner';
 import FreeSlideDialog, { FreeSlideDialogContent } from 'src/components/FreeSlideDialog';
 
 import { usePresentation } from '../presentationProvider';
@@ -29,12 +30,20 @@ const FreeSlideDialogProvider = ({ children }: PropsWithChildren) => {
     handleSetContent(undefined);
   };
 
+  const openWithFreeSlide = (content: FreeSlideDialogContent) => {
+    setOpen(true);
+    setContent(content);
+    setText(content?.text ?? '', content?.title ?? '');
+  };
+
   return (
     <FreeSlideDialogContext.Provider
       value={{
         setOpen,
+        openWithFreeSlide,
       }}
     >
+      <ExtensionListener />
       {children}
       <FreeSlideDialog open={open} onClose={handleClose} setContent={handleSetContent} content={content} />
     </FreeSlideDialogContext.Provider>

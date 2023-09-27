@@ -4,6 +4,7 @@ import { FreeSlideDialogContextType } from '../types';
 
 const defaultValue: FreeSlideDialogContextType = {
   setOpen: () => true,
+  openWithFreeSlide: () => true,
 };
 
 const FreeSlideDialogContext = createContext<FreeSlideDialogContextType>(defaultValue);

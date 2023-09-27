@@ -1,0 +1,32 @@
+{
+    "manifest_version": 3,
+    "name": "Text to Projector",
+    "version": "1.0.0",
+    "description": "Display selected text on projector",
+    "permissions": ["scripting", "tabs", "contextMenus", "activeTab"],
+    "action": {
+      "default_icon": {
+        "16": "icon16.png",
+        "48": "icon48.png",
+        "128": "icon128.png"
+      }
+    },
+    "background": {
+      "service_worker": "background.js"
+    },
+    "content_scripts": [
+      {
+        "matches": ["<all_urls>"],
+        "js": ["content.js"]
+      },
+      {
+        "matches": ["*://localhost/*"],
+        "js": ["sogContent.js"]
+      }
+    ],
+    "icons": {
+      "16": "icon16.png",
+      "48": "icon48.png",
+      "128": "icon128.png"
+    }
+}
