@@ -29,3 +29,7 @@ export interface PresentationContextType {
   releaseTextScreen: () => void;
   validSession: boolean;
 }
+
+export interface FreeSlideDialogContextType {
+  setOpen: Dispatch<SetStateAction<boolean>>;
+}
