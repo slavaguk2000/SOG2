@@ -1,0 +1,1 @@
+venv\Scripts\python3 src\view.py 192.168.100.47
