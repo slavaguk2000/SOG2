@@ -46,6 +46,18 @@ def resolve_set_active_slide(*_, slide_id=None):
     return True
 
 
+@mutation.field("setFreeSlide")
+@convert_kwargs_to_snake_case
+def resolve_set_active_slide(*_, text: str, title: str):
+    global current_active_slide
+    current_active_slide = {"content": text, "title": title}
+
+    for subscriber_queue in subscribers_queues:
+        subscriber_queue.put_nowait(current_active_slide)
+
+    return True
+
+
 @subscription.source("activeSlideSubscription")
 async def resolve_active_slide_subscription(*_):
     queue = Queue()

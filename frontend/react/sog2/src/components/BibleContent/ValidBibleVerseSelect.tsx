@@ -12,7 +12,7 @@ const verseModifier = (slide: Slide) => {
   const { content, location } = slide;
 
   return {
-    text: `${location[location.length - 1]}. ${content}`,
+    text: `${location ? `${location[location.length - 1]} .` : ''}${content}`,
     location,
     slide,
   };
@@ -97,13 +97,15 @@ const ValidBibleVerseSelect = () => {
           {preselectNumberVerse}
         </VersePreselectBox>
       ) : undefined}
-      {verses?.map(({ text, location, slide }) => (
+      {verses?.map(({ text, location, slide }, idx) => (
         <BibleEntityItem
-          key={location[location.length - 1]}
+          key={location ? location[location.length - 1] : idx}
           name={text}
           onClick={() => handleUpdateSlide(slide)}
           selected={Boolean(
-            currentSlide && currentSlide.location[currentSlide.location.length - 1] === location[location.length - 1],
+            currentSlide?.location &&
+              location &&
+              currentSlide.location[currentSlide.location.length - 1] === location[location.length - 1],
           )}
         />
       ))}
