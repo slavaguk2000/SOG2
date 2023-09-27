@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { ApolloClient, InMemoryCache, ApolloProvider, gql, HttpLink, split } from '@apollo/client';
+import { ApolloClient, InMemoryCache, ApolloProvider, HttpLink, split } from '@apollo/client';
 import { getMainDefinition } from '@apollo/client/utilities';
 import { WebSocketLink } from '@apollo/link-ws';
 import ReactDOM from 'react-dom/client';
@@ -33,18 +33,6 @@ const client = new ApolloClient({
   link,
   cache: new InMemoryCache(),
 });
-
-client
-  .query({
-    query: gql`
-      query {
-        search(searchPattern: "Ирод") {
-          content
-        }
-      }
-    `,
-  })
-  .then((result) => console.log(result));
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
