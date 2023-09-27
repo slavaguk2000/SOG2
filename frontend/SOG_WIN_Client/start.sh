@@ -1,1 +1,1 @@
-python3 src/view.py 192.168.100.47
+venv/bin/python3 src/view.py localhost

@@ -4,3 +4,4 @@ frontend/react/.DS_Store
 */**/venv/**
 backend/venv
 .DS_Store
+*/.DS_Store

@@ -15,8 +15,9 @@ bible_books_query = gql("""
 subscription_query = gql("""
 subscription {
     activeSlideSubscription {
-         id
+        id
         content
+        title
         location
         searchContent
     }
@@ -44,16 +45,21 @@ class GraphQLSubscription:
                     print(e)
                     bible_books_data = None
 
-                print(bible_books_data)
-
                 async for result in session.subscribe(subscription_query):
                     slide = result.get("activeSlideSubscription")
                     if slide:
                         try:
-                            location = slide["location"]
+                            text = slide['content']
+                            title = ''
+                            if 'location' in slide and slide["location"]:
+                                location = slide["location"]
+                                text = f"{location[-1]}. {slide['content']}"
+                                title = f'{bible_books_data[int(location[-3])]["name"] if bible_books_data else ""} {location[-2]}'
+                            if 'title' in slide and slide['title']:
+                                title = slide['title']
                             self.parent.update_signal.emit({
-                                'text': f"{location[-1]}. {slide['content']}",
-                                'title': f'{bible_books_data[int(location[-3])]["name"] if bible_books_data else ""} {location[-2]}'
+                                'text': text,
+                                'title': title
                             })
                         except BaseException as e:
                             print(e)
