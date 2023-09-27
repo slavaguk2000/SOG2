@@ -29,10 +29,16 @@ const FreeSlideDialogProvider = ({ children }: PropsWithChildren) => {
     handleSetContent(undefined);
   };
 
+  const openWithFreeSlide = (content: FreeSlideDialogContent) => {
+    setOpen(true);
+    setContent(content);
+  };
+
   return (
     <FreeSlideDialogContext.Provider
       value={{
         setOpen,
+        openWithFreeSlide,
       }}
     >
       {children}

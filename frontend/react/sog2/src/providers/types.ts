@@ -1,5 +1,6 @@
 import { Dispatch, SetStateAction } from 'react';
 
+import { FreeSlideDialogContent } from '../components/FreeSlideDialog';
 import { BibleBook, Query, Slide } from '../utils/gql/types';
 
 export interface ChapterSelector {
@@ -32,4 +33,5 @@ export interface PresentationContextType {
 
 export interface FreeSlideDialogContextType {
   setOpen: Dispatch<SetStateAction<boolean>>;
+  openWithFreeSlide: (content: FreeSlideDialogContent) => void;
 }
