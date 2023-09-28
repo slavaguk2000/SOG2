@@ -62,6 +62,11 @@ const FreeSlideDialog = ({ open, onClose, content, setContent }: FreeSlideDialog
           variant="standard"
           value={content?.title ?? ''}
           onChange={({ target: { value } }) => handleChangeTitle(value)}
+          InputProps={{
+            onKeyDown: (e) => {
+              e.stopPropagation();
+            },
+          }}
         />
       </DialogContent>
     </Dialog>
