@@ -22,6 +22,14 @@
     {
       "matches": ["https://branham.ru/sermons/*"],
       "js": ["branhamRuContent.js"]
+    },
+    {
+      "matches": ["https://holychords.pro/*"],
+      "js": ["holychordsProContent.js"]
+    },
+    {
+      "matches": ["https://fonki.pro/minus/*"],
+      "js": ["fonkiProContent.js"]
     }
   ],
   "icons": {
