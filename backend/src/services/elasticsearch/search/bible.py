@@ -127,7 +127,15 @@ def bible_search(search_pattern: str, bible_id: str):
                     "query": f"{maybe_book_res['book']}*",
                     "boost": 5
                 }
-            }]
+            },
+            {
+                "query_string": {
+                    "default_field": "verse_content",
+                    "query": f"{maybe_book_res['book']}*",
+                    "boost": 1
+                }
+            }
+        ]
 
     if maybe_book_res["chapter"]:
         must_chapter = [
@@ -197,24 +205,29 @@ def bible_search(search_pattern: str, bible_id: str):
             }
         ]
 
+    must = [
+        {
+            "term": {
+                "bible_id": bible_id
+            },
+        }
+    ]
+
+    if len(maybe_book_res['content']):
+        for content_word in maybe_book_res['content'].strip().split():
+            must.append({
+                "query_string": {
+                    "default_field": "verse_content",
+                    "query": f"{content_word}*",
+                    "boost": 1
+                }
+            })
+
     query = {
         "function_score": {
             "query": {
                 "bool": {
-                    "must": [
-                        {
-                            "term": {
-                                "bible_id": bible_id
-                            },
-                        },
-                        {
-                            "query_string": {
-                                "default_field": "verse_content",
-                                "query": f"{maybe_book_res['content']}*",
-                                "boost": 1
-                            }
-                        }
-                    ],
+                    "must": must,
                     "should": should
                 }
             },
@@ -228,7 +241,7 @@ def bible_search(search_pattern: str, bible_id: str):
                             "decay": 0.5  # Скорость уменьшения значения после прохождения через "origin"
                         }
                     },
-                    "weight": 2  # Увеличение веса для совпадений
+                    "weight": 0.5  # Увеличение веса для совпадений
                 }
             ],
             "boost_mode": "sum"  # Метод комбинирования оценки функции и базовой оценки
