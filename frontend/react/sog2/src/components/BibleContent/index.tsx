@@ -8,16 +8,9 @@ import BibleVersesSelect from './BibleVerseSelect';
 import { BibleContentWrapper } from './styled';
 
 const BibleContent = () => {
-  const { currentChapter, currentBook, setCurrentChapter, bibleBooksData, handleBookSelect } = useBibleData();
+  const { currentChapter, currentBook, handleChapterSelect, bibleBooksData, handleBookSelect } = useBibleData();
 
   const chaptersCount = currentBook?.chapterCount ?? bibleBooksData?.[0].chapterCount ?? 0;
-
-  const handleChapterSelect = (selectedId: number) => {
-    setCurrentChapter((prev) => ({
-      ...prev,
-      chapterId: selectedId,
-    }));
-  };
 
   return (
     <BibleContentWrapper>

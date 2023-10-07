@@ -51,9 +51,8 @@ const SearchLine = () => {
     }
 
     if (e.key === 'Enter') {
-      e.stopPropagation();
-      e.preventDefault();
       if (options.length) {
+        e.stopPropagation();
         const newSlide = options[selectedProposeIdx];
         if (newSlide) {
           handleUpdateSlide(newSlide);
