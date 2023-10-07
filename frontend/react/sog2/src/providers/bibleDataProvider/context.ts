@@ -4,13 +4,8 @@ import { BibleContextType } from '../types';
 
 const defaultValue: BibleContextType = {
   bibleId: '0',
-  currentChapter: {
-    bookIdx: undefined,
-    chapterId: undefined,
-  },
-  currentBook: undefined,
-  setCurrentChapter: () => true,
-  currentSlide: undefined,
+  currentChapter: {},
+  handleChapterSelect: () => true,
   handleUpdateSlide: () => true,
   handleBookSelect: () => true,
   handlePrevSlide: () => true,

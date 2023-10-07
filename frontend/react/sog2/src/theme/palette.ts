@@ -1,3 +1,4 @@
+import { lightBlue } from '@mui/material/colors';
 import { PaletteOptions } from '@mui/material/styles/createPalette';
 
 export const palette: PaletteOptions = {
@@ -20,5 +21,6 @@ export const palette: PaletteOptions = {
   action: {
     hover: '#9ef',
     selected: '#4af',
+    focus: lightBlue[100],
   },
 };

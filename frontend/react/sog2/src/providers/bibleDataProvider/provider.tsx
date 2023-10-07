@@ -40,6 +40,7 @@ const BibleDataProvider = ({ bibleId = '0', children }: PropsWithChildren<BibleD
   });
 
   const [currentSlide, setCurrentSlide] = useState<Slide | undefined>(undefined);
+  const [lastSlide, setLastSlide] = useState<Slide | undefined>(undefined);
 
   const { data } = useQuery<Pick<Query, 'bibleBooks'>, QueryBibleBooksArgs>(bibleBooks, {
     variables: {
@@ -76,6 +77,8 @@ const BibleDataProvider = ({ bibleId = '0', children }: PropsWithChildren<BibleD
         bookIdx,
         chapterId: undefined,
       });
+
+      setLastSlide(undefined);
     }
   };
 
@@ -111,6 +114,10 @@ const BibleDataProvider = ({ bibleId = '0', children }: PropsWithChildren<BibleD
 
   const handleUpdateSlide = (newSlide?: Slide) => {
     setCurrentSlide(newSlide);
+
+    if (newSlide) {
+      setLastSlide(newSlide);
+    }
 
     if (!silentMode) {
       updatePresentationAndBackendSlide(newSlide);
@@ -154,9 +161,11 @@ const BibleDataProvider = ({ bibleId = '0', children }: PropsWithChildren<BibleD
 
   const validVersesData = versesData && !versesDataLoading;
 
+  const selectedOrPreselectedSlide = currentSlide || lastSlide;
+
   const handleNextSlide = () => {
-    if (validVersesData && currentSlide) {
-      const nextVerseIdx = getVerseNumberFromSlide(currentSlide); // idx from 1
+    if (validVersesData && selectedOrPreselectedSlide) {
+      const nextVerseIdx = getVerseNumberFromSlide(selectedOrPreselectedSlide); // idx from 1
 
       if (nextVerseIdx < versesData?.bibleVerses?.length) {
         handleUpdateSlide(versesData.bibleVerses[nextVerseIdx]);
@@ -165,8 +174,8 @@ const BibleDataProvider = ({ bibleId = '0', children }: PropsWithChildren<BibleD
   };
 
   const handlePrevSlide = () => {
-    if (validVersesData && currentSlide) {
-      const prevVerseIdx = getVerseNumberFromSlide(currentSlide) - 2; // idx from 1
+    if (validVersesData && selectedOrPreselectedSlide) {
+      const prevVerseIdx = getVerseNumberFromSlide(selectedOrPreselectedSlide) - 2; // idx from 1
 
       if (prevVerseIdx >= 0) {
         handleUpdateSlide(versesData.bibleVerses[prevVerseIdx]);
@@ -184,16 +193,26 @@ const BibleDataProvider = ({ bibleId = '0', children }: PropsWithChildren<BibleD
     });
   };
 
+  const handleChapterSelect = (selectedId: number) => {
+    setCurrentChapter((prev) => ({
+      ...prev,
+      chapterId: selectedId,
+    }));
+
+    setLastSlide(undefined);
+  };
+
   return (
     <BibleContext.Provider
       value={{
         bibleId,
         currentChapter,
         currentBook,
-        setCurrentChapter,
+        handleChapterSelect,
         bibleBooksData,
         versesData,
         currentSlide,
+        lastSlide,
         handleUpdateSlide,
         handleBookSelect,
         handleNextSlide,

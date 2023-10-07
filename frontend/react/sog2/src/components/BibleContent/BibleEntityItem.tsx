@@ -6,9 +6,10 @@ interface BibleEntityItemProps {
   name: string;
   onClick: () => void;
   selected: boolean;
+  preSelected?: boolean;
 }
 
-const BibleEntityItem = ({ name, onClick, selected }: BibleEntityItemProps) => {
+const BibleEntityItem = ({ name, onClick, selected, preSelected }: BibleEntityItemProps) => {
   const itemRef = useRef(null);
 
   useEffect(() => {
@@ -21,7 +22,7 @@ const BibleEntityItem = ({ name, onClick, selected }: BibleEntityItemProps) => {
   }, [selected]);
 
   return (
-    <BibleEntityItemWrapper selected={selected} onClick={onClick} ref={itemRef}>
+    <BibleEntityItemWrapper selected={selected} onClick={onClick} ref={itemRef} preSelected={preSelected}>
       {name}
     </BibleEntityItemWrapper>
   );

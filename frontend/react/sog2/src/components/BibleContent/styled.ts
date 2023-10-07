@@ -29,10 +29,11 @@ export const BibleVersesWrapper = styled(BibleEntitySelectWrapper)`
 
 type BibleEntityItemProps = {
   selected: boolean;
+  preSelected?: boolean;
 };
 
 export const BibleEntityItemWrapper = styled(Box, {
-  shouldForwardProp: (prop) => prop !== 'selected',
+  shouldForwardProp: (prop) => !(['selected', 'preSelected'] as PropertyKey[]).includes(prop),
 })<BibleEntityItemProps>`
   display: flex;
   padding: 2px 5px;
@@ -42,10 +43,11 @@ export const BibleEntityItemWrapper = styled(Box, {
   box-sizing: border-box;
   background: ${({
     selected,
+    preSelected,
     theme: {
       palette: { action, background },
     },
-  }) => (selected ? action.selected : background.default)};
+  }) => (selected ? action.selected : preSelected ? action.focus : background.default)};
 
   :hover {
     background: ${({

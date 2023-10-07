@@ -1,8 +1,9 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { Box } from '@mui/material';
 
 import { useBibleData } from 'src/providers/bibleDataProvider';
+import { getVerseNumberFromSlide } from 'src/providers/bibleDataProvider/provider';
 import { Slide } from 'src/utils/gql/types';
 
 import BibleEntityItem from './BibleEntityItem';
@@ -21,8 +22,9 @@ const verseModifier = (slide: Slide) => {
 const debounceSeconds = 0.7;
 
 const ValidBibleVerseSelect = () => {
-  const { currentSlide, handleUpdateSlide, versesData, handlePrevSlide, handleNextSlide } = useBibleData();
+  const { currentSlide, handleUpdateSlide, versesData, lastSlide } = useBibleData();
   const [preselectNumberVerse, setPreselectNumber] = useState<number>(0);
+  const versesRef = useRef<HTMLElement>(null);
 
   const verses = useMemo(() => versesData?.bibleVerses.map(verseModifier), [versesData]);
 
@@ -71,16 +73,6 @@ const ValidBibleVerseSelect = () => {
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
     switch (event.key) {
-      case 'ArrowUp':
-        handlePrevSlide();
-        event.preventDefault();
-        event.stopPropagation();
-        break;
-      case 'ArrowDown':
-        handleNextSlide();
-        event.preventDefault();
-        event.stopPropagation();
-        break;
       default:
         if (event.key.length === 1 && /[0-9]/.test(event.key)) {
           if (handleNumberPressed(Number(event.key))) {
@@ -90,8 +82,16 @@ const ValidBibleVerseSelect = () => {
     }
   };
 
+  const selectedVerseNumber = currentSlide && getVerseNumberFromSlide(currentSlide);
+
+  useEffect(() => {
+    if (selectedVerseNumber) {
+      versesRef?.current?.focus();
+    }
+  }, [selectedVerseNumber]);
+
   return (
-    <Box tabIndex={0} onKeyDown={handleKeyDown}>
+    <Box tabIndex={0} onKeyDown={handleKeyDown} ref={versesRef}>
       {preselectNumberVerse ? (
         <VersePreselectBox debounceSeconds={debounceSeconds} key={preselectNumberVerse}>
           {preselectNumberVerse}
@@ -102,10 +102,9 @@ const ValidBibleVerseSelect = () => {
           key={location ? location[location.length - 1] : idx}
           name={text}
           onClick={() => handleUpdateSlide(slide)}
-          selected={Boolean(
-            currentSlide?.location &&
-              location &&
-              currentSlide.location[currentSlide.location.length - 1] === location[location.length - 1],
+          selected={Boolean(selectedVerseNumber && slide && selectedVerseNumber === getVerseNumberFromSlide(slide))}
+          preSelected={Boolean(
+            lastSlide && slide && getVerseNumberFromSlide(lastSlide) === getVerseNumberFromSlide(slide),
           )}
         />
       ))}
