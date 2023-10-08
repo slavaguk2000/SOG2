@@ -7,6 +7,7 @@ import ReactDOM from 'react-dom/client';
 
 import './index.css';
 import App from './App';
+import BackendStatusChecker from './components/backendStatusChecker';
 import reportWebVitals from './reportWebVitals';
 
 const httpLink = new HttpLink({
@@ -19,6 +20,12 @@ const wsLink = new WebSocketLink({
     reconnect: true,
   },
 });
+
+const webSocketImpl = wsLink?.subscriptionClient;
+
+const isWebSocketConnected = () => {
+  return webSocketImpl.status === webSocketImpl.wsImpl.OPEN;
+};
 
 const link = split(
   ({ query }) => {
@@ -37,9 +44,11 @@ const client = new ApolloClient({
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <ApolloProvider client={client}>
-      <App />
-    </ApolloProvider>
+    <BackendStatusChecker isWebSocketConnected={isWebSocketConnected}>
+      <ApolloProvider client={client}>
+        <App />
+      </ApolloProvider>
+    </BackendStatusChecker>
   </React.StrictMode>,
 );
 
