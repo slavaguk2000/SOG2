@@ -13,7 +13,7 @@ const verseModifier = (slide: Slide) => {
   const { content, location } = slide;
 
   return {
-    text: `${location ? `${location[location.length - 1]} .` : ''}${content}`,
+    text: `${location ? `${location[location.length - 1]}. ` : ''}${content}`,
     location,
     slide,
   };
