@@ -19,6 +19,9 @@ class Elastic:
     def __init__(self):
         self.es = Elasticsearch(elastic_address, basic_auth=(user, password), verify_certs=False)
 
+    def ping(self):
+        return self.es.ping()
+
     def index_exist(self, index: str):
         return self.es.indices.exists(index=index)
 

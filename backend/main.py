@@ -1,17 +1,30 @@
+import elasticsearch
 from ariadne import make_executable_schema, snake_case_fallback_resolvers
 from ariadne.asgi import GraphQL
 from starlette.middleware.cors import CORSMiddleware
+from time import sleep
 
 from src.services.elasticsearch.elastic import Elastic
 from src.services.elasticsearch.search.bible import get_bible_books_by_bible_id, bible_search, get_chapter_verses, \
-    get_bible_slide_by_id
+    get_bible_slide_by_id, el
 from src.typedefs.main_typedefs import type_defs
 from src.resolvers.resolvers import resolvers
 
-print(bible_search("1 и 4 2 при", "0")[1]["search_content"])
-# print(get_bible_books_by_bible_id("0"))
-# print(get_chapter_verses('0', '0', 1))
-# print(get_bible_slide_by_id('28270'))
+while True:
+    if el.ping():
+        try:
+            print(bible_search("1 и 4 2 при", "0")[1]["search_content"])
+            # print(get_bible_books_by_bible_id("0"))
+            # print(get_chapter_verses('0', '0', 1))
+            # print(get_bible_slide_by_id('28270'))
+            break
+        except elasticsearch.ApiError:
+            sleep(0.5)
+    else:
+        sleep(0.5)
+
+
+
 
 
 schema = make_executable_schema(type_defs, resolvers, snake_case_fallback_resolvers)
