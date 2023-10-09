@@ -1,4 +1,4 @@
-import React, { PropsWithChildren, SetStateAction, useMemo, useState } from 'react';
+import React, { PropsWithChildren, SetStateAction, useCallback, useMemo, useState } from 'react';
 
 import { useMutation, useQuery } from '@apollo/client';
 
@@ -55,19 +55,22 @@ const BibleDataProvider = ({ bibleId = '0', children }: PropsWithChildren<BibleD
 
   const bibleBooksData = data?.bibleBooks;
 
-  const getBookIdxById = (bookId: string) => {
-    if (!bibleBooksData) {
-      return undefined;
-    }
+  const getBookIdxById = useCallback(
+    (bookId: string) => {
+      if (!bibleBooksData) {
+        return undefined;
+      }
 
-    const bookIdx = bibleBooksData.findIndex(({ id }) => id === bookId);
+      const bookIdx = bibleBooksData.findIndex(({ id }) => id === bookId);
 
-    if (bookIdx < 0) {
-      return undefined;
-    }
+      if (bookIdx < 0) {
+        return undefined;
+      }
 
-    return bookIdx;
-  };
+      return bookIdx;
+    },
+    [bibleBooksData],
+  );
 
   const handleBookSelect = (selectedId: string) => {
     const bookIdx = getBookIdxById(selectedId);
@@ -112,18 +115,8 @@ const BibleDataProvider = ({ bibleId = '0', children }: PropsWithChildren<BibleD
     updateSlideOnPresentation(newSlide);
   };
 
-  const handleUpdateSlide = (newSlide?: Slide) => {
-    setCurrentSlide(newSlide);
-
-    if (newSlide) {
-      setLastSlide(newSlide);
-    }
-
-    if (!silentMode) {
-      updatePresentationAndBackendSlide(newSlide);
-    }
-
-    if (!newSlide?.location) {
+  const handleUpdateLocation = (newSlide: Slide) => {
+    if (!newSlide.location) {
       return;
     }
 
@@ -138,6 +131,19 @@ const BibleDataProvider = ({ bibleId = '0', children }: PropsWithChildren<BibleD
           chapterId: Number(slideChapter),
         });
       }
+    }
+  };
+
+  const handleUpdateSlide = (newSlide?: Slide) => {
+    setCurrentSlide(newSlide);
+
+    if (newSlide) {
+      setLastSlide(newSlide);
+      handleUpdateLocation(newSlide);
+    }
+
+    if (!silentMode) {
+      updatePresentationAndBackendSlide(newSlide);
     }
   };
 
@@ -202,6 +208,22 @@ const BibleDataProvider = ({ bibleId = '0', children }: PropsWithChildren<BibleD
     setLastSlide(undefined);
   };
 
+  const slideInChapter = useMemo<boolean>(() => {
+    if (!selectedOrPreselectedSlide?.location) {
+      return false;
+    }
+
+    const [slideBibleId, slideBookId, slideChapter] = selectedOrPreselectedSlide.location;
+
+    if (bibleId !== slideBibleId) {
+      return false;
+    }
+
+    const bookIdx = getBookIdxById(slideBookId);
+
+    return bookIdx === currentChapter.bookIdx && Number(slideChapter) === currentChapter.chapterId;
+  }, [bibleId, currentChapter.bookIdx, currentChapter.chapterId, getBookIdxById, selectedOrPreselectedSlide?.location]);
+
   return (
     <BibleContext.Provider
       value={{
@@ -209,6 +231,7 @@ const BibleDataProvider = ({ bibleId = '0', children }: PropsWithChildren<BibleD
         currentChapter,
         currentBook,
         handleChapterSelect,
+        handleUpdateLocation,
         bibleBooksData,
         versesData,
         currentSlide,
@@ -219,6 +242,7 @@ const BibleDataProvider = ({ bibleId = '0', children }: PropsWithChildren<BibleD
         handlePrevSlide,
         silentMode,
         setSilentMode: handleSetSilentMode,
+        slideInChapter,
       }}
     >
       {children}

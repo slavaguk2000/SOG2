@@ -18,11 +18,13 @@ export interface BibleContextType {
   currentSlide?: Slide;
   lastSlide?: Slide;
   handleUpdateSlide: (newSlide?: Slide) => void;
+  handleUpdateLocation: (newSlide: Slide) => void;
   handleBookSelect: (selectedId: string) => void;
   handlePrevSlide: () => void;
   handleNextSlide: () => void;
   silentMode: boolean;
   setSilentMode: Dispatch<SetStateAction<boolean>>;
+  slideInChapter: boolean;
 }
 
 export interface PresentationContextType {

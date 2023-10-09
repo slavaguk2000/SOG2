@@ -50,3 +50,14 @@ export const SearchLineAutocompleteItemWrapper = styled(Box, {
     padding: 3px;
   }
 `;
+
+export const SearchLineAutocompleteItemContentWrapper = styled(Box)``;
+
+export const SearchLineAutocompleteItemContentPlaceWrapper = styled('span', {
+  shouldForwardProp: (prop) => prop !== 'selected',
+})<SearchLineAutocompleteItemWrapperProps>`
+  background: ${({ theme, selected }) => (selected ? theme.palette.action.hover : 'none')};
+  border-radius: 6px;
+`;
+
+export const SearchLineAutocompleteItemContentTextWrapper = styled('span')``;

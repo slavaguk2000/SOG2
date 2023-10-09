@@ -12,6 +12,8 @@ const defaultValue: BibleContextType = {
   handleNextSlide: () => true,
   silentMode: false,
   setSilentMode: () => true,
+  handleUpdateLocation: () => true,
+  slideInChapter: true,
 };
 
 const BibleContext = createContext<BibleContextType>(defaultValue);
