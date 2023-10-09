@@ -22,7 +22,7 @@ const verseModifier = (slide: Slide) => {
 const debounceSeconds = 0.7;
 
 const ValidBibleVerseSelect = () => {
-  const { currentSlide, handleUpdateSlide, versesData, lastSlide } = useBibleData();
+  const { currentSlide, handleUpdateSlide, versesData, lastSlide, slideInChapter } = useBibleData();
   const [preselectNumberVerse, setPreselectNumber] = useState<number>(0);
   const versesRef = useRef<HTMLElement>(null);
 
@@ -102,9 +102,14 @@ const ValidBibleVerseSelect = () => {
           key={location ? location[location.length - 1] : idx}
           name={text}
           onClick={() => handleUpdateSlide(slide)}
-          selected={Boolean(selectedVerseNumber && slide && selectedVerseNumber === getVerseNumberFromSlide(slide))}
+          selected={Boolean(
+            slideInChapter && selectedVerseNumber && slide && selectedVerseNumber === getVerseNumberFromSlide(slide),
+          )}
           preSelected={Boolean(
-            lastSlide && slide && getVerseNumberFromSlide(lastSlide) === getVerseNumberFromSlide(slide),
+            slideInChapter &&
+              lastSlide &&
+              slide &&
+              getVerseNumberFromSlide(lastSlide) === getVerseNumberFromSlide(slide),
           )}
         />
       ))}

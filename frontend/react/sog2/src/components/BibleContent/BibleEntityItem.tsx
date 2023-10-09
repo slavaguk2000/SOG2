@@ -16,7 +16,7 @@ const BibleEntityItem = ({ name, onClick, selected, preSelected }: BibleEntityIt
     if (selected && itemRef.current) {
       (itemRef.current as HTMLElement).scrollIntoView({
         behavior: 'smooth',
-        block: 'nearest',
+        block: 'center',
       });
     }
   }, [selected]);
