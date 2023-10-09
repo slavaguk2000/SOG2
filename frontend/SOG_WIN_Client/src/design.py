@@ -14,7 +14,7 @@ class Ui_mainWindow(object):
         icon.addPixmap(QtGui.QPixmap("res/folder.ico"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         icon.addPixmap(QtGui.QPixmap("res/folder.ico"), QtGui.QIcon.Normal, QtGui.QIcon.On)
         mainWindow.setWindowIcon(icon)
-        mainWindow.setStyleSheet("background-color: " + ("black" if config.isFull else "blue"))
+        mainWindow.setStyleSheet("background-color: blue")
         self.centralwidget = QtWidgets.QWidget(mainWindow)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)

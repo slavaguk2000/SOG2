@@ -24,8 +24,5 @@ while True:
         sleep(0.5)
 
 
-
-
-
 schema = make_executable_schema(type_defs, resolvers, snake_case_fallback_resolvers)
 app = CORSMiddleware(GraphQL(schema, debug=True), allow_origins=['*'], allow_methods=("GET", "POST", "OPTIONS"))

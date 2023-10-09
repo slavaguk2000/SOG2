@@ -1,7 +1,7 @@
 import math
-import sys  # sys нужен для передачи argv в QApplication
-from PyQt5 import QtWidgets, QtCore, QtGui, QtNetwork
-import design  # Это наш конвертированный файл дизайна
+import sys
+from PyQt5 import QtWidgets, QtCore, QtGui
+import design
 from graphqlSubscription import SubscriptionThread
 from tcp import start_socket, stop_socket
 
@@ -31,14 +31,20 @@ class ClientApp(QtWidgets.QMainWindow, design.Ui_mainWindow):
         super().__init__()
         self.setupUi(self)
 
+        self.text_string = ''
+        self.title_string = ''
+        self.down = False
+        self.target_alpha = 0
+        self.target_width = 0
+        self.target_height = 0
         self.counter = 0
         self.rollTimer = create_timer(self.roll_step)
         self.scriptTimer = create_timer(self.script_step)
         self.textTimer = create_timer(self.text_step)
         if config.isFull:
-           self.mainText.setStyleSheet("color: white")
+            self.mainText.setStyleSheet("color: white")
         self.sig.connect(self.roll_start)
-        # start_socket(self)
+        start_socket(self)
         self.script.setFixedWidth(config.MIN_WIDTH)
         self.roll.setFixedHeight(config.MIN_HEIGHT)
         self.destroyed.connect(stop_socket)
@@ -55,9 +61,12 @@ class ClientApp(QtWidgets.QMainWindow, design.Ui_mainWindow):
         self.down = text != ""
         self.sig.emit()
 
+        if config.isFull:
+            self.setStyleSheet(f"background-color: {'black' if self.down else 'blue'}")
+
     def roll_end(self):
         if self.down:
-            self.target_width = config.MAX_WIDTH+ config.SHAKE_AMPLITUDE
+            self.target_width = config.MAX_WIDTH + config.SHAKE_AMPLITUDE
             self.scriptTimer.start(config.TIMER_TIMEOUT)
         else:
             self.inProcess = False
@@ -71,11 +80,13 @@ class ClientApp(QtWidgets.QMainWindow, design.Ui_mainWindow):
             self.target_height = config.MIN_HEIGHT
             self.rollTimer.start(config.TIMER_TIMEOUT)
 
-    def setScriptWidth(self, width):
+    def set_script_width(self, width):
         self.script.setFixedWidth(width)
 
-    def setRollHeight(self, height):
-        self.roll.setGeometry(QtCore.QRect(0, int(config.yStart + (config.MAX_HEIGHT - height) / 2), config.MAX_WIDTH, height)) #from right
+    def set_roll_height(self, height):
+        self.roll.setGeometry(
+            QtCore.QRect(0, int(config.yStart + (config.MAX_HEIGHT - height) / 2), config.MAX_WIDTH, height)
+        )  # from right
         self.roll.setFixedHeight(height)
 
     def set_roll_target(self, amplitude):
@@ -84,11 +95,11 @@ class ClientApp(QtWidgets.QMainWindow, design.Ui_mainWindow):
     def set_script_target(self, amplitude):
         self.target_width = config.MAX_WIDTH - amplitude
 
-    def core_step(self, demesion_get, target, end_target, timer, end_fun, set_demension_fun, set_new_target):
-        demension = demesion_get()
-        if demension != target:
-            step = d_ceil((target - demension) * config.SPEED / 10)
-            demension += step
+    def core_step(self, dimension_get, target, end_target, timer, end_fun, set_demension_fun, set_new_target):
+        dimension = dimension_get()
+        if dimension != target:
+            step = d_ceil((target - dimension) * config.SPEED / 10)
+            dimension += step
         else:
             if self.down:
                 amplitude = target - end_target
@@ -101,20 +112,22 @@ class ClientApp(QtWidgets.QMainWindow, design.Ui_mainWindow):
             else:
                 timer.stop()
                 end_fun()
-        set_demension_fun(demension)
+        set_demension_fun(dimension)
 
     def roll_step(self):
-        self.core_step(self.roll.height, self.target_height, config.MAX_HEIGHT, self.rollTimer, self.roll_end, self.setRollHeight, self.set_roll_target)
+        self.core_step(self.roll.height, self.target_height, config.MAX_HEIGHT, self.rollTimer, self.roll_end,
+                       self.set_roll_height, self.set_roll_target)
 
     def script_step(self):
-        self.core_step(self.script.width, self.target_width, config.MAX_WIDTH, self.scriptTimer, self.script_end, self.setScriptWidth, self.set_script_target)
+        self.core_step(self.script.width, self.target_width, config.MAX_WIDTH, self.scriptTimer, self.script_end,
+                       self.set_script_width, self.set_script_target)
 
     def text_step(self):
-        if (self.alpha != self.target_alpha):
+        if self.alpha != self.target_alpha:
             self.alpha += d_ceil((self.target_alpha - self.alpha) * config.SPEED * config.SPEED_TEXT / 25)
-            styleSheet = "background-color: rgba(0, 0, 0, 0); color: rgba(0, 0, 0, " + str(self.alpha / 255) + ")"
+            style_sheet = "background-color: rgba(0, 0, 0, 0); color: rgba(0, 0, 0, " + str(self.alpha / 255) + ")"
             for textLabel in [self.mainText, self.titleText]:
-                textLabel.setStyleSheet(styleSheet)
+                textLabel.setStyleSheet(style_sheet)
         else:
             self.textTimer.stop()
             if self.down:
@@ -135,7 +148,6 @@ class ClientApp(QtWidgets.QMainWindow, design.Ui_mainWindow):
                 self.target_alpha = 0
                 self.textTimer.start(config.TIMER_TIMEOUT)
 
-
     def set_text(self):
         self.set_title(self.title_string)
         self.set_main_text(self.text_string)
@@ -147,20 +159,21 @@ class ClientApp(QtWidgets.QMainWindow, design.Ui_mainWindow):
         if len(text_string):
             font = self.mainText.font()
             rect = self.mainText.geometry()
-            fontSize = 1
+            font_size = 1
             while True:
                 f = QtGui.QFont(font)
-                f.setPixelSize(fontSize)
-                r = QtGui.QFontMetrics(f).boundingRect(rect, QtCore.Qt.AlignCenter | QtCore.Qt.TextWordWrap, text_string)
-                if(r.height() <= rect.height() and r.width() <= rect.width()):
-                #if((r.height() <= int(761 - (int(design.y1 - ((design.x1 - design.x0) * 9 /16))))) and (r.width() <= rect.width())):
-                    if fontSize < config.maxFontSize:
-                        fontSize += 1   
+                f.setPixelSize(font_size)
+                r = QtGui.QFontMetrics(f).boundingRect(rect, QtCore.Qt.AlignCenter | QtCore.Qt.TextWordWrap,
+                                                       text_string)
+                if r.height() <= rect.height() and r.width() <= rect.width():
+                    # if((r.height() <= int(761 - (int(design.y1 - ((design.x1 - design.x0) * 9 /16))))) and (r.width() <= rect.width())):
+                    if font_size < config.maxFontSize:
+                        font_size += 1
                     else:
-                        break                    
+                        break
                 else:
                     break
-            f.setPixelSize(fontSize-1)
+            f.setPixelSize(font_size - 1)
             self.mainText.setFont(f)
         self.mainText.setText(text_string)
 
@@ -175,12 +188,13 @@ def main():
         config.ySize /= 3
         config.ySize = int(config.ySize)
         config.yStart = 2 * config.ySize
-        config.MAX_HEIGHT = config.HEIGHT - config.yStart - config.SHAKE_AMPLITUDE        
+        config.MAX_HEIGHT = config.HEIGHT - config.yStart - config.SHAKE_AMPLITUDE
         config.x0 += 60
-        config.xSize = config.WIDTH - 2*config.x0
+        config.xSize = config.WIDTH - 2 * config.x0
     app = QtWidgets.QApplication(sys.argv)  # Новый экземпляр QApplication
     window = ClientApp()  # Создаём объект класса ExampleApp
     window.show()  # Показываем окно
     app.exec_()  # и запускаем приложение
+
 
 main()
