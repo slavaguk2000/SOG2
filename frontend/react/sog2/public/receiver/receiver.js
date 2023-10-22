@@ -1,4 +1,4 @@
-const maxFontSize = 120;
+const maxFontSize = 60;
 
 function addConnection(connection) {
   connection.addEventListener('message', function (event) {
