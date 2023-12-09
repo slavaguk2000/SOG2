@@ -337,6 +337,17 @@ def get_chapter_verses(bible_id: str, book_id: str, chapter: int):
     return [bible_hit_to_slide(hit) for hit in result["hits"]["hits"]]
 
 
+def get_bible_history(bible_id, start=0, size=10):
+    result = el.search(index=bible_mapping.index, query={
+        "term":
+            {
+                "bible_id": str(bible_id)
+            }
+    }, source=default_slide_source, from_=start, size=size, sort='last_usage:desc')
+
+    return [bible_hit_to_slide(hit) for hit in result["hits"]["hits"]]
+
+
 def get_bible_slide_by_id(slide_id: str):
     return bible_hit_to_slide(el.get_slide_by_id(bible_mapping.index, slide_id))
 

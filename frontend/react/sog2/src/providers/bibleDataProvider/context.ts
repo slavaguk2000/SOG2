@@ -14,6 +14,7 @@ const defaultValue: BibleContextType = {
   setSilentMode: () => true,
   handleUpdateLocation: () => true,
   slideInChapter: true,
+  getReadableBiblePlace: () => '',
 };
 
 const BibleContext = createContext<BibleContextType>(defaultValue);
