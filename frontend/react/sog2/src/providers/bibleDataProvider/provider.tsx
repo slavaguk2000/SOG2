@@ -95,6 +95,13 @@ const BibleDataProvider = ({ bibleId = '0', children }: PropsWithChildren<BibleD
     }).catch((e) => console.error(e));
   };
 
+  const getReadableBiblePlace = (slide: Slide, withVerse?: boolean) =>
+    bibleBooksData
+      ? `${getBookFromSlide(slide, bibleBooksData)?.name ?? ''} ${getChapterNumberFromSlide(slide)}${
+          withVerse ? `:${getVerseNumberFromSlide(slide)}` : ''
+        }`
+      : '';
+
   const updateSlideOnPresentation = (newSlide?: Slide) => {
     if (!newSlide) {
       setText('', '');
@@ -103,10 +110,7 @@ const BibleDataProvider = ({ bibleId = '0', children }: PropsWithChildren<BibleD
     }
 
     if (bibleId === newSlide.location?.[0] && bibleBooksData) {
-      setText(
-        `${getVerseNumberFromSlide(newSlide)}. ${newSlide.content}`,
-        `${getBookFromSlide(newSlide, bibleBooksData)?.name ?? ''} ${getChapterNumberFromSlide(newSlide)}`,
-      );
+      setText(`${getVerseNumberFromSlide(newSlide)}. ${newSlide.content}`, getReadableBiblePlace(newSlide));
     }
   };
 
@@ -232,6 +236,7 @@ const BibleDataProvider = ({ bibleId = '0', children }: PropsWithChildren<BibleD
         currentBook,
         handleChapterSelect,
         handleUpdateLocation,
+        getReadableBiblePlace,
         bibleBooksData,
         versesData,
         currentSlide,

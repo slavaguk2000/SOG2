@@ -1,9 +1,14 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
+import { useQuery } from '@apollo/client';
 import HistoryIcon from '@mui/icons-material/History';
-import { IconButton, MenuItem, MenuList, Popover, Typography } from '@mui/material';
+import { CircularProgress, IconButton, MenuItem, MenuList, Popover, Tooltip, Typography } from '@mui/material';
 
-import { HistoryInstrumentIconWrapper } from './styled';
+import { useBibleData } from '../../../providers/bibleDataProvider';
+import { bibleHistory } from '../../../utils/gql/queries';
+import { Query, QueryBibleHistoryArgs } from '../../../utils/gql/types';
+
+import { EllipsisTypography, HistoryContentWrapper, HistoryInstrumentIconWrapper } from './styled';
 
 const History = () => {
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
@@ -27,6 +32,28 @@ const History = () => {
 
   const open = Boolean(anchorEl);
 
+  const { data, loading } = useQuery<Pick<Query, 'bibleHistory'>, QueryBibleHistoryArgs>(bibleHistory, {
+    variables: {
+      bibleId: '0',
+      start: 0,
+      size: 30,
+    },
+    fetchPolicy: 'no-cache',
+    skip: !open,
+  });
+
+  const { getReadableBiblePlace } = useBibleData();
+
+  const historyData = useMemo(
+    () =>
+      data?.bibleHistory.map((slide) => ({
+        location: slide.location,
+        content: slide.content,
+        title: `${getReadableBiblePlace(slide, true)} ${slide.content}`,
+      })),
+    [data?.bibleHistory, getReadableBiblePlace],
+  );
+
   return (
     <HistoryInstrumentIconWrapper>
       <IconButton onClick={handleClick}>
@@ -46,18 +73,26 @@ const History = () => {
           horizontal: 'right',
         }}
       >
-        <MenuList
-          autoFocusItem={open}
-          id="composition-menu"
-          aria-labelledby="composition-button"
-          onKeyDown={handleListKeyDown}
-        >
-          {Array.from({ length: 20 }).map((_, idx) => (
-            <MenuItem key={idx} onClick={handleClose}>
-              <Typography>{`Profile ${idx}`}</Typography>
-            </MenuItem>
-          ))}
-        </MenuList>
+        <HistoryContentWrapper>
+          <MenuList
+            autoFocusItem={open}
+            id="composition-menu"
+            aria-labelledby="composition-button"
+            onKeyDown={handleListKeyDown}
+          >
+            {loading || !historyData ? (
+              <CircularProgress />
+            ) : (
+              historyData.map(({ content, location, title }, idx) => (
+                <MenuItem key={location?.join('-') ?? idx} onClick={handleClose}>
+                  <Tooltip title={<Typography>{content}</Typography>} placement="bottom-end">
+                    <EllipsisTypography>{title}</EllipsisTypography>
+                  </Tooltip>
+                </MenuItem>
+              ))
+            )}
+          </MenuList>
+        </HistoryContentWrapper>
       </Popover>
     </HistoryInstrumentIconWrapper>
   );

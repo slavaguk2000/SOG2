@@ -41,6 +41,7 @@ export type MutationSetFreeSlideArgs = {
 export type Query = {
   __typename?: 'Query';
   bibleBooks: Array<BibleBook>;
+  bibleHistory: Array<Slide>;
   bibleVerses: Array<Slide>;
   search: Array<Slide>;
 };
@@ -48,6 +49,13 @@ export type Query = {
 
 export type QueryBibleBooksArgs = {
   bibleId: Scalars['ID']['input'];
+};
+
+
+export type QueryBibleHistoryArgs = {
+  bibleId: Scalars['ID']['input'];
+  size?: InputMaybe<Scalars['Int']['input']>;
+  start?: InputMaybe<Scalars['Int']['input']>;
 };
 
 

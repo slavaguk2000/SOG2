@@ -21,6 +21,16 @@ export const bibleBooks = gql`
   }
 `;
 
+export const bibleHistory = gql`
+  query bibleHistory($bibleId: ID!, $start: Int, $size: Int) {
+    bibleHistory(bibleId: $bibleId, start: $start, size: $size) {
+      id
+      content
+      location
+    }
+  }
+`;
+
 export const bibleVerses = gql`
   query bibleVerses($bibleId: ID!, $bookId: ID!, $chapter: Int!) {
     bibleVerses(bibleId: $bibleId, bookId: $bookId, chapter: $chapter) {

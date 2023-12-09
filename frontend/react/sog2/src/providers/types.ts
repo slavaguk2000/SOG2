@@ -25,6 +25,7 @@ export interface BibleContextType {
   silentMode: boolean;
   setSilentMode: Dispatch<SetStateAction<boolean>>;
   slideInChapter: boolean;
+  getReadableBiblePlace: (slide: Slide, withVerse?: boolean) => string;
 }
 
 export interface PresentationContextType {
