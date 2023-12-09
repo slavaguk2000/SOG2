@@ -1,6 +1,6 @@
 from ariadne import convert_kwargs_to_snake_case, ObjectType, QueryType, MutationType, SubscriptionType
 from src.services.elasticsearch.search.bible import bible_search, get_bible_books_by_bible_id, get_chapter_verses, \
-    get_bible_slide_by_id, update_bible_slide_usage
+    get_bible_slide_by_id, update_bible_slide_usage, get_bible_history
 from asyncio import Queue
 
 active_slide_queue = Queue()
@@ -27,6 +27,12 @@ def resolve_bible_books(*_, bible_id: str):
 @convert_kwargs_to_snake_case
 def resolve_bible_verses(*_, bible_id: str, book_id: str, chapter: int):
     return get_chapter_verses(bible_id, book_id, chapter)
+
+
+@query.field("bibleHistory")
+@convert_kwargs_to_snake_case
+def resolve_bible_history(*_, bible_id: str, **kwargs):
+    return get_bible_history(bible_id, **kwargs)
 
 
 @mutation.field("setActiveSlide")

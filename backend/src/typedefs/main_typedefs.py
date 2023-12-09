@@ -5,6 +5,7 @@ type_defs = gql("""
         search(searchPattern: String!): [Slide!]!
         bibleBooks(bibleId: ID!): [BibleBook!]!
         bibleVerses(bibleId: ID!, bookId: ID!, chapter: Int!): [Slide!]!
+        bibleHistory(bibleId: ID!, start: Int, size: Int): [Slide!]!
     }
 
     type Slide {
