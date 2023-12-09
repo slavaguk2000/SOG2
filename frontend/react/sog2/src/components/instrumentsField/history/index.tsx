@@ -6,7 +6,7 @@ import { CircularProgress, IconButton, MenuItem, MenuList, Popover, Tooltip, Typ
 
 import { useBibleData } from '../../../providers/bibleDataProvider';
 import { bibleHistory } from '../../../utils/gql/queries';
-import { Query, QueryBibleHistoryArgs } from '../../../utils/gql/types';
+import { Query, QueryBibleHistoryArgs, Slide } from '../../../utils/gql/types';
 
 import { EllipsisTypography, HistoryContentWrapper, HistoryInstrumentIconWrapper } from './styled';
 
@@ -42,17 +42,21 @@ const History = () => {
     skip: !open,
   });
 
-  const { getReadableBiblePlace } = useBibleData();
+  const { getReadableBiblePlace, handleUpdateSlide } = useBibleData();
 
   const historyData = useMemo(
     () =>
       data?.bibleHistory.map((slide) => ({
-        location: slide.location,
-        content: slide.content,
+        slide,
         title: `${getReadableBiblePlace(slide, true)} ${slide.content}`,
       })),
     [data?.bibleHistory, getReadableBiblePlace],
   );
+
+  const handleSlideClick = (slide: Slide) => {
+    handleUpdateSlide(slide);
+    handleClose();
+  };
 
   return (
     <HistoryInstrumentIconWrapper>
@@ -83,9 +87,9 @@ const History = () => {
             {loading || !historyData ? (
               <CircularProgress />
             ) : (
-              historyData.map(({ content, location, title }, idx) => (
-                <MenuItem key={location?.join('-') ?? idx} onClick={handleClose}>
-                  <Tooltip title={<Typography>{content}</Typography>} placement="bottom-end">
+              historyData.map(({ slide, title }, idx) => (
+                <MenuItem key={slide.location?.join('-') ?? idx} onClick={() => handleSlideClick(slide)}>
+                  <Tooltip title={<Typography>{slide.content}</Typography>} placement="bottom-end">
                     <EllipsisTypography>{title}</EllipsisTypography>
                   </Tooltip>
                 </MenuItem>
