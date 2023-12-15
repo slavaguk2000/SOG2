@@ -67,12 +67,21 @@ sermon_mapping = Mapping(
             }
         },
         "properties": {
+            "id": {
+                "type": "keyword"
+            },
             "sermon_collection_id": {
                 "type": "keyword"
             },
             "sermon_name": {
                 "type": "text",
                 "analyzer": "lowercase_analyzer"
+            },
+            "sermon_translation": {
+                "type": "keyword"
+            },
+            "sermon_date": {
+                "type": "date"
             },
             "chapter": {
                 "type": "integer"
