@@ -90,6 +90,9 @@ sermon_mapping = Mapping(
                 "type": "text",
                 "analyzer": "russian"
             },
+            "audio_link": {
+                "type": "keyword"
+            }
         }
     }
 )
