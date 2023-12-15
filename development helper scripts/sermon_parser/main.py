@@ -32,7 +32,7 @@ def parse_current_sermon(url):
         try:
             soup = BeautifulSoup(response.text, 'html.parser')
 
-            year = re.sub('\\W', '', soup.select('span.my-1')[0].get_text().replace('-', '').strip())
+            year = re.sub('\\s', '', soup.select('span.my-1')[0].get_text().replace('-', '').strip())
             title = soup.select('h4.mt-3')[0].get_text().strip().upper()
             translation = soup.select('span.my-1')[2].get_text().strip()
 
@@ -99,8 +99,5 @@ def scrape_branham_sermons():
 
 
 branham_sermons_data = scrape_branham_sermons()
-print()
-# print(branham_sermons_data)
-print('---------------')
-print(get_text_file_for_sog(branham_sermons_data))
-print('-------------')
+with open('branham-ru.sog', mode='w', encoding='utf-8') as f:
+    f.write(get_text_file_for_sog(branham_sermons_data))
