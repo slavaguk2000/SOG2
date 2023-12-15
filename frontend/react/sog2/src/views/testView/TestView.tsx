@@ -5,13 +5,14 @@ import { v4 } from 'uuid';
 
 import { search } from 'src/utils/gql/queries';
 
-import { Query, QuerySearchArgs } from '../../utils/gql/types';
+import { Query, QuerySearchArgs, TabType } from '../../utils/gql/types';
 
 const TestView = () => {
   const [searchPattern, setSearchPattern] = useState('бегущий');
   const { data } = useQuery<Pick<Query, 'search'>, QuerySearchArgs>(search, {
     variables: {
       searchPattern,
+      tabType: TabType.Bible,
     },
     fetchPolicy: 'cache-first',
   });

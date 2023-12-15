@@ -1,8 +1,8 @@
 import { gql } from '@apollo/client';
 
 export const search = gql`
-  query search($searchPattern: String!) {
-    search(searchPattern: $searchPattern) {
+  query search($searchPattern: String!, $tabType: TabType!) {
+    search(searchPattern: $searchPattern, tabType: $tabType) {
       id
       content
       location

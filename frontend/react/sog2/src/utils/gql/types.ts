@@ -68,6 +68,7 @@ export type QueryBibleVersesArgs = {
 
 export type QuerySearchArgs = {
   searchPattern: Scalars['String']['input'];
+  tabType: TabType;
 };
 
 export type Slide = {
@@ -88,3 +89,8 @@ export type Subscription = {
   __typename?: 'Subscription';
   activeSlideSubscription?: Maybe<Slide>;
 };
+
+export enum TabType {
+  Bible = 'Bible',
+  Sermon = 'Sermon'
+}

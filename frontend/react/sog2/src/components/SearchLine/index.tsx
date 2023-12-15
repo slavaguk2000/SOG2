@@ -6,7 +6,7 @@ import { debounce } from 'lodash';
 
 import { debounceInputDelay, minimumSearchLength } from 'src/constants/behaviorConstants';
 import { search } from 'src/utils/gql/queries';
-import { Query, QuerySearchArgs, Slide } from 'src/utils/gql/types';
+import { Query, QuerySearchArgs, Slide, TabType } from 'src/utils/gql/types';
 
 import { useBibleData } from '../../providers/bibleDataProvider';
 
@@ -30,6 +30,7 @@ const SearchLine = () => {
   const { data } = useQuery<Pick<Query, 'search'>, QuerySearchArgs>(search, {
     variables: {
       searchPattern: debouncedSearchText,
+      tabType: TabType.Bible,
     },
     fetchPolicy: 'cache-first',
     skip: debouncedSearchText.length < minimumSearchLength,
