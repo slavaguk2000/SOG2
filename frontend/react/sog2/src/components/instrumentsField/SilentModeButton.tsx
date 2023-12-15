@@ -5,10 +5,10 @@ import LeakRemoveIcon from '@mui/icons-material/LeakRemove';
 import { IconButton } from '@mui/material';
 import Tooltip from '@mui/material/Tooltip';
 
-import { useBibleData } from 'src/providers/bibleDataProvider';
+import { useInstrumentsField } from '../../providers/instrumentsFieldProvider';
 
 const SilentModeButton = () => {
-  const { silentMode, setSilentMode } = useBibleData();
+  const { silentMode, setSilentMode } = useInstrumentsField();
 
   const handleClick = () => {
     setSilentMode((prev) => !prev);

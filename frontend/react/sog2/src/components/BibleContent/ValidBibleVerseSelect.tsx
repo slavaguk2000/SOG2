@@ -6,6 +6,8 @@ import { useBibleData } from 'src/providers/bibleDataProvider';
 import { getVerseNumberFromSlide } from 'src/providers/bibleDataProvider/provider';
 import { Slide } from 'src/utils/gql/types';
 
+import { useInstrumentsField } from '../../providers/instrumentsFieldProvider';
+
 import BibleEntityItem from './BibleEntityItem';
 import { VersePreselectBox } from './styled';
 
@@ -22,7 +24,8 @@ const verseModifier = (slide: Slide) => {
 const debounceSeconds = 0.7;
 
 const ValidBibleVerseSelect = () => {
-  const { currentSlide, handleUpdateSlide, versesData, lastSlide, slideInChapter } = useBibleData();
+  const { currentSlide } = useInstrumentsField();
+  const { handleUpdateSlide, versesData, lastSlide, slideInChapter } = useBibleData();
   const [preselectNumberVerse, setPreselectNumber] = useState<number>(0);
   const versesRef = useRef<HTMLElement>(null);
 
