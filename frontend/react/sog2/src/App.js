@@ -1,5 +1,6 @@
 import './App.css';
 import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 
 import { ThemeProvider } from '@mui/material';
 
@@ -16,11 +17,21 @@ function App() {
     <ThemeProvider theme={theme}>
       <PresentationProvider>
         <FreeSlideDialogProvider>
-          <BibleDataProvider bibleId="0">
-            <AppRoot>
-              <MainView />
-            </AppRoot>
-          </BibleDataProvider>
+          <AppRoot>
+            <Router>
+              <Routes>
+                <Route path="/" element={<Navigate to="/bible" replace />} />
+                <Route
+                  path="/bible"
+                  element={
+                    <BibleDataProvider bibleId="0">
+                      <MainView />
+                    </BibleDataProvider>
+                  }
+                />
+              </Routes>
+            </Router>
+          </AppRoot>
         </FreeSlideDialogProvider>
       </PresentationProvider>
     </ThemeProvider>
