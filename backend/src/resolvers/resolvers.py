@@ -3,6 +3,8 @@ from src.services.elasticsearch.search.bible import bible_search, get_bible_book
     get_bible_slide_by_id, update_bible_slide_usage, get_bible_history
 from asyncio import Queue
 
+from src.services.elasticsearch.search.sermon import sermon_search
+
 active_slide_queue = Queue()
 query = QueryType()
 mutation = MutationType()
@@ -17,7 +19,7 @@ def resolve_search(*_, search_pattern: str, tab_type: str):
     if tab_type == 'Bible':
         return bible_search(search_pattern, "0")
     if tab_type == 'Sermon':
-        return [{"id": 5}]
+        return sermon_search(search_pattern, "0")
     return []
 
 

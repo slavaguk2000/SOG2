@@ -1,11 +1,10 @@
+from src.services.elasticsearch.constants import highlight_pre_tag, highlight_post_tag
 from src.services.elasticsearch.elastic import Elastic
 from src.services.elasticsearch.mappings import bible_mapping
 import re
 
 el = Elastic()
 
-highlight_pre_tag = '<span class="highlighted">'
-highlight_post_tag = "</span>"
 
 default_slide_source = ["book", "book_order", "chapter", "verse_number", "verse_content", "search_content"]
 sort_priority = [
@@ -256,7 +255,7 @@ def bible_search(search_pattern: str, bible_id: str):
             "book_name": {}
         }
     }
-    print(str(query).replace("'", '"'))
+    # print(str(query).replace("'", '"'))
 
     result = el.search(
         index=bible_mapping.index,
