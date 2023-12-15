@@ -9,7 +9,7 @@ import os
 
 elastic_host = os.getenv("ELASTIC_URL")
 
-elastic_address = f'http://{elastic_host if elastic_host else "192.168.100.7"}:9200'
+elastic_address = f'http://{elastic_host if elastic_host else "localhost"}:9200'
 user = 'elastic'
 password = 'q1Z3ArlE7ky=4eoxB*cn'
 

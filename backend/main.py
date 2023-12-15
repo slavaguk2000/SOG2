@@ -22,6 +22,7 @@ while True:
         except elasticsearch.ApiError as e:
             sleep(0.5)
     else:
+        print('elastic ping fail')
         sleep(0.5)
 
 

@@ -1,8 +1,13 @@
 from ariadne import gql
 
 type_defs = gql("""
+    enum TabType {
+      Bible
+      Sermon
+    }
+
     type Query {
-        search(searchPattern: String!): [Slide!]!
+        search(searchPattern: String!, tabType: TabType!): [Slide!]!
         bibleBooks(bibleId: ID!): [BibleBook!]!
         bibleVerses(bibleId: ID!, bookId: ID!, chapter: Int!): [Slide!]!
         bibleHistory(bibleId: ID!, start: Int, size: Int): [Slide!]!
