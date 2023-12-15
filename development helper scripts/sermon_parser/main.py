@@ -4,6 +4,8 @@ import re
 from bs4 import BeautifulSoup
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
+from elasticsearch.helpers import BulkIndexError
+
 from elasticSearchServise.ElasticSearch import Elastic
 from elasticSearchServise.mappings import sermon_mapping
 
@@ -87,7 +89,7 @@ def scrape_branham_sermons():
         future_to_sermon = {}
 
         with ThreadPoolExecutor() as executor:
-            for row in sermon_rows[0:10]:
+            for row in sermon_rows[:10]:
                 sermon_link = row.find('a', class_='font-weight-bold')
                 if sermon_link and sermon_link.text:
                     link = sermon_link['href']
@@ -117,7 +119,7 @@ def convert_sermon_year_to_datetime(date_str):
 
     time = time_mapping[time_suffix]
 
-    return f"{year}-{month}-{day}T{time}:00"
+    return f"{year}-{'{:02}'.format(max(min(int(month), 12), 1))}-{'{:02}'.format(max(min(int(day), 31), 1))}T{time}:00"
 
 
 def get_elastic_data_from_single_sermon_data(sermon_data):
@@ -136,12 +138,20 @@ def get_elastic_data_from_single_sermon_data(sermon_data):
 
 
 def add_sermon_data_to_elastic(sermons_data):
-    elastic_bulk_data_from_branham_ru = list(flatten_deeply_nested_list([
-        get_elastic_data_from_single_sermon_data(sermon_data) for sermon_data in branham_sermons_data
-    ]))
+    elastic_bulk_data_from_branham_ru = [
+        list(flatten_deeply_nested_list(
+            get_elastic_data_from_single_sermon_data(sermon_data)
+        )) for sermon_data in sermons_data
+    ]
+
     el = Elastic()
     el.clear_index(sermon_mapping.index)
-    el.bulk_create(elastic_bulk_data_from_branham_ru, sermon_mapping.index)
+
+    for one_sermon_data in elastic_bulk_data_from_branham_ru:
+        try:
+            el.bulk_create(one_sermon_data, sermon_mapping.index)
+        except BulkIndexError as e:
+            print(e.errors[0])
 
 
 branham_sermons_data = scrape_branham_sermons()
