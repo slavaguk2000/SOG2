@@ -126,24 +126,31 @@ def get_elastic_data_from_single_sermon_data(sermon_data):
     sermon_date = convert_sermon_year_to_datetime(sermon_data["year"])
     sermon_id = str(uuid.uuid4())
 
-    return [[{
-        "_id": str(uuid.uuid4()),
-        "sermon_collection_id": "0",
-        "sermon_id": sermon_id,
-        "sermon_name": sermon_data["title"],
-        "sermon_translation": sermon_data["translation"],
-        "sermon_date": sermon_date,
-        "audio_link": sermon_data["audio_link"],
-        **({} if idx else {"chapter": chapter["chapter"]}),
-        "chapter_content": paragraph,
-    } for idx, paragraph in enumerate(chapter['paragraphs'])] for chapter in sermon_data["content"]]
+    result = []
+    order = 0
+
+    for chapter in sermon_data["content"]:
+        for idx, paragraph in enumerate(chapter['paragraphs']):
+            result.append({
+                "_id": str(uuid.uuid4()),
+                "sermon_collection_id": "0",
+                "sermon_id": sermon_id,
+                "paragraph_order": order,
+                "sermon_name": sermon_data["title"],
+                "sermon_translation": sermon_data["translation"],
+                "sermon_date": sermon_date,
+                "audio_link": sermon_data["audio_link"],
+                **({} if idx else {"chapter": chapter["chapter"]}),
+                "chapter_content": paragraph,
+            })
+            order += 1
+
+    return result
 
 
 def add_sermon_data_to_elastic(sermons_data):
     elastic_bulk_data_from_branham_ru = [
-        list(flatten_deeply_nested_list(
-            get_elastic_data_from_single_sermon_data(sermon_data)
-        )) for sermon_data in sermons_data
+        get_elastic_data_from_single_sermon_data(sermon_data) for sermon_data in sermons_data
     ]
 
     el = Elastic()

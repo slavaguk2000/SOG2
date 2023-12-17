@@ -82,6 +82,9 @@ sermon_mapping = Mapping(
             "chapter": {
                 "type": "integer"
             },
+            "paragraph_order": {
+                "type": "integer"
+            },
             "chapter_content": {
                 "type": "text",
                 "analyzer": "russian"
