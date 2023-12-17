@@ -155,6 +155,7 @@ def add_sermon_data_to_elastic(sermons_data):
 
     el = Elastic()
     el.clear_index(sermon_mapping.index)
+    el.create_index(sermon_mapping)
 
     for one_sermon_data in elastic_bulk_data_from_branham_ru:
         try:

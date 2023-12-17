@@ -50,10 +50,8 @@ actions = [
 class Elastic:
     def __init__(self):
         self.es = Elasticsearch(elastic_address, basic_auth=(user, password), verify_certs=False)
-        if not self.index_exist(bible_mapping.index):
-            self.es.indices.create(index=bible_mapping.index, body=bible_mapping.body)
-        if not self.index_exist(sermon_mapping.index):
-            self.es.indices.create(index=sermon_mapping.index, body=sermon_mapping.body)
+        self.create_index(bible_mapping)
+        self.create_index(sermon_mapping)
         if not self.index_exist('test'):
             self.es.indices.create(index='test')
 
@@ -63,6 +61,10 @@ class Elastic:
     def bulk_create(self, data: [dict], index: str):
         print(helpers.bulk(self.es, actions=data, index=index))
         # print(self.es.bulk(operations=actions, refresh=True))
+
+    def create_index(self, mapping):
+        if not self.index_exist(mapping.index):
+            self.es.indices.create(index=mapping.index, body=mapping.body)
 
     def clear_index(self, index):
         if self.index_exist(index):
