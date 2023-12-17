@@ -14,8 +14,9 @@ def sermon_hit_to_slide(hit: dict):
     print(hit)
     source = hit["_source"]
     print(source['chapter_content'])
-    for i in hit['highlight']['chapter_content']:
-        print(i)
+    if 'highlight' in hit and 'chapter_content' in hit['highlight']:
+        for i in hit['highlight']['chapter_content']:
+            print(i)
 
     sermon_date = source['sermon_date']
 
@@ -26,6 +27,19 @@ def sermon_hit_to_slide(hit: dict):
         "search_content": f"{date_object.strftime('%y')}-{date_object.month}{date_object.day} {source['sermon_name']} ({source['sermon_translation']}) {insert_highlights_into_original_str(source['chapter_content'], hit)}",
         "content": source['chapter_content'],
     }
+
+
+def get_sermon_by_id(sermon_id: str):
+    result = el.search(index=sermon_mapping.index, query={
+        "term":
+            {
+                "sermon_id": str(sermon_id)
+            }
+    }, size=1000, sort=['paragraph_order'])
+
+    print(result)
+
+    return [sermon_hit_to_slide(hit) for hit in result["hits"]["hits"]]
 
 
 def sermon_search(search_pattern: str, sermon_collection_id: str):

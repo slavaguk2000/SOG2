@@ -11,6 +11,7 @@ type_defs = gql("""
         bibleBooks(bibleId: ID!): [BibleBook!]!
         bibleVerses(bibleId: ID!, bookId: ID!, chapter: Int!): [Slide!]!
         bibleHistory(bibleId: ID!, start: Int, size: Int): [Slide!]!
+        sermon(sermonId: ID!): [Slide!]!
     }
 
     type Slide {
