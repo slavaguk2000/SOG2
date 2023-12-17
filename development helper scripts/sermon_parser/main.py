@@ -124,10 +124,12 @@ def convert_sermon_year_to_datetime(date_str):
 
 def get_elastic_data_from_single_sermon_data(sermon_data):
     sermon_date = convert_sermon_year_to_datetime(sermon_data["year"])
+    sermon_id = str(uuid.uuid4())
 
     return [[{
         "_id": str(uuid.uuid4()),
         "sermon_collection_id": "0",
+        "sermon_id": sermon_id,
         "sermon_name": sermon_data["title"],
         "sermon_translation": sermon_data["translation"],
         "sermon_date": sermon_date,

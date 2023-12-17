@@ -73,6 +73,9 @@ sermon_mapping = Mapping(
             "sermon_collection_id": {
                 "type": "keyword"
             },
+            "sermon_id": {
+                "type": "keyword"
+            },
             "sermon_name": {
                 "type": "text",
                 "analyzer": "lowercase_analyzer"
