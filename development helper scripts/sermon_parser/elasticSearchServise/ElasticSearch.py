@@ -1,5 +1,5 @@
 from elasticsearch import Elasticsearch, helpers
-from elasticSearchServise.mappings import bible_mapping
+from elasticSearchServise.mappings import bible_mapping, sermon_mapping
 from uuid import uuid4
 
 import os
@@ -52,6 +52,8 @@ class Elastic:
         self.es = Elasticsearch(elastic_address, basic_auth=(user, password), verify_certs=False)
         if not self.index_exist(bible_mapping.index):
             self.es.indices.create(index=bible_mapping.index, body=bible_mapping.body)
+        if not self.index_exist(sermon_mapping.index):
+            self.es.indices.create(index=sermon_mapping.index, body=sermon_mapping.body)
         if not self.index_exist('test'):
             self.es.indices.create(index='test')
 

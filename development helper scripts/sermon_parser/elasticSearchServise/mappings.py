@@ -55,17 +55,6 @@ bible_mapping = Mapping(
 sermon_mapping = Mapping(
     'sermon',
     {
-        "settings": {
-            "analysis": {
-                "analyzer": {
-                    "lowercase_analyzer": {
-                        "type": "custom",
-                        "tokenizer": "keyword",
-                        "filter": ["lowercase"]
-                    }
-                }
-            }
-        },
         "properties": {
             "id": {
                 "type": "keyword"
@@ -78,7 +67,6 @@ sermon_mapping = Mapping(
             },
             "sermon_name": {
                 "type": "text",
-                "analyzer": "lowercase_analyzer"
             },
             "sermon_translation": {
                 "type": "keyword"
