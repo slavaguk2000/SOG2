@@ -44,6 +44,7 @@ export type Query = {
   bibleHistory: Array<Slide>;
   bibleVerses: Array<Slide>;
   search: Array<Slide>;
+  sermon: Array<Slide>;
 };
 
 
@@ -69,6 +70,11 @@ export type QueryBibleVersesArgs = {
 export type QuerySearchArgs = {
   searchPattern: Scalars['String']['input'];
   tabType: TabType;
+};
+
+
+export type QuerySermonArgs = {
+  sermonId: Scalars['ID']['input'];
 };
 
 export type Slide = {

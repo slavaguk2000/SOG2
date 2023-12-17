@@ -12,8 +12,11 @@ import BibleDataProvider from './providers/bibleDataProvider/provider';
 import FreeSlideDialogProvider from './providers/FreeSlideDialogProvider/provider';
 import InstrumentsFieldProvider from './providers/instrumentsFieldProvider/provider';
 import { PresentationProvider } from './providers/presentationProvider/provider';
+import SermonDataProviderContext from './providers/sermanDataProvider/context';
+import SermonDataProvider from './providers/sermanDataProvider/provider';
 import { AppRoot } from './styled';
 import MainView from './views/MainView/MainView';
+import SermonView from './views/SermanView';
 
 function App() {
   return (
@@ -33,6 +36,16 @@ function App() {
                           <BibleContent />
                         </MainView>
                       </BibleDataProvider>
+                    }
+                  />
+                  <Route
+                    path="/sermon"
+                    element={
+                      <SermonDataProvider>
+                        <MainView dataProviderContext={SermonDataProviderContext}>
+                          <SermonView />
+                        </MainView>
+                      </SermonDataProvider>
                     }
                   />
                 </Routes>

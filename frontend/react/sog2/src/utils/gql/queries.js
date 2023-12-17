@@ -11,6 +11,15 @@ export const search = gql`
   }
 `;
 
+export const sermon = gql`
+  query sermon($sermonId: ID!) {
+    sermon(sermonId: $sermonId) {
+      id
+      content
+    }
+  }
+`;
+
 export const bibleBooks = gql`
   query bibleBooks($bibleId: ID!) {
     bibleBooks(bibleId: $bibleId) {

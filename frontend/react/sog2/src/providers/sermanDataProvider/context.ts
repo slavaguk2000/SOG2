@@ -3,7 +3,9 @@ import { createContext } from 'react';
 import { SermonDataProviderContextType } from '../types';
 
 const defaultValue: SermonDataProviderContextType = {
-  a: true,
+  handleNextSlide: () => true,
+  handlePrevSlide: () => true,
+  handleUpdateSlide: () => true,
 };
 
 const SermonDataProviderContext = createContext<SermonDataProviderContextType>(defaultValue);

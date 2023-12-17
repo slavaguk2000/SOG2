@@ -3,6 +3,8 @@ import { createTheme } from '@mui/material';
 import { MuiAutocomplete } from './overrides/MuiAutocomplete';
 import { MuiInputLabel } from './overrides/MuiInputLabel';
 import { MuiOutlinedInput } from './overrides/MuiOutlinedInput';
+import MuiTab from './overrides/MuiTab';
+import MuiTabs from './overrides/MuiTabs';
 import { palette } from './palette';
 
 export const theme = createTheme({
@@ -10,6 +12,8 @@ export const theme = createTheme({
     MuiAutocomplete,
     MuiInputLabel,
     MuiOutlinedInput,
+    MuiTab,
+    MuiTabs,
   },
   palette,
 });

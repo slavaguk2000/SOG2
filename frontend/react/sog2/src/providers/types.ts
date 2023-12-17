@@ -55,6 +55,6 @@ export interface InstrumentsFieldProviderContextType {
   currentSlide?: Slide;
 }
 
-export interface SermonDataProviderContextType {
-  a: boolean;
+export interface SermonDataProviderContextType extends DataProvider {
+  currentSermonSlides?: Slide[];
 }

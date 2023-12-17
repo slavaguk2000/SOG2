@@ -1,4 +1,5 @@
 import React, { KeyboardEvent, useEffect, useRef, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 
 import { useQuery } from '@apollo/client';
 import TextField from '@mui/material/TextField';
@@ -27,10 +28,12 @@ const SearchLine = () => {
   const searchLineRef = useRef<HTMLInputElement>(null);
   const [placeSelected, setPlaceSelected] = useState<boolean>(false);
 
+  const { pathname } = useLocation();
+
   const { data } = useQuery<Pick<Query, 'search'>, QuerySearchArgs>(search, {
     variables: {
       searchPattern: debouncedSearchText,
-      tabType: TabType.Bible,
+      tabType: pathname === '/bible' ? TabType.Bible : TabType.Sermon,
     },
     fetchPolicy: 'cache-first',
     skip: debouncedSearchText.length < minimumSearchLength,
