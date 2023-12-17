@@ -2,6 +2,7 @@ from src.services.elasticsearch.constants import highlight_pre_tag, highlight_po
 from src.services.elasticsearch.elastic import Elastic
 from src.services.elasticsearch.mappings import sermon_mapping
 from src.services.elasticsearch.utils import insert_highlights_into_original_str
+from datetime import datetime
 
 el = Elastic()
 
@@ -15,9 +16,14 @@ def sermon_hit_to_slide(hit: dict):
     print(source['chapter_content'])
     for i in hit['highlight']['chapter_content']:
         print(i)
+
+    sermon_date = source['sermon_date']
+
+    date_object = datetime.strptime(sermon_date, '%Y-%m-%dT%H:%M:%S')
+
     return {
         "id": hit["_id"],
-        "search_content": insert_highlights_into_original_str(source['chapter_content'], hit),
+        "search_content": f"{date_object.strftime('%y')}-{date_object.month}{date_object.day} {source['sermon_name']} ({source['sermon_translation']}) {insert_highlights_into_original_str(source['chapter_content'], hit)}",
         "content": source['chapter_content'],
     }
 
