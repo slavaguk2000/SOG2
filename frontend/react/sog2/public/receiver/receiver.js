@@ -1,4 +1,4 @@
-const maxFontSize = 60;
+const maxFontSize = 10;
 
 function addConnection(connection) {
   connection.addEventListener('message', function (event) {
@@ -43,16 +43,16 @@ function resizeText() {
 
   let fontSize = 1; // начальный размер шрифта
   const step = 1; // шаг изменения размера шрифта
-  div.style.fontSize = `${fontSize}px`;
+  div.style.fontSize = `${fontSize}vh`;
 
   while (div.scrollHeight <= div.clientHeight && div.scrollWidth <= div.clientWidth && fontSize <= maxFontSize) {
     fontSize += step;
-    div.style.fontSize = `${fontSize}px`;
+    div.style.fontSize = `${fontSize}vh`;
   }
 
   while (div.scrollHeight > div.clientHeight || div.scrollWidth > div.clientWidth) {
     fontSize -= step;
-    div.style.fontSize = `${fontSize}px`;
+    div.style.fontSize = `${fontSize}vh`;
   }
 }
 
