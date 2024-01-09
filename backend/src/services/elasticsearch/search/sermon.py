@@ -26,6 +26,7 @@ def sermon_hit_to_slide(hit: dict):
         "id": hit["_id"],
         "search_content": f"{date_object.strftime('%y')}-{date_object.month}{date_object.day} {source['sermon_name']} ({source['sermon_translation']}) {insert_highlights_into_original_str(source['chapter_content'], hit)}",
         "content": source['chapter_content'],
+        "location": [source['sermon_collection_id'], source['sermon_id'], source['paragraph_order']]
     }
 
 
