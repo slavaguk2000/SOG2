@@ -4,12 +4,12 @@ import { useSearchParams } from 'react-router-dom';
 import { useQuery } from '@apollo/client';
 
 import { sermon } from '../../utils/gql/queries';
-import { Query, QuerySermonArgs } from '../../utils/gql/types';
+import { Query, QuerySermonArgs, Slide } from '../../utils/gql/types';
 
 import SermonDataProviderContext from './context';
 
 const SermonDataProvider: FC<PropsWithChildren> = ({ children }) => {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const id = searchParams.get('id');
 
   const { data } = useQuery<Pick<Query, 'sermon'>, QuerySermonArgs>(sermon, {
@@ -29,8 +29,19 @@ const SermonDataProvider: FC<PropsWithChildren> = ({ children }) => {
     return;
   };
 
-  const handleUpdateSlide = () => {
+  const handleUpdateSlide = (newSlide?: Slide) => {
+    console.log('handleUpdateSlide', newSlide);
+    const sermonId = newSlide?.location?.[1];
+
+    if (sermonId) {
+      setSearchParams((prev) => ({ ...prev, id: sermonId }));
+    }
+
     return;
+  };
+
+  const handleUpdateLocation = (newSlide: Slide) => {
+    console.log('handleUpdateLocation', newSlide);
   };
 
   return (
@@ -39,6 +50,7 @@ const SermonDataProvider: FC<PropsWithChildren> = ({ children }) => {
         handleNextSlide,
         handlePrevSlide,
         handleUpdateSlide,
+        handleUpdateLocation,
         currentSermonSlides: data?.sermon,
       }}
     >

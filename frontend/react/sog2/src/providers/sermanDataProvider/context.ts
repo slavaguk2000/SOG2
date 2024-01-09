@@ -6,6 +6,7 @@ const defaultValue: SermonDataProviderContextType = {
   handleNextSlide: () => true,
   handlePrevSlide: () => true,
   handleUpdateSlide: () => true,
+  handleUpdateLocation: () => true,
 };
 
 const SermonDataProviderContext = createContext<SermonDataProviderContextType>(defaultValue);

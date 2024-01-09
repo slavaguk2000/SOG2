@@ -21,6 +21,7 @@ export interface DataProvider {
   handlePrevSlide: () => void;
   handleNextSlide: () => void;
   handleUpdateSlide: (newSlide?: Slide) => void;
+  handleUpdateLocation: (newSlide: Slide) => void;
 }
 
 export interface BibleContextType extends DataProvider {
@@ -30,7 +31,6 @@ export interface BibleContextType extends DataProvider {
   handleChapterSelect: (selectedId: number) => void;
   bibleBooksData?: BibleBook[];
   versesData?: Pick<Query, 'bibleVerses'>;
-  handleUpdateLocation: (newSlide: Slide) => void;
   handleBookSelect: (selectedId: string) => void;
   slideInChapter: boolean;
   getReadableBiblePlace: (slide: Slide, withVerse?: boolean) => string;
