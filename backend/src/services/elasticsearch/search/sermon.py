@@ -43,6 +43,58 @@ def get_sermon_by_id(sermon_id: str):
     return [sermon_hit_to_slide(hit) for hit in result["hits"]["hits"]]
 
 
+def sermon_agg_to_sermon_data(agg_data: dict):
+    return {
+        "id": agg_data["key"],
+        "name": agg_data["sermon_name"]["buckets"][0]["key"],
+        "translation": agg_data["sermon_translation"]["buckets"][0]["key"],
+        "date": agg_data["sermon_date"]["buckets"][0]["key_as_string"]
+    }
+
+
+def get_sermons(sermons_collection_id: str):
+    result = el.search(index=sermon_mapping.index, body={
+      "size": 0,
+      "query": {
+        "term": {
+          "sermon_collection_id": {
+            "value": sermons_collection_id
+          }
+        }
+      },
+      "aggs": {
+        "unique_sermon_ids": {
+          "terms": {
+            "field": "sermon_id",
+            "size": 10000
+          },
+          "aggs": {
+            "sermon_name": {
+              "terms": {
+                "field": "sermon_name.keyword",
+                "size": 1
+              }
+            },
+            "sermon_translation": {
+              "terms": {
+                "field": "sermon_translation",
+                "size": 1
+              }
+            },
+            "sermon_date": {
+              "terms": {
+                "field": "sermon_date",
+                "size": 1
+              }
+            }
+          }
+        }
+      }
+    })
+
+    return [sermon_agg_to_sermon_data(sermon_data) for sermon_data in result["aggregations"]["unique_sermon_ids"]["buckets"]]
+
+
 def sermon_search(search_pattern: str, sermon_collection_id: str):
     should = []
 

@@ -3,7 +3,7 @@ from src.services.elasticsearch.search.bible import bible_search, get_bible_book
     get_bible_slide_by_id, update_bible_slide_usage, get_bible_history
 from asyncio import Queue
 
-from src.services.elasticsearch.search.sermon import sermon_search, get_sermon_by_id
+from src.services.elasticsearch.search.sermon import sermon_search, get_sermon_by_id, get_sermons
 
 active_slide_queue = Queue()
 query = QueryType()
@@ -27,6 +27,12 @@ def resolve_search(*_, search_pattern: str, tab_type: str):
 @convert_kwargs_to_snake_case
 def sermon(*_, sermon_id: str):
     return get_sermon_by_id(sermon_id)
+
+
+@query.field("sermons")
+@convert_kwargs_to_snake_case
+def sermon(*_, sermons_collection_id: str):
+    return get_sermons(sermons_collection_id)
 
 
 @query.field("bibleBooks")
