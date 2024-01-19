@@ -71,7 +71,12 @@ sermon_mapping = Mapping(
             },
             "sermon_name": {
                 "type": "text",
-                "analyzer": "lowercase_analyzer"
+                "analyzer": "lowercase_analyzer",
+                "fields": {
+                    "keyword": {
+                        "type": "keyword"
+                    }
+                }
             },
             "sermon_translation": {
                 "type": "keyword"
