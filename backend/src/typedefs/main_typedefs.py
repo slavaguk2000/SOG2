@@ -12,6 +12,7 @@ type_defs = gql("""
         bibleVerses(bibleId: ID!, bookId: ID!, chapter: Int!): [Slide!]!
         bibleHistory(bibleId: ID!, start: Int, size: Int): [Slide!]!
         sermon(sermonId: ID!): [Slide!]!
+        sermons(sermonsCollectionId: ID!): [Sermon!]!
     }
 
     type Slide {
@@ -30,6 +31,13 @@ type_defs = gql("""
         id: ID!
         name: String!
         chapterCount: Int!
+    }
+    
+    type Sermon {
+        id: ID!
+        name: String!
+        translation: String!
+        date: String!
     }
     
     type Mutation {
