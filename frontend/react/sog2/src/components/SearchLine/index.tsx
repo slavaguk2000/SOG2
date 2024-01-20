@@ -186,7 +186,7 @@ const SearchLine = () => {
           <TextField
             {...params}
             size="small"
-            label={`Search in ${TabType.Bible ? 'Bible' : 'Sermons'}`}
+            label={`Search in ${tabType === TabType.Bible ? 'Bible' : 'Sermons'}`}
             onKeyDown={handleKeyDown}
             inputRef={searchLineRef}
           />
