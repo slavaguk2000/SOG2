@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import { Tab, Tabs } from '@mui/material';
 
@@ -13,9 +13,11 @@ const TabsField: FC = () => {
     navigate(route);
   };
 
+  const { pathname } = useLocation();
+
   return (
     <TabsFieldWrapper>
-      <Tabs onChange={handleChangeTab}>
+      <Tabs onChange={handleChangeTab} value={pathname}>
         <Tab label={'Bible'} value="/bible" />
         <Tab label={'Sermon'} value="/sermon" />
         {/*<Tab label={'Songs'} />*/}

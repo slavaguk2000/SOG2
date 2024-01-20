@@ -1,4 +1,4 @@
-import React, { FC, PropsWithChildren } from 'react';
+import React, { FC, PropsWithChildren, useCallback, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 import { useQuery } from '@apollo/client';
@@ -16,24 +16,22 @@ const SermonDataProvider: FC<SermonDataProviderProps> = ({ sermonsCollectionId =
   const [searchParams, setSearchParams] = useSearchParams();
   const currentSermonId = searchParams.get('id') ?? undefined;
 
-  const handleSermonSelect = (id: string) => {
-    setSearchParams((prev) => {
-      prev.set('id', id);
+  const handleSermonSelect = useCallback(
+    (id: string) => {
+      setSearchParams((prev) => {
+        prev.set('id', id);
 
-      return prev;
-    });
-  };
+        return prev;
+      });
+    },
+    [setSearchParams],
+  );
 
   const { data: sermonsData } = useQuery<Pick<Query, 'sermons'>, QuerySermonsArgs>(sermons, {
     variables: {
       sermonsCollectionId,
     },
     fetchPolicy: 'cache-first',
-    onCompleted: ({ sermons }) => {
-      if (!currentSermonId) {
-        handleSermonSelect(sermons[0].id);
-      }
-    },
   });
 
   const { data: currentSermonData } = useQuery<Pick<Query, 'sermon'>, QuerySermonArgs>(sermon, {
@@ -44,7 +42,11 @@ const SermonDataProvider: FC<SermonDataProviderProps> = ({ sermonsCollectionId =
     skip: !currentSermonId,
   });
 
-  console.log(sermonsData);
+  useEffect(() => {
+    if (!currentSermonId && sermonsData) {
+      handleSermonSelect(sermonsData.sermons[0].id);
+    }
+  }, [currentSermonId, handleSermonSelect, sermonsData]);
 
   const handleNextSlide = () => {
     return;

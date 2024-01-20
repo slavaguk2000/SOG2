@@ -13,7 +13,7 @@ const SermonsContent = () => {
       <SermonSelectWrapper>
         {sermonsData?.map(({ name, id }) => (
           <BibleEntityItem
-            key={name}
+            key={id}
             name={name}
             onClick={() => handleSermonSelect(id)}
             selected={id === currentSermonId}
