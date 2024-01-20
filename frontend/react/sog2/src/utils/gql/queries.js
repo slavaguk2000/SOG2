@@ -16,6 +16,7 @@ export const sermon = gql`
     sermon(sermonId: $sermonId) {
       id
       content
+      location
     }
   }
 `;
