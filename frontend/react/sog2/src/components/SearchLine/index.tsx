@@ -52,7 +52,7 @@ const SearchLine = () => {
   };
 
   const { handleUpdateSlide, handleUpdateLocation } = useContext<DataProvider>(
-    (tabType === TabType.Bible ? BibleContext : SermonDataProviderContext) as Context<DataProvider>,
+    (tabType === TabType.Bible ? BibleContext : SermonDataProviderContext) as unknown as Context<DataProvider>,
   );
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {

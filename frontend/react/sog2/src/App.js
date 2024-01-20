@@ -7,6 +7,7 @@ import { ThemeProvider } from '@mui/material';
 import { theme } from 'src/theme';
 
 import BibleContent from './components/BibleContent';
+import SermonsContent from './components/SermonsContent';
 import BibleContext from './providers/bibleDataProvider/context';
 import BibleDataProvider from './providers/bibleDataProvider/provider';
 import FreeSlideDialogProvider from './providers/FreeSlideDialogProvider/provider';
@@ -16,7 +17,6 @@ import SermonDataProviderContext from './providers/sermanDataProvider/context';
 import SermonDataProvider from './providers/sermanDataProvider/provider';
 import { AppRoot } from './styled';
 import MainView from './views/MainView/MainView';
-import SermonView from './views/SermanView';
 
 function App() {
   return (
@@ -43,7 +43,7 @@ function App() {
                     element={
                       <SermonDataProvider>
                         <MainView dataProviderContext={SermonDataProviderContext}>
-                          <SermonView />
+                          <SermonsContent />
                         </MainView>
                       </SermonDataProvider>
                     }

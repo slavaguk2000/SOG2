@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction } from 'react';
 
 import { FreeSlideDialogContent } from '../components/FreeSlideDialog';
-import { BibleBook, Query, Slide } from '../utils/gql/types';
+import { BibleBook, Query, Sermon, Slide } from '../utils/gql/types';
 
 export interface ChapterSelector {
   bookIdx?: number;
@@ -57,4 +57,7 @@ export interface InstrumentsFieldProviderContextType {
 
 export interface SermonDataProviderContextType extends DataProvider {
   currentSermonSlides?: Slide[];
+  sermonsData?: Sermon[];
+  handleSermonSelect: (id: string) => void;
+  currentSermonId?: string;
 }

@@ -20,6 +20,17 @@ export const sermon = gql`
   }
 `;
 
+export const sermons = gql`
+  query sermons($sermonsCollectionId: ID!) {
+    sermons(sermonsCollectionId: $sermonsCollectionId) {
+      id
+      name
+      translation
+      date
+    }
+  }
+`;
+
 export const bibleBooks = gql`
   query bibleBooks($bibleId: ID!) {
     bibleBooks(bibleId: $bibleId) {

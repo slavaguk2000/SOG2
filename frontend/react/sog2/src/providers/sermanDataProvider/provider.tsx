@@ -3,23 +3,48 @@ import { useSearchParams } from 'react-router-dom';
 
 import { useQuery } from '@apollo/client';
 
-import { sermon } from '../../utils/gql/queries';
-import { Query, QuerySermonArgs, Slide } from '../../utils/gql/types';
+import { sermon, sermons } from '../../utils/gql/queries';
+import { Query, QuerySermonArgs, QuerySermonsArgs, Slide } from '../../utils/gql/types';
 
 import SermonDataProviderContext from './context';
 
-const SermonDataProvider: FC<PropsWithChildren> = ({ children }) => {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const id = searchParams.get('id');
+interface SermonDataProviderProps extends PropsWithChildren {
+  sermonsCollectionId?: string;
+}
 
-  const { data } = useQuery<Pick<Query, 'sermon'>, QuerySermonArgs>(sermon, {
+const SermonDataProvider: FC<SermonDataProviderProps> = ({ sermonsCollectionId = '0', children }) => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const currentSermonId = searchParams.get('id') ?? undefined;
+
+  const handleSermonSelect = (id: string) => {
+    setSearchParams((prev) => {
+      prev.set('id', id);
+
+      return prev;
+    });
+  };
+
+  const { data: sermonsData } = useQuery<Pick<Query, 'sermons'>, QuerySermonsArgs>(sermons, {
     variables: {
-      sermonId: id ?? 'ce762a0d-113b-466d-9bb9-e975127bb50a',
+      sermonsCollectionId,
     },
     fetchPolicy: 'cache-first',
+    onCompleted: ({ sermons }) => {
+      if (!currentSermonId) {
+        handleSermonSelect(sermons[0].id);
+      }
+    },
   });
 
-  console.log(data);
+  const { data: currentSermonData } = useQuery<Pick<Query, 'sermon'>, QuerySermonArgs>(sermon, {
+    variables: {
+      sermonId: currentSermonId ?? '',
+    },
+    fetchPolicy: 'cache-first',
+    skip: !currentSermonId,
+  });
+
+  console.log(sermonsData);
 
   const handleNextSlide = () => {
     return;
@@ -51,7 +76,10 @@ const SermonDataProvider: FC<PropsWithChildren> = ({ children }) => {
         handlePrevSlide,
         handleUpdateSlide,
         handleUpdateLocation,
-        currentSermonSlides: data?.sermon,
+        handleSermonSelect,
+        currentSermonId,
+        sermonsData: sermonsData?.sermons,
+        currentSermonSlides: currentSermonData?.sermon,
       }}
     >
       {children}
