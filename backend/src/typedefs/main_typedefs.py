@@ -38,6 +38,7 @@ type_defs = gql("""
         name: String!
         translation: String!
         date: String!
+        audioLink: String
     }
     
     type Mutation {

@@ -60,9 +60,11 @@ const History = () => {
 
   return (
     <HistoryInstrumentIconWrapper>
-      <IconButton onClick={handleClick}>
-        <HistoryIcon />
-      </IconButton>
+      <Tooltip title="History">
+        <IconButton onClick={handleClick}>
+          <HistoryIcon />
+        </IconButton>
+      </Tooltip>
 
       <Popover
         open={open}

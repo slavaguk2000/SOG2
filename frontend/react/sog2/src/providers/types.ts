@@ -61,5 +61,5 @@ export interface SermonDataProviderContextType extends DataProvider {
   currentSermonSlides?: Slide[];
   sermonsData?: Sermon[];
   handleSermonSelect: (id: string) => void;
-  currentSermonId?: string;
+  currentSermon?: Sermon;
 }

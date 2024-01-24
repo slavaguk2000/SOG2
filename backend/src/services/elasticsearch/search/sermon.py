@@ -38,7 +38,7 @@ def get_sermon_by_id(sermon_id: str):
             }
     }, size=1000, sort=['paragraph_order'])
 
-    print(result)
+    # print(result)
 
     return [sermon_hit_to_slide(hit) for hit in result["hits"]["hits"]]
 
@@ -48,7 +48,8 @@ def sermon_agg_to_sermon_data(agg_data: dict):
         "id": agg_data["key"],
         "name": agg_data["sermon_name"]["buckets"][0]["key"],
         "translation": agg_data["sermon_translation"]["buckets"][0]["key"],
-        "date": agg_data["sermon_date"]["buckets"][0]["key_as_string"]
+        "date": agg_data["sermon_date"]["buckets"][0]["key_as_string"],
+        "audio_link": agg_data["audio_link"]["buckets"][0]["key"] if len(agg_data["audio_link"]["buckets"]) else None
     }
 
 
@@ -84,6 +85,12 @@ def get_sermons(sermons_collection_id: str):
             "sermon_date": {
               "terms": {
                 "field": "sermon_date",
+                "size": 1
+              }
+            },
+            "audio_link": {
+              "terms": {
+                "field": "audio_link",
                 "size": 1
               }
             }

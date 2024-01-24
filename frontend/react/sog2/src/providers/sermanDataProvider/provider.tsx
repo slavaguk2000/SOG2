@@ -116,7 +116,7 @@ const SermonDataProvider: FC<SermonDataProviderProps> = ({ sermonsCollectionId =
         handleUpdateSlide,
         handleUpdateLocation,
         handleSermonSelect,
-        currentSermonId,
+        currentSermon: currentSermonId ? sermonsMap?.[currentSermonId] : undefined,
         sermonsData: sermonsData?.sermons,
         currentSermonSlides: currentSermonData?.sermon,
       }}

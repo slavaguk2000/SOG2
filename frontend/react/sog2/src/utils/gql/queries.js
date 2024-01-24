@@ -28,6 +28,7 @@ export const sermons = gql`
       name
       translation
       date
+      audioLink
     }
   }
 `;

@@ -6,7 +6,7 @@ import BibleEntityItem from '../BibleContent/BibleEntityItem';
 import { SermonSelectWrapper } from './styled';
 
 const SermonsSelect = () => {
-  const { sermonsData, handleSermonSelect, currentSermonId } = useSermonData();
+  const { sermonsData, handleSermonSelect, currentSermon } = useSermonData();
 
   const preparedData = useMemo(
     () =>
@@ -29,7 +29,7 @@ const SermonsSelect = () => {
           key={id}
           name={name}
           onClick={() => handleSermonSelect(id)}
-          selected={id === currentSermonId}
+          selected={id === currentSermon?.id}
         />
       ))}
     </SermonSelectWrapper>

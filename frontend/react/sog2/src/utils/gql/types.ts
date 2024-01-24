@@ -85,6 +85,7 @@ export type QuerySermonsArgs = {
 
 export type Sermon = {
   __typename?: 'Sermon';
+  audioLink?: Maybe<Scalars['String']['output']>;
   date: Scalars['String']['output'];
   id: Scalars['ID']['output'];
   name: Scalars['String']['output'];
