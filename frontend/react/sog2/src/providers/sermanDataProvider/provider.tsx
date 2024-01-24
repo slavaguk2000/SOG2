@@ -50,20 +50,15 @@ const SermonDataProvider: FC<SermonDataProviderProps> = ({ sermonsCollectionId =
     }
   }, [currentSermonId, handleSermonSelect, sermonsData]);
 
-  const handleNextSlide = () => {
-    return;
-  };
-
-  const handlePrevSlide = () => {
-    return;
-  };
+  const { handleUpdateSlide: instrumentsHandleUpdateSlide, currentSlide } = useInstrumentsField();
 
   const sermonsMap = useMemo(() => sermonsData && arrayToMap(sermonsData.sermons), [sermonsData]);
-
-  const { handleUpdateSlide: instrumentsHandleUpdateSlide } = useInstrumentsField();
+  const sermonParagraphsMap = useMemo(
+    () => currentSermonData && arrayToMap(currentSermonData.sermon, { mapper: (slide, idx) => ({ ...slide, idx }) }),
+    [currentSermonData],
+  );
 
   const handleUpdateSlide = (newSlide?: Slide) => {
-    console.log('handleUpdateSlide', newSlide);
     const sermonId = newSlide?.location?.[1];
 
     if (sermonId) {
@@ -79,6 +74,34 @@ const SermonDataProvider: FC<SermonDataProviderProps> = ({ sermonsCollectionId =
         },
       },
     );
+  };
+
+  const handleNextSlide = () => {
+    if (!(currentSermonData && sermonParagraphsMap && currentSlide?.id)) {
+      return;
+    }
+
+    const currentIdx = sermonParagraphsMap[currentSlide.id].idx;
+
+    const nextIdx = currentIdx + 1;
+
+    if (currentIdx >= 0 && currentSermonData.sermon.length > nextIdx) {
+      handleUpdateSlide(currentSermonData.sermon[nextIdx]);
+    }
+  };
+
+  const handlePrevSlide = () => {
+    if (!(currentSermonData && sermonParagraphsMap && currentSlide?.id)) {
+      return;
+    }
+
+    const currentIdx = sermonParagraphsMap[currentSlide.id].idx;
+
+    const prevIdx = currentIdx - 1;
+
+    if (prevIdx >= 0) {
+      handleUpdateSlide(currentSermonData.sermon[prevIdx]);
+    }
   };
 
   const handleUpdateLocation = (newSlide: Slide) => {
