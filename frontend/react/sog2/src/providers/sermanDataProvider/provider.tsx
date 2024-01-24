@@ -1,10 +1,12 @@
-import React, { FC, PropsWithChildren, useCallback, useEffect } from 'react';
+import React, { FC, PropsWithChildren, useCallback, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 import { useQuery } from '@apollo/client';
 
+import { arrayToMap } from '../../utils';
 import { sermon, sermons } from '../../utils/gql/queries';
 import { Query, QuerySermonArgs, QuerySermonsArgs, Slide } from '../../utils/gql/types';
+import { useInstrumentsField } from '../instrumentsFieldProvider';
 
 import SermonDataProviderContext from './context';
 
@@ -56,6 +58,10 @@ const SermonDataProvider: FC<SermonDataProviderProps> = ({ sermonsCollectionId =
     return;
   };
 
+  const sermonsMap = useMemo(() => sermonsData && arrayToMap(sermonsData.sermons), [sermonsData]);
+
+  const { handleUpdateSlide: instrumentsHandleUpdateSlide } = useInstrumentsField();
+
   const handleUpdateSlide = (newSlide?: Slide) => {
     console.log('handleUpdateSlide', newSlide);
     const sermonId = newSlide?.location?.[1];
@@ -64,7 +70,15 @@ const SermonDataProvider: FC<SermonDataProviderProps> = ({ sermonsCollectionId =
       setSearchParams((prev) => ({ ...prev, id: sermonId }));
     }
 
-    return;
+    instrumentsHandleUpdateSlide(
+      newSlide && {
+        slide: newSlide,
+        presentationData: {
+          text: `${newSlide.location?.[2] ? `${newSlide.location?.[2]}. ` : ''}${newSlide.content}`,
+          title: (sermonId && sermonsMap?.[sermonId].name) || '',
+        },
+      },
+    );
   };
 
   const handleUpdateLocation = (newSlide: Slide) => {
