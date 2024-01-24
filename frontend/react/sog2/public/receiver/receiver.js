@@ -26,7 +26,10 @@ function addMessage(text, location) {
 document.addEventListener('DOMContentLoaded', function () {
   if (navigator.presentation.receiver) {
     navigator.presentation.receiver.connectionList.then((list) => {
-      list.connections.map((connection) => addConnection(connection));
+      list.connections.map((connection) => {
+        addConnection(connection);
+        connection.send('Connected');
+      });
       list.addEventListener('connectionavailable', function (event) {
         addConnection(event.connection);
       });

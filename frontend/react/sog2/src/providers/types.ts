@@ -8,12 +8,14 @@ export interface ChapterSelector {
   chapterId?: number;
 }
 
+export interface PresentationData {
+  text: string;
+  title: string;
+}
+
 export interface SlideData {
   slide: Slide;
-  presentationData: {
-    text: string;
-    title: string;
-  };
+  presentationData: PresentationData;
 }
 
 export interface DataProvider {
