@@ -1,4 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useState } from 'react';
+import ReactPlayer from 'react-player';
 
 import AlbumIcon from '@mui/icons-material/Album';
 import PauseIcon from '@mui/icons-material/Pause';
@@ -21,51 +22,28 @@ const formatTime = (seconds: number | typeof NaN) => {
 };
 
 const AudioPlayer = () => {
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [duration, setDuration] = useState(0);
-  const [currentTime, setCurrentTime] = useState(0);
-  const audioRef = useRef<HTMLAudioElement>(null);
+  const [isPlaying, setIsPlaying] = useState<boolean>(false);
+  const [played, setPlayed] = useState<number>(0);
+  const [duration, setDuration] = useState<number>(0);
+  const playerRef = React.createRef<ReactPlayer>();
 
-  const audio = audioRef?.current;
-
-  useEffect(() => {
-    if (!audio) {
-      return;
-    }
-
-    const setAudioData = () => {
-      setDuration(audio.duration);
-      setCurrentTime(audio.currentTime);
-    };
-
-    audio.addEventListener('loadeddata', setAudioData);
-    audio.addEventListener('timeupdate', setAudioData);
-
-    setAudioData();
-
-    return () => {
-      audio.removeEventListener('loadeddata', setAudioData);
-      audio.removeEventListener('timeupdate', setAudioData);
-    };
-  }, [audio]);
-
-  const togglePlayPause = async () => {
-    const prevValue = isPlaying;
-    setIsPlaying(!prevValue);
-    if (!prevValue) {
-      return audioRef?.current?.play();
-    } else {
-      return audioRef?.current?.pause();
-    }
+  const handlePlayPause = () => {
+    setIsPlaying(!isPlaying);
   };
 
-  const handleSliderChange = (event: Event, newValue: number) => {
-    if (!audioRef?.current) {
-      return;
-    }
+  const handleProgress = (state: { playedSeconds: number }) => {
+    setPlayed(state.playedSeconds);
+  };
 
-    audioRef.current.currentTime = newValue;
-    setCurrentTime(newValue);
+  const handleDuration = (duration: number) => {
+    setDuration(duration);
+  };
+
+  const handleSeek = (value: number | number[]) => {
+    if (typeof value === 'number') {
+      setPlayed(value);
+      playerRef?.current?.seekTo?.(value);
+    }
   };
 
   const { currentSermon } = useSermonData();
@@ -74,9 +52,15 @@ const AudioPlayer = () => {
 
   return (
     <Box>
-      <audio ref={audioRef} src={audioSrc} preload="metadata">
-        <track kind="captions" />
-      </audio>
+      <ReactPlayer
+        url={audioSrc}
+        playing={isPlaying}
+        onProgress={handleProgress}
+        onDuration={handleDuration}
+        height="0"
+        width="0"
+        ref={playerRef}
+      />
       <InstrumentWithPopper
         icon={<AlbumIcon />}
         tooltip="Audio player"
@@ -85,17 +69,17 @@ const AudioPlayer = () => {
       >
         {audioSrc && (
           <AudioPlayerWrapper>
-            <Button onClick={togglePlayPause}>{isPlaying ? <PauseIcon /> : <PlayArrowIcon />}</Button>
+            <Button onClick={handlePlayPause}>{isPlaying ? <PauseIcon /> : <PlayArrowIcon />}</Button>
             <Slider
               min={0}
               max={duration}
-              value={currentTime}
-              onChange={(e, newValue) => handleSliderChange(e, typeof newValue === 'number' ? newValue : newValue[0])}
+              value={played}
+              onChange={(e, value) => handleSeek(value)}
               valueLabelDisplay="off"
               valueLabelFormat={formatTime}
             />
             <Typography>
-              {formatTime(currentTime)} / {formatTime(duration)}
+              {formatTime(played)} / {formatTime(duration)}
             </Typography>
           </AudioPlayerWrapper>
         )}
