@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 
+import AlbumIcon from '@mui/icons-material/Album';
 import PauseIcon from '@mui/icons-material/Pause';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
-import SurroundSoundIcon from '@mui/icons-material/SurroundSound';
 import { Box, Button, Slider, Typography } from '@mui/material';
 
 import { useSermonData } from '../../providers/sermanDataProvider';
@@ -78,7 +78,7 @@ const AudioPlayer = () => {
         <track kind="captions" />
       </audio>
       <InstrumentWithPopper
-        icon={<SurroundSoundIcon />}
+        icon={<AlbumIcon />}
         tooltip="Audio player"
         disabled={!audioSrc}
         popoverSx={{ opacity: 0.7 }}
