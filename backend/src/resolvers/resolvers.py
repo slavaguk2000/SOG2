@@ -92,6 +92,12 @@ def resolve_set_active_slide(*_, sog_file_src: str, language: str, translation: 
     return True
 
 
+@mutation.field("parseSermonsFromBranhamRu")
+@convert_kwargs_to_snake_case
+def parse_sermons_from_branham_ru(*_):
+    return True
+
+
 @mutation.field("syncBibleToElastic")
 @convert_kwargs_to_snake_case
 def sync_bible_to_elastic(*_, bible_id: str):

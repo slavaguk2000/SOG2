@@ -23,8 +23,17 @@ export type BibleBook = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  addBibleFromSog?: Maybe<Scalars['Boolean']['output']>;
   setActiveSlide?: Maybe<Scalars['Boolean']['output']>;
   setFreeSlide?: Maybe<Scalars['Boolean']['output']>;
+  syncBibleToElastic?: Maybe<Scalars['Boolean']['output']>;
+};
+
+
+export type MutationAddBibleFromSogArgs = {
+  language: Scalars['String']['input'];
+  sogFileSrc: Scalars['String']['input'];
+  translation: Scalars['String']['input'];
 };
 
 
@@ -36,6 +45,11 @@ export type MutationSetActiveSlideArgs = {
 export type MutationSetFreeSlideArgs = {
   text: Scalars['String']['input'];
   title: Scalars['String']['input'];
+};
+
+
+export type MutationSyncBibleToElasticArgs = {
+  bibleId?: InputMaybe<Scalars['ID']['input']>;
 };
 
 export type Query = {
@@ -69,6 +83,7 @@ export type QueryBibleVersesArgs = {
 
 
 export type QuerySearchArgs = {
+  id?: InputMaybe<Scalars['ID']['input']>;
   searchPattern: Scalars['String']['input'];
   tabType: TabType;
 };

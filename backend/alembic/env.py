@@ -20,6 +20,9 @@ from src.services.database import Base
 from src.models.bible import Bible
 from src.models.bible_book import BibleBook
 from src.models.verse import Verse
+from src.models.paragraph import Paragraph
+from src.models.sermon_audio_mapping import SermonAudioMapping
+from src.models.sermon import Sermon
 target_metadata = Base.metadata
 for table in Base.metadata.tables.items():
     print(table)

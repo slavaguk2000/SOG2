@@ -6,7 +6,6 @@ from src.services.database import init_db
 from src.typedefs.main_typedefs import type_defs
 from src.resolvers.resolvers import resolvers
 
-init_db()
 
 schema = make_executable_schema(type_defs, resolvers, snake_case_fallback_resolvers)
 app = CORSMiddleware(GraphQL(schema, debug=True), allow_origins=['*'], allow_methods=("GET", "POST", "OPTIONS"))
