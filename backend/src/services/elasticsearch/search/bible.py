@@ -67,7 +67,6 @@ def bible_source_to_location(source: dict):
 
 def bible_hit_to_slide(hit: dict):
     source = hit["_source"]
-    print(hit)
     return {
         "id": hit["_id"],
         "search_content": bible_source_to_search_content_string(
@@ -207,7 +206,7 @@ def bible_search(search_pattern: str, bible_id: str):
     must = [
         {
             "term": {
-                "bible_id": bible_id
+                "bible_id.keyword": bible_id
             },
         }
     ]
@@ -255,7 +254,6 @@ def bible_search(search_pattern: str, bible_id: str):
             "book_name": {}
         }
     }
-    # print(str(query).replace("'", '"'))
 
     result = el.search(
         index=bible_mapping.index,

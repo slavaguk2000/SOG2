@@ -48,3 +48,6 @@ class Elastic:
         }
 
         self.es.update(index=index, id=slide_id, body=update_script)
+
+    def delete_index(self, index: str):
+        return self.es.delete(index=index)

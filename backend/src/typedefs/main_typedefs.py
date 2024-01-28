@@ -7,7 +7,7 @@ type_defs = gql("""
     }
 
     type Query {
-        search(searchPattern: String!, tabType: TabType!): [Slide!]!
+        search(searchPattern: String!, tabType: TabType!, id: ID): [Slide!]!
         bibleBooks(bibleId: ID!): [BibleBook!]!
         bibleVerses(bibleId: ID!, bookId: ID!, chapter: Int!): [Slide!]!
         bibleHistory(bibleId: ID!, start: Int, size: Int): [Slide!]!
@@ -45,6 +45,7 @@ type_defs = gql("""
       setActiveSlide(slideId: ID): Boolean
       setFreeSlide(text: String!, title: String!): Boolean
       addBibleFromSog(sogFileSrc: String!, language: String!, translation: String!): Boolean
+      syncBibleToElastic(bibleId: ID): Boolean
     }
     
     type Subscription {

@@ -6,6 +6,7 @@ from src.services.parsers.bibleParsers.sog_parser import SimpleBibleParser
 from asyncio import Queue
 
 from src.services.elasticsearch.search.sermon import sermon_search, get_sermon_by_id, get_sermons
+from src.services.elasticsearch.sync.bible import sync_bible
 
 active_slide_queue = Queue()
 query = QueryType()
@@ -17,9 +18,9 @@ subscribers_queues = []
 
 @query.field("search")
 @convert_kwargs_to_snake_case
-def resolve_search(*_, search_pattern: str, tab_type: str):
+def resolve_search(*_, search_pattern: str, tab_type: str, **kwargs):
     if tab_type == 'Bible':
-        return bible_search(search_pattern, "0")
+        return bible_search(search_pattern, kwargs["id"] if kwargs.get("id") else "607e6be1-dc31-498e-ba8b-f73ddd8806fb")
     if tab_type == 'Sermon':
         return sermon_search(search_pattern, "0")
     return []
@@ -89,6 +90,12 @@ def resolve_set_active_slide(*_, text: str, title: str):
 def resolve_set_active_slide(*_, sog_file_src: str, language: str, translation: str):
     SimpleBibleParser.parse(sog_file_src, language, translation)
     return True
+
+
+@mutation.field("syncBibleToElastic")
+@convert_kwargs_to_snake_case
+def sync_bible_to_elastic(*_, bible_id: str):
+    return sync_bible(bible_id)
 
 
 @subscription.source("activeSlideSubscription")
