@@ -44,7 +44,7 @@ type_defs = gql("""
     type Mutation {
       setActiveSlide(slideId: ID): Boolean
       setFreeSlide(text: String!, title: String!): Boolean
-      setFreeSlide(text: String!, title: String!): Boolean
+      addBibleFromSog(sogFileSrc: String!, language: String!, translation: String!): Boolean
     }
     
     type Subscription {

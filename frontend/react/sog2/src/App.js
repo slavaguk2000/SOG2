@@ -31,7 +31,7 @@ function App() {
                   <Route
                     path="/bible"
                     element={
-                      <BibleDataProvider bibleId="0">
+                      <BibleDataProvider bibleId="607e6be1-dc31-498e-ba8b-f73ddd8806fb">
                         <MainView dataProviderContext={BibleContext}>
                           <BibleContent />
                         </MainView>

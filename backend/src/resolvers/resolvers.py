@@ -1,6 +1,8 @@
 from ariadne import convert_kwargs_to_snake_case, ObjectType, QueryType, MutationType, SubscriptionType
-from src.services.elasticsearch.search.bible import bible_search, get_bible_books_by_bible_id, get_chapter_verses, \
+from src.services.elasticsearch.search.bible import bible_search, \
     get_bible_slide_by_id, update_bible_slide_usage, get_bible_history
+from src.services.database_helpers.bible import get_bible_books_by_bible_id, get_chapter_verses
+from src.services.parsers.bibleParsers.sog_parser import SimpleBibleParser
 from asyncio import Queue
 
 from src.services.elasticsearch.search.sermon import sermon_search, get_sermon_by_id, get_sermons
@@ -84,8 +86,8 @@ def resolve_set_active_slide(*_, text: str, title: str):
 
 @mutation.field("addBibleFromSog")
 @convert_kwargs_to_snake_case
-def resolve_set_active_slide(*_, sog_file_src: str, translation: str):
-
+def resolve_set_active_slide(*_, sog_file_src: str, language: str, translation: str):
+    SimpleBibleParser.parse(sog_file_src, language, translation)
     return True
 
 
