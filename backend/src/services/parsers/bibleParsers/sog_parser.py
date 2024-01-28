@@ -1,12 +1,8 @@
-from datetime import datetime, timezone
-
 from sqlalchemy.orm import Session
-from src.services.database import engine, Base
+from src.services.database import engine
 from src.models.bible import Bible
 from src.models.bible_book import BibleBook
 from src.models.verse import Verse
-
-from src.services.database import get_db
 
 
 class SimpleBibleParser:
