@@ -44,6 +44,7 @@ type_defs = gql("""
     type Mutation {
       setActiveSlide(slideId: ID): Boolean
       setFreeSlide(text: String!, title: String!): Boolean
+      setFreeSlide(text: String!, title: String!): Boolean
     }
     
     type Subscription {

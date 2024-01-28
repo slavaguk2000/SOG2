@@ -82,6 +82,13 @@ def resolve_set_active_slide(*_, text: str, title: str):
     return True
 
 
+@mutation.field("addBibleFromSog")
+@convert_kwargs_to_snake_case
+def resolve_set_active_slide(*_, sog_file_src: str, translation: str):
+
+    return True
+
+
 @subscription.source("activeSlideSubscription")
 async def resolve_active_slide_subscription(*_):
     queue = Queue()
