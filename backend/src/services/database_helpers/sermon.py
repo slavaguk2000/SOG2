@@ -6,7 +6,7 @@ from src.models.paragraph import Paragraph
 
 def get_sermons(sermons_collection_id: str):
     with Session(engine) as session:
-        sermons = session.query(Sermon).all()
+        sermons = session.query(Sermon).order_by(Sermon.date.asc()).all()
         return [
             {
                 'id': sermon.id,
@@ -22,7 +22,7 @@ def get_sermon_by_id(sermon_id: str):
     with Session(engine) as session:
         paragraphs = session.query(Paragraph).filter(
             Paragraph.sermon_id == sermon_id,
-        ).all()
+        ).order_by(Paragraph.paragraph_order.asc()).all()
 
         return [{
             "id": paragraph.id,
