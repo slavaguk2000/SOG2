@@ -5,6 +5,9 @@ from sqlalchemy import Column, String, DateTime
 from sqlalchemy.orm import relationship
 from src.services.database import Base
 
+import src.models.paragraph
+import src.models.sermon_audio_mapping
+
 
 class Sermon(Base):
     __tablename__ = 'sermons'
