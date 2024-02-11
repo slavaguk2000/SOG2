@@ -6,7 +6,7 @@ import re
 el = Elastic()
 
 
-default_slide_source = ["book", "book_order", "chapter", "verse_number", "verse_content", "search_content"]
+default_slide_source = ["bible_id", "book_id", "book_order", "chapter", "verse_number", "verse_content", "search_content"]
 sort_priority = [
     {
         "_score": {
@@ -62,7 +62,7 @@ def bible_source_to_search_content_string(source: dict, highlight: dict, matched
 
 
 def bible_source_to_location(source: dict):
-    return ["0", source['book_order'], source['chapter'], source['verse_number']]
+    return [source['bible_id'], source['book_id'], source['chapter'], source['verse_number']]
 
 
 def bible_hit_to_slide(hit: dict):

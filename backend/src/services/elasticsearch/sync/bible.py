@@ -13,11 +13,20 @@ def sync_bible(bible_id: str) -> bool:
         return False
     with Session(engine) as session:
         verses = session.query(Verse).filter(Verse.bible_id == bible_id).all()
-        el.delete_index(bible_mapping.index)
+
+        if el.index_exist(bible_mapping.index):
+            el.delete_by_query(bible_mapping.index, {
+                "term": {
+                    "bible_id": bible_id,
+                }
+            })
+        else:
+            el.create_index(bible_mapping.index, bible_mapping.body["mappings"])
+
         el.bulk_create(bible_mapping.index, [
             {
                 "_id": verse.id,
-                "book": verse.bible_book.name,
+                "book_id": verse.bible_book.id,
                 "book_name": verse.bible_book.name,
                 "book_order": verse.bible_book.book_order,
                 "bible_id": verse.bible_id,

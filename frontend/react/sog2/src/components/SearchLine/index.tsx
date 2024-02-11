@@ -1,5 +1,5 @@
 import React, { Context, KeyboardEvent, useContext, useEffect, useRef, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useSearchParams } from 'react-router-dom';
 
 import { useQuery } from '@apollo/client';
 import TextField from '@mui/material/TextField';
@@ -23,6 +23,7 @@ const handleSearch = debounce(
 );
 
 const SearchLine = () => {
+  const [searchParams] = useSearchParams();
   const [debouncedSearchText, setDebouncedSearchText] = useState<string>('');
   const [searchText, setSearchText] = useState<string>('');
   const [autocompleteActive, setAutocompleteActive] = useState<boolean>(false);
@@ -38,6 +39,7 @@ const SearchLine = () => {
     variables: {
       searchPattern: debouncedSearchText,
       tabType,
+      id: searchParams.get(pathname === '/bible' ? 'bibleId' : 'id'),
     },
     fetchPolicy: 'cache-first',
     skip: debouncedSearchText.length < minimumSearchLength,

@@ -49,5 +49,11 @@ class Elastic:
 
         self.es.update(index=index, id=slide_id, body=update_script)
 
-    def delete_index(self, index: str):
-        return self.es.delete(index=index)
+    def delete_index(self, index: str, id: str):
+        return self.es.delete(index=index, id=id)
+
+    def delete_by_query(self, index: str, query: dict):
+        return self.es.delete_by_query(index=index, body={"query": query})
+
+    def create_index(self, index: str, body: dict):
+        return self.es.indices.create(index=index, mappings=body.get("mappings"), settings=body.get("settings"))

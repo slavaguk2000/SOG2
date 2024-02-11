@@ -3,22 +3,11 @@ from src.types.Mapping import Mapping
 bible_mapping = Mapping(
     'bible',
     {
-        "settings": {
-            "analysis": {
-                "analyzer": {
-                    "lowercase_analyzer": {
-                        "type": "custom",
-                        "tokenizer": "keyword",
-                        "filter": ["lowercase"]
-                    }
-                }
-            }
-        },
         "properties": {
             "bible_id": {
                 "type": "keyword"
             },
-            "book": {
+            "book_id": {
                 "type": "keyword"
             },
             "book_name": {
@@ -43,7 +32,19 @@ bible_mapping = Mapping(
                 "analyzer": "russian"
             }
         }
-    })
+    },
+    settings={
+        "analysis": {
+            "analyzer": {
+                "lowercase_analyzer": {
+                    "type": "custom",
+                    "tokenizer": "keyword",
+                    "filter": ["lowercase"]
+                }
+            }
+        }
+    }
+)
 
 sermon_mapping = Mapping(
     'sermon',
