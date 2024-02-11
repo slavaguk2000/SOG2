@@ -37,7 +37,7 @@ def sermon(*_, sermon_id: str):
 
 @query.field("sermons")
 @convert_kwargs_to_snake_case
-def sermon(*_, sermons_collection_id: str):
+def sermons(*_, sermons_collection_id: str):
     return get_sermons(sermons_collection_id)
 
 

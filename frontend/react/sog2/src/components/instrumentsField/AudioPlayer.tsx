@@ -48,7 +48,7 @@ const AudioPlayer = () => {
 
   const { currentSermon } = useSermonData();
 
-  const audioSrc = currentSermon?.audioLink ? `https://branham.ru${currentSermon.audioLink}` : undefined;
+  const audioSrc = currentSermon?.audioLink ?? undefined;
 
   return (
     <Box>

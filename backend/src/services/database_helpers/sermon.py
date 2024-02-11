@@ -13,7 +13,7 @@ def get_sermons(sermons_collection_id: str):
                 'name': sermon.name,
                 'translation': sermon.translation,
                 'date': sermon.date,
-                'audioLink': sermon.audio_mappings[0].audio_link if len(sermon.audio_mappings) else None
+                'audio_link': (sermon.audio_mappings[0].audio_link if len(sermon.audio_mappings) else None)
             } for sermon in sermons
         ]
 
