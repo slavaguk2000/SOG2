@@ -349,5 +349,8 @@ def get_bible_slide_by_id(slide_id: str):
     return bible_hit_to_slide(el.get_slide_by_id(bible_mapping.index, slide_id))
 
 
-def update_bible_slide_usage(slide_id: str):
-    return el.update_slide_usage(bible_mapping.index, slide_id)
+def update_bible_slide_usage_in_elastic(slide_id: str):
+    try:
+        return el.update_slide_usage(bible_mapping.index, slide_id)
+    except BaseException as e:
+        print('Error while syncing in elastic', e)
