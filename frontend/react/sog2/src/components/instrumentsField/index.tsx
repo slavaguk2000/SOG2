@@ -1,6 +1,6 @@
 import React from 'react';
 
-import AudioPlayer from './AudioPlayer';
+import AudioPlayerButton from './AudioPlayerButton';
 import CaptureScreen from './CaptureScreen';
 import FreeSlideDialogButton from './FreeSlideDialogButton';
 import History from './history';
@@ -10,7 +10,7 @@ import { InstrumentsFieldWrapper } from './styled';
 const InstrumentsField = () => {
   return (
     <InstrumentsFieldWrapper>
-      <AudioPlayer />
+      <AudioPlayerButton />
       <History />
       <FreeSlideDialogButton />
       <SilentModeButton />

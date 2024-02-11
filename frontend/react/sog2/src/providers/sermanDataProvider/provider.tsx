@@ -7,6 +7,7 @@ import { arrayToMap } from '../../utils';
 import { sermon, sermons } from '../../utils/gql/queries';
 import { Query, QuerySermonArgs, QuerySermonsArgs, Slide } from '../../utils/gql/types';
 import { useInstrumentsField } from '../instrumentsFieldProvider';
+import { usePlayerContext } from '../playerProvider';
 
 import SermonDataProviderContext from './context';
 
@@ -107,6 +108,17 @@ const SermonDataProvider: FC<SermonDataProviderProps> = ({ sermonsCollectionId =
   const handleUpdateLocation = (newSlide: Slide) => {
     console.log('handleUpdateLocation', newSlide);
   };
+
+  const { setAudio, src } = usePlayerContext();
+
+  const audioLink = currentSermonId && sermonsMap?.[currentSermonId]?.audioLink;
+  const sermonName = currentSermonId && sermonsMap?.[currentSermonId]?.name;
+
+  useEffect(() => {
+    if (audioLink && sermonName && audioLink !== src) {
+      setAudio(audioLink, sermonName);
+    }
+  }, [audioLink, sermonName, setAudio, src]);
 
   return (
     <SermonDataProviderContext.Provider

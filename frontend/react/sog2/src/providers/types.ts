@@ -63,3 +63,16 @@ export interface SermonDataProviderContextType extends DataProvider {
   handleSermonSelect: (id: string) => void;
   currentSermon?: Sermon;
 }
+
+export interface PlayerContextType {
+  seek: (value: number | number[]) => void;
+  setAudio: (src: string, title: string, played?: number) => void;
+  handlePlayPause: () => void;
+  setOpenInterface: Dispatch<SetStateAction<boolean>>;
+  src: string | null;
+  title: string;
+  played: number;
+  duration: number;
+  isPlaying: boolean;
+  openInterface: boolean;
+}

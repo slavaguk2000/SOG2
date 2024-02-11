@@ -6,13 +6,19 @@ export const InstrumentsFieldWrapper = styled(Box)`
 
 export const AudioPlayerWrapper = styled(Box)`
   display: flex;
-  margin: 10px;
+  padding: 10px;
   height: 40px;
-  width: 90vw;
+  width: 100%;
   align-items: center;
 
   & > p {
     white-space: nowrap;
     margin: 0 0 0 10px;
+  }
+
+  & > button {
+    min-width: 20px;
+    margin: 0 15px 0 0;
+    border-radius: 50%;
   }
 `;
