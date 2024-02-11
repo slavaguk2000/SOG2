@@ -1,15 +1,17 @@
 import React, { FC, PropsWithChildren, SetStateAction, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 
 import { useMutation } from '@apollo/client';
 
 import { setActiveSlide } from '../../utils/gql/queries';
-import { Mutation, MutationSetActiveSlideArgs, Slide } from '../../utils/gql/types';
+import { Mutation, MutationSetActiveSlideArgs, Slide, TabType } from '../../utils/gql/types';
 import { usePresentation } from '../presentationProvider';
 import { SlideData } from '../types';
 
 import InstrumentsFieldProviderContext from './context';
 
 const InstrumentsFieldProvider: FC<PropsWithChildren> = ({ children }) => {
+  const { pathname } = useLocation();
   const [silentMode, setSilentMode] = useState<boolean>(false);
   const [currentSlide, setCurrentSlide] = useState<SlideData | undefined>(undefined);
 
@@ -19,10 +21,13 @@ const InstrumentsFieldProvider: FC<PropsWithChildren> = ({ children }) => {
     setActiveSlide,
   );
 
+  const tabType = pathname === '/bible' ? TabType.Bible : TabType.Sermon;
+
   const sendActiveSlide = (newSlide?: Slide) => {
     setActiveSlideMutation({
       variables: {
         slideId: newSlide?.id,
+        type: tabType,
       },
     }).catch((e) => console.error(e));
   };

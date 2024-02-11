@@ -3,7 +3,7 @@ from ariadne import convert_kwargs_to_snake_case, ObjectType, QueryType, Mutatio
 from src.services.bible_helper import update_bible_slide_usage
 from src.services.elasticsearch.search.bible import bible_search, get_bible_history
 from src.services.database_helpers.bible import get_bible_books_by_bible_id, get_chapter_verses, get_bible_slide_by_id
-from src.services.database_helpers.sermon import get_sermons, get_sermon_by_id
+from src.services.database_helpers.sermon import get_sermons, get_sermon_by_id, get_sermon_paragraph_by_id
 from src.services.elasticsearch.sync.sermon import sync_sermons
 from src.services.parsers.bibleParsers.sog_parser import SimpleBibleParser
 from asyncio import Queue
@@ -61,14 +61,18 @@ def resolve_bible_history(*_, bible_id: str, **kwargs):
 
 @mutation.field("setActiveSlide")
 @convert_kwargs_to_snake_case
-def resolve_set_active_slide(*_, slide_id=None):
+def resolve_set_active_slide(*_, slide_id=None, **kwargs):
     global current_active_slide
-    active_slide = get_bible_slide_by_id(slide_id) if slide_id else None
+    active_slide = None
+    if slide_id:
+        if kwargs.get('type') == 'Sermon':
+            active_slide = get_sermon_paragraph_by_id(slide_id)
+        else:
+            active_slide = get_bible_slide_by_id(slide_id)
+            update_bible_slide_usage(slide_id)
+
     current_active_slide = active_slide
     print(current_active_slide)
-
-    if slide_id:
-        update_bible_slide_usage(slide_id)
 
     for subscriber_queue in subscribers_queues:
         subscriber_queue.put_nowait(active_slide)

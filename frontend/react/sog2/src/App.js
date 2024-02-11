@@ -23,9 +23,9 @@ function App() {
     <ThemeProvider theme={theme}>
       <PresentationProvider>
         <FreeSlideDialogProvider>
-          <InstrumentsFieldProvider>
-            <AppRoot>
-              <Router>
+          <AppRoot>
+            <Router>
+              <InstrumentsFieldProvider>
                 <Routes>
                   <Route path="/" element={<Navigate to="/bible" replace />} />
                   <Route
@@ -49,9 +49,9 @@ function App() {
                     }
                   />
                 </Routes>
-              </Router>
-            </AppRoot>
-          </InstrumentsFieldProvider>
+              </InstrumentsFieldProvider>
+            </Router>
+          </AppRoot>
         </FreeSlideDialogProvider>
       </PresentationProvider>
     </ThemeProvider>

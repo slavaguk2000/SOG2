@@ -24,9 +24,11 @@ export type BibleBook = {
 export type Mutation = {
   __typename?: 'Mutation';
   addBibleFromSog?: Maybe<Scalars['Boolean']['output']>;
+  parseSermonsFromBranhamRu?: Maybe<Scalars['Boolean']['output']>;
   setActiveSlide?: Maybe<Scalars['Boolean']['output']>;
   setFreeSlide?: Maybe<Scalars['Boolean']['output']>;
   syncBibleToElastic?: Maybe<Scalars['Boolean']['output']>;
+  syncSermonsToElastic?: Maybe<Scalars['Boolean']['output']>;
 };
 
 
@@ -39,6 +41,7 @@ export type MutationAddBibleFromSogArgs = {
 
 export type MutationSetActiveSlideArgs = {
   slideId?: InputMaybe<Scalars['ID']['input']>;
+  type?: InputMaybe<TabType>;
 };
 
 

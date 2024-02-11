@@ -26,9 +26,11 @@ const InstrumentWithPopper: FC<InstrumentWithPopperProps> = ({ children, icon, t
   return (
     <Box>
       <Tooltip title={tooltip}>
-        <IconButton onClick={handleClick} disabled={disabled}>
-          {icon}
-        </IconButton>
+        <div>
+          <IconButton onClick={handleClick} disabled={disabled}>
+            {icon}
+          </IconButton>
+        </div>
       </Tooltip>
 
       <Popover

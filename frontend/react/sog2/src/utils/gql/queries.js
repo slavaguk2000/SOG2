@@ -65,8 +65,8 @@ export const bibleVerses = gql`
 `;
 
 export const setActiveSlide = gql`
-  mutation setActiveSlide($slideId: ID) {
-    setActiveSlide(slideId: $slideId)
+  mutation setActiveSlide($slideId: ID, $type: TabType) {
+    setActiveSlide(slideId: $slideId, type: $type)
   }
 `;
 

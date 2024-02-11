@@ -35,3 +35,25 @@ def get_sermon_by_id(sermon_id: str):
                 paragraph.paragraph_order
             ]
         } for idx, paragraph in enumerate(paragraphs)]
+
+
+def get_sermon_paragraph_by_id(id: str):
+    with Session(engine) as session:
+        paragraph = session.query(Paragraph).filter(
+            Paragraph.id == id,
+        ).first()
+
+        if paragraph:
+            return {
+                "id": paragraph.id,
+                "search_content": paragraph.content,
+                "content": paragraph.content,
+                "location": [
+                    "0",
+                    paragraph.sermon_id,
+                    "",
+                    paragraph.paragraph_order
+                ]
+            }
+
+    return None
