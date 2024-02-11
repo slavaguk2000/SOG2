@@ -26,7 +26,7 @@ def sermon_hit_to_slide(hit: dict):
         "id": hit["_id"],
         "search_content": f"{date_object.strftime('%y')}-{date_object.month}{date_object.day} {source['sermon_name']} ({source['sermon_translation']}) {insert_highlights_into_original_str(source['chapter_content'], hit)}",
         "content": source['chapter_content'],
-        "location": [source['sermon_collection_id'], source['sermon_id'], str(source["chapter"]) if source.get("chapter") else "", source['paragraph_order']]
+        "location": ["0", source['sermon_id'], str(source["chapter"]) if source.get("chapter") else "", source['paragraph_order']]
     }
 
 
@@ -106,11 +106,11 @@ def sermon_search(search_pattern: str, sermon_collection_id: str):
     should = []
 
     must = [
-        {
-            "term": {
-                "sermon_collection_id": sermon_collection_id
-            },
-        }
+        # {
+        #     "term": {
+        #         "sermon_collection_id": sermon_collection_id
+        #     },
+        # }
     ]
 
     if len(search_pattern.strip()):
