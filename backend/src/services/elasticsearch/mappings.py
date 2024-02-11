@@ -49,17 +49,6 @@ bible_mapping = Mapping(
 sermon_mapping = Mapping(
     'sermon',
     {
-        "settings": {
-            "analysis": {
-                "analyzer": {
-                    "lowercase_analyzer": {
-                        "type": "custom",
-                        "tokenizer": "keyword",
-                        "filter": ["lowercase"]
-                    }
-                }
-            }
-        },
         "properties": {
             "id": {
                 "type": "keyword"
@@ -97,6 +86,17 @@ sermon_mapping = Mapping(
             },
             "audio_link": {
                 "type": "keyword"
+            }
+        }
+    },
+    settings={
+        "analysis": {
+            "analyzer": {
+                "lowercase_analyzer": {
+                    "type": "custom",
+                    "tokenizer": "keyword",
+                    "filter": ["lowercase"]
+                }
             }
         }
     }

@@ -4,6 +4,7 @@ from src.services.bible_helper import update_bible_slide_usage
 from src.services.elasticsearch.search.bible import bible_search, get_bible_history
 from src.services.database_helpers.bible import get_bible_books_by_bible_id, get_chapter_verses, get_bible_slide_by_id
 from src.services.database_helpers.sermon import get_sermons, get_sermon_by_id
+from src.services.elasticsearch.sync.sermon import sync_sermons
 from src.services.parsers.bibleParsers.sog_parser import SimpleBibleParser
 from asyncio import Queue
 
@@ -104,6 +105,12 @@ def parse_sermons_from_branham_ru(*_):
 @convert_kwargs_to_snake_case
 def sync_bible_to_elastic(*_, bible_id: str):
     return sync_bible(bible_id)
+
+
+@mutation.field("syncSermonsToElastic")
+@convert_kwargs_to_snake_case
+def sync_sermons_to_elastic(*_):
+    sync_sermons()
 
 
 @subscription.source("activeSlideSubscription")

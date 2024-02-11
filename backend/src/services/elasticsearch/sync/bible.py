@@ -21,7 +21,7 @@ def sync_bible(bible_id: str) -> bool:
                 }
             })
         else:
-            el.create_index(bible_mapping.index, bible_mapping.body["mappings"])
+            el.create_index(bible_mapping.index, bible_mapping.body)
 
         el.bulk_create(bible_mapping.index, [
             {

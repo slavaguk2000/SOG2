@@ -46,6 +46,7 @@ type_defs = gql("""
       setFreeSlide(text: String!, title: String!): Boolean
       addBibleFromSog(sogFileSrc: String!, language: String!, translation: String!): Boolean
       syncBibleToElastic(bibleId: ID): Boolean
+      syncSermonsToElastic: Boolean
       parseSermonsFromBranhamRu: Boolean
     }
     
