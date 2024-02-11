@@ -1,4 +1,5 @@
-import React, { PropsWithChildren, useCallback, useMemo, useState } from 'react';
+import React, { PropsWithChildren, useCallback, useEffect, useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 
 import { useQuery } from '@apollo/client';
 
@@ -10,10 +11,6 @@ import { ChapterSelector } from '../types';
 
 import BibleContext from './context';
 
-interface BibleDataProviderProps {
-  bibleId: string;
-}
-
 export const getEntityIdFromSlide = (slide: Slide, position: number): string =>
   slide.location ? slide.location[slide.location.length - position] : '';
 
@@ -24,7 +21,19 @@ export const getChapterNumberFromSlide = (slide: Slide): number => Number(getEnt
 export const getBookFromSlide = (slide: Slide, bibleBooksData: BibleBook[]): BibleBook | undefined =>
   bibleBooksData.find(({ id }) => id === getEntityIdFromSlide(slide, 3));
 
-const BibleDataProvider = ({ bibleId = '0', children }: PropsWithChildren<BibleDataProviderProps>) => {
+const BibleDataProvider = ({ children }: PropsWithChildren) => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const bibleId = searchParams.get('bibleId') ?? '';
+
+  useEffect(() => {
+    if (!bibleId) {
+      setSearchParams((prev) => ({
+        ...prev,
+        bibleId: 'fcd38411-5f94-4bda-9a2a-cd5624b3dac2',
+      }));
+    }
+  });
+
   const [currentChapter, setCurrentChapter] = useState<ChapterSelector>({
     bookIdx: undefined,
     chapterId: undefined,
@@ -36,6 +45,7 @@ const BibleDataProvider = ({ bibleId = '0', children }: PropsWithChildren<BibleD
     variables: {
       bibleId,
     },
+    skip: !bibleId,
     fetchPolicy: 'cache-first',
   });
 
@@ -121,16 +131,18 @@ const BibleDataProvider = ({ bibleId = '0', children }: PropsWithChildren<BibleD
     [bibleBooksData, currentChapter.bookIdx],
   );
 
+  const bookId = currentBook?.id ?? (bibleBooksData?.[0]?.id as string) ?? '';
+
   const { data: versesData, loading: versesDataLoading } = useQuery<Pick<Query, 'bibleVerses'>, QueryBibleVersesArgs>(
     bibleVerses,
     {
       variables: {
         bibleId,
-        bookId: currentBook?.id ?? (bibleBooksData?.[0].id as string),
+        bookId,
         chapter: currentChapter?.chapterId ?? 1,
       },
       fetchPolicy: 'cache-first',
-      skip: !bibleBooksData,
+      skip: !(bibleBooksData && bookId),
     },
   );
 
