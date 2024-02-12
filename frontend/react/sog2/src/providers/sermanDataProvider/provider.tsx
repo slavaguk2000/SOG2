@@ -1,4 +1,4 @@
-import React, { FC, PropsWithChildren, useCallback, useEffect, useMemo } from 'react';
+import React, { FC, PropsWithChildren, useCallback, useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 import { useQuery } from '@apollo/client';
@@ -9,6 +9,7 @@ import { Query, QuerySermonArgs, QuerySermonsArgs, Slide } from '../../utils/gql
 import { useInstrumentsField } from '../instrumentsFieldProvider';
 import { usePlayerContext } from '../playerProvider';
 
+import ChangePlayingSrcProposalDialog from './ChangePlayingSrcProposalDialog';
 import SermonDataProviderContext from './context';
 
 interface SermonDataProviderProps extends PropsWithChildren {
@@ -109,16 +110,52 @@ const SermonDataProvider: FC<SermonDataProviderProps> = ({ sermonsCollectionId =
     console.log('handleUpdateLocation', newSlide);
   };
 
-  const { setAudio, src } = usePlayerContext();
+  // work with player
+  const [playAnother, setPlayAnother] = useState(false);
+
+  useEffect(() => {
+    setPlayAnother(false);
+  }, [currentSermonId]);
+
+  const { setAudio, src, played, isPlaying } = usePlayerContext();
+  const [changePlayingSrcProposalDialogData, setChangePlayingSrcProposalDialogData] = useState({
+    sermonName: '',
+    audioLink: '',
+  });
+
+  const handleCloseDialog = () =>
+    setChangePlayingSrcProposalDialogData({
+      sermonName: '',
+      audioLink: '',
+    });
+
+  const handleChangeAudio = () => {
+    setAudio(changePlayingSrcProposalDialogData.audioLink, changePlayingSrcProposalDialogData.sermonName);
+    handleCloseDialog();
+  };
+
+  const handleDontChangeAudio = () => {
+    setPlayAnother(true);
+    handleCloseDialog();
+  };
 
   const audioLink = currentSermonId && sermonsMap?.[currentSermonId]?.audioLink;
   const sermonName = currentSermonId && sermonsMap?.[currentSermonId]?.name;
 
   useEffect(() => {
-    if (audioLink && sermonName && audioLink !== src) {
-      setAudio(audioLink, sermonName);
+    if (audioLink && sermonName && audioLink !== src && !playAnother) {
+      if (isPlaying) {
+        setChangePlayingSrcProposalDialogData({
+          sermonName,
+          audioLink,
+        });
+      } else {
+        setAudio(audioLink, sermonName);
+      }
     }
-  }, [audioLink, sermonName, setAudio, src]);
+  }, [audioLink, isPlaying, playAnother, played, sermonName, setAudio, src]);
+
+  //
 
   return (
     <SermonDataProviderContext.Provider
@@ -134,6 +171,12 @@ const SermonDataProvider: FC<SermonDataProviderProps> = ({ sermonsCollectionId =
       }}
     >
       {children}
+      <ChangePlayingSrcProposalDialog
+        open={!!(changePlayingSrcProposalDialogData.sermonName && changePlayingSrcProposalDialogData.audioLink)}
+        sermonTitle={changePlayingSrcProposalDialogData.sermonName}
+        handleNo={handleDontChangeAudio}
+        handleYes={handleChangeAudio}
+      />
     </SermonDataProviderContext.Provider>
   );
 };
