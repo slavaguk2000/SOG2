@@ -42,9 +42,8 @@ type_defs = gql("""
     }
     
     input SlideMappingInput {
-        slideCollectionAudioMappingId: ID
-        slideId: ID
-        timePoint: Int
+        slideCollectionAudioMappingId: ID!
+        timePoint: Int!
     }
     
     type Mutation {

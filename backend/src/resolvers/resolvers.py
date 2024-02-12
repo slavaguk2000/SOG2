@@ -3,7 +3,8 @@ from ariadne import convert_kwargs_to_snake_case, ObjectType, QueryType, Mutatio
 from src.services.bible_helper import update_bible_slide_usage
 from src.services.elasticsearch.search.bible import bible_search, get_bible_history
 from src.services.database_helpers.bible import get_bible_books_by_bible_id, get_chapter_verses, get_bible_slide_by_id
-from src.services.database_helpers.sermon import get_sermons, get_sermon_by_id, get_sermon_paragraph_by_id
+from src.services.database_helpers.sermon import get_sermons, get_sermon_by_id, get_sermon_paragraph_by_id, \
+    add_slide_audio_mapping
 from src.services.elasticsearch.sync.sermon import sync_sermons
 from src.services.parsers.bibleParsers.sog_parser import SimpleBibleParser
 from asyncio import Queue
@@ -67,6 +68,13 @@ def resolve_set_active_slide(*_, slide_id=None, **kwargs):
     if slide_id:
         if kwargs.get('type') == 'Sermon':
             active_slide = get_sermon_paragraph_by_id(slide_id)
+            slide_audio_mapping = kwargs.get('slide_audio_mapping')
+            if slide_audio_mapping:
+                add_slide_audio_mapping(
+                    slide_audio_mapping['slide_collection_audio_mapping_id'],
+                    slide_id,
+                    slide_audio_mapping['time_point'],
+                )
         else:
             active_slide = get_bible_slide_by_id(slide_id)
             update_bible_slide_usage(slide_id)

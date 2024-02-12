@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 from src.services.database import engine
 from src.models.sermon import Sermon
 from src.models.paragraph import Paragraph
+from src.models.slide_audio_mapping import SlideAudioMapping
 
 
 def get_sermons(sermons_collection_id: str):
@@ -57,3 +58,15 @@ def get_sermon_paragraph_by_id(id: str):
             }
 
     return None
+
+
+def add_slide_audio_mapping(sermon_audio_mapping_id: str, slide_id: str, time_point: int):
+    with Session(engine) as session:
+        session.add(
+            SlideAudioMapping(
+                slide_collection_audio_mapping_id=sermon_audio_mapping_id,
+                slide_id=slide_id,
+                time_point=time_point
+            )
+        )
+        session.commit()
