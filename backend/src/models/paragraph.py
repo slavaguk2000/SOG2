@@ -15,3 +15,4 @@ class Paragraph(Base):
     content = Column(Text, nullable=False)
 
     sermon = relationship('Sermon', back_populates='paragraphs')
+    slide_audio_mappings = relationship("SlideAudioMapping", back_populates="slide", cascade="all, delete-orphan")

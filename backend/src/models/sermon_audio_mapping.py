@@ -13,3 +13,5 @@ class SermonAudioMapping(Base):
     audio_link = Column(String, nullable=False)
 
     sermon = relationship("Sermon", back_populates="audio_mappings")
+    slide_audio_mappings = relationship("SlideAudioMapping", back_populates="sermon_audio_mapping", cascade="all, delete-orphan")
+

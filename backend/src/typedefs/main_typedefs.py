@@ -41,8 +41,14 @@ type_defs = gql("""
         audioLink: String
     }
     
+    input SlideMappingInput {
+        slideCollectionAudioMappingId: ID
+        slideId: ID
+        timePoint: Int
+    }
+    
     type Mutation {
-      setActiveSlide(slideId: ID, type: TabType): Boolean
+      setActiveSlide(slideId: ID, type: TabType, slideAudioMapping: SlideMappingInput): Boolean
       setFreeSlide(text: String!, title: String!): Boolean
       addBibleFromSog(sogFileSrc: String!, language: String!, translation: String!): Boolean
       syncBibleToElastic(bibleId: ID): Boolean
