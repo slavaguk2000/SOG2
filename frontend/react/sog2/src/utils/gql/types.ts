@@ -14,6 +14,12 @@ export type Scalars = {
   Float: { input: number; output: number; }
 };
 
+export type AudioMapping = {
+  __typename?: 'AudioMapping';
+  audioLink: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+};
+
 export type BibleBook = {
   __typename?: 'BibleBook';
   chapterCount: Scalars['Int']['output'];
@@ -40,6 +46,7 @@ export type MutationAddBibleFromSogArgs = {
 
 
 export type MutationSetActiveSlideArgs = {
+  slideAudioMapping?: InputMaybe<SlideMappingInput>;
   slideId?: InputMaybe<Scalars['ID']['input']>;
   type?: InputMaybe<TabType>;
 };
@@ -103,7 +110,7 @@ export type QuerySermonsArgs = {
 
 export type Sermon = {
   __typename?: 'Sermon';
-  audioLink?: Maybe<Scalars['String']['output']>;
+  audioMapping?: Maybe<AudioMapping>;
   date: Scalars['String']['output'];
   id: Scalars['ID']['output'];
   name: Scalars['String']['output'];
@@ -122,6 +129,11 @@ export type Slide = {
 export type SlideLocation = {
   __typename?: 'SlideLocation';
   location: Array<Scalars['String']['output']>;
+};
+
+export type SlideMappingInput = {
+  slideCollectionAudioMappingId: Scalars['ID']['input'];
+  timePoint: Scalars['Int']['input'];
 };
 
 export type Subscription = {

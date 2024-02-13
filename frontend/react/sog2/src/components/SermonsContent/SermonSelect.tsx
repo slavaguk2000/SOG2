@@ -10,14 +10,14 @@ const SermonsSelect = () => {
 
   const preparedData = useMemo(
     () =>
-      sermonsData?.map(({ id, name, translation, date, audioLink }) => {
+      sermonsData?.map(({ id, name, translation, date, audioMapping }) => {
         const sermonDate = new Date(date);
 
         const year = sermonDate.getFullYear().toString().substr(-2);
         const month = (sermonDate.getMonth() + 1).toString().padStart(2, '0');
         const day = sermonDate.getDate().toString().padStart(2, '0');
 
-        return { id, name: `${year}-${month}${day} ${audioLink ? '💿 ' : ''}${name} (${translation})` };
+        return { id, name: `${year}-${month}${day} ${audioMapping ? '💿 ' : ''}${name} (${translation})` };
       }),
     [sermonsData],
   );

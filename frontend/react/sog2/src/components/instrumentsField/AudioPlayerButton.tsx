@@ -1,12 +1,12 @@
 import React from 'react';
 
-import { IconButton, Tooltip } from '@mui/material';
+import { Box, IconButton, Tooltip } from '@mui/material';
 
 import PlayerIcon from '../../icons/PlayerIcon';
 import { usePlayerContext } from '../../providers/playerProvider';
 
 const AudioPlayerButton = () => {
-  const { setOpenInterface, duration, played } = usePlayerContext();
+  const { setOpenInterface, duration, played, src } = usePlayerContext();
 
   const handleClick = () => {
     setOpenInterface((prev) => !prev);
@@ -14,9 +14,11 @@ const AudioPlayerButton = () => {
 
   return (
     <Tooltip title={'Audio player'}>
-      <IconButton onClick={handleClick}>
-        <PlayerIcon progress={duration > 0 ? played / duration : 0} />
-      </IconButton>
+      <Box>
+        <IconButton onClick={handleClick} disabled={!src}>
+          <PlayerIcon progress={duration > 0 ? played / duration : 0} />
+        </IconButton>
+      </Box>
     </Tooltip>
   );
 };

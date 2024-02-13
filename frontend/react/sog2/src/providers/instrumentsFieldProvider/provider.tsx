@@ -4,7 +4,7 @@ import { useLocation } from 'react-router-dom';
 import { useMutation } from '@apollo/client';
 
 import { setActiveSlide } from '../../utils/gql/queries';
-import { Mutation, MutationSetActiveSlideArgs, Slide, TabType } from '../../utils/gql/types';
+import { Mutation, MutationSetActiveSlideArgs, TabType } from '../../utils/gql/types';
 import { usePresentation } from '../presentationProvider';
 import { SlideData } from '../types';
 
@@ -23,11 +23,12 @@ const InstrumentsFieldProvider: FC<PropsWithChildren> = ({ children }) => {
 
   const tabType = pathname === '/bible' ? TabType.Bible : TabType.Sermon;
 
-  const sendActiveSlide = (newSlide?: Slide) => {
+  const sendActiveSlide = (newSlideData?: SlideData) => {
     setActiveSlideMutation({
       variables: {
-        slideId: newSlide?.id,
+        slideId: newSlideData?.slide?.id,
         type: tabType,
+        slideAudioMapping: newSlideData?.slideAudioMapping,
       },
     }).catch((e) => console.error(e));
   };
@@ -43,7 +44,7 @@ const InstrumentsFieldProvider: FC<PropsWithChildren> = ({ children }) => {
   };
 
   const updatePresentationAndBackendSlide = (newSlide?: SlideData) => {
-    sendActiveSlide(newSlide?.slide);
+    sendActiveSlide(newSlide);
     updateSlideOnPresentation(newSlide);
   };
 
@@ -58,6 +59,16 @@ const InstrumentsFieldProvider: FC<PropsWithChildren> = ({ children }) => {
   };
 
   const handleUpdateSlide = (newSlide?: SlideData) => {
+    if (
+      (currentSlide?.slide?.id && currentSlide.slide.id === newSlide?.slide?.id) ||
+      (currentSlide?.slide && currentSlide.slide.content === newSlide?.slide?.content) ||
+      (currentSlide?.presentationData &&
+        currentSlide.presentationData.title === newSlide?.presentationData?.title &&
+        currentSlide.presentationData.text === newSlide?.presentationData?.text)
+    ) {
+      return;
+    }
+
     setCurrentSlide(newSlide);
 
     if (!silentMode) {

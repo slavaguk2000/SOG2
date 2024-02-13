@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction } from 'react';
 
 import { FreeSlideDialogContent } from '../components/FreeSlideDialog';
-import { BibleBook, Query, Sermon, Slide } from '../utils/gql/types';
+import { BibleBook, InputMaybe, Query, Sermon, Slide, SlideMappingInput } from '../utils/gql/types';
 
 export interface ChapterSelector {
   bookIdx?: number;
@@ -16,6 +16,7 @@ export interface PresentationData {
 export interface SlideData {
   slide: Slide;
   presentationData: PresentationData;
+  slideAudioMapping?: InputMaybe<SlideMappingInput>;
 }
 
 export interface DataProvider {

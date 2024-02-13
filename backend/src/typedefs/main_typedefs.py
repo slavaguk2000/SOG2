@@ -33,12 +33,17 @@ type_defs = gql("""
         chapterCount: Int!
     }
     
+    type AudioMapping {
+        id: ID!
+        audioLink: String!
+    }
+    
     type Sermon {
         id: ID!
         name: String!
         translation: String!
         date: String!
-        audioLink: String
+        audioMapping: AudioMapping
     }
     
     input SlideMappingInput {

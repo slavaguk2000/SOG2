@@ -60,12 +60,28 @@ const SermonDataProvider: FC<SermonDataProviderProps> = ({ sermonsCollectionId =
     [currentSermonData],
   );
 
+  const currentSermon = currentSermonId ? sermonsMap?.[currentSermonId] : undefined;
+
+  const { setAudio, src, played, isPlaying } = usePlayerContext();
+
+  const audioMapping = currentSermon?.audioMapping;
+
+  const audioLink = audioMapping?.audioLink;
+
   const handleUpdateSlide = (newSlide?: Slide) => {
     const sermonId = newSlide?.location?.[1];
 
     if (sermonId) {
       setSearchParams((prev) => ({ ...prev, id: sermonId }));
     }
+
+    const slideAudioMapping =
+      audioMapping && isPlaying && src === audioMapping.audioLink
+        ? {
+            slideCollectionAudioMappingId: audioMapping.id,
+            timePoint: Math.floor(played),
+          }
+        : null;
 
     instrumentsHandleUpdateSlide(
       newSlide && {
@@ -74,6 +90,7 @@ const SermonDataProvider: FC<SermonDataProviderProps> = ({ sermonsCollectionId =
           text: `${newSlide.location?.[2] ? `${newSlide.location?.[2]}. ` : ''}${newSlide.content}`,
           title: (sermonId && sermonsMap?.[sermonId].name) || '',
         },
+        slideAudioMapping,
       },
     );
   };
@@ -117,7 +134,6 @@ const SermonDataProvider: FC<SermonDataProviderProps> = ({ sermonsCollectionId =
     setPlayAnother(false);
   }, [currentSermonId]);
 
-  const { setAudio, src, played, isPlaying } = usePlayerContext();
   const [changePlayingSrcProposalDialogData, setChangePlayingSrcProposalDialogData] = useState({
     sermonName: '',
     audioLink: '',
@@ -139,8 +155,7 @@ const SermonDataProvider: FC<SermonDataProviderProps> = ({ sermonsCollectionId =
     handleCloseDialog();
   };
 
-  const audioLink = currentSermonId && sermonsMap?.[currentSermonId]?.audioLink;
-  const sermonName = currentSermonId && sermonsMap?.[currentSermonId]?.name;
+  const sermonName = currentSermon?.name;
 
   useEffect(() => {
     if (audioLink && sermonName && audioLink !== src && !playAnother) {
@@ -165,7 +180,7 @@ const SermonDataProvider: FC<SermonDataProviderProps> = ({ sermonsCollectionId =
         handleUpdateSlide,
         handleUpdateLocation,
         handleSermonSelect,
-        currentSermon: currentSermonId ? sermonsMap?.[currentSermonId] : undefined,
+        currentSermon,
         sermonsData: sermonsData?.sermons,
         currentSermonSlides: currentSermonData?.sermon,
       }}

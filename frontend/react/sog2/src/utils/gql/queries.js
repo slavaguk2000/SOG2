@@ -28,7 +28,10 @@ export const sermons = gql`
       name
       translation
       date
-      audioLink
+      audioMapping {
+        id
+        audioLink
+      }
     }
   }
 `;
@@ -65,8 +68,8 @@ export const bibleVerses = gql`
 `;
 
 export const setActiveSlide = gql`
-  mutation setActiveSlide($slideId: ID, $type: TabType) {
-    setActiveSlide(slideId: $slideId, type: $type)
+  mutation setActiveSlide($slideId: ID, $type: TabType, $slideAudioMapping: SlideMappingInput) {
+    setActiveSlide(slideId: $slideId, type: $type, slideAudioMapping: $slideAudioMapping)
   }
 `;
 
