@@ -38,7 +38,6 @@ def bible_source_to_content_string(source: dict):
 def bible_source_to_search_content_string(source: dict, highlight: dict, matched_queries: [str]):
     if "search_content" in source:
         search_content = source['search_content']
-        print(matched_queries)
         if 'book' in source and ('primary_verse' in matched_queries or 'secondary_verse' in matched_queries):
             search_content = re.sub(
                 r'^(' + re.escape(source["book"]) + r' \d+:)(\d+)(\s)',

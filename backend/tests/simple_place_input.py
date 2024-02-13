@@ -1,12 +1,21 @@
 from src.services.elasticsearch.search.bible import bible_search
+from src.services.database_helpers.bible import get_bible_books_by_bible_id
 
 
-def get_place_by_short_write_template(search_line: str, expected_locations):
-    result = bible_search(search_line, "0")
-    print()
-    print(result)
+bible_id = "fcd38411-5f94-4bda-9a2a-cd5624b3dac2"
+
+
+def get_place_by_short_write_template(search_line: str, expected_locations, bible_books: [dict]):
+    result = bible_search(search_line, bible_id)
+
+    print('exp', expected_locations)
+    print('res', [res["search_content"] for res in result])
     for i, expected_location in enumerate(expected_locations):
-        assert result[i]["location"] == ['0'] + expected_location
+        current_expected = [bible_id] + [bible_books[expected_location[0]]['id']] + expected_location[1:]
+        current_result = result[i]["location"]
+        print('exp', current_expected)
+        print('res', current_result)
+        assert current_result == current_expected
 
 
 short_writes = [
@@ -55,5 +64,11 @@ short_writes = [
 
 
 def test_answer():
-    for short_write in short_writes[-1:]:
-        get_place_by_short_write_template(short_write["search_line"], short_write['expected_locations'])
+    bible_books = get_bible_books_by_bible_id(bible_id)
+
+    for short_write in short_writes:
+        get_place_by_short_write_template(short_write["search_line"], short_write['expected_locations'], bible_books)
+
+
+if __name__ == '__main__':
+    test_answer()

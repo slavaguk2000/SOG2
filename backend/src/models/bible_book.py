@@ -2,6 +2,7 @@ from sqlalchemy import Column, String, ForeignKey, Integer
 from sqlalchemy.orm import relationship
 import uuid
 from src.services.database import Base
+from src.models.bible import Bible
 
 
 class BibleBook(Base):
