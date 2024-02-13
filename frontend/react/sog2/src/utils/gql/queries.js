@@ -17,6 +17,11 @@ export const sermon = gql`
       id
       content
       location
+      audioMappings {
+        id
+        slideCollectionAudioMappingId
+        timePoint
+      }
     }
   }
 `;

@@ -64,7 +64,7 @@ const SermonDataProvider: FC<SermonDataProviderProps> = ({ sermonsCollectionId =
 
   const { setAudio, src, played, isPlaying } = usePlayerContext();
 
-  const audioMapping = currentSermon?.audioMapping;
+  const audioMapping = currentSermon?.audioMapping ?? undefined;
 
   const audioLink = audioMapping?.audioLink;
 
@@ -183,6 +183,7 @@ const SermonDataProvider: FC<SermonDataProviderProps> = ({ sermonsCollectionId =
         currentSermon,
         sermonsData: sermonsData?.sermons,
         currentSermonSlides: currentSermonData?.sermon,
+        audioMapping,
       }}
     >
       {children}

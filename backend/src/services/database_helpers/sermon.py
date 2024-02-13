@@ -37,6 +37,13 @@ def get_sermon_by_id(sermon_id: str):
                 sermon_id,
                 paragraph.chapter if paragraph.chapter != paragraphs[idx - 1].chapter else "",
                 paragraph.paragraph_order
+            ],
+            "audio_mappings": [
+                {
+                    "id": mapping.id,
+                    "slide_collection_audio_mapping_id": mapping.slide_collection_audio_mapping_id,
+                    "time_point": mapping.time_point,
+                } for mapping in paragraph.slide_audio_mappings
             ]
         } for idx, paragraph in enumerate(paragraphs)]
 

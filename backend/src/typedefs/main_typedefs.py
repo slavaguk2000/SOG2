@@ -14,6 +14,12 @@ type_defs = gql("""
         sermon(sermonId: ID!): [Slide!]!
         sermons(sermonsCollectionId: ID!): [Sermon!]!
     }
+    
+    type SlideAudioMapping {
+        id: ID
+        slideCollectionAudioMappingId: ID
+        timePoint: Int
+    }
 
     type Slide {
         id: ID
@@ -21,6 +27,7 @@ type_defs = gql("""
         content: String!
         searchContent: String
         title: String
+        audioMappings: [SlideAudioMapping!]
     }
 
     type SlideLocation {

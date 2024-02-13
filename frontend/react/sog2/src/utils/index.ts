@@ -21,3 +21,13 @@ export function arrayToMap<T extends Record<string, unknown>, P>(
     return acc;
   }, {});
 }
+
+export const formatTime = (seconds: number | typeof NaN) => {
+  if (isNaN(seconds)) {
+    seconds = 0;
+  }
+
+  const date = new Date(0);
+  date.setSeconds(seconds);
+  return date.toISOString().substr(11, 8);
+};

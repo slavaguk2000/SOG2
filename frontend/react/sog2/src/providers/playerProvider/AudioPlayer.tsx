@@ -6,18 +6,9 @@ import { Button, Slider, Tooltip, Typography } from '@mui/material';
 import { debounce } from 'lodash';
 
 import { AudioPlayerWrapper } from '../../components/instrumentsField/styled';
+import { formatTime } from '../../utils';
 
 import { usePlayerContext } from './index';
-
-const formatTime = (seconds: number | typeof NaN) => {
-  if (isNaN(seconds)) {
-    seconds = 0;
-  }
-
-  const date = new Date(0);
-  date.setSeconds(seconds);
-  return date.toISOString().substr(11, 8);
-};
 
 const AudioPlayer = () => {
   const { duration, played, title, isPlaying, handlePlayPause, seek } = usePlayerContext();

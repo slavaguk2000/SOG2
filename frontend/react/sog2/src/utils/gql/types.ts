@@ -119,11 +119,19 @@ export type Sermon = {
 
 export type Slide = {
   __typename?: 'Slide';
+  audioMappings?: Maybe<Array<SlideAudioMapping>>;
   content: Scalars['String']['output'];
   id?: Maybe<Scalars['ID']['output']>;
   location?: Maybe<Array<Scalars['String']['output']>>;
   searchContent?: Maybe<Scalars['String']['output']>;
   title?: Maybe<Scalars['String']['output']>;
+};
+
+export type SlideAudioMapping = {
+  __typename?: 'SlideAudioMapping';
+  id?: Maybe<Scalars['ID']['output']>;
+  slideCollectionAudioMappingId?: Maybe<Scalars['ID']['output']>;
+  timePoint?: Maybe<Scalars['Int']['output']>;
 };
 
 export type SlideLocation = {

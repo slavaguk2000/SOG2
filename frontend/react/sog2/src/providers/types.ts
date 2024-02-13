@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction } from 'react';
 
 import { FreeSlideDialogContent } from '../components/FreeSlideDialog';
-import { BibleBook, InputMaybe, Query, Sermon, Slide, SlideMappingInput } from '../utils/gql/types';
+import { AudioMapping, BibleBook, InputMaybe, Query, Sermon, Slide, SlideMappingInput } from '../utils/gql/types';
 
 export interface ChapterSelector {
   bookIdx?: number;
@@ -63,6 +63,7 @@ export interface SermonDataProviderContextType extends DataProvider {
   sermonsData?: Sermon[];
   handleSermonSelect: (id: string) => void;
   currentSermon?: Sermon;
+  audioMapping?: AudioMapping;
 }
 
 export interface PlayerContextType {
