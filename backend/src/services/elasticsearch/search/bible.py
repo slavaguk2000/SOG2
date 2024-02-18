@@ -126,9 +126,19 @@ def bible_search(search_pattern: str, bible_id: str):
                 }
             },
             {
-                "query_string": {
-                    "default_field": "verse_content",
-                    "query": f"{maybe_book_res['book']}*",
+                "bool": {
+                    "must_not": {
+                        "query_string": {
+                            "default_field": "book_name",
+                            "query": f"{maybe_book_res['book']}*",
+                        }
+                    },
+                    "must": {
+                        "query_string": {
+                            "default_field": "verse_content",
+                            "query": f"{maybe_book_res['book']}*",
+                        }
+                    },
                     "boost": 1
                 }
             }
@@ -221,27 +231,9 @@ def bible_search(search_pattern: str, bible_id: str):
             })
 
     query = {
-        "function_score": {
-            "query": {
-                "bool": {
-                    "must": must,
-                    "should": should
-                }
-            },
-            "functions": [
-                {
-                    "linear": {
-                        "book_order": {
-                            "origin": 1,  # Примерный порядок книги, который вы считаете наиболее релевантным
-                            "scale": 10,  # Зависит от разброса вашего параметра book_order
-                            "offset": 5,  # Можно использовать, чтобы добавить небольшую "погрешность"
-                            "decay": 0.5  # Скорость уменьшения значения после прохождения через "origin"
-                        }
-                    },
-                    "weight": 0.5  # Увеличение веса для совпадений
-                }
-            ],
-            "boost_mode": "sum"  # Метод комбинирования оценки функции и базовой оценки
+        "bool": {
+            "must": must,
+            "should": should
         }
     }
 

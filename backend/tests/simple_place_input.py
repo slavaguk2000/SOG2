@@ -21,7 +21,7 @@ def get_place_by_short_write_template(search_line: str, expected_locations, bibl
 short_writes = [
     # 'Исход 1:11 И поставили над ним начальников работ, чтобы изнуряли его тяжкими работами.
     # И он построил фараону Пифом и Раамсес, города для запасов.'
-    {'search_line': "Ис фа", 'expected_locations': [[1, 1, 11], [1, 1, 19]]},
+    {'search_line': "Ис фа", 'expected_locations': [[1, 1, 11], [1, 1, 19], [1, 1, 22]]},
 
     {'search_line': "Ис фарс", 'expected_locations': [[22, 2, 16]]},
     # 'Исаии 2:16 и на все корабли Фарсисские, и на все вожделенные украшения их.'
