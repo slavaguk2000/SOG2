@@ -118,30 +118,26 @@ def bible_search(search_pattern: str, bible_id: str):
     should = []
 
     if maybe_book_res["book"]:
-        should += [{
-                "query_string": {
+        should += [
+          {
+            "dis_max": {
+              "queries": [
+                {
+                  "query_string": {
                     "default_field": "book_name",
                     "query": f"{maybe_book_res['book']}*",
                     "boost": 5
+                  }
+                },
+                {
+                  "query_string": {
+                    "default_field": "verse_content",
+                    "query": f"{maybe_book_res['book']}*"
+                  }
                 }
-            },
-            {
-                "bool": {
-                    "must_not": {
-                        "query_string": {
-                            "default_field": "book_name",
-                            "query": f"{maybe_book_res['book']}*",
-                        }
-                    },
-                    "must": {
-                        "query_string": {
-                            "default_field": "verse_content",
-                            "query": f"{maybe_book_res['book']}*",
-                        }
-                    },
-                    "boost": 1
-                }
+              ]
             }
+          }
         ]
 
     if maybe_book_res["chapter"]:
