@@ -82,7 +82,13 @@ sermon_mapping = Mapping(
             },
             "chapter_content": {
                 "type": "text",
-                "analyzer": "russian"
+                "analyzer": "russian",
+                "fields": {
+                    "standard": {
+                        "type": "text",
+                        "analyzer": "standard"
+                    }
+                }
             },
             "audio_link": {
                 "type": "keyword"
