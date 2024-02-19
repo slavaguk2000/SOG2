@@ -1,8 +1,14 @@
 from src.services.elasticsearch.constants import highlight_pre_tag, highlight_post_tag
 from src.services.elasticsearch.elastic import Elastic
 from src.services.elasticsearch.mappings import sermon_mapping
+from src.services.elasticsearch.search.sermon.SearchQuery import SearchQuery
+from src.services.elasticsearch.search.sermon.search_providers.abstract_seacrh_provider import SearchProvider
+from src.services.elasticsearch.search.sermon.search_providers.default_search_provider import DefaultSearchProvider
+from src.services.elasticsearch.search.sermon.search_providers.sermon_chapter_content_search_provider import \
+    SermonChapterContentSearchProvider
 from src.services.elasticsearch.utils import insert_highlights_into_original_str
 from datetime import datetime
+from typing import List, Union
 
 el = Elastic()
 
@@ -102,31 +108,23 @@ def get_sermons(sermons_collection_id: str):
     return [sermon_agg_to_sermon_data(sermon_data) for sermon_data in result["aggregations"]["unique_sermon_ids"]["buckets"]]
 
 
+def search(search_request: str, providers: List[SearchProvider]) -> SearchQuery:
+    for provider in providers:
+        if provider.match(search_request):
+            return provider.get_query(search_request)
+    return SearchQuery()
+
+
 def sermon_search(search_pattern: str, sermon_collection_id: str):
-    should = []
-
-    must = [
-        # {
-        #     "term": {
-        #         "sermon_collection_id": sermon_collection_id
-        #     },
-        # }
-    ]
-
-    if len(search_pattern.strip()):
-        for content_word in search_pattern.strip().split():
-            must.append({
-                "query_string": {
-                    "default_field": "chapter_content",
-                    "query": f"{content_word}*",
-                    "boost": 1
-                }
-            })
+    search_query = search(search_pattern.strip(), [
+        SermonChapterContentSearchProvider(),
+        DefaultSearchProvider(),
+    ])
 
     query = {
         "bool": {
-            "must": must,
-            "should": should
+            "must": search_query.must,
+            "should": search_query.should
         }
     }
 
@@ -134,9 +132,14 @@ def sermon_search(search_pattern: str, sermon_collection_id: str):
         "pre_tags": [highlight_pre_tag],
         "post_tags": [highlight_post_tag],
         "fields": {
+            "sermon_name": {},
+            "chapter": {},
             "chapter_content": {},
+            "chapter_content.standard": {}
         }
     }
+
+    print(query)
 
     result = el.search(
         index=sermon_mapping.index,

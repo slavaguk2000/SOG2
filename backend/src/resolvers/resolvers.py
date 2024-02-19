@@ -9,7 +9,7 @@ from src.services.elasticsearch.sync.sermon import sync_sermons
 from src.services.parsers.bibleParsers.sog_parser import SimpleBibleParser
 from asyncio import Queue
 
-from src.services.elasticsearch.search.sermon import sermon_search
+from src.services.elasticsearch.search.sermon.sermon import sermon_search
 from src.services.elasticsearch.sync.bible import sync_bible
 
 active_slide_queue = Queue()
