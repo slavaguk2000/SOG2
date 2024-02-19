@@ -30,7 +30,7 @@ def sermon_hit_to_slide(hit: dict):
 
     return {
         "id": hit["_id"],
-        "search_content": f"{date_object.strftime('%y')}-{date_object.month}{date_object.day} {source['sermon_name']} ({source['sermon_translation']}) {insert_highlights_into_original_str(source['chapter_content'], hit)}",
+        "search_content": f"{date_object.strftime('%y')}-{date_object.month}{date_object.day} {source['sermon_name']} ({source['sermon_translation']}) {insert_highlights_into_original_str(source['chapter_content'], hit, ['chapter_content.standard', 'chapter_content'])}",
         "content": source['chapter_content'],
         "location": ["0", source['sermon_id'], str(source["chapter"]) if source.get("chapter") else "", source['paragraph_order']]
     }
