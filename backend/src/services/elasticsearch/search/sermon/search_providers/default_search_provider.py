@@ -20,7 +20,7 @@ class DefaultSearchProvider(SearchProvider):
                         "chapter_content.standard": {
                             "query": search_request,
                             "slop": i,
-                            "boost": MAX_SLOP - i
+                            "boost": 2 - i / MAX_SLOP
                         }
                     }
                 }
