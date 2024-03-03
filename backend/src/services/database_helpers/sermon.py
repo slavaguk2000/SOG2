@@ -1,4 +1,6 @@
 from sqlalchemy.orm import Session
+
+from src.services.common_utils.sermon import get_sermon_date_string_from_datetime
 from src.services.database import engine
 from src.models.sermon import Sermon
 from src.models.paragraph import Paragraph
@@ -54,20 +56,36 @@ def get_sermon_paragraph_by_id(id: str):
             Paragraph.id == id,
         ).first()
 
-        if paragraph:
-            return {
-                "id": paragraph.id,
-                "search_content": paragraph.content,
-                "content": paragraph.content,
-                "location": [
-                    "0",
-                    paragraph.sermon_id,
-                    "",
-                    paragraph.paragraph_order
-                ]
-            }
+        if not paragraph:
+            return None
 
-    return None
+        chapter = str(paragraph.chapter)
+
+        sermon_id = str(paragraph.sermon_id)
+        if paragraph.paragraph_order > 0:
+            prev_paragraph = session.query(Paragraph).filter(
+                Paragraph.sermon_id == sermon_id,
+                Paragraph.paragraph_order == paragraph.paragraph_order - 1
+            ).first()
+
+            if prev_paragraph and prev_paragraph.chapter == paragraph.chapter:
+                chapter = ""
+
+        sermon = paragraph.sermon
+
+        return {
+            "id": paragraph.id,
+            "search_content": paragraph.content,
+            "content": paragraph.content,
+            "location": [
+                "0",
+                paragraph.sermon_id,
+                str(paragraph.paragraph_order),
+                chapter
+            ],
+            "title": f"{get_sermon_date_string_from_datetime(sermon.date)} {sermon.name}"
+        }
+
 
 
 def add_slide_audio_mapping(sermon_audio_mapping_id: str, slide_id: str, time_point: int):

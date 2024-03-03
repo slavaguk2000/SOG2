@@ -1,3 +1,4 @@
+from src.services.common_utils.sermon import get_sermon_date_string_from_datetime
 from src.services.elasticsearch.constants import highlight_pre_tag, highlight_post_tag
 from src.services.elasticsearch.elastic import Elastic
 from src.services.elasticsearch.mappings import sermon_mapping
@@ -20,7 +21,7 @@ el = Elastic()
 def get_date_str_for_search(source: dict):
     sermon_date = source['sermon_date']
     date_object = datetime.strptime(sermon_date, '%Y-%m-%dT%H:%M:%S')
-    return f"{date_object.strftime('%y')}-{'{:02d}'.format(date_object.month)}{'{:02d}'.format(date_object.day)}"
+    return get_sermon_date_string_from_datetime(date_object)
 
 
 def get_content_for_search(hit: dict):
