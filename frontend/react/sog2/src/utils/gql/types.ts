@@ -14,6 +14,12 @@ export type Scalars = {
   Float: { input: number; output: number; }
 };
 
+export type AudioMapping = {
+  __typename?: 'AudioMapping';
+  audioLink: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+};
+
 export type BibleBook = {
   __typename?: 'BibleBook';
   chapterCount: Scalars['Int']['output'];
@@ -23,13 +29,26 @@ export type BibleBook = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  addBibleFromSog?: Maybe<Scalars['Boolean']['output']>;
+  parseSermonsFromBranhamRu?: Maybe<Scalars['Boolean']['output']>;
   setActiveSlide?: Maybe<Scalars['Boolean']['output']>;
   setFreeSlide?: Maybe<Scalars['Boolean']['output']>;
+  syncBibleToElastic?: Maybe<Scalars['Boolean']['output']>;
+  syncSermonsToElastic?: Maybe<Scalars['Boolean']['output']>;
+};
+
+
+export type MutationAddBibleFromSogArgs = {
+  language: Scalars['String']['input'];
+  sogFileSrc: Scalars['String']['input'];
+  translation: Scalars['String']['input'];
 };
 
 
 export type MutationSetActiveSlideArgs = {
+  slideAudioMapping?: InputMaybe<SlideMappingInput>;
   slideId?: InputMaybe<Scalars['ID']['input']>;
+  type?: InputMaybe<TabType>;
 };
 
 
@@ -38,12 +57,19 @@ export type MutationSetFreeSlideArgs = {
   title: Scalars['String']['input'];
 };
 
+
+export type MutationSyncBibleToElasticArgs = {
+  bibleId?: InputMaybe<Scalars['ID']['input']>;
+};
+
 export type Query = {
   __typename?: 'Query';
   bibleBooks: Array<BibleBook>;
   bibleHistory: Array<Slide>;
   bibleVerses: Array<Slide>;
   search: Array<Slide>;
+  sermon: Array<Slide>;
+  sermons: Array<Sermon>;
 };
 
 
@@ -67,11 +93,33 @@ export type QueryBibleVersesArgs = {
 
 
 export type QuerySearchArgs = {
+  id?: InputMaybe<Scalars['ID']['input']>;
   searchPattern: Scalars['String']['input'];
+  tabType: TabType;
+};
+
+
+export type QuerySermonArgs = {
+  sermonId: Scalars['ID']['input'];
+};
+
+
+export type QuerySermonsArgs = {
+  sermonsCollectionId: Scalars['ID']['input'];
+};
+
+export type Sermon = {
+  __typename?: 'Sermon';
+  audioMapping?: Maybe<AudioMapping>;
+  date: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  name: Scalars['String']['output'];
+  translation: Scalars['String']['output'];
 };
 
 export type Slide = {
   __typename?: 'Slide';
+  audioMappings?: Maybe<Array<SlideAudioMapping>>;
   content: Scalars['String']['output'];
   id?: Maybe<Scalars['ID']['output']>;
   location?: Maybe<Array<Scalars['String']['output']>>;
@@ -79,12 +127,29 @@ export type Slide = {
   title?: Maybe<Scalars['String']['output']>;
 };
 
+export type SlideAudioMapping = {
+  __typename?: 'SlideAudioMapping';
+  id?: Maybe<Scalars['ID']['output']>;
+  slideCollectionAudioMappingId?: Maybe<Scalars['ID']['output']>;
+  timePoint?: Maybe<Scalars['Int']['output']>;
+};
+
 export type SlideLocation = {
   __typename?: 'SlideLocation';
   location: Array<Scalars['String']['output']>;
+};
+
+export type SlideMappingInput = {
+  slideCollectionAudioMappingId: Scalars['ID']['input'];
+  timePoint: Scalars['Int']['input'];
 };
 
 export type Subscription = {
   __typename?: 'Subscription';
   activeSlideSubscription?: Maybe<Slide>;
 };
+
+export enum TabType {
+  Bible = 'Bible',
+  Sermon = 'Sermon'
+}

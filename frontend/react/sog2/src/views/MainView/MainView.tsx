@@ -1,13 +1,21 @@
-import React, { useEffect } from 'react';
+import React, { Context, FC, PropsWithChildren, useContext, useEffect } from 'react';
 
-import BibleContent from 'src/components/BibleContent';
 import Header from 'src/components/header';
-import { useBibleData } from 'src/providers/bibleDataProvider';
+
+import { useInstrumentsField } from '../../providers/instrumentsFieldProvider';
+import { DataProvider } from '../../providers/types';
 
 import { MainViewWrapper } from './styled';
 
-const MainView = () => {
-  const { handleUpdateSlide, lastSlide, currentSlide, handlePrevSlide, handleNextSlide } = useBibleData();
+interface MainViewProps extends PropsWithChildren {
+  dataProviderContext: Context<DataProvider>;
+}
+
+const MainView: FC<MainViewProps> = ({ children, dataProviderContext }) => {
+  const { currentSlide } = useInstrumentsField();
+
+  const { handleUpdateSlide, lastSlide, handlePrevSlide, handleNextSlide } =
+    useContext<DataProvider>(dataProviderContext);
 
   useEffect(() => {
     const handleKeydown = (e: KeyboardEvent) => {
@@ -41,7 +49,7 @@ const MainView = () => {
   return (
     <MainViewWrapper>
       <Header />
-      <BibleContent />
+      {children}
     </MainViewWrapper>
   );
 };

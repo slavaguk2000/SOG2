@@ -1,13 +1,12 @@
+from src.services.elasticsearch.constants import highlight_pre_tag, highlight_post_tag
 from src.services.elasticsearch.elastic import Elastic
 from src.services.elasticsearch.mappings import bible_mapping
 import re
 
 el = Elastic()
 
-highlight_pre_tag = '<span class="highlighted">'
-highlight_post_tag = "</span>"
 
-default_slide_source = ["book", "book_order", "chapter", "verse_number", "verse_content", "search_content"]
+default_slide_source = ["bible_id", "book_id", "book_order", "chapter", "verse_number", "verse_content", "search_content"]
 sort_priority = [
     {
         "_score": {
@@ -39,7 +38,6 @@ def bible_source_to_content_string(source: dict):
 def bible_source_to_search_content_string(source: dict, highlight: dict, matched_queries: [str]):
     if "search_content" in source:
         search_content = source['search_content']
-        print(matched_queries)
         if 'book' in source and ('primary_verse' in matched_queries or 'secondary_verse' in matched_queries):
             search_content = re.sub(
                 r'^(' + re.escape(source["book"]) + r' \d+:)(\d+)(\s)',
@@ -63,12 +61,11 @@ def bible_source_to_search_content_string(source: dict, highlight: dict, matched
 
 
 def bible_source_to_location(source: dict):
-    return ["0", source['book_order'], source['chapter'], source['verse_number']]
+    return [source['bible_id'], source['book_id'], source['chapter'], source['verse_number']]
 
 
 def bible_hit_to_slide(hit: dict):
     source = hit["_source"]
-    print(hit)
     return {
         "id": hit["_id"],
         "search_content": bible_source_to_search_content_string(
@@ -121,20 +118,26 @@ def bible_search(search_pattern: str, bible_id: str):
     should = []
 
     if maybe_book_res["book"]:
-        should += [{
-                "query_string": {
+        should += [
+          {
+            "dis_max": {
+              "queries": [
+                {
+                  "query_string": {
                     "default_field": "book_name",
                     "query": f"{maybe_book_res['book']}*",
                     "boost": 5
-                }
-            },
-            {
-                "query_string": {
+                  }
+                },
+                {
+                  "query_string": {
                     "default_field": "verse_content",
-                    "query": f"{maybe_book_res['book']}*",
-                    "boost": 1
+                    "query": f"{maybe_book_res['book']}*"
+                  }
                 }
+              ]
             }
+          }
         ]
 
     if maybe_book_res["chapter"]:
@@ -208,7 +211,7 @@ def bible_search(search_pattern: str, bible_id: str):
     must = [
         {
             "term": {
-                "bible_id": bible_id
+                "bible_id.keyword": bible_id
             },
         }
     ]
@@ -224,27 +227,9 @@ def bible_search(search_pattern: str, bible_id: str):
             })
 
     query = {
-        "function_score": {
-            "query": {
-                "bool": {
-                    "must": must,
-                    "should": should
-                }
-            },
-            "functions": [
-                {
-                    "linear": {
-                        "book_order": {
-                            "origin": 1,  # Примерный порядок книги, который вы считаете наиболее релевантным
-                            "scale": 10,  # Зависит от разброса вашего параметра book_order
-                            "offset": 5,  # Можно использовать, чтобы добавить небольшую "погрешность"
-                            "decay": 0.5  # Скорость уменьшения значения после прохождения через "origin"
-                        }
-                    },
-                    "weight": 0.5  # Увеличение веса для совпадений
-                }
-            ],
-            "boost_mode": "sum"  # Метод комбинирования оценки функции и базовой оценки
+        "bool": {
+            "must": must,
+            "should": should
         }
     }
 
@@ -256,7 +241,8 @@ def bible_search(search_pattern: str, bible_id: str):
             "book_name": {}
         }
     }
-    print(str(query).replace("'", '"'))
+
+    # print(str(query).replace("'", '"'))
 
     result = el.search(
         index=bible_mapping.index,
@@ -352,5 +338,8 @@ def get_bible_slide_by_id(slide_id: str):
     return bible_hit_to_slide(el.get_slide_by_id(bible_mapping.index, slide_id))
 
 
-def update_bible_slide_usage(slide_id: str):
-    return el.update_slide_usage(bible_mapping.index, slide_id)
+def update_bible_slide_usage_in_elastic(slide_id: str):
+    try:
+        return el.update_slide_usage(bible_mapping.index, slide_id)
+    except BaseException as e:
+        print('Error while syncing in elastic', e)

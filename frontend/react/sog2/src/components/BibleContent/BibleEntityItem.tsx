@@ -1,5 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 
+import { Tooltip } from '@mui/material';
+
 import { BibleEntityItemWrapper } from './styled';
 
 interface BibleEntityItemProps {
@@ -7,9 +9,10 @@ interface BibleEntityItemProps {
   onClick: () => void;
   selected: boolean;
   preSelected?: boolean;
+  tooltip?: string;
 }
 
-const BibleEntityItem = ({ name, onClick, selected, preSelected }: BibleEntityItemProps) => {
+const BibleEntityItem = ({ name, onClick, selected, preSelected, tooltip }: BibleEntityItemProps) => {
   const itemRef = useRef(null);
 
   useEffect(() => {
@@ -21,11 +24,13 @@ const BibleEntityItem = ({ name, onClick, selected, preSelected }: BibleEntityIt
     }
   }, [selected]);
 
-  return (
+  const body = (
     <BibleEntityItemWrapper selected={selected} onClick={onClick} ref={itemRef} preSelected={preSelected}>
       {name}
     </BibleEntityItemWrapper>
   );
+
+  return tooltip ? <Tooltip title={tooltip}>{body}</Tooltip> : body;
 };
 
 export default BibleEntityItem;

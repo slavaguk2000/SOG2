@@ -3,22 +3,11 @@ from src.types.Mapping import Mapping
 bible_mapping = Mapping(
     'bible',
     {
-        "settings": {
-            "analysis": {
-                "analyzer": {
-                    "lowercase_analyzer": {
-                        "type": "custom",
-                        "tokenizer": "keyword",
-                        "filter": ["lowercase"]
-                    }
-                }
-            }
-        },
         "properties": {
             "bible_id": {
                 "type": "keyword"
             },
-            "book": {
+            "book_id": {
                 "type": "keyword"
             },
             "book_name": {
@@ -43,4 +32,78 @@ bible_mapping = Mapping(
                 "analyzer": "russian"
             }
         }
-    })
+    },
+    settings={
+        "analysis": {
+            "analyzer": {
+                "lowercase_analyzer": {
+                    "type": "custom",
+                    "tokenizer": "keyword",
+                    "filter": ["lowercase"]
+                }
+            }
+        }
+    }
+)
+
+sermon_mapping = Mapping(
+    'sermon',
+    {
+        "properties": {
+            "id": {
+                "type": "keyword"
+            },
+            "sermon_collection_id": {
+                "type": "keyword"
+            },
+            "sermon_id": {
+                "type": "keyword"
+            },
+            "sermon_name": {
+                "type": "text",
+                "analyzer": "lowercase_analyzer",
+                "fields": {
+                    "keyword": {
+                        "type": "keyword"
+                    }
+                }
+            },
+            "sermon_translation": {
+                "type": "keyword"
+            },
+            "sermon_date": {
+                "type": "date"
+            },
+            "chapter": {
+                "type": "integer"
+            },
+            "paragraph_order": {
+                "type": "integer"
+            },
+            "chapter_content": {
+                "type": "text",
+                "analyzer": "russian",
+                "fields": {
+                    "standard": {
+                        "type": "text",
+                        "analyzer": "standard"
+                    }
+                }
+            },
+            "audio_link": {
+                "type": "keyword"
+            }
+        }
+    },
+    settings={
+        "analysis": {
+            "analyzer": {
+                "lowercase_analyzer": {
+                    "type": "custom",
+                    "tokenizer": "keyword",
+                    "filter": ["lowercase"]
+                }
+            }
+        }
+    }
+)

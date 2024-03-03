@@ -1,0 +1,7 @@
+Generate migration
+
+`alembic revision --autogenerate -m "name"`
+
+Then, run to upgrade
+
+`alembic upgrade head`

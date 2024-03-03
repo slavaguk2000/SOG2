@@ -1,26 +1,15 @@
-import React, { PropsWithChildren, SetStateAction, useCallback, useMemo, useState } from 'react';
+import React, { PropsWithChildren, useCallback, useEffect, useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 
-import { useMutation, useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 
-import { bibleBooks, bibleVerses, setActiveSlide } from 'src/utils/gql/queries';
-import {
-  BibleBook,
-  Mutation,
-  MutationSetActiveSlideArgs,
-  Query,
-  QueryBibleBooksArgs,
-  QueryBibleVersesArgs,
-  Slide,
-} from 'src/utils/gql/types';
+import { bibleBooks, bibleVerses } from 'src/utils/gql/queries';
+import { BibleBook, Query, QueryBibleBooksArgs, QueryBibleVersesArgs, Slide } from 'src/utils/gql/types';
 
-import { usePresentation } from '../presentationProvider';
+import { useInstrumentsField } from '../instrumentsFieldProvider';
 import { ChapterSelector } from '../types';
 
 import BibleContext from './context';
-
-interface BibleDataProviderProps {
-  bibleId: string;
-}
 
 export const getEntityIdFromSlide = (slide: Slide, position: number): string =>
   slide.location ? slide.location[slide.location.length - position] : '';
@@ -32,26 +21,33 @@ export const getChapterNumberFromSlide = (slide: Slide): number => Number(getEnt
 export const getBookFromSlide = (slide: Slide, bibleBooksData: BibleBook[]): BibleBook | undefined =>
   bibleBooksData.find(({ id }) => id === getEntityIdFromSlide(slide, 3));
 
-const BibleDataProvider = ({ bibleId = '0', children }: PropsWithChildren<BibleDataProviderProps>) => {
-  const [silentMode, setSilentMode] = useState<boolean>(false);
+const BibleDataProvider = ({ children }: PropsWithChildren) => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const bibleId = searchParams.get('bibleId') ?? '';
+
+  useEffect(() => {
+    if (!bibleId) {
+      setSearchParams((prev) => ({
+        ...prev,
+        bibleId: 'fcd38411-5f94-4bda-9a2a-cd5624b3dac2',
+      }));
+    }
+  });
+
   const [currentChapter, setCurrentChapter] = useState<ChapterSelector>({
     bookIdx: undefined,
     chapterId: undefined,
   });
 
-  const [currentSlide, setCurrentSlide] = useState<Slide | undefined>(undefined);
   const [lastSlide, setLastSlide] = useState<Slide | undefined>(undefined);
 
   const { data } = useQuery<Pick<Query, 'bibleBooks'>, QueryBibleBooksArgs>(bibleBooks, {
     variables: {
       bibleId,
     },
+    skip: !bibleId,
     fetchPolicy: 'cache-first',
   });
-
-  const [setActiveSlideMutation] = useMutation<Pick<Mutation, 'setActiveSlide'>, MutationSetActiveSlideArgs>(
-    setActiveSlide,
-  );
 
   const bibleBooksData = data?.bibleBooks;
 
@@ -85,39 +81,12 @@ const BibleDataProvider = ({ bibleId = '0', children }: PropsWithChildren<BibleD
     }
   };
 
-  const { setText } = usePresentation();
-
-  const sendActiveSlide = (newSlide?: Slide) => {
-    setActiveSlideMutation({
-      variables: {
-        slideId: newSlide?.id,
-      },
-    }).catch((e) => console.error(e));
-  };
-
   const getReadableBiblePlace = (slide: Slide, withVerse?: boolean) =>
     bibleBooksData
       ? `${getBookFromSlide(slide, bibleBooksData)?.name ?? ''} ${getChapterNumberFromSlide(slide)}${
           withVerse ? `:${getVerseNumberFromSlide(slide)}` : ''
         }`
       : '';
-
-  const updateSlideOnPresentation = (newSlide?: Slide) => {
-    if (!newSlide) {
-      setText('', '');
-
-      return;
-    }
-
-    if (bibleId === newSlide.location?.[0] && bibleBooksData) {
-      setText(`${getVerseNumberFromSlide(newSlide)}. ${newSlide.content}`, getReadableBiblePlace(newSlide));
-    }
-  };
-
-  const updatePresentationAndBackendSlide = (newSlide?: Slide) => {
-    sendActiveSlide(newSlide);
-    updateSlideOnPresentation(newSlide);
-  };
 
   const handleUpdateLocation = (newSlide: Slide) => {
     if (!newSlide.location) {
@@ -138,17 +107,23 @@ const BibleDataProvider = ({ bibleId = '0', children }: PropsWithChildren<BibleD
     }
   };
 
-  const handleUpdateSlide = (newSlide?: Slide) => {
-    setCurrentSlide(newSlide);
+  const { handleUpdateSlide: instrumentsHandleUpdateSlide, currentSlide } = useInstrumentsField();
 
+  const handleUpdateSlide = (newSlide?: Slide) => {
     if (newSlide) {
       setLastSlide(newSlide);
       handleUpdateLocation(newSlide);
     }
 
-    if (!silentMode) {
-      updatePresentationAndBackendSlide(newSlide);
-    }
+    instrumentsHandleUpdateSlide(
+      newSlide && {
+        slide: newSlide,
+        presentationData: {
+          text: `${getVerseNumberFromSlide(newSlide)}. ${newSlide.content}`,
+          title: getReadableBiblePlace(newSlide),
+        },
+      },
+    );
   };
 
   const currentBook = useMemo(
@@ -156,16 +131,18 @@ const BibleDataProvider = ({ bibleId = '0', children }: PropsWithChildren<BibleD
     [bibleBooksData, currentChapter.bookIdx],
   );
 
+  const bookId = currentBook?.id ?? (bibleBooksData?.[0]?.id as string) ?? '';
+
   const { data: versesData, loading: versesDataLoading } = useQuery<Pick<Query, 'bibleVerses'>, QueryBibleVersesArgs>(
     bibleVerses,
     {
       variables: {
         bibleId,
-        bookId: currentBook?.id ?? (bibleBooksData?.[0].id as string),
+        bookId,
         chapter: currentChapter?.chapterId ?? 1,
       },
       fetchPolicy: 'cache-first',
-      skip: !bibleBooksData,
+      skip: !(bibleBooksData && bookId),
     },
   );
 
@@ -191,16 +168,6 @@ const BibleDataProvider = ({ bibleId = '0', children }: PropsWithChildren<BibleD
         handleUpdateSlide(versesData.bibleVerses[prevVerseIdx]);
       }
     }
-  };
-
-  const handleSetSilentMode = (setter: SetStateAction<boolean>) => {
-    setSilentMode((prev) => {
-      const newMode = typeof setter === 'function' ? setter(prev) : setter;
-
-      updatePresentationAndBackendSlide(newMode ? undefined : currentSlide);
-
-      return newMode;
-    });
   };
 
   const handleChapterSelect = (selectedId: number) => {
@@ -239,14 +206,11 @@ const BibleDataProvider = ({ bibleId = '0', children }: PropsWithChildren<BibleD
         getReadableBiblePlace,
         bibleBooksData,
         versesData,
-        currentSlide,
         lastSlide,
         handleUpdateSlide,
         handleBookSelect,
         handleNextSlide,
         handlePrevSlide,
-        silentMode,
-        setSilentMode: handleSetSilentMode,
         slideInChapter,
       }}
     >

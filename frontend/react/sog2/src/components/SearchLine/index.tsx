@@ -1,4 +1,5 @@
-import React, { KeyboardEvent, useEffect, useRef, useState } from 'react';
+import React, { Context, KeyboardEvent, useContext, useEffect, useRef, useState } from 'react';
+import { useLocation, useSearchParams } from 'react-router-dom';
 
 import { useQuery } from '@apollo/client';
 import TextField from '@mui/material/TextField';
@@ -6,9 +7,11 @@ import { debounce } from 'lodash';
 
 import { debounceInputDelay, minimumSearchLength } from 'src/constants/behaviorConstants';
 import { search } from 'src/utils/gql/queries';
-import { Query, QuerySearchArgs, Slide } from 'src/utils/gql/types';
+import { Query, QuerySearchArgs, Slide, TabType } from 'src/utils/gql/types';
 
-import { useBibleData } from '../../providers/bibleDataProvider';
+import BibleContext from '../../providers/bibleDataProvider/context';
+import SermonDataProviderContext from '../../providers/sermanDataProvider/context';
+import { DataProvider } from '../../providers/types';
 
 import SearchLineAutocompleteItem from './SearchLineAutocompleteItem';
 import { SearchLineAutocomplete, SearchLineWrapper } from './styled';
@@ -20,6 +23,7 @@ const handleSearch = debounce(
 );
 
 const SearchLine = () => {
+  const [searchParams] = useSearchParams();
   const [debouncedSearchText, setDebouncedSearchText] = useState<string>('');
   const [searchText, setSearchText] = useState<string>('');
   const [autocompleteActive, setAutocompleteActive] = useState<boolean>(false);
@@ -27,9 +31,15 @@ const SearchLine = () => {
   const searchLineRef = useRef<HTMLInputElement>(null);
   const [placeSelected, setPlaceSelected] = useState<boolean>(false);
 
+  const { pathname } = useLocation();
+
+  const tabType = pathname === '/bible' ? TabType.Bible : TabType.Sermon;
+
   const { data } = useQuery<Pick<Query, 'search'>, QuerySearchArgs>(search, {
     variables: {
       searchPattern: debouncedSearchText,
+      tabType,
+      id: searchParams.get(pathname === '/bible' ? 'bibleId' : 'id'),
     },
     fetchPolicy: 'cache-first',
     skip: debouncedSearchText.length < minimumSearchLength,
@@ -43,7 +53,9 @@ const SearchLine = () => {
     setSelectedProposeIdx(0);
   };
 
-  const { handleUpdateSlide, handleUpdateLocation } = useBibleData();
+  const { handleUpdateSlide, handleUpdateLocation } = useContext<DataProvider>(
+    (tabType === TabType.Bible ? BibleContext : SermonDataProviderContext) as unknown as Context<DataProvider>,
+  );
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Escape') {
@@ -176,7 +188,7 @@ const SearchLine = () => {
           <TextField
             {...params}
             size="small"
-            label="Search the Bible"
+            label={`Search in ${tabType === TabType.Bible ? 'Bible' : 'Sermons'}`}
             onKeyDown={handleKeyDown}
             inputRef={searchLineRef}
           />

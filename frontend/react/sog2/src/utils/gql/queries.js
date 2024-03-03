@@ -1,12 +1,42 @@
 import { gql } from '@apollo/client';
 
 export const search = gql`
-  query search($searchPattern: String!) {
-    search(searchPattern: $searchPattern) {
+  query search($searchPattern: String!, $tabType: TabType!, $id: ID) {
+    search(searchPattern: $searchPattern, tabType: $tabType, id: $id) {
       id
       content
       location
       searchContent
+    }
+  }
+`;
+
+export const sermon = gql`
+  query sermon($sermonId: ID!) {
+    sermon(sermonId: $sermonId) {
+      id
+      content
+      location
+      audioMappings {
+        id
+        slideCollectionAudioMappingId
+        timePoint
+      }
+    }
+  }
+`;
+
+export const sermons = gql`
+  query sermons($sermonsCollectionId: ID!) {
+    sermons(sermonsCollectionId: $sermonsCollectionId) {
+      id
+      name
+      translation
+      date
+      audioMapping {
+        id
+        audioLink
+      }
     }
   }
 `;
@@ -43,8 +73,8 @@ export const bibleVerses = gql`
 `;
 
 export const setActiveSlide = gql`
-  mutation setActiveSlide($slideId: ID) {
-    setActiveSlide(slideId: $slideId)
+  mutation setActiveSlide($slideId: ID, $type: TabType, $slideAudioMapping: SlideMappingInput) {
+    setActiveSlide(slideId: $slideId, type: $type, slideAudioMapping: $slideAudioMapping)
   }
 `;
 

@@ -10,8 +10,6 @@ const defaultValue: BibleContextType = {
   handleBookSelect: () => true,
   handlePrevSlide: () => true,
   handleNextSlide: () => true,
-  silentMode: false,
-  setSilentMode: () => true,
   handleUpdateLocation: () => true,
   slideInChapter: true,
   getReadableBiblePlace: () => '',
