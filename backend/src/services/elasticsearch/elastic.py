@@ -31,7 +31,7 @@ class Elastic:
     def search(self, index: str, fields=None, **kwargs):
         if fields is None:
             fields = []
-        return self.es.search(index=index, fields=fields, **kwargs)
+        return self.es.search(index=index, fields=fields, size=15, **kwargs)
 
     def get_slide_by_id(self, index: str, slide_id: str):
         return self.es.get(index=index, id=slide_id)

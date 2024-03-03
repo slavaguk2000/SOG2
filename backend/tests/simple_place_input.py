@@ -70,5 +70,10 @@ def test_answer():
         get_place_by_short_write_template(short_write["search_line"], short_write['expected_locations'], bible_books)
 
 
+def test_highlight():
+    answer = bible_search("мат 24 14", bible_id)
+    assert answer[0]['search_content'] == 'От <span class="highlighted">Матфея</span> <span class="highlighted">24</span>:<span class="highlighted">14</span> И проповедано будет сие Евангелие Царствия по всей вселенной, во свидетельство всем народам; и тогда придет конец.'
+
+
 if __name__ == '__main__':
     test_answer()

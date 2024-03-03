@@ -3,10 +3,22 @@ from src.services.elasticsearch.elastic import Elastic
 from src.services.elasticsearch.mappings import bible_mapping
 import re
 
+from src.services.elasticsearch.utils import insert_highlights_into_original_str
+
 el = Elastic()
 
 
-default_slide_source = ["bible_id", "book_id", "book_order", "chapter", "verse_number", "verse_content", "search_content"]
+default_slide_source = [
+    "bible_id",
+    "book_id",
+    "book_name",
+    "book_order",
+    "chapter",
+    "verse_number",
+    "verse_content",
+    "search_content"
+]
+
 sort_priority = [
     {
         "_score": {
@@ -35,29 +47,43 @@ def bible_source_to_content_string(source: dict):
     return source['verse_content']
 
 
-def bible_source_to_search_content_string(source: dict, highlight: dict, matched_queries: [str]):
-    if "search_content" in source:
-        search_content = source['search_content']
-        if 'book' in source and ('primary_verse' in matched_queries or 'secondary_verse' in matched_queries):
-            search_content = re.sub(
-                r'^(' + re.escape(source["book"]) + r' \d+:)(\d+)(\s)',
-                r'\1' + highlight_pre_tag + r'\2' + highlight_post_tag + r'\3',
-                search_content
-            )
-        if 'book' in source and ('primary_chapter' in matched_queries or 'secondary_chapter' in matched_queries):
-            search_content = re.sub(
-                r'^(' + re.escape(source["book"]) + r' )(\d+):',
-                r'\1' + highlight_pre_tag + r'\2' + highlight_post_tag + r':',
-                search_content
-            )
-        if 'book_name' in highlight and 'book' in source:
-            regex_pattern = r'^' + re.escape(source["book"]) + r'\b'
-            search_content = re.sub(regex_pattern, highlight['book_name'][0], search_content)
-        if 'verse_content' in highlight and 'verse_content' in source:
-            regex_pattern = r'\b' + re.escape(source["verse_content"]) + r'$'
-            search_content = re.sub(regex_pattern, highlight['verse_content'][0], search_content)
-        return search_content
-    return ''
+def get_highlighted_book(hit: dict):
+    if 'book_name' not in hit['_source']:
+        return ""
+
+    return insert_highlights_into_original_str(hit['_source']["book_name"], hit, ['book_name'])
+
+
+def get_highlighted_chapter(hit: dict):
+    chapter_number = str(hit["_source"]['chapter'])
+    matched_chapter = 'matched_queries' in hit and (
+            'primary_chapter' in hit['matched_queries'] or 'secondary_chapter' in hit['matched_queries']
+    )
+    return f"{highlight_pre_tag}{chapter_number}{highlight_post_tag}" if matched_chapter else chapter_number
+
+
+def get_highlighted_verse_number(hit: dict):
+    verse_number = str(hit["_source"]['verse_number'])
+    matched_verse_number = 'matched_queries' in hit and (
+            'primary_verse' in hit['matched_queries'] or 'secondary_verse' in hit['matched_queries']
+    )
+    return f"{highlight_pre_tag}{verse_number}{highlight_post_tag}" if matched_verse_number else verse_number
+
+
+def get_highlighted_verse_content(hit: dict):
+    return insert_highlights_into_original_str(
+        hit["_source"]['verse_content'],
+        hit,
+        ['verse_content']
+    )
+
+
+def bible_source_to_search_content_string(hit: dict):
+    book = get_highlighted_book(hit)
+    chapter = get_highlighted_chapter(hit)
+    verse_number = get_highlighted_verse_number(hit)
+    verse_content = get_highlighted_verse_content(hit)
+    return f"{book} {chapter}:{verse_number} {verse_content}"
 
 
 def bible_source_to_location(source: dict):
@@ -68,11 +94,7 @@ def bible_hit_to_slide(hit: dict):
     source = hit["_source"]
     return {
         "id": hit["_id"],
-        "search_content": bible_source_to_search_content_string(
-            source,
-            hit["highlight"] if 'highlight' in hit else {},
-            hit["matched_queries"] if "matched_queries" in hit else []
-        ),
+        "search_content": bible_source_to_search_content_string(hit),
         "content": bible_source_to_content_string(source),
         "location": bible_source_to_location(source)
     }
