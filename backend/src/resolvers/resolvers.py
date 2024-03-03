@@ -26,7 +26,7 @@ def resolve_search(*_, search_pattern: str, tab_type: str, **kwargs):
     if tab_type == 'Bible':
         return bible_search(search_pattern, kwargs["id"] if kwargs.get("id") else "607e6be1-dc31-498e-ba8b-f73ddd8806fb")
     if tab_type == 'Sermon':
-        return sermon_search(search_pattern, "0")
+        return sermon_search(search_pattern, "0", kwargs.get("id"))
     return []
 
 

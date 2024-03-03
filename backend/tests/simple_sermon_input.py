@@ -1,9 +1,10 @@
 from src.services.elasticsearch.search.sermon.sermon import sermon_search
 from src.services.database_helpers.sermon import get_sermons
+import re
 
 
 def sermon_search_test(search_line: str, expected_locations: [[int | str]]):
-    result = sermon_search(search_line, "0")
+    result = sermon_search(search_line, "0", None)
 
     for i, expected_location in enumerate(expected_locations):
         current_result = result[i]["location"][1:]
@@ -62,5 +63,18 @@ def test_short_writes():
 
 
 def test_highlight():
-    answer = sermon_search("рас 189 лже", "0")
+    answer = sermon_search("рас 189 лже", "0", None)
     assert answer[0]['search_content'] == '64-726 <span class="highlighted">Распознай</span> cвой день и его послание (VGR) <span class="highlighted">189</span> Вот, тот же самый человек поставил кассету и сказал: "Взгляните сюда, Пятидесятники, — сказал, — и вы, Баптисты. Этот человек, <span class="highlighted">лжепророк</span> Уилльям Бранхам сказал, что Орал Роберте и Билли Грэйем были в Содоме." Смотрите, потом обрезал ленту; вот и все, понимаете.'
+
+
+def test_context():
+    # 61d8295e-8f63-49c7-8a84-cfed75e83e9b - ID of Распознай cвой день и его послание (VGR)
+    test_sermon_id = "61d8295e-8f63-49c7-8a84-cfed75e83e9b"
+    count_result_in_sermon = 3
+    search_pattern = "лжеп"
+    answers = sermon_search(search_pattern, "0", test_sermon_id)
+    for start_answer in answers[0:count_result_in_sermon]:
+        assert start_answer['location'][1] == test_sermon_id
+    for every_answer in answers:
+        highlighted_parts = re.findall(r'<span class="highlighted">([^<]+)</span>', every_answer['search_content'])
+        assert any(highlighted.startswith(search_pattern) for highlighted in highlighted_parts)

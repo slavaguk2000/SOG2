@@ -1,3 +1,4 @@
+from typing import List, Optional
 from src.services.elasticsearch.search.sermon.SearchQuery import SearchQuery
 from src.services.elasticsearch.search.sermon.search_providers.abstract_seacrh_provider import SearchProvider
 import regex
@@ -12,7 +13,7 @@ class SermonChapterContentSearchProvider(SearchProvider):
     def match(self, search_request: str) -> bool:
         return bool(regex.search(pattern, search_request))
 
-    def get_query(self, search_request: str) -> SearchQuery:
+    def get_query(self, search_request: str, context: Optional[List[str]]) -> SearchQuery:
         search_query = SearchQuery()
 
         match = regex.search(pattern, search_request)
@@ -32,7 +33,7 @@ class SermonChapterContentSearchProvider(SearchProvider):
         )
 
         if sermon_name:
-            q = sermon_name_search_provider.get_query(sermon_name)
+            q = sermon_name_search_provider.get_query(sermon_name, None)
             search_query.should.append({
                 "bool": {
                     "should": q.should,
@@ -52,7 +53,7 @@ class SermonChapterContentSearchProvider(SearchProvider):
             })
 
         if content:
-            q = content_search_provider.get_query(content)
+            q = content_search_provider.get_query(content, None)
             search_query.should += q.should
 
         return search_query
