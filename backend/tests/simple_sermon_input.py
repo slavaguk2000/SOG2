@@ -10,7 +10,6 @@ def sermon_search_test(search_line: str, expected_locations: [[int | str]]):
         assert current_result == expected_location
 
 
-
 def get_id_by_name_and_translation(sermons: [dict], name: str, translation: str):
     return list(
         filter(
@@ -60,3 +59,8 @@ def test_short_writes():
         },
     ]
     template_test_answer(short_writes)
+
+
+def test_highlight():
+    answer = sermon_search("рас 189 лже", "0")
+    assert answer[0]['search_content'] == '64-726 <span class="highlighted">Распознай</span> cвой день и его послание (VGR) <span class="highlighted">189</span> Вот, тот же самый человек поставил кассету и сказал: "Взгляните сюда, Пятидесятники, — сказал, — и вы, Баптисты. Этот человек, <span class="highlighted">лжепророк</span> Уилльям Бранхам сказал, что Орал Роберте и Билли Грэйем были в Содоме." Смотрите, потом обрезал ленту; вот и все, понимаете.'

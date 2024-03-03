@@ -12,27 +12,58 @@ from typing import List, Union
 
 el = Elastic()
 
+
 # TODO : filter
 # default_slide_source = ["book", "book_order", "chapter", "verse_number", "verse_content", "search_content"]
 
 
-def sermon_hit_to_slide(hit: dict):
-    print(hit)
-    source = hit["_source"]
-    print(source['chapter_content'])
-    if 'highlight' in hit and 'chapter_content' in hit['highlight']:
-        for i in hit['highlight']['chapter_content']:
-            print(i)
-
+def get_date_str_for_search(source: dict):
     sermon_date = source['sermon_date']
-
     date_object = datetime.strptime(sermon_date, '%Y-%m-%dT%H:%M:%S')
+    return f"{date_object.strftime('%y')}-{date_object.month}{date_object.day}"
+
+
+def get_content_for_search(hit: dict):
+    return insert_highlights_into_original_str(
+        hit["_source"]['chapter_content'],
+        hit,
+        ['chapter_content.standard', 'chapter_content']
+    )
+
+
+def get_name_for_search(hit: dict):
+    return insert_highlights_into_original_str(
+        hit["_source"]['sermon_name'],
+        hit,
+        ['sermon_name']
+    )
+
+
+def get_chapter_for_search(hit: dict):
+    chapter_number = str(hit["_source"]['chapter'])
+    matched_chapter = 'matched_queries' in hit and 'chapter' in hit['matched_queries']
+    return f"{highlight_pre_tag}{chapter_number}{highlight_post_tag}" if matched_chapter else chapter_number
+
+
+def sermon_hit_to_slide(hit: dict):
+    source = hit["_source"]
+
+    date_str = get_date_str_for_search(source)
+
+    content = get_content_for_search(hit)
+
+    name = get_name_for_search(hit)
+
+    chapter = get_chapter_for_search(hit)
 
     return {
         "id": hit["_id"],
-        "search_content": f"{date_object.strftime('%y')}-{date_object.month}{date_object.day} {source['sermon_name']} ({source['sermon_translation']}) {insert_highlights_into_original_str(source['chapter_content'], hit, ['chapter_content.standard', 'chapter_content'])}",
+        "search_content": (
+            f"{date_str} {name} ({source['sermon_translation']}) {chapter} {content}"
+        ),
         "content": source['chapter_content'],
-        "location": ["0", source['sermon_id'], str(source["chapter"]) if source.get("chapter") else "", source['paragraph_order']]
+        "location": ["0", source['sermon_id'], str(source["chapter"]) if source.get("chapter") else "",
+                     source['paragraph_order']]
     }
 
 
@@ -61,51 +92,52 @@ def sermon_agg_to_sermon_data(agg_data: dict):
 
 def get_sermons(sermons_collection_id: str):
     result = el.search(index=sermon_mapping.index, body={
-      "size": 0,
-      "query": {
-        "term": {
-          "sermon_collection_id": {
-            "value": sermons_collection_id
-          }
-        }
-      },
-      "aggs": {
-        "unique_sermon_ids": {
-          "terms": {
-            "field": "sermon_id",
-            "size": 10000
-          },
-          "aggs": {
-            "sermon_name": {
-              "terms": {
-                "field": "sermon_name.keyword",
-                "size": 1
-              }
-            },
-            "sermon_translation": {
-              "terms": {
-                "field": "sermon_translation",
-                "size": 1
-              }
-            },
-            "sermon_date": {
-              "terms": {
-                "field": "sermon_date",
-                "size": 1
-              }
-            },
-            "audio_link": {
-              "terms": {
-                "field": "audio_link",
-                "size": 1
-              }
+        "size": 0,
+        "query": {
+            "term": {
+                "sermon_collection_id": {
+                    "value": sermons_collection_id
+                }
             }
-          }
+        },
+        "aggs": {
+            "unique_sermon_ids": {
+                "terms": {
+                    "field": "sermon_id",
+                    "size": 10000
+                },
+                "aggs": {
+                    "sermon_name": {
+                        "terms": {
+                            "field": "sermon_name.keyword",
+                            "size": 1
+                        }
+                    },
+                    "sermon_translation": {
+                        "terms": {
+                            "field": "sermon_translation",
+                            "size": 1
+                        }
+                    },
+                    "sermon_date": {
+                        "terms": {
+                            "field": "sermon_date",
+                            "size": 1
+                        }
+                    },
+                    "audio_link": {
+                        "terms": {
+                            "field": "audio_link",
+                            "size": 1
+                        }
+                    }
+                }
+            }
         }
-      }
     })
 
-    return [sermon_agg_to_sermon_data(sermon_data) for sermon_data in result["aggregations"]["unique_sermon_ids"]["buckets"]]
+    return [sermon_agg_to_sermon_data(sermon_data) for sermon_data in
+            result["aggregations"]["unique_sermon_ids"]["buckets"]]
 
 
 def search(search_request: str, providers: List[SearchProvider]) -> SearchQuery:
@@ -139,7 +171,7 @@ def sermon_search(search_pattern: str, sermon_collection_id: str):
         }
     }
 
-    print(query)
+    # print(str(query).replace("'", '"'))
 
     result = el.search(
         index=sermon_mapping.index,
@@ -150,4 +182,3 @@ def sermon_search(search_pattern: str, sermon_collection_id: str):
     )
 
     return [sermon_hit_to_slide(hit) for hit in result["hits"]["hits"]]
-

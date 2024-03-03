@@ -45,7 +45,8 @@ class SermonChapterContentSearchProvider(SearchProvider):
                 "term": {
                     "chapter": {
                         "value": chapter,
-                        "boost": 30
+                        "boost": 30,
+                        "_name": "chapter"
                     }
                 }
             })

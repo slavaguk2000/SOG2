@@ -242,6 +242,8 @@ def bible_search(search_pattern: str, bible_id: str):
         }
     }
 
+    # print(str(query).replace("'", '"'))
+
     result = el.search(
         index=bible_mapping.index,
         query=query,
