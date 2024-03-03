@@ -20,7 +20,7 @@ el = Elastic()
 def get_date_str_for_search(source: dict):
     sermon_date = source['sermon_date']
     date_object = datetime.strptime(sermon_date, '%Y-%m-%dT%H:%M:%S')
-    return f"{date_object.strftime('%y')}-{date_object.month}{date_object.day}"
+    return f"{date_object.strftime('%y')}-{'{:02d}'.format(date_object.month)}{'{:02d}'.format(date_object.day)}"
 
 
 def get_content_for_search(hit: dict):
@@ -32,8 +32,14 @@ def get_content_for_search(hit: dict):
 
 
 def get_name_for_search(hit: dict):
+    matched_context_sermon = 'matched_queries' in hit and 'context_sermon' in hit['matched_queries']
+    sermon_name = hit["_source"]['sermon_name']
+
+    if matched_context_sermon:
+        return f"{highlight_pre_tag}{sermon_name}{highlight_post_tag}"
+
     return insert_highlights_into_original_str(
-        hit["_source"]['sermon_name'],
+        sermon_name,
         hit,
         ['sermon_name']
     )
@@ -77,7 +83,7 @@ def get_sermon_by_id(sermon_id: str):
 
     # print(result)
 
-    return [sermon_hit_to_slide(hit) for hit in result["hits"]["hits"]]
+    return [sermon_hit_to_slide(hit) for hit in result["hits"]["hits"][:1]]
 
 
 def sermon_agg_to_sermon_data(agg_data: dict):
@@ -140,18 +146,18 @@ def get_sermons(sermons_collection_id: str):
             result["aggregations"]["unique_sermon_ids"]["buckets"]]
 
 
-def search(search_request: str, providers: List[SearchProvider]) -> SearchQuery:
+def search(search_request: str, providers: List[SearchProvider], current_sermon_id: str | None) -> SearchQuery:
     for provider in providers:
         if provider.match(search_request):
-            return provider.get_query(search_request)
+            return provider.get_query(search_request, [current_sermon_id] if current_sermon_id else None)
     return SearchQuery()
 
 
-def sermon_search(search_pattern: str, sermon_collection_id: str):
+def sermon_search(search_pattern: str, sermon_collection_id: str, current_sermon_id: str | None):
     search_query = search(search_pattern.strip(), [
         SermonChapterContentSearchProvider(),
         DefaultSearchProvider(),
-    ])
+    ], current_sermon_id)
 
     query = {
         "bool": {

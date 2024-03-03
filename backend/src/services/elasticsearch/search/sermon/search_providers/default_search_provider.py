@@ -1,3 +1,4 @@
+from typing import List, Optional
 from src.services.elasticsearch.search.sermon.SearchQuery import SearchQuery
 from src.services.elasticsearch.search.sermon.search_providers.abstract_seacrh_provider import SearchProvider
 
@@ -34,7 +35,7 @@ class DefaultSearchProvider(SearchProvider):
 
         return phrase_queries
 
-    def get_query(self, search_request: str) -> SearchQuery:
+    def get_query(self, search_request: str, context: Optional[List[str]]) -> SearchQuery:
         search_query = SearchQuery()
         search_query.fields = [
             self.__russian_field,
@@ -73,6 +74,17 @@ class DefaultSearchProvider(SearchProvider):
             search_query.should.append({
                 "dis_max": {
                     "queries": self.__get_phrase_queries(search_request)
+                }
+            })
+
+        if context and context[0]:
+            search_query.should.append({
+                "term": {
+                    "sermon_id": {
+                        "value": context[0],
+                        "boost": 0.3,
+                        "_name": "context_sermon"
+                    }
                 }
             })
 
