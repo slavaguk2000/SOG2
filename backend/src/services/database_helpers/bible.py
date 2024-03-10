@@ -21,7 +21,8 @@ def get_slide_by_verse(verse: Verse):
             verse.bible_book.id,
             verse.chapter,
             verse.verse_number
-        ]
+        ],
+        "title": f"{verse.bible_book.name} {verse.chapter}"
     }
 
 
