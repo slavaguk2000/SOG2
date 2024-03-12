@@ -5,7 +5,12 @@ bible_mapping = Mapping(
     {
         "properties": {
             "bible_id": {
-                "type": "keyword"
+                "type": "keyword",
+                "fields": {
+                    "keyword": {
+                        "type": "keyword"
+                    }
+                }
             },
             "book_id": {
                 "type": "keyword"
