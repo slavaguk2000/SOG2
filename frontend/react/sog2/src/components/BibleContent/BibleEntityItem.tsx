@@ -4,7 +4,7 @@ import { Tooltip } from '@mui/material';
 
 import { BibleEntityItemWrapper } from './styled';
 
-interface BibleEntityItemProps {
+export interface BibleEntityItemProps {
   name: string;
   onClick: () => void;
   selected: boolean;

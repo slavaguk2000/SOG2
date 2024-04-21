@@ -4,7 +4,7 @@ import { useInstrumentsField } from '../../providers/instrumentsFieldProvider';
 import { usePlayerContext } from '../../providers/playerProvider';
 import { useSermonData } from '../../providers/sermanDataProvider';
 import { formatTime } from '../../utils';
-import BibleEntityItem from '../BibleContent/BibleEntityItem';
+import SlideWithPreview from '../SlideWithPreview';
 
 import { SermonChapterSelectWrapper } from './styled';
 
@@ -33,12 +33,14 @@ const SermonChapterSelect = () => {
   return (
     <SermonChapterSelectWrapper>
       {preparedData?.map(({ content, id, slide, tooltip }) => (
-        <BibleEntityItem
+        <SlideWithPreview
           key={id}
-          name={content}
-          onClick={() => handleUpdateSlide(slide)}
-          selected={currentSlide?.id === id}
-          tooltip={tooltip}
+          bibleEntityItemProps={{
+            name: content,
+            onClick: () => handleUpdateSlide(slide),
+            selected: currentSlide?.id === id,
+            tooltip,
+          }}
         />
       ))}
     </SermonChapterSelectWrapper>
