@@ -15,7 +15,7 @@ export const palette: PaletteOptions = {
     contrastText: '#47008F',
   },
   background: {
-    paper: '#bef',
+    paper: '#24a',
     default: '#cef',
   },
   action: {

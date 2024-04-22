@@ -12,6 +12,8 @@ import BibleContext from './providers/bibleDataProvider/context';
 import BibleDataProvider from './providers/bibleDataProvider/provider';
 import FreeSlideDialogProvider from './providers/FreeSlideDialogProvider/provider';
 import InstrumentsFieldProvider from './providers/instrumentsFieldProvider/provider';
+import MainScreenRatioProvider from './providers/mainScreenRatioProvider/provider';
+import MultiScreenDataProvider from './providers/multiScreenDataProvider/provider';
 import PlayerContextProvider from './providers/playerProvider';
 import { PresentationProvider } from './providers/presentationProvider/provider';
 import SermonDataProviderContext from './providers/sermanDataProvider/context';
@@ -22,41 +24,45 @@ import MainView from './views/MainView/MainView';
 function App() {
   return (
     <ThemeProvider theme={theme}>
-      <PresentationProvider>
-        <FreeSlideDialogProvider>
-          <AppRoot>
-            <Router>
-              <PlayerContextProvider>
-                <InstrumentsFieldProvider>
-                  <Routes>
-                    <Route path="/" element={<Navigate to="/bible" replace />} />
-                    <Route
-                      path="/bible"
-                      element={
-                        <BibleDataProvider>
-                          <MainView dataProviderContext={BibleContext}>
-                            <BibleContent />
-                          </MainView>
-                        </BibleDataProvider>
-                      }
-                    />
-                    <Route
-                      path="/sermon"
-                      element={
-                        <SermonDataProvider>
-                          <MainView dataProviderContext={SermonDataProviderContext}>
-                            <SermonsContent />
-                          </MainView>
-                        </SermonDataProvider>
-                      }
-                    />
-                  </Routes>
-                </InstrumentsFieldProvider>
-              </PlayerContextProvider>
-            </Router>
-          </AppRoot>
-        </FreeSlideDialogProvider>
-      </PresentationProvider>
+      <MainScreenRatioProvider>
+        <PresentationProvider>
+          <FreeSlideDialogProvider>
+            <AppRoot>
+              <Router>
+                <PlayerContextProvider>
+                  <InstrumentsFieldProvider>
+                    <Routes>
+                      <Route path="/" element={<Navigate to="/bible" replace />} />
+                      <Route
+                        path="/bible"
+                        element={
+                          <BibleDataProvider>
+                            <MainView dataProviderContext={BibleContext}>
+                              <BibleContent />
+                            </MainView>
+                          </BibleDataProvider>
+                        }
+                      />
+                      <Route
+                        path="/sermon"
+                        element={
+                          <MultiScreenDataProvider>
+                            <SermonDataProvider>
+                              <MainView dataProviderContext={SermonDataProviderContext}>
+                                <SermonsContent />
+                              </MainView>
+                            </SermonDataProvider>
+                          </MultiScreenDataProvider>
+                        }
+                      />
+                    </Routes>
+                  </InstrumentsFieldProvider>
+                </PlayerContextProvider>
+              </Router>
+            </AppRoot>
+          </FreeSlideDialogProvider>
+        </PresentationProvider>
+      </MainScreenRatioProvider>
     </ThemeProvider>
   );
 }
