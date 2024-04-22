@@ -90,4 +90,6 @@ export interface MultiScreenDataProviderContextType {
   resetScreens: () => void;
   setLastUp: () => void;
   setLastDown: () => void;
+  proposeNewRatio: (newRatio: number) => void;
+  ratio: number;
 }

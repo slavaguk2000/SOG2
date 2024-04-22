@@ -13,6 +13,8 @@ const defaultValue: MultiScreenDataProviderContextType = {
   resetScreens: () => true,
   setLastUp: () => true,
   setLastDown: () => true,
+  proposeNewRatio: () => true,
+  ratio: 4 / 3,
 };
 
 const MultiScreenDataProviderContext = createContext<MultiScreenDataProviderContextType>(defaultValue);

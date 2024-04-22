@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 
 import { useMultiScreenDataProvider } from '../../providers/multiScreenDataProvider';
 
@@ -12,16 +12,16 @@ const minFontSize = 6;
 const fontStep = 1;
 const backFontStep = 0.1;
 const maxFontSize = 20;
-const ratio = 4 / 3;
 const overflow = 10;
 const previewWidthInPixels = 100;
-const previewHeightInPixels = previewWidthInPixels / ratio;
 
 const SlidePreview = ({ content }: SlidePreviewProps) => {
-  const { currentScreen, screensCount, setScreensCount } = useMultiScreenDataProvider();
+  const { currentScreen, screensCount, setScreensCount, ratio } = useMultiScreenDataProvider();
   const [fontSize, setFontSize] = useState(minFontSize);
   const [overflowFontSize, setOverflowFontSize] = useState<null | number>(null);
   const containerRef = useRef<null | HTMLDivElement>(null);
+
+  const previewHeightInPixels = useMemo(() => previewWidthInPixels / ratio, [ratio]);
 
   useEffect(() => {
     if (containerRef?.current) {
@@ -41,7 +41,20 @@ const SlidePreview = ({ content }: SlidePreviewProps) => {
         }
       }
     }
-  }, [screensCount, overflowFontSize, fontSize, setScreensCount]);
+  }, [screensCount, overflowFontSize, fontSize, setScreensCount, previewHeightInPixels]);
+
+  const clientHeight = containerRef?.current?.clientHeight;
+
+  const realOverflow = useMemo(() => {
+    if (clientHeight && screensCount) {
+      return (screensCount * previewHeightInPixels - clientHeight) / (screensCount - 1);
+    }
+
+    return overflow;
+  }, [clientHeight, previewHeightInPixels, screensCount]);
+
+  const previewTop = screensCount ? currentScreen * (previewHeightInPixels - realOverflow) : undefined;
+  const previewBottom = screensCount ? undefined : 0;
 
   return (
     <SlidePreviewWrapper width={`${previewWidthInPixels}px`} visible={!!(screensCount && screensCount > 1)}>
@@ -50,8 +63,8 @@ const SlidePreview = ({ content }: SlidePreviewProps) => {
       </SlidePreviewContainer>
       <SlidePreviewViewBox
         rendered={!!screensCount}
-        top={screensCount ? currentScreen * (previewHeightInPixels - overflow) : undefined}
-        bottom={screensCount ? undefined : 0}
+        top={previewTop}
+        bottom={previewBottom}
         width={`${previewWidthInPixels}px`}
         height={`${previewHeightInPixels}px`}
       />

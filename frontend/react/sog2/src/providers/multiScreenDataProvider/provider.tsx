@@ -15,6 +15,7 @@ const initialScreensData = {
 const MultiScreenDataProvider: FC<PropsWithChildren> = ({ children }) => {
   const [{ screensCount, currentScreen }, setScreensData] = useState<ScreensData>(initialScreensData);
   const [lastUp, setLastUp] = useState(false);
+  const [ratio, setRatio] = useState(4 / 3);
 
   const isFirstScreen = (): boolean => {
     if (screensCount === null) {
@@ -69,6 +70,11 @@ const MultiScreenDataProvider: FC<PropsWithChildren> = ({ children }) => {
     }));
   };
 
+  const proposeNewRatio = (newRatio: number) => {
+    setRatio(newRatio);
+    console.log(`New ratio: ${newRatio}`);
+  };
+
   return (
     <MultiScreenDataProviderContext.Provider
       value={{
@@ -82,6 +88,8 @@ const MultiScreenDataProvider: FC<PropsWithChildren> = ({ children }) => {
         resetScreens,
         setLastUp: handleLastUp,
         setLastDown: handleLastDown,
+        proposeNewRatio,
+        ratio,
       }}
     >
       {children}

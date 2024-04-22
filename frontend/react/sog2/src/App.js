@@ -23,43 +23,43 @@ import MainView from './views/MainView/MainView';
 function App() {
   return (
     <ThemeProvider theme={theme}>
-      <PresentationProvider>
-        <FreeSlideDialogProvider>
-          <AppRoot>
-            <Router>
-              <PlayerContextProvider>
-                <InstrumentsFieldProvider>
-                  <Routes>
-                    <Route path="/" element={<Navigate to="/bible" replace />} />
-                    <Route
-                      path="/bible"
-                      element={
-                        <BibleDataProvider>
-                          <MainView dataProviderContext={BibleContext}>
-                            <BibleContent />
-                          </MainView>
-                        </BibleDataProvider>
-                      }
-                    />
-                    <Route
-                      path="/sermon"
-                      element={
-                        <MultiScreenDataProvider>
+      <MultiScreenDataProvider>
+        <PresentationProvider>
+          <FreeSlideDialogProvider>
+            <AppRoot>
+              <Router>
+                <PlayerContextProvider>
+                  <InstrumentsFieldProvider>
+                    <Routes>
+                      <Route path="/" element={<Navigate to="/bible" replace />} />
+                      <Route
+                        path="/bible"
+                        element={
+                          <BibleDataProvider>
+                            <MainView dataProviderContext={BibleContext}>
+                              <BibleContent />
+                            </MainView>
+                          </BibleDataProvider>
+                        }
+                      />
+                      <Route
+                        path="/sermon"
+                        element={
                           <SermonDataProvider>
                             <MainView dataProviderContext={SermonDataProviderContext}>
                               <SermonsContent />
                             </MainView>
                           </SermonDataProvider>
-                        </MultiScreenDataProvider>
-                      }
-                    />
-                  </Routes>
-                </InstrumentsFieldProvider>
-              </PlayerContextProvider>
-            </Router>
-          </AppRoot>
-        </FreeSlideDialogProvider>
-      </PresentationProvider>
+                        }
+                      />
+                    </Routes>
+                  </InstrumentsFieldProvider>
+                </PlayerContextProvider>
+              </Router>
+            </AppRoot>
+          </FreeSlideDialogProvider>
+        </PresentationProvider>
+      </MultiScreenDataProvider>
     </ThemeProvider>
   );
 }
