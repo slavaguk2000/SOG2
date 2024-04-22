@@ -21,6 +21,9 @@ const SlideWithPreview = ({ bibleEntityItemProps }: SlideWithPreviewProps) => {
       <BibleEntityItem {...bibleEntityItemProps} />
       {popperOpen && (
         <Popper
+          sx={{
+            pointerEvents: 'none',
+          }}
           open={!!(popperOpen && anchorEl)}
           anchorEl={anchorEl}
           placement="bottom"

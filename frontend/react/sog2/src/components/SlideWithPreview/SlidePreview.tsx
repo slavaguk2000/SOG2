@@ -1,5 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 
+import { useMultiScreenDataProvider } from '../../providers/multiScreenDataProvider';
+
 import { SlidePreviewContainer, SlidePreviewWrapper, SlidePreviewText, SlidePreviewViewBox } from './styled';
 
 interface SlidePreviewProps {
@@ -16,23 +18,22 @@ const previewWidthInPixels = 100;
 const previewHeightInPixels = previewWidthInPixels / ratio;
 
 const SlidePreview = ({ content }: SlidePreviewProps) => {
-  const [viewPortOffset, setViewPortOffset] = useState(0);
+  const { currentScreen, screensCount, setScreensCount } = useMultiScreenDataProvider();
   const [fontSize, setFontSize] = useState(minFontSize);
   const [overflowFontSize, setOverflowFontSize] = useState<null | number>(null);
-  const [screenCount, setScreenCount] = useState<null | number>(null);
   const containerRef = useRef<null | HTMLDivElement>(null);
 
   useEffect(() => {
     if (containerRef?.current) {
       const screenHeight = containerRef.current?.clientHeight;
       const currentScreenCount = Math.ceil((screenHeight - overflow) / (previewHeightInPixels - overflow));
-      if (!screenCount) {
-        setScreenCount(currentScreenCount);
+      if (!screensCount) {
+        setScreensCount(currentScreenCount);
       } else if (overflowFontSize) {
-        if (currentScreenCount > screenCount) {
+        if (currentScreenCount > screensCount) {
           setFontSize(fontSize - backFontStep);
         }
-      } else if (currentScreenCount > screenCount) {
+      } else if (currentScreenCount > screensCount) {
         setOverflowFontSize(fontSize);
       } else {
         if (!overflowFontSize && fontSize < maxFontSize) {
@@ -40,19 +41,17 @@ const SlidePreview = ({ content }: SlidePreviewProps) => {
         }
       }
     }
-  }, [screenCount, overflowFontSize, fontSize]);
-
-  useEffect(() => {
-    setTimeout(() => setViewPortOffset((prev) => (screenCount ? (prev + 1) % screenCount : 0)), 2000);
-  }, [screenCount, viewPortOffset]);
+  }, [screensCount, overflowFontSize, fontSize, setScreensCount]);
 
   return (
-    <SlidePreviewWrapper width={`${previewWidthInPixels}px`}>
+    <SlidePreviewWrapper width={`${previewWidthInPixels}px`} visible={!!(screensCount && screensCount > 1)}>
       <SlidePreviewContainer ref={containerRef}>
         <SlidePreviewText fontSize={`${fontSize}px`}>{content}</SlidePreviewText>
       </SlidePreviewContainer>
       <SlidePreviewViewBox
-        top={viewPortOffset * (previewHeightInPixels - overflow)}
+        rendered={!!screensCount}
+        top={screensCount ? currentScreen * (previewHeightInPixels - overflow) : undefined}
+        bottom={screensCount ? undefined : 0}
         width={`${previewWidthInPixels}px`}
         height={`${previewHeightInPixels}px`}
       />

@@ -7,6 +7,7 @@ import { arrayToMap } from '../../utils';
 import { sermon, sermons } from '../../utils/gql/queries';
 import { Query, QuerySermonArgs, QuerySermonsArgs, Slide } from '../../utils/gql/types';
 import { useInstrumentsField } from '../instrumentsFieldProvider';
+import { useMultiScreenDataProvider } from '../multiScreenDataProvider';
 import { usePlayerContext } from '../playerProvider';
 
 import ChangePlayingSrcProposalDialog from './ChangePlayingSrcProposalDialog';
@@ -19,6 +20,8 @@ interface SermonDataProviderProps extends PropsWithChildren {
 const SermonDataProvider: FC<SermonDataProviderProps> = ({ sermonsCollectionId = '0', children }) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const currentSermonId = searchParams.get('id') ?? undefined;
+  const { isLastScreen, isFirstScreen, requestNextScreen, requestPrevScreen, resetScreens, setLastDown, setLastUp } =
+    useMultiScreenDataProvider();
 
   const handleSermonSelect = useCallback(
     (id: string) => {
@@ -69,6 +72,8 @@ const SermonDataProvider: FC<SermonDataProviderProps> = ({ sermonsCollectionId =
   const audioLink = audioMapping?.audioLink;
 
   const handleUpdateSlide = (newSlide?: Slide) => {
+    resetScreens();
+    setLastDown();
     const sermonId = newSlide?.location?.[1];
 
     if (sermonId) {
@@ -100,6 +105,11 @@ const SermonDataProvider: FC<SermonDataProviderProps> = ({ sermonsCollectionId =
       return;
     }
 
+    if (!isLastScreen()) {
+      requestNextScreen();
+      return;
+    }
+
     const currentIdx = sermonParagraphsMap[currentSlide.id].idx;
 
     const nextIdx = currentIdx + 1;
@@ -114,12 +124,18 @@ const SermonDataProvider: FC<SermonDataProviderProps> = ({ sermonsCollectionId =
       return;
     }
 
+    if (!isFirstScreen()) {
+      requestPrevScreen();
+      return;
+    }
+
     const currentIdx = sermonParagraphsMap[currentSlide.id].idx;
 
     const prevIdx = currentIdx - 1;
 
     if (prevIdx >= 0) {
       handleUpdateSlide(currentSermonData.sermon[prevIdx]);
+      setLastUp();
     }
   };
 

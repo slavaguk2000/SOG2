@@ -78,3 +78,16 @@ export interface PlayerContextType {
   isPlaying: boolean;
   openInterface: boolean;
 }
+
+export interface MultiScreenDataProviderContextType {
+  setScreensCount: (newScreenCount: number | null) => void;
+  isFirstScreen: () => boolean;
+  isLastScreen: () => boolean;
+  currentScreen: number;
+  screensCount: null | number;
+  requestNextScreen: () => void;
+  requestPrevScreen: () => void;
+  resetScreens: () => void;
+  setLastUp: () => void;
+  setLastDown: () => void;
+}
