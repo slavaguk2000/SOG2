@@ -1,4 +1,6 @@
-import React, { FC, PropsWithChildren, useState } from 'react';
+import React, { FC, PropsWithChildren, useEffect, useState } from 'react';
+
+import { usePresentation } from '../presentationProvider';
 
 import MultiScreenDataProviderContext from './context';
 
@@ -15,7 +17,15 @@ const initialScreensData = {
 const MultiScreenDataProvider: FC<PropsWithChildren> = ({ children }) => {
   const [{ screensCount, currentScreen }, setScreensData] = useState<ScreensData>(initialScreensData);
   const [lastUp, setLastUp] = useState(false);
-  const [ratio, setRatio] = useState(4 / 3);
+
+  const { setSegmentation } = usePresentation();
+
+  useEffect(() => {
+    if (screensCount && screensCount > 1) {
+      setSegmentation({ screensCount, currentScreen });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [screensCount, currentScreen]);
 
   const isFirstScreen = (): boolean => {
     if (screensCount === null) {
@@ -70,11 +80,6 @@ const MultiScreenDataProvider: FC<PropsWithChildren> = ({ children }) => {
     }));
   };
 
-  const proposeNewRatio = (newRatio: number) => {
-    setRatio(newRatio);
-    console.log(`New ratio: ${newRatio}`);
-  };
-
   return (
     <MultiScreenDataProviderContext.Provider
       value={{
@@ -88,8 +93,6 @@ const MultiScreenDataProvider: FC<PropsWithChildren> = ({ children }) => {
         resetScreens,
         setLastUp: handleLastUp,
         setLastDown: handleLastDown,
-        proposeNewRatio,
-        ratio,
       }}
     >
       {children}

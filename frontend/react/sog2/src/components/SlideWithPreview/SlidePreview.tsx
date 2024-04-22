@@ -1,5 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 
+import { presentationOverflowPercentage } from '../../constants/behaviorConstants';
+import { useMainScreenRatio } from '../../providers/mainScreenRatioProvider';
 import { useMultiScreenDataProvider } from '../../providers/multiScreenDataProvider';
 
 import { SlidePreviewContainer, SlidePreviewWrapper, SlidePreviewText, SlidePreviewViewBox } from './styled';
@@ -12,11 +14,12 @@ const minFontSize = 6;
 const fontStep = 1;
 const backFontStep = 0.1;
 const maxFontSize = 20;
-const overflow = 10;
+const overflow = presentationOverflowPercentage;
 const previewWidthInPixels = 100;
 
 const SlidePreview = ({ content }: SlidePreviewProps) => {
-  const { currentScreen, screensCount, setScreensCount, ratio } = useMultiScreenDataProvider();
+  const { currentScreen, screensCount, setScreensCount } = useMultiScreenDataProvider();
+  const { ratio } = useMainScreenRatio();
   const [fontSize, setFontSize] = useState(minFontSize);
   const [overflowFontSize, setOverflowFontSize] = useState<null | number>(null);
   const containerRef = useRef<null | HTMLDivElement>(null);

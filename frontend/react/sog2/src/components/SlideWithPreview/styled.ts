@@ -44,6 +44,6 @@ export const SlidePreviewViewBox = styled(Box, {
   display: flex;
   background-color: ${({ theme }) => theme.palette.primary.light};
   position: absolute;
-  opacity: 0.7;
+  opacity: 0.4;
   ${({ rendered }) => (rendered ? 'transition: top 0.3s ease-out;' : '')}
 `;

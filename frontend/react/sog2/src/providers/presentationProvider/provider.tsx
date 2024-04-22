@@ -1,6 +1,8 @@
 import React, { PropsWithChildren, useMemo, useState } from 'react';
 
-import { PresentationData } from '../types';
+import { presentationOverflowPercentage } from '../../constants/behaviorConstants';
+import { useMainScreenRatio } from '../mainScreenRatioProvider';
+import { PresentationData, SegmentationData } from '../types';
 
 import { PresentationContext } from './PresentationContext';
 
@@ -13,11 +15,32 @@ interface Session {
   send: (message: string) => void;
 }
 
+enum Commands {
+  setText = 'setText',
+  setSegmentation = 'setSegmentation',
+}
+
 const presUrls = ['receiver/index.html'];
+
+const setTextInSession = (session: Session, text: string, location: string) => {
+  session.send(JSON.stringify({ command: Commands.setText, text, location }));
+};
+
+const setSegmentationInSession = (session: Session, { screensCount, currentScreen }: SegmentationData) => {
+  session.send(
+    JSON.stringify({
+      command: Commands.setSegmentation,
+      screensCount,
+      currentScreen,
+      overflow: presentationOverflowPercentage,
+    }),
+  );
+};
 
 export const PresentationProvider = ({ children }: PropsWithChildren<PresentationProviderProps>) => {
   const [session, setSession] = useState<Session | null>(null);
   const [presentationData, setPresentationData] = useState<PresentationData | null>(null);
+  const [segmentationData, setSegmentationData] = useState<SegmentationData | null>(null);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [presentationRequestAvailability, setPresentationRequestAvailability] = useState<boolean | undefined>(
     undefined,
@@ -48,9 +71,14 @@ export const PresentationProvider = ({ children }: PropsWithChildren<Presentatio
   }, []);
 
   const setText = async (text: string, location: string) => {
-    session?.send(JSON.stringify({ text, location }));
+    if (session) {
+      setTextInSession(session, text, location);
+    }
     setPresentationData({ text, title: location });
+    setSegmentationData(null);
   };
+
+  const { proposeNewRatio } = useMainScreenRatio();
 
   const captureTextScreen = () => {
     if (!session) {
@@ -62,9 +90,18 @@ export const PresentationProvider = ({ children }: PropsWithChildren<Presentatio
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
           newSession.addEventListener('message', (event) => {
-            if (event.data === 'Connected') {
+            let message = event.data;
+            try {
+              message = JSON.parse(event.data);
+            } catch {}
+            if (message.message === 'Connected') {
+              proposeNewRatio(message.data.width / message.data.height);
+              console.log(message.data);
               if (presentationData?.text && presentationData?.title) {
-                newSession.send(JSON.stringify({ text: presentationData.text, location: presentationData.title }));
+                setTextInSession(newSession, presentationData.text, presentationData.title);
+              }
+              if (segmentationData) {
+                setSegmentationInSession(newSession, segmentationData);
               }
             } else {
               console.log('Received echo:', event.data);
@@ -82,10 +119,18 @@ export const PresentationProvider = ({ children }: PropsWithChildren<Presentatio
     setSession(null);
   };
 
+  const setSegmentation = (newSegmentationData: SegmentationData) => {
+    if (session) {
+      setSegmentationInSession(session, newSegmentationData);
+    }
+    setSegmentationData(newSegmentationData);
+  };
+
   return (
     <PresentationContext.Provider
       value={{
         setText,
+        setSegmentation,
         captureTextScreen,
         releaseTextScreen,
         validSession: Boolean(session),

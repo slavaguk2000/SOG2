@@ -13,6 +13,11 @@ export interface PresentationData {
   title: string;
 }
 
+export interface SegmentationData {
+  screensCount: number;
+  currentScreen: number;
+}
+
 export interface SlideData {
   slide: Slide;
   presentationData: PresentationData;
@@ -41,6 +46,7 @@ export interface BibleContextType extends DataProvider {
 
 export interface PresentationContextType {
   setText: (text: string, location: string) => void;
+  setSegmentation: (segmentationData: SegmentationData) => void;
   captureTextScreen: () => void;
   releaseTextScreen: () => void;
   validSession: boolean;
@@ -90,6 +96,8 @@ export interface MultiScreenDataProviderContextType {
   resetScreens: () => void;
   setLastUp: () => void;
   setLastDown: () => void;
+}
+export interface MainScreenRatioProviderContextType {
   proposeNewRatio: (newRatio: number) => void;
   ratio: number;
 }
