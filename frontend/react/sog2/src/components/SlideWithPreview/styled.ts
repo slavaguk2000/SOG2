@@ -14,7 +14,7 @@ export const SlidePreviewWrapper = styled(Box, {
 })<{ visible: boolean }>`
   display: flex;
   background-color: ${({ theme }) => theme.palette.background.paper};
-  overflow-y: scroll;
+  overflow: hidden;
   max-height: 50vh;
   opacity: ${({ visible }) => (visible ? '0.85' : '0')};
   position: relative;
@@ -26,7 +26,7 @@ export const SlidePreviewWrapper = styled(Box, {
 
 export const SlidePreviewContainer = styled(Box)`
   display: flex;
-  padding: 2px;
+  padding: 2px 7px 2px 3px;
 `;
 
 export const SlidePreviewText = styled(Box)`

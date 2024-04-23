@@ -26,8 +26,8 @@ function addConnection(connection) {
   });
 
   const { width, height } = window.screen;
-  // height * 0.828 because text contains 90% of height and 3% and 5% paddings of 90% (0.9 - 0.9 * 0.08)
-  connection.send(JSON.stringify({ message: 'Connected', data: { width, height: height * 0.828 } }));
+  // height * 0.828 because text contains 90% of height and 0% and 1% paddings of 90% (0.9 - 0.9 * 0.01)
+  connection.send(JSON.stringify({ message: 'Connected', data: { width, height: height * 0.899 } }));
 
   currentConnection = connection;
 }
@@ -56,6 +56,7 @@ function setText(text, location) {
     textContainer.style.top = '0';
     textContainer.textContent = text;
     resizeText();
+    textContainer.style.position = 'static';
   }
   const locationContainer = document.getElementById('location')?.children[0];
   if (locationContainer) {
@@ -116,6 +117,9 @@ function setOffset() {
   if (div) {
     div.style.transition = 'top 0.6s ease-in-out';
     div.style.top = `-${offset}px`;
+    if (currentSegmentationData.screensCount > 1) {
+      div.style.position = 'absolute';
+    }
   }
 
   currentConnection?.send(
