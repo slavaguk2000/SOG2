@@ -9,8 +9,9 @@ export const SlideWithPreviewWrapper = styled(Box)`
 
 export const SlidePreviewWrapper = styled(Box)`
   display: flex;
+  box-sizing: content-box;
+  overflow: hidden auto;
   background-color: ${({ theme }) => theme.palette.background.paper};
-  overflow-y: scroll;
   max-height: 50vh;
   opacity: 0.85;
   position: relative;
