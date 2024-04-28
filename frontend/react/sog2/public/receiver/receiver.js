@@ -117,7 +117,7 @@ function resizeText(proposalCurrentScreen, lastUp, multiScreenShow) {
   while (
     getScreenCount(div.scrollHeight, div.clientHeight, overflow) <= currentScreenCount &&
     div.scrollWidth <= div.clientWidth &&
-    fontSize <= maxFontSize
+    fontSize < maxFontSize
   ) {
     fontSize += forwardStep;
     div.style.fontSize = `${fontSize}vw`;
