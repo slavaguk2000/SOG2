@@ -3,7 +3,13 @@ import React, { useRef } from 'react';
 import { multiScreenShowPreviewScale } from '../../constants/behaviorConstants';
 import { useMainScreenSegmentationData } from '../../providers/MainScreenSegmentationDataProvider';
 
-import { SlidePreviewContainer, SlidePreviewWrapper, SlidePreviewText, SlidePreviewViewBox } from './styled';
+import {
+  SlidePreviewContainer,
+  SlidePreviewWrapper,
+  SlidePreviewText,
+  SlidePreviewViewBox,
+  OverlayIndicator,
+} from './styled';
 
 interface SlidePreviewProps {
   content: string;
@@ -18,10 +24,8 @@ const SlidePreview = ({ content }: SlidePreviewProps) => {
 
   const scaledViewBoxWidth = previewScreensData ? previewScreensData.viewWidth * multiScreenShowPreviewScale : 10;
   const scaledViewBoxHeight = mainScreenSize ? mainScreenSize.height * multiScreenShowPreviewScale : 10;
-  const scaledOffset =
-    previewScreensData && mainScreenSize
-      ? currentScreen * (mainScreenSize.height - previewScreensData.overlay) * multiScreenShowPreviewScale
-      : 0;
+  const scaledOverlay = previewScreensData ? previewScreensData.overlay * multiScreenShowPreviewScale : 1;
+  const scaledOffset = currentScreen * (scaledViewBoxHeight - scaledOverlay);
 
   return (
     <SlidePreviewWrapper width={`${scaledMainScreenWidth}px`}>
@@ -35,7 +39,14 @@ const SlidePreview = ({ content }: SlidePreviewProps) => {
         width={`${scaledMainScreenWidth}px`}
         height={`${scaledViewBoxHeight}px`}
         smoothScrolling
-      />
+      >
+        <OverlayIndicator visible={currentScreen > 0} height={`${scaledOverlay}px`} top={0} />
+        <OverlayIndicator
+          visible={!!(previewScreensData && currentScreen < previewScreensData.screensCount - 1)}
+          height={`${scaledOverlay}px`}
+          bottom={0}
+        />
+      </SlidePreviewViewBox>
     </SlidePreviewWrapper>
   );
 };
