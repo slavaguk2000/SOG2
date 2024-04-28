@@ -11,6 +11,7 @@ export interface ChapterSelector {
 export interface PresentationData {
   text: string;
   title: string;
+  multiScreenShow?: boolean;
 }
 
 export interface SegmentationData {
@@ -45,8 +46,7 @@ export interface BibleContextType extends DataProvider {
 }
 
 export interface PresentationContextType {
-  setText: (text: string, location: string) => void;
-  setSegmentation: (segmentationData: SegmentationData) => void;
+  setText: (text: string, location: string, options?: { currentLastUp?: boolean; multiScreenShow?: boolean }) => void;
   captureTextScreen: () => void;
   releaseTextScreen: () => void;
   validSession: boolean;
@@ -60,7 +60,7 @@ export interface FreeSlideDialogContextType {
 export interface InstrumentsFieldProviderContextType {
   silentMode: boolean;
   setSilentMode: Dispatch<SetStateAction<boolean>>;
-  handleUpdateSlide: (newSlide?: SlideData) => void;
+  handleUpdateSlide: (newSlide?: SlideData, options?: { currentLastUp?: boolean }) => void;
   currentSlide?: Slide;
 }
 
@@ -85,19 +85,35 @@ export interface PlayerContextType {
   openInterface: boolean;
 }
 
-export interface MultiScreenDataProviderContextType {
-  setScreensCount: (newScreenCount: number | null) => void;
+export interface PreviewScreensData {
+  screensCount: number;
+  fontSize: number;
+  viewHeight: number;
+  viewWidth: number;
+  overlay: number;
+  currentScreen: number;
+}
+
+export interface ScreenSize {
+  width: number;
+  height: number;
+}
+
+export interface MainScreenSegmentationDataProviderContextType {
+  mainScreenSize: ScreenSize | null;
+  proposeNewScreenSize: (screenSize: ScreenSize) => void;
+  setCurrentScreen: (newScreen: number) => void;
+  currentScreen: number;
+  screensCount: number;
+  multiScreenMode: boolean;
+  proposePreviewScreensData: (newPreviewScreensData: PreviewScreensData) => void;
+  previewScreensData: PreviewScreensData | null;
   isFirstScreen: () => boolean;
   isLastScreen: () => boolean;
-  currentScreen: number;
-  screensCount: null | number;
   requestNextScreen: () => void;
   requestPrevScreen: () => void;
   resetScreens: () => void;
   setLastUp: () => void;
   setLastDown: () => void;
-}
-export interface MainScreenRatioProviderContextType {
-  proposeNewRatio: (newRatio: number) => void;
-  ratio: number;
+  lastUp: boolean;
 }

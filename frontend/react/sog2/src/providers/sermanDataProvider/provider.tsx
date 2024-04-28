@@ -3,11 +3,12 @@ import { useSearchParams } from 'react-router-dom';
 
 import { useQuery } from '@apollo/client';
 
+import { compareSermonLocation } from '../../services/slidesService';
 import { arrayToMap } from '../../utils';
 import { sermon, sermons } from '../../utils/gql/queries';
 import { Query, QuerySermonArgs, QuerySermonsArgs, Slide } from '../../utils/gql/types';
 import { useInstrumentsField } from '../instrumentsFieldProvider';
-import { useMultiScreenDataProvider } from '../multiScreenDataProvider';
+import { useMainScreenSegmentationData } from '../MainScreenSegmentationDataProvider';
 import { usePlayerContext } from '../playerProvider';
 
 import ChangePlayingSrcProposalDialog from './ChangePlayingSrcProposalDialog';
@@ -21,7 +22,7 @@ const SermonDataProvider: FC<SermonDataProviderProps> = ({ sermonsCollectionId =
   const [searchParams, setSearchParams] = useSearchParams();
   const currentSermonId = searchParams.get('id') ?? undefined;
   const { isLastScreen, isFirstScreen, requestNextScreen, requestPrevScreen, resetScreens, setLastDown, setLastUp } =
-    useMultiScreenDataProvider();
+    useMainScreenSegmentationData();
 
   const handleSermonSelect = useCallback(
     (id: string) => {
@@ -96,6 +97,9 @@ const SermonDataProvider: FC<SermonDataProviderProps> = ({ sermonsCollectionId =
           title: (sermonId && sermonsMap?.[sermonId].name) || '',
         },
         slideAudioMapping,
+      },
+      {
+        currentLastUp: compareSermonLocation(newSlide?.location ?? undefined, currentSlide?.location ?? undefined) < 0,
       },
     );
   };

@@ -7,30 +7,28 @@ export const SlideWithPreviewWrapper = styled(Box)`
   position: relative;
 `;
 
-export const SlidePreviewWrapper = styled(Box, {
-  shouldForwardProp(propName: PropertyKey) {
-    return propName !== 'visible';
-  },
-})<{ visible: boolean }>`
+export const SlidePreviewWrapper = styled(Box)`
   display: flex;
   background-color: ${({ theme }) => theme.palette.background.paper};
   overflow-y: scroll;
   max-height: 50vh;
-  opacity: ${({ visible }) => (visible ? '0.85' : '0')};
+  opacity: 0.85;
   position: relative;
   border-radius: 6px;
   border: solid 1px #ffffffbb;
   box-shadow: 0 4px 9px rgba(0, 0, 0, 0.5);
   transition: opacity 0.3s ease-out;
+  min-height: 10px;
 `;
 
 export const SlidePreviewContainer = styled(Box)`
   display: flex;
-  padding: 2px;
+  justify-content: center;
 `;
 
 export const SlidePreviewText = styled(Box)`
   display: flex;
+  line-height: 1.1;
   font-family: 'Arial', 'sans-serif';
   text-align: center;
   color: ${({ theme }) => theme.palette.common.white};
@@ -38,12 +36,12 @@ export const SlidePreviewText = styled(Box)`
 
 export const SlidePreviewViewBox = styled(Box, {
   shouldForwardProp(propName: PropertyKey) {
-    return propName !== 'rendered';
+    return propName !== 'smoothScrolling';
   },
-})<{ rendered: boolean }>`
+})<{ smoothScrolling: boolean }>`
   display: flex;
   background-color: ${({ theme }) => theme.palette.primary.light};
   position: absolute;
   opacity: 0.4;
-  ${({ rendered }) => (rendered ? 'transition: top 0.3s ease-out;' : '')}
+  ${({ smoothScrolling }) => (smoothScrolling ? 'transition: top 0.3s ease-out;' : '')}
 `;
