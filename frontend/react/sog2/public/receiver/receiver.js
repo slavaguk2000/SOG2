@@ -1,5 +1,5 @@
-const minFontSIze = 7;
-const maxFontSize = 14;
+const minFontSIze = 5;
+const maxFontSize = 10;
 const overflowPercentage = 10;
 const overflow = Math.max(Math.min(overflowPercentage / 100, 90), 0);
 
