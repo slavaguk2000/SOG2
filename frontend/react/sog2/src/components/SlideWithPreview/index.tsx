@@ -2,6 +2,7 @@ import React, { useRef } from 'react';
 
 import { Popper } from '@mui/material';
 
+import { useMainScreenSegmentationData } from '../../providers/MainScreenSegmentationDataProvider';
 import BibleEntityItem, { BibleEntityItemProps } from '../BibleContent/BibleEntityItem';
 
 import SlidePreview from './SlidePreview';
@@ -12,9 +13,10 @@ interface SlideWithPreviewProps {
 }
 
 const SlideWithPreview = ({ bibleEntityItemProps }: SlideWithPreviewProps) => {
+  const { multiScreenMode } = useMainScreenSegmentationData();
   const wrapperRef = useRef<null | HTMLDivElement>(null);
   const anchorEl = wrapperRef?.current;
-  const popperOpen = bibleEntityItemProps.selected;
+  const popperOpen = bibleEntityItemProps.selected && multiScreenMode;
 
   return (
     <SlideWithPreviewWrapper ref={wrapperRef}>

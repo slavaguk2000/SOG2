@@ -12,8 +12,7 @@ import BibleContext from './providers/bibleDataProvider/context';
 import BibleDataProvider from './providers/bibleDataProvider/provider';
 import FreeSlideDialogProvider from './providers/FreeSlideDialogProvider/provider';
 import InstrumentsFieldProvider from './providers/instrumentsFieldProvider/provider';
-import MainScreenRatioProvider from './providers/mainScreenRatioProvider/provider';
-import MultiScreenDataProvider from './providers/multiScreenDataProvider/provider';
+import MainScreenRatioProvider from './providers/MainScreenSegmentationDataProvider/provider';
 import PlayerContextProvider from './providers/playerProvider';
 import { PresentationProvider } from './providers/presentationProvider/provider';
 import SermonDataProviderContext from './providers/sermanDataProvider/context';
@@ -46,13 +45,11 @@ function App() {
                       <Route
                         path="/sermon"
                         element={
-                          <MultiScreenDataProvider>
-                            <SermonDataProvider>
-                              <MainView dataProviderContext={SermonDataProviderContext}>
-                                <SermonsContent />
-                              </MainView>
-                            </SermonDataProvider>
-                          </MultiScreenDataProvider>
+                          <SermonDataProvider>
+                            <MainView dataProviderContext={SermonDataProviderContext}>
+                              <SermonsContent />
+                            </MainView>
+                          </SermonDataProvider>
                         }
                       />
                     </Routes>

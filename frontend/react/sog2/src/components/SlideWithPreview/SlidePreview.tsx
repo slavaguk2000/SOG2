@@ -1,8 +1,7 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useRef } from 'react';
 
-import { presentationOverflowPercentage } from '../../constants/behaviorConstants';
-import { useMainScreenRatio } from '../../providers/mainScreenRatioProvider';
-import { useMultiScreenDataProvider } from '../../providers/multiScreenDataProvider';
+import { multiScreenShowPreviewScale } from '../../constants/behaviorConstants';
+import { useMainScreenSegmentationData } from '../../providers/MainScreenSegmentationDataProvider';
 
 import { SlidePreviewContainer, SlidePreviewWrapper, SlidePreviewText, SlidePreviewViewBox } from './styled';
 
@@ -10,66 +9,32 @@ interface SlidePreviewProps {
   content: string;
 }
 
-const minFontSize = 6;
-const fontStep = 1;
-const backFontStep = 0.1;
-const maxFontSize = 20;
-const overflow = presentationOverflowPercentage;
-const previewWidthInPixels = 100;
-
 const SlidePreview = ({ content }: SlidePreviewProps) => {
-  const { currentScreen, screensCount, setScreensCount } = useMultiScreenDataProvider();
-  const { ratio } = useMainScreenRatio();
-  const [fontSize, setFontSize] = useState(minFontSize);
-  const [overflowFontSize, setOverflowFontSize] = useState<null | number>(null);
+  const { mainScreenSize, currentScreen, previewScreensData } = useMainScreenSegmentationData();
   const containerRef = useRef<null | HTMLDivElement>(null);
 
-  const previewHeightInPixels = useMemo(() => previewWidthInPixels / ratio, [ratio]);
+  const scaledMainScreenWidth = mainScreenSize ? mainScreenSize.width * multiScreenShowPreviewScale : 10;
+  const scaledFontSize = previewScreensData ? (previewScreensData.fontSize * scaledMainScreenWidth) / 100 : 10;
 
-  useEffect(() => {
-    if (containerRef?.current) {
-      const screenHeight = containerRef.current?.clientHeight;
-      const currentScreenCount = Math.ceil((screenHeight - overflow) / (previewHeightInPixels - overflow));
-      if (!screensCount) {
-        setScreensCount(currentScreenCount);
-      } else if (overflowFontSize) {
-        if (currentScreenCount > screensCount) {
-          setFontSize(fontSize - backFontStep);
-        }
-      } else if (currentScreenCount > screensCount) {
-        setOverflowFontSize(fontSize);
-      } else {
-        if (!overflowFontSize && fontSize < maxFontSize) {
-          setFontSize(fontSize + fontStep);
-        }
-      }
-    }
-  }, [screensCount, overflowFontSize, fontSize, setScreensCount, previewHeightInPixels]);
-
-  const clientHeight = containerRef?.current?.clientHeight;
-
-  const realOverflow = useMemo(() => {
-    if (clientHeight && screensCount) {
-      return (screensCount * previewHeightInPixels - clientHeight) / (screensCount - 1);
-    }
-
-    return overflow;
-  }, [clientHeight, previewHeightInPixels, screensCount]);
-
-  const previewTop = screensCount ? currentScreen * (previewHeightInPixels - realOverflow) : undefined;
-  const previewBottom = screensCount ? undefined : 0;
+  const scaledViewBoxWidth = previewScreensData ? previewScreensData.viewWidth * multiScreenShowPreviewScale : 10;
+  const scaledViewBoxHeight = mainScreenSize ? mainScreenSize.height * multiScreenShowPreviewScale : 10;
+  const scaledOffset =
+    previewScreensData && mainScreenSize
+      ? currentScreen * (mainScreenSize.height - previewScreensData.overlay) * multiScreenShowPreviewScale
+      : 0;
 
   return (
-    <SlidePreviewWrapper width={`${previewWidthInPixels}px`} visible={!!(screensCount && screensCount > 1)}>
+    <SlidePreviewWrapper width={`${scaledMainScreenWidth}px`}>
       <SlidePreviewContainer ref={containerRef}>
-        <SlidePreviewText fontSize={`${fontSize}px`}>{content}</SlidePreviewText>
+        <SlidePreviewText width={`${scaledViewBoxWidth}px`} fontSize={`${scaledFontSize}px`}>
+          {content}
+        </SlidePreviewText>
       </SlidePreviewContainer>
       <SlidePreviewViewBox
-        rendered={!!screensCount}
-        top={previewTop}
-        bottom={previewBottom}
-        width={`${previewWidthInPixels}px`}
-        height={`${previewHeightInPixels}px`}
+        top={scaledOffset}
+        width={`${scaledMainScreenWidth}px`}
+        height={`${scaledViewBoxHeight}px`}
+        smoothScrolling
       />
     </SlidePreviewWrapper>
   );

@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom';
 
 import { useMutation } from '@apollo/client';
 
+import { multiScreenShowTabTypes } from '../../constants/behaviorConstants';
 import { setActiveSlide } from '../../utils/gql/queries';
 import { Mutation, MutationSetActiveSlideArgs, TabType } from '../../utils/gql/types';
 import { usePresentation } from '../presentationProvider';
@@ -33,19 +34,22 @@ const InstrumentsFieldProvider: FC<PropsWithChildren> = ({ children }) => {
     }).catch((e) => console.error(e));
   };
 
-  const updateSlideOnPresentation = (newSlide?: SlideData) => {
+  const updateSlideOnPresentation = (newSlide?: SlideData, options: { currentLastUp?: boolean } = {}) => {
     if (!newSlide) {
       setText('', '');
 
       return;
     }
 
-    setText(newSlide.presentationData.text, newSlide.presentationData.title);
+    setText(newSlide.presentationData.text, newSlide.presentationData.title, {
+      ...options,
+      multiScreenShow: multiScreenShowTabTypes.includes(tabType),
+    });
   };
 
-  const updatePresentationAndBackendSlide = (newSlide?: SlideData) => {
+  const updatePresentationAndBackendSlide = (newSlide?: SlideData, options: { currentLastUp?: boolean } = {}) => {
     sendActiveSlide(newSlide);
-    updateSlideOnPresentation(newSlide);
+    updateSlideOnPresentation(newSlide, options);
   };
 
   const handleSetSilentMode = (setter: SetStateAction<boolean>) => {
@@ -58,7 +62,7 @@ const InstrumentsFieldProvider: FC<PropsWithChildren> = ({ children }) => {
     });
   };
 
-  const handleUpdateSlide = (newSlide?: SlideData) => {
+  const handleUpdateSlide = (newSlide?: SlideData, options: { currentLastUp?: boolean } = {}) => {
     if (
       (currentSlide?.slide?.id && currentSlide.slide.id === newSlide?.slide?.id) ||
       (currentSlide?.slide && currentSlide.slide.content === newSlide?.slide?.content) ||
@@ -72,7 +76,7 @@ const InstrumentsFieldProvider: FC<PropsWithChildren> = ({ children }) => {
     setCurrentSlide(newSlide);
 
     if (!silentMode) {
-      updatePresentationAndBackendSlide(newSlide);
+      updatePresentationAndBackendSlide(newSlide, options);
     }
   };
 

@@ -1,8 +1,7 @@
-import React, { PropsWithChildren, useMemo, useState } from 'react';
+import React, { PropsWithChildren, useEffect, useMemo, useState } from 'react';
 
-import { presentationOverflowPercentage } from '../../constants/behaviorConstants';
-import { useMainScreenRatio } from '../mainScreenRatioProvider';
-import { PresentationData, SegmentationData } from '../types';
+import { useMainScreenSegmentationData } from '../MainScreenSegmentationDataProvider';
+import { PresentationData } from '../types';
 
 import { PresentationContext } from './PresentationContext';
 
@@ -17,22 +16,32 @@ interface Session {
 
 enum Commands {
   setText = 'setText',
-  setSegmentation = 'setSegmentation',
+  scrollToScreen = 'scrollToScreen',
+}
+
+enum ScreenMessages {
+  Connected = 'Connected',
+  MultiScreenPreviewData = 'MultiScreenPreviewData',
 }
 
 const presUrls = ['receiver/index.html'];
 
-const setTextInSession = (session: Session, text: string, location: string) => {
-  session.send(JSON.stringify({ command: Commands.setText, text, location }));
+const setTextInSession = (
+  session: Session,
+  text: string,
+  location: string,
+  lastUp: boolean,
+  currentScreen?: number,
+  multiScreenShow?: boolean,
+) => {
+  session.send(JSON.stringify({ command: Commands.setText, text, location, lastUp, currentScreen, multiScreenShow }));
 };
 
-const setSegmentationInSession = (session: Session, { screensCount, currentScreen }: SegmentationData) => {
+const setScreenInSession = (session: Session, newScreen: number) => {
   session.send(
     JSON.stringify({
-      command: Commands.setSegmentation,
-      screensCount,
-      currentScreen,
-      overflow: presentationOverflowPercentage,
+      command: Commands.scrollToScreen,
+      newScreen,
     }),
   );
 };
@@ -40,7 +49,6 @@ const setSegmentationInSession = (session: Session, { screensCount, currentScree
 export const PresentationProvider = ({ children }: PropsWithChildren<PresentationProviderProps>) => {
   const [session, setSession] = useState<Session | null>(null);
   const [presentationData, setPresentationData] = useState<PresentationData | null>(null);
-  const [segmentationData, setSegmentationData] = useState<SegmentationData | null>(null);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [presentationRequestAvailability, setPresentationRequestAvailability] = useState<boolean | undefined>(
     undefined,
@@ -70,15 +78,22 @@ export const PresentationProvider = ({ children }: PropsWithChildren<Presentatio
     return request;
   }, []);
 
-  const setText = async (text: string, location: string) => {
-    if (session) {
-      setTextInSession(session, text, location);
-    }
-    setPresentationData({ text, title: location });
-    setSegmentationData(null);
-  };
+  const { proposeNewScreenSize, proposePreviewScreensData, previewScreensData, resetScreens, lastUp } =
+    useMainScreenSegmentationData();
 
-  const { proposeNewRatio } = useMainScreenRatio();
+  const currentScreen = previewScreensData?.currentScreen;
+
+  const setText = async (
+    text: string,
+    location: string,
+    { currentLastUp, multiScreenShow }: { currentLastUp?: boolean; multiScreenShow?: boolean } = {},
+  ) => {
+    resetScreens();
+    if (session) {
+      setTextInSession(session, text, location, currentLastUp ?? false, undefined, multiScreenShow ?? false);
+    }
+    setPresentationData({ text, title: location, multiScreenShow });
+  };
 
   const captureTextScreen = () => {
     if (!session) {
@@ -94,15 +109,28 @@ export const PresentationProvider = ({ children }: PropsWithChildren<Presentatio
             try {
               message = JSON.parse(event.data);
             } catch {}
-            if (message.message === 'Connected') {
-              proposeNewRatio(message.data.width / message.data.height);
-              console.log(message.data);
+            if (message.message === ScreenMessages.Connected) {
+              proposeNewScreenSize({ width: message.data.width, height: message.data.height });
               if (presentationData?.text && presentationData?.title) {
-                setTextInSession(newSession, presentationData.text, presentationData.title);
+                setTextInSession(
+                  newSession,
+                  presentationData.text,
+                  presentationData.title,
+                  lastUp,
+                  currentScreen,
+                  presentationData.multiScreenShow,
+                );
               }
-              if (segmentationData) {
-                setSegmentationInSession(newSession, segmentationData);
-              }
+            } else if (message.message === ScreenMessages.MultiScreenPreviewData) {
+              const { fontSize, screensCount, viewHeight, viewWidth, overlay, currentScreen } = message;
+              proposePreviewScreensData({
+                fontSize,
+                screensCount,
+                viewHeight,
+                viewWidth,
+                overlay,
+                currentScreen,
+              });
             } else {
               console.log('Received echo:', event.data);
             }
@@ -119,18 +147,17 @@ export const PresentationProvider = ({ children }: PropsWithChildren<Presentatio
     setSession(null);
   };
 
-  const setSegmentation = (newSegmentationData: SegmentationData) => {
-    if (session) {
-      setSegmentationInSession(session, newSegmentationData);
+  useEffect(() => {
+    if (session && currentScreen !== undefined) {
+      setScreenInSession(session, currentScreen);
     }
-    setSegmentationData(newSegmentationData);
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentScreen]);
 
   return (
     <PresentationContext.Provider
       value={{
         setText,
-        setSegmentation,
         captureTextScreen,
         releaseTextScreen,
         validSession: Boolean(session),
