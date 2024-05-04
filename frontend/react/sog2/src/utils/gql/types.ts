@@ -32,6 +32,7 @@ export type Mutation = {
   addBibleFromSog?: Maybe<Scalars['Boolean']['output']>;
   parseSermonsFromBranhamRu?: Maybe<Scalars['Boolean']['output']>;
   setActiveSlide?: Maybe<Scalars['Boolean']['output']>;
+  setActiveSlideOffset?: Maybe<Scalars['Boolean']['output']>;
   setFreeSlide?: Maybe<Scalars['Boolean']['output']>;
   syncBibleToElastic?: Maybe<Scalars['Boolean']['output']>;
   syncSermonsToElastic?: Maybe<Scalars['Boolean']['output']>;
@@ -49,6 +50,14 @@ export type MutationSetActiveSlideArgs = {
   slideAudioMapping?: InputMaybe<SlideMappingInput>;
   slideId?: InputMaybe<Scalars['ID']['input']>;
   type?: InputMaybe<TabType>;
+};
+
+
+export type MutationSetActiveSlideOffsetArgs = {
+  offset?: InputMaybe<Scalars['Float']['input']>;
+  slideAudioMapping?: InputMaybe<SlideMappingInput>;
+  slideId: Scalars['ID']['input'];
+  type: TabType;
 };
 
 

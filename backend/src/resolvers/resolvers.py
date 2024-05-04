@@ -74,6 +74,7 @@ def resolve_set_active_slide(*_, slide_id=None, **kwargs):
                     slide_audio_mapping['slide_collection_audio_mapping_id'],
                     slide_id,
                     slide_audio_mapping['time_point'],
+                    offset=0,
                 )
         else:
             active_slide = get_bible_slide_by_id(slide_id)
@@ -86,6 +87,23 @@ def resolve_set_active_slide(*_, slide_id=None, **kwargs):
         subscriber_queue.put_nowait(active_slide)
 
     return True
+
+
+@mutation.field("setActiveSlideOffset")
+@convert_kwargs_to_snake_case
+def resolve_set_active_slide_offset(*_, slide_id=None, **kwargs):
+    if slide_id:
+        slide_audio_mapping = kwargs.get('slide_audio_mapping')
+        offset = kwargs.get('offset')
+        if kwargs.get('type') == 'Sermon' and slide_audio_mapping and offset:
+            add_slide_audio_mapping(
+                slide_audio_mapping['slide_collection_audio_mapping_id'],
+                slide_id,
+                slide_audio_mapping['time_point'],
+                offset,
+            )
+            return True
+    return False
 
 
 @mutation.field("setFreeSlide")

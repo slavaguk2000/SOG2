@@ -56,7 +56,11 @@ const SermonDataProvider: FC<SermonDataProviderProps> = ({ sermonsCollectionId =
     }
   }, [currentSermonId, handleSermonSelect, sermonsData]);
 
-  const { handleUpdateSlide: instrumentsHandleUpdateSlide, currentSlide } = useInstrumentsField();
+  const {
+    handleUpdateSlide: instrumentsHandleUpdateSlide,
+    currentSlide,
+    handleUpdateCurrentSlideOffset,
+  } = useInstrumentsField();
 
   const sermonsMap = useMemo(() => sermonsData && arrayToMap(sermonsData.sermons), [sermonsData]);
   const sermonParagraphsMap = useMemo(
@@ -104,13 +108,16 @@ const SermonDataProvider: FC<SermonDataProviderProps> = ({ sermonsCollectionId =
     );
   };
 
-  const handleNextSlide = () => {
+  const handleNextSlide = async () => {
     if (!(currentSermonData && sermonParagraphsMap && currentSlide?.id)) {
       return;
     }
 
     if (!isLastScreen()) {
-      requestNextScreen();
+      const screenOffset = await requestNextScreen();
+
+      handleUpdateCurrentSlideOffset(screenOffset, Math.floor(played));
+
       return;
     }
 

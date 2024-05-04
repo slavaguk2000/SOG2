@@ -60,6 +60,7 @@ type_defs = gql("""
     
     type Mutation {
       setActiveSlide(slideId: ID, type: TabType, slideAudioMapping: SlideMappingInput): Boolean
+      setActiveSlideOffset(slideId: ID!, type: TabType!, slideAudioMapping: SlideMappingInput!, offset: Float!): Boolean
       setFreeSlide(text: String!, title: String!): Boolean
       addBibleFromSog(sogFileSrc: String!, language: String!, translation: String!): Boolean
       syncBibleToElastic(bibleId: ID): Boolean

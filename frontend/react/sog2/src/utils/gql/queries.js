@@ -78,6 +78,17 @@ export const setActiveSlide = gql`
   }
 `;
 
+export const setActiveSlideOffset = gql`
+  mutation setActiveSlideOffset(
+    $slideId: ID!
+    $type: TabType!
+    $slideAudioMapping: SlideMappingInput!
+    $offset: Float!
+  ) {
+    setActiveSlideOffset(slideId: $slideId, type: $type, slideAudioMapping: $slideAudioMapping, offset: $offset)
+  }
+`;
+
 export const setFreeSlide = gql`
   mutation setFreeSlide($text: String!, $title: String!) {
     setFreeSlide(text: $text, title: $title)
