@@ -8,6 +8,7 @@ import { theme } from 'src/theme';
 
 import BibleContent from './components/BibleContent';
 import SermonsContent from './components/SermonsContent';
+import AudioMappingProvider from './providers/AudioMapping/provider';
 import BibleContext from './providers/bibleDataProvider/context';
 import BibleDataProvider from './providers/bibleDataProvider/provider';
 import FreeSlideDialogProvider from './providers/FreeSlideDialogProvider/provider';
@@ -45,11 +46,13 @@ function App() {
                       <Route
                         path="/sermon"
                         element={
-                          <SermonDataProvider>
-                            <MainView dataProviderContext={SermonDataProviderContext}>
-                              <SermonsContent />
-                            </MainView>
-                          </SermonDataProvider>
+                          <AudioMappingProvider>
+                            <SermonDataProvider>
+                              <MainView dataProviderContext={SermonDataProviderContext}>
+                                <SermonsContent />
+                              </MainView>
+                            </SermonDataProvider>
+                          </AudioMappingProvider>
                         }
                       />
                     </Routes>

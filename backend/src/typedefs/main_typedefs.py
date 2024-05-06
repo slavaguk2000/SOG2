@@ -19,6 +19,7 @@ type_defs = gql("""
         id: ID
         slideCollectionAudioMappingId: ID
         timePoint: Int
+        spaceOffset: Float
     }
 
     type Slide {

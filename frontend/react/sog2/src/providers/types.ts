@@ -118,3 +118,10 @@ export interface MainScreenSegmentationDataProviderContextType {
   setLastDown: () => void;
   lastUp: boolean;
 }
+
+export interface AudioMappingProviderContextType {
+  follow: boolean;
+  setFollow: Dispatch<SetStateAction<boolean>>;
+  recording: boolean;
+  setRecording: Dispatch<SetStateAction<boolean>>;
+}
