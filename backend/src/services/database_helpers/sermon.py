@@ -45,6 +45,7 @@ def get_sermon_by_id(sermon_id: str):
                     "id": mapping.id,
                     "slide_collection_audio_mapping_id": mapping.slide_collection_audio_mapping_id,
                     "time_point": mapping.time_point,
+                    "space_offset": mapping.space_offset,
                 } for mapping in paragraph.slide_audio_mappings
             ]
         } for idx, paragraph in enumerate(paragraphs)]
@@ -87,14 +88,14 @@ def get_sermon_paragraph_by_id(id: str):
         }
 
 
-
-def add_slide_audio_mapping(sermon_audio_mapping_id: str, slide_id: str, time_point: int):
+def add_slide_audio_mapping(sermon_audio_mapping_id: str, slide_id: str, time_point: int, offset: float):
     with Session(engine) as session:
         session.add(
             SlideAudioMapping(
                 slide_collection_audio_mapping_id=sermon_audio_mapping_id,
                 slide_id=slide_id,
-                time_point=time_point
+                time_point=time_point,
+                space_offset=offset
             )
         )
         session.commit()

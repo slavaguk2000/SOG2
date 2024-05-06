@@ -8,6 +8,7 @@ import { theme } from 'src/theme';
 
 import BibleContent from './components/BibleContent';
 import SermonsContent from './components/SermonsContent';
+import AudioMappingProvider from './providers/AudioMapping/provider';
 import BibleContext from './providers/bibleDataProvider/context';
 import BibleDataProvider from './providers/bibleDataProvider/provider';
 import FreeSlideDialogProvider from './providers/FreeSlideDialogProvider/provider';
@@ -29,31 +30,33 @@ function App() {
             <AppRoot>
               <Router>
                 <PlayerContextProvider>
-                  <InstrumentsFieldProvider>
-                    <Routes>
-                      <Route path="/" element={<Navigate to="/bible" replace />} />
-                      <Route
-                        path="/bible"
-                        element={
-                          <BibleDataProvider>
-                            <MainView dataProviderContext={BibleContext}>
-                              <BibleContent />
-                            </MainView>
-                          </BibleDataProvider>
-                        }
-                      />
-                      <Route
-                        path="/sermon"
-                        element={
-                          <SermonDataProvider>
-                            <MainView dataProviderContext={SermonDataProviderContext}>
-                              <SermonsContent />
-                            </MainView>
-                          </SermonDataProvider>
-                        }
-                      />
-                    </Routes>
-                  </InstrumentsFieldProvider>
+                  <AudioMappingProvider>
+                    <InstrumentsFieldProvider>
+                      <Routes>
+                        <Route path="/" element={<Navigate to="/bible" replace />} />
+                        <Route
+                          path="/bible"
+                          element={
+                            <BibleDataProvider>
+                              <MainView dataProviderContext={BibleContext}>
+                                <BibleContent />
+                              </MainView>
+                            </BibleDataProvider>
+                          }
+                        />
+                        <Route
+                          path="/sermon"
+                          element={
+                            <SermonDataProvider>
+                              <MainView dataProviderContext={SermonDataProviderContext}>
+                                <SermonsContent />
+                              </MainView>
+                            </SermonDataProvider>
+                          }
+                        />
+                      </Routes>
+                    </InstrumentsFieldProvider>
+                  </AudioMappingProvider>
                 </PlayerContextProvider>
               </Router>
             </AppRoot>

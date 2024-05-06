@@ -4,8 +4,9 @@ import { useLocation } from 'react-router-dom';
 import { useMutation } from '@apollo/client';
 
 import { multiScreenShowTabTypes } from '../../constants/behaviorConstants';
-import { setActiveSlide } from '../../utils/gql/queries';
-import { Mutation, MutationSetActiveSlideArgs, TabType } from '../../utils/gql/types';
+import { setActiveSlide, setActiveSlideOffset } from '../../utils/gql/queries';
+import { Mutation, MutationSetActiveSlideArgs, MutationSetActiveSlideOffsetArgs, TabType } from '../../utils/gql/types';
+import { useAudioMapping } from '../AudioMapping/provider';
 import { usePresentation } from '../presentationProvider';
 import { SlideData } from '../types';
 
@@ -17,21 +18,51 @@ const InstrumentsFieldProvider: FC<PropsWithChildren> = ({ children }) => {
   const [currentSlide, setCurrentSlide] = useState<SlideData | undefined>(undefined);
 
   const { setText } = usePresentation();
+  const { recording: mappingRecording } = useAudioMapping();
 
   const [setActiveSlideMutation] = useMutation<Pick<Mutation, 'setActiveSlide'>, MutationSetActiveSlideArgs>(
     setActiveSlide,
   );
 
+  const [setActiveSlideOffsetMutation] = useMutation<
+    Pick<Mutation, 'setActiveSlideOffset'>,
+    MutationSetActiveSlideOffsetArgs
+  >(setActiveSlideOffset);
+
   const tabType = pathname === '/bible' ? TabType.Bible : TabType.Sermon;
 
   const sendActiveSlide = (newSlideData?: SlideData) => {
+    console.log({
+      variables: {
+        slideId: newSlideData?.slide?.id,
+        type: tabType,
+        slideAudioMapping: mappingRecording ? newSlideData?.slideAudioMapping : undefined,
+      },
+      refetchQueries: mappingRecording ? ['sermon'] : [],
+      mappingRecording,
+    });
     setActiveSlideMutation({
       variables: {
         slideId: newSlideData?.slide?.id,
         type: tabType,
-        slideAudioMapping: newSlideData?.slideAudioMapping,
+        slideAudioMapping: mappingRecording ? newSlideData?.slideAudioMapping : undefined,
       },
+      refetchQueries: mappingRecording ? ['sermon'] : [],
     }).catch((e) => console.error(e));
+  };
+
+  const handleUpdateCurrentSlideOffset = (screenOffset: number, timePoint: number) => {
+    if (currentSlide?.slide?.id && currentSlide?.slideAudioMapping) {
+      setActiveSlideOffsetMutation({
+        variables: {
+          slideId: currentSlide.slide.id,
+          type: tabType,
+          slideAudioMapping: mappingRecording ? { ...currentSlide.slideAudioMapping, timePoint } : undefined,
+          offset: screenOffset,
+        },
+        refetchQueries: mappingRecording ? ['sermon'] : [],
+      }).catch((e) => console.error(e));
+    }
   };
 
   const updateSlideOnPresentation = (newSlide?: SlideData, options: { currentLastUp?: boolean } = {}) => {
@@ -87,6 +118,7 @@ const InstrumentsFieldProvider: FC<PropsWithChildren> = ({ children }) => {
         setSilentMode: handleSetSilentMode,
         handleUpdateSlide,
         currentSlide: currentSlide?.slide,
+        handleUpdateCurrentSlideOffset,
       }}
     >
       {children}

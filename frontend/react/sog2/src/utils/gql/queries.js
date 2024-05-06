@@ -21,6 +21,7 @@ export const sermon = gql`
         id
         slideCollectionAudioMappingId
         timePoint
+        spaceOffset
       }
     }
   }
@@ -75,6 +76,17 @@ export const bibleVerses = gql`
 export const setActiveSlide = gql`
   mutation setActiveSlide($slideId: ID, $type: TabType, $slideAudioMapping: SlideMappingInput) {
     setActiveSlide(slideId: $slideId, type: $type, slideAudioMapping: $slideAudioMapping)
+  }
+`;
+
+export const setActiveSlideOffset = gql`
+  mutation setActiveSlideOffset(
+    $slideId: ID!
+    $type: TabType!
+    $slideAudioMapping: SlideMappingInput
+    $offset: Float!
+  ) {
+    setActiveSlideOffset(slideId: $slideId, type: $type, slideAudioMapping: $slideAudioMapping, offset: $offset)
   }
 `;
 

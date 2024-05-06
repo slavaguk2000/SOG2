@@ -7,6 +7,7 @@ import { debounce } from 'lodash';
 
 import { AudioPlayerWrapper } from '../../components/instrumentsField/styled';
 import { formatTime } from '../../utils';
+import AudioMappingController from '../AudioMapping/controller';
 
 import { usePlayerContext } from './index';
 
@@ -55,6 +56,7 @@ const AudioPlayer = () => {
       <Typography>
         {formatTime(played)} / {formatTime(duration)}
       </Typography>
+      <AudioMappingController />
     </AudioPlayerWrapper>
   );
 

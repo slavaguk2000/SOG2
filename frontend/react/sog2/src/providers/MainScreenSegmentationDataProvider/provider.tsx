@@ -50,16 +50,26 @@ const MainScreenRatioProvider: FC<PropsWithChildren> = ({ children }) => {
     return currentScreen >= screensCount - 1;
   };
 
-  const requestNextScreen = () => {
-    setPreviewScreensData(
-      (prev) =>
-        prev && {
-          ...prev,
-          currentScreen:
-            screensCount > 1 ? (prev.currentScreen + 1 < screensCount ? prev.currentScreen + 1 : screensCount - 1) : 0,
-        },
-    );
-  };
+  const requestNextScreen = () =>
+    new Promise<number>((resolve, reject) => {
+      setPreviewScreensData((prev) => {
+        if (prev) {
+          const currentScreen =
+            screensCount > 1 ? (prev.currentScreen + 1 < screensCount ? prev.currentScreen + 1 : screensCount - 1) : 0;
+
+          console.log(2, Math.min(currentScreen / prev.screensCount, 1));
+          resolve(Math.min(currentScreen / prev.screensCount, 1));
+
+          return {
+            ...prev,
+            currentScreen,
+          };
+        }
+
+        reject();
+        return prev;
+      });
+    });
 
   const requestPrevScreen = () => {
     setPreviewScreensData(

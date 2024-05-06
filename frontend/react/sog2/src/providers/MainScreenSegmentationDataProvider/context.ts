@@ -6,7 +6,7 @@ const defaultValue: MainScreenSegmentationDataProviderContextType = {
   currentScreen: 0,
   multiScreenMode: false,
   screensCount: 1,
-  requestNextScreen: () => true,
+  requestNextScreen: () => new Promise((_, reject) => reject()),
   requestPrevScreen: () => true,
   resetScreens: () => true,
   proposeNewScreenSize: () => true,

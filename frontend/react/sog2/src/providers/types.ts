@@ -61,6 +61,7 @@ export interface InstrumentsFieldProviderContextType {
   silentMode: boolean;
   setSilentMode: Dispatch<SetStateAction<boolean>>;
   handleUpdateSlide: (newSlide?: SlideData, options?: { currentLastUp?: boolean }) => void;
+  handleUpdateCurrentSlideOffset: (screenOffset: number, timePoint: number) => void;
   currentSlide?: Slide;
 }
 
@@ -110,10 +111,17 @@ export interface MainScreenSegmentationDataProviderContextType {
   previewScreensData: PreviewScreensData | null;
   isFirstScreen: () => boolean;
   isLastScreen: () => boolean;
-  requestNextScreen: () => void;
+  requestNextScreen: () => Promise<number>;
   requestPrevScreen: () => void;
   resetScreens: () => void;
   setLastUp: () => void;
   setLastDown: () => void;
   lastUp: boolean;
+}
+
+export interface AudioMappingProviderContextType {
+  follow: boolean;
+  setFollow: Dispatch<SetStateAction<boolean>>;
+  recording: boolean;
+  setRecording: Dispatch<SetStateAction<boolean>>;
 }

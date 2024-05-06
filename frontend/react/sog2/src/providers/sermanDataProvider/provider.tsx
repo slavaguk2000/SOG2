@@ -7,6 +7,7 @@ import { compareSermonLocation } from '../../services/slidesService';
 import { arrayToMap } from '../../utils';
 import { sermon, sermons } from '../../utils/gql/queries';
 import { Query, QuerySermonArgs, QuerySermonsArgs, Slide } from '../../utils/gql/types';
+import AudioMappingFollower from '../AudioMapping/AudioMappingFollower';
 import { useInstrumentsField } from '../instrumentsFieldProvider';
 import { useMainScreenSegmentationData } from '../MainScreenSegmentationDataProvider';
 import { usePlayerContext } from '../playerProvider';
@@ -56,7 +57,11 @@ const SermonDataProvider: FC<SermonDataProviderProps> = ({ sermonsCollectionId =
     }
   }, [currentSermonId, handleSermonSelect, sermonsData]);
 
-  const { handleUpdateSlide: instrumentsHandleUpdateSlide, currentSlide } = useInstrumentsField();
+  const {
+    handleUpdateSlide: instrumentsHandleUpdateSlide,
+    currentSlide,
+    handleUpdateCurrentSlideOffset,
+  } = useInstrumentsField();
 
   const sermonsMap = useMemo(() => sermonsData && arrayToMap(sermonsData.sermons), [sermonsData]);
   const sermonParagraphsMap = useMemo(
@@ -104,13 +109,16 @@ const SermonDataProvider: FC<SermonDataProviderProps> = ({ sermonsCollectionId =
     );
   };
 
-  const handleNextSlide = () => {
+  const handleNextSlide = async () => {
     if (!(currentSermonData && sermonParagraphsMap && currentSlide?.id)) {
       return;
     }
 
     if (!isLastScreen()) {
-      requestNextScreen();
+      const screenOffset = await requestNextScreen();
+
+      handleUpdateCurrentSlideOffset(screenOffset, Math.floor(played));
+
       return;
     }
 
@@ -176,9 +184,10 @@ const SermonDataProvider: FC<SermonDataProviderProps> = ({ sermonsCollectionId =
   };
 
   const sermonName = currentSermon?.name;
+  const playedAndShowDifferent = audioLink !== src;
 
   useEffect(() => {
-    if (audioLink && sermonName && audioLink !== src && !playAnother) {
+    if (audioLink && sermonName && playedAndShowDifferent && !playAnother) {
       if (isPlaying) {
         setChangePlayingSrcProposalDialogData({
           sermonName,
@@ -188,9 +197,7 @@ const SermonDataProvider: FC<SermonDataProviderProps> = ({ sermonsCollectionId =
         setAudio(audioLink, sermonName);
       }
     }
-  }, [audioLink, isPlaying, playAnother, played, sermonName, setAudio, src]);
-
-  //
+  }, [audioLink, isPlaying, playAnother, played, playedAndShowDifferent, sermonName, setAudio, src]);
 
   return (
     <SermonDataProviderContext.Provider
@@ -206,6 +213,9 @@ const SermonDataProvider: FC<SermonDataProviderProps> = ({ sermonsCollectionId =
         audioMapping,
       }}
     >
+      {currentSermonData?.sermon && !playedAndShowDifferent && (
+        <AudioMappingFollower sermonData={currentSermonData.sermon} />
+      )}
       {children}
       <ChangePlayingSrcProposalDialog
         open={!!(changePlayingSrcProposalDialogData.sermonName && changePlayingSrcProposalDialogData.audioLink)}
