@@ -55,7 +55,7 @@ export type MutationSetActiveSlideArgs = {
 
 export type MutationSetActiveSlideOffsetArgs = {
   offset: Scalars['Float']['input'];
-  slideAudioMapping: SlideMappingInput;
+  slideAudioMapping?: InputMaybe<SlideMappingInput>;
   slideId: Scalars['ID']['input'];
   type: TabType;
 };

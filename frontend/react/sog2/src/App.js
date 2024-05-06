@@ -30,33 +30,33 @@ function App() {
             <AppRoot>
               <Router>
                 <PlayerContextProvider>
-                  <InstrumentsFieldProvider>
-                    <Routes>
-                      <Route path="/" element={<Navigate to="/bible" replace />} />
-                      <Route
-                        path="/bible"
-                        element={
-                          <BibleDataProvider>
-                            <MainView dataProviderContext={BibleContext}>
-                              <BibleContent />
-                            </MainView>
-                          </BibleDataProvider>
-                        }
-                      />
-                      <Route
-                        path="/sermon"
-                        element={
-                          <AudioMappingProvider>
+                  <AudioMappingProvider>
+                    <InstrumentsFieldProvider>
+                      <Routes>
+                        <Route path="/" element={<Navigate to="/bible" replace />} />
+                        <Route
+                          path="/bible"
+                          element={
+                            <BibleDataProvider>
+                              <MainView dataProviderContext={BibleContext}>
+                                <BibleContent />
+                              </MainView>
+                            </BibleDataProvider>
+                          }
+                        />
+                        <Route
+                          path="/sermon"
+                          element={
                             <SermonDataProvider>
                               <MainView dataProviderContext={SermonDataProviderContext}>
                                 <SermonsContent />
                               </MainView>
                             </SermonDataProvider>
-                          </AudioMappingProvider>
-                        }
-                      />
-                    </Routes>
-                  </InstrumentsFieldProvider>
+                          }
+                        />
+                      </Routes>
+                    </InstrumentsFieldProvider>
+                  </AudioMappingProvider>
                 </PlayerContextProvider>
               </Router>
             </AppRoot>

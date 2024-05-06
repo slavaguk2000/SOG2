@@ -199,8 +199,6 @@ const SermonDataProvider: FC<SermonDataProviderProps> = ({ sermonsCollectionId =
     }
   }, [audioLink, isPlaying, playAnother, played, playedAndShowDifferent, sermonName, setAudio, src]);
 
-  // console.log(currentSermonData);
-
   return (
     <SermonDataProviderContext.Provider
       value={{

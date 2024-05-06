@@ -1,4 +1,4 @@
-import React, { createContext, PropsWithChildren, useContext, useState } from 'react';
+import React, { createContext, PropsWithChildren, useContext, useEffect, useState } from 'react';
 
 import { AudioMappingProviderContextType } from '../types';
 
@@ -20,6 +20,18 @@ export const useAudioMapping = () => {
 const AudioMappingProvider = ({ children }: PropsWithChildren) => {
   const [follow, setFollow] = useState(false);
   const [recording, setRecording] = useState(false);
+
+  useEffect(() => {
+    if (follow) {
+      setRecording(false);
+    }
+  }, [follow]);
+
+  useEffect(() => {
+    if (recording) {
+      setFollow(false);
+    }
+  }, [recording]);
 
   return (
     <AudioMappingProviderContext.Provider
