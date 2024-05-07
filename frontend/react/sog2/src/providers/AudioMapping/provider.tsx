@@ -1,4 +1,4 @@
-import React, { createContext, PropsWithChildren, useContext, useEffect, useState } from 'react';
+import React, { createContext, Dispatch, PropsWithChildren, SetStateAction, useContext, useState } from 'react';
 
 import { AudioMappingProviderContextType } from '../types';
 
@@ -17,29 +17,43 @@ export const useAudioMapping = () => {
   return useContext(AudioMappingProviderContext);
 };
 
+const xorDispatchFactory =
+  (currentDispatch: Dispatch<SetStateAction<boolean>>, anotherDispatch: Dispatch<SetStateAction<boolean>>) =>
+  (action: SetStateAction<boolean>) => {
+    if (typeof action === 'function') {
+      currentDispatch((p) => {
+        const newValue = action(p);
+
+        if (newValue) {
+          anotherDispatch(false);
+        }
+
+        return newValue;
+      });
+    } else {
+      if (action) {
+        anotherDispatch(false);
+      }
+
+      currentDispatch(action);
+    }
+  };
+
 const AudioMappingProvider = ({ children }: PropsWithChildren) => {
   const [follow, setFollow] = useState(false);
   const [recording, setRecording] = useState(false);
 
-  useEffect(() => {
-    if (follow) {
-      setRecording(false);
-    }
-  }, [follow]);
+  const handleRecording: Dispatch<SetStateAction<boolean>> = xorDispatchFactory(setRecording, setFollow);
 
-  useEffect(() => {
-    if (recording) {
-      setFollow(false);
-    }
-  }, [recording]);
+  const handleFollow: Dispatch<SetStateAction<boolean>> = xorDispatchFactory(setFollow, setRecording);
 
   return (
     <AudioMappingProviderContext.Provider
       value={{
         follow,
-        setFollow,
+        setFollow: handleFollow,
         recording,
-        setRecording,
+        setRecording: handleRecording,
       }}
     >
       {children}
