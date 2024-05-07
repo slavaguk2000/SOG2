@@ -1,5 +1,5 @@
-const minFontSIze = 7;
-const maxFontSize = 14;
+const minFontSIze = 5;
+const maxFontSize = 10;
 const overflowPercentage = 10;
 const overflow = Math.max(Math.min(overflowPercentage / 100, 90), 0);
 
@@ -117,7 +117,7 @@ function resizeText(proposalCurrentScreen, lastUp, multiScreenShow) {
   while (
     getScreenCount(div.scrollHeight, div.clientHeight, overflow) <= currentScreenCount &&
     div.scrollWidth <= div.clientWidth &&
-    fontSize <= maxFontSize
+    fontSize < maxFontSize
   ) {
     fontSize += forwardStep;
     div.style.fontSize = `${fontSize}vw`;

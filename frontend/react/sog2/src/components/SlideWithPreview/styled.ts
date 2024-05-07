@@ -9,8 +9,9 @@ export const SlideWithPreviewWrapper = styled(Box)`
 
 export const SlidePreviewWrapper = styled(Box)`
   display: flex;
+  box-sizing: content-box;
+  overflow: hidden auto;
   background-color: ${({ theme }) => theme.palette.background.paper};
-  overflow-y: scroll;
   max-height: 50vh;
   opacity: 0.85;
   position: relative;
@@ -44,4 +45,16 @@ export const SlidePreviewViewBox = styled(Box, {
   position: absolute;
   opacity: 0.4;
   ${({ smoothScrolling }) => (smoothScrolling ? 'transition: top 0.3s ease-out;' : '')}
+`;
+
+export const OverlayIndicator = styled(Box, {
+  shouldForwardProp(propName: PropertyKey) {
+    return propName !== 'visible';
+  },
+})<{ visible: boolean }>`
+  opacity: ${({ visible }) => (visible ? '0.95' : '0')};
+  width: 100%;
+  background-color: #54f5f7;
+  position: absolute;
+  transition: opacity 0.3s ease-out;
 `;
