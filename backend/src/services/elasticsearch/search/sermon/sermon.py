@@ -2,7 +2,7 @@ from src.services.common_utils.sermon import get_sermon_date_string_from_datetim
 from src.services.elasticsearch.constants import highlight_pre_tag, highlight_post_tag
 from src.services.elasticsearch.elastic import Elastic
 from src.services.elasticsearch.mappings import sermon_mapping
-from src.services.elasticsearch.search.sermon.SearchQuery import SearchQuery
+from src.services.elasticsearch.search.SearchQuery import SearchQuery
 from src.services.elasticsearch.search.sermon.search_providers.abstract_seacrh_provider import SearchProvider
 from src.services.elasticsearch.search.sermon.search_providers.default_search_provider import DefaultSearchProvider
 from src.services.elasticsearch.search.sermon.search_providers.sermon_chapter_content_search_provider import \
