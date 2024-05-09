@@ -1,4 +1,6 @@
 from sqlalchemy.orm import Session
+
+from src.utils.bible_utils import get_root_book_name_rus
 from src.services.database import engine
 from src.models.verse import Verse
 from src.services.elasticsearch.elastic import Elastic
@@ -28,6 +30,7 @@ def sync_bible(bible_id: str) -> bool:
                 "_id": verse.id,
                 "book_id": verse.bible_book.id,
                 "book_name": verse.bible_book.name,
+                "root_book_name": get_root_book_name_rus(verse.bible_book.name),
                 "book_order": verse.bible_book.book_order,
                 "bible_id": verse.bible_id,
                 "last_usage": verse.last_usage,

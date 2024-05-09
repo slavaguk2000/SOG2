@@ -1,10 +1,11 @@
 from ariadne import convert_kwargs_to_snake_case, ObjectType, QueryType, MutationType, SubscriptionType
 
 from src.services.bible_helper import update_bible_slide_usage
-from src.services.elasticsearch.search.bible import bible_search, get_bible_history
 from src.services.database_helpers.bible import get_bible_books_by_bible_id, get_chapter_verses, get_bible_slide_by_id
 from src.services.database_helpers.sermon import get_sermons, get_sermon_by_id, get_sermon_paragraph_by_id, \
     add_slide_audio_mapping
+from src.services.elasticsearch.search.bible.bible_getters import get_bible_history
+from src.services.elasticsearch.search.bible.bible_search_engine.bible_search_engine import bible_search
 from src.services.elasticsearch.sync.sermon import sync_sermons
 from src.services.parsers.bibleParsers.sog_parser import SimpleBibleParser
 from asyncio import Queue
