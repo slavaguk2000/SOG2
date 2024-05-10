@@ -18,7 +18,7 @@ def get_book_name_query_strings(current_books_pattern: str):
             "query_string": {
                 "default_field": "book_name",
                 "query": f"{current_books_pattern}",
-                "boost": 0.3
+                "boost": 1.6
             }
         }
     ]
