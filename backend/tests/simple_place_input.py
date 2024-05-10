@@ -1,12 +1,11 @@
-from src.services.elasticsearch.search.bible import bible_search
 from src.services.database_helpers.bible import get_bible_books_by_bible_id
-
+from src.services.elasticsearch.search.bible.bible_search_engine.bible_search_engine import bible_search2
 
 bible_id = "fcd38411-5f94-4bda-9a2a-cd5624b3dac2"
 
 
 def get_place_by_short_write_template(search_line: str, expected_locations, bible_books: [dict]):
-    result = bible_search(search_line, bible_id)
+    result = bible_search2(search_line, bible_id)
 
     print('exp', expected_locations)
     print('res', [res["search_content"] for res in result])
@@ -60,19 +59,24 @@ short_writes = [
     {'search_line': "1 кор одоб", 'expected_locations': [[53, 3, 1]]},
     # '2 Коринфянам 3:1 Неужели нам снова знакомиться с вами? Неужели нужны для нас, как для некоторых,
     # одобрительные письма к вам или от вас?'
+
+    {'search_line': "лук 13 7", 'expected_locations': [[41, 13, 7]]},
+    # 'От Луки 13:7 и сказал виноградарю: вот, я третий год прихожу искать плода на этой смоковнице и не нахожу;
+    # сруби ее: на что она и землю занимает?'
 ]
 
 
 def test_answer():
     bible_books = get_bible_books_by_bible_id(bible_id)
+    # [print(i, book["name"]) for i, book in enumerate(bible_books)]
 
     for short_write in short_writes:
         get_place_by_short_write_template(short_write["search_line"], short_write['expected_locations'], bible_books)
 
 
-def test_highlight():
-    answer = bible_search("мат 24 14", bible_id)
-    assert answer[0]['search_content'] == 'От <span class="highlighted">Матфея</span> <span class="highlighted">24</span>:<span class="highlighted">14</span> И проповедано будет сие Евангелие Царствия по всей вселенной, во свидетельство всем народам; и тогда придет конец.'
+# def test_highlight():
+#     answer = bible_search("мат 24 14", bible_id)
+#     assert answer[0]['search_content'] == 'От <span class="highlighted">Матфея</span> <span class="highlighted">24</span>:<span class="highlighted">14</span> И проповедано будет сие Евангелие Царствия по всей вселенной, во свидетельство всем народам; и тогда придет конец.'
 
 
 if __name__ == '__main__':

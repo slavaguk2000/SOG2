@@ -17,7 +17,31 @@ bible_mapping = Mapping(
             },
             "book_name": {
                 "type": "text",
-                "analyzer": "lowercase_analyzer"
+                "fields": {
+                    "keyword": {
+                        "type": "keyword",
+                        "ignore_above": 256
+                    },
+                    "edge_ngram": {
+                        "type": "text",
+                        "analyzer": "edge_ngram_analyzer",
+                        "search_analyzer": "standard"
+                    }
+                }
+            },
+            "root_book_name": {
+                "type": "text",
+                "fields": {
+                    "keyword": {
+                        "type": "keyword",
+                        "ignore_above": 256
+                    },
+                    "edge_ngram": {
+                        "type": "text",
+                        "analyzer": "edge_ngram_analyzer",
+                        "search_analyzer": "standard"
+                    }
+                }
             },
             "book_order": {
                 "type": "integer"
@@ -30,7 +54,13 @@ bible_mapping = Mapping(
             },
             "verse_content": {
                 "type": "text",
-                "analyzer": "russian"
+                "analyzer": "russian",
+                "fields": {
+                    "standard": {
+                        "type": "text",
+                        "analyzer": "standard"
+                    }
+                }
             },
             "search_content": {
                 "type": "text",
@@ -40,11 +70,28 @@ bible_mapping = Mapping(
     },
     settings={
         "analysis": {
+            "tokenizer": {
+                "whitespace_tokenizer": {
+                    "type": "whitespace"
+                }
+            },
+            "filter": {
+                "edge_ngram_filter": {
+                    "type": "edge_ngram",
+                    "min_gram": 1,
+                    "max_gram": 5
+                }
+            },
             "analyzer": {
                 "lowercase_analyzer": {
                     "type": "custom",
                     "tokenizer": "keyword",
                     "filter": ["lowercase"]
+                },
+                "edge_ngram_analyzer": {
+                    "type": "custom",
+                    "tokenizer": "whitespace_tokenizer",
+                    "filter": ["lowercase", "edge_ngram_filter"]
                 }
             }
         }

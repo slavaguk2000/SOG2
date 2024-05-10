@@ -31,3 +31,8 @@ sort_priority = [
         }
     }
 ]
+
+# 1 Кор or Пес пес
+MAX_BOOK_PATTERNS_COUNT = 2
+# book pattern 2 5 verse content
+MAX_NOT_VERSE_CONTENT_POSITION = MAX_BOOK_PATTERNS_COUNT + 2
