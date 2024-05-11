@@ -237,6 +237,7 @@ def bible_search2(search_pattern: str, bible_id: str):
         "post_tags": [highlight_post_tag],
         "fields": {
             "verse_content": {},
+            "verse_content.standard": {},
             "book_name": {}
         }
     }

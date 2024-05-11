@@ -5,6 +5,7 @@ from src.services.elasticsearch.search.bible.bible_elastic_constants import MAX_
 from src.services.elasticsearch.search.bible.bible_search_engine.abstract_seacrh_provider import SearchProvider
 from src.services.elasticsearch.search.bible.bible_search_engine.common_parts import get_book_name_query_strings, \
     get_verse_content_pattern_dis_max
+from src.services.elasticsearch.search.common_search_queries import get_phrase_queries
 from src.utils.common_utils import generate_combinations
 
 
@@ -73,9 +74,12 @@ class PatternsArray:
         return self.__patterns_array
 
 
+# Maybe should be default
 class NumericSearchProvider(SearchProvider):
     def match(self, search_patterns: List[str]) -> bool:
-        return any(pattern.isdigit() for pattern in search_patterns)
+        # temporary default
+        return True
+        # return any(pattern.isdigit() for pattern in search_patterns)
 
     @staticmethod
     def __get_chapter_verse_queries(chapter_verse_number_patterns: List[Pattern]):
@@ -165,8 +169,16 @@ class NumericSearchProvider(SearchProvider):
                 elif current_not_books_pattern.can_be_verse_number and current_not_books_pattern.can_be_chapter:
                     chapter_verse_number_patterns.append(current_not_books_pattern)
 
-            for current_not_books_pattern in verse_content_patterns:
-                must.append(get_verse_content_pattern_dis_max(current_not_books_pattern.pattern_string))
+            for verse_content_pattern in verse_content_patterns:
+                must.append(get_verse_content_pattern_dis_max(verse_content_pattern.pattern_string))
+            if len(verse_content_patterns) >= 2:
+                must.append({
+                    "dis_max": {
+                        "queries": get_phrase_queries(" ".join(
+                            [pattern.pattern_string for pattern in verse_content_patterns]
+                        ), "verse_content")
+                    }
+                })
 
             chapter_verse_queries = self.__get_chapter_verse_queries(chapter_verse_number_patterns)
 
