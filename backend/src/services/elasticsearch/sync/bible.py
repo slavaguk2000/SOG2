@@ -31,6 +31,7 @@ def sync_bible(bible_id: str) -> bool:
                 "book_id": verse.bible_book.id,
                 "book_name": verse.bible_book.name,
                 "root_book_name": get_root_book_name_rus(verse.bible_book.name),
+                "book_name_length": len(verse.bible_book.name.split()),
                 "book_order": verse.bible_book.book_order,
                 "bible_id": verse.bible_id,
                 "last_usage": verse.last_usage,

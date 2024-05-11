@@ -180,7 +180,16 @@ class NumericSearchProvider(SearchProvider):
             queries.append({
                 "bool": {
                     # should for testing
-                    "should": must
+                    "should": must,
+                    "must": [
+                        {
+                            "range": {
+                                "book_name_length": {
+                                    "gte": i,
+                                }
+                            }
+                        }
+                    ]
                 }
             })
 
