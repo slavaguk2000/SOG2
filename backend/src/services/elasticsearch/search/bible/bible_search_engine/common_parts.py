@@ -1,10 +1,13 @@
 def get_book_name_query_strings(current_books_pattern: str):
     return [
         {
-            "query_string": {
-                "default_field": "root_book_name.edge_ngram",
-                "query": f"{current_books_pattern}",
-                "boost": 10
+            "constant_score": {
+                "filter": {
+                    "term": {
+                        "root_book_name.edge_ngram": f"{current_books_pattern}"
+                    }
+                },
+                "boost": 6.5
             }
         },
         {
