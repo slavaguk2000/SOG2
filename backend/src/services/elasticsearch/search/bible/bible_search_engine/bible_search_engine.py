@@ -207,7 +207,7 @@ def search(search_patterns_array: List[str], providers: List[SearchProvider]) ->
 
 
 def bible_search2(search_pattern: str, bible_id: str):
-    search_patterns_array = search_pattern.split()
+    search_patterns_array = search_pattern.lower().split()
 
     if not len(search_patterns_array):
         return []
