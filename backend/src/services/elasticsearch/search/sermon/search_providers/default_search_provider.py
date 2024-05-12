@@ -1,5 +1,6 @@
 from typing import List, Optional
-from src.services.elasticsearch.search.sermon.SearchQuery import SearchQuery
+from src.services.elasticsearch.search.SearchQuery import SearchQuery
+from src.services.elasticsearch.search.common_search_queries import get_phrase_queries
 from src.services.elasticsearch.search.sermon.search_providers.abstract_seacrh_provider import SearchProvider
 
 
@@ -17,23 +18,7 @@ class DefaultSearchProvider(SearchProvider):
         return True
 
     def __get_phrase_queries(self, search_request: str):
-        phrase_queries = []
-
-        if self.__standard_field:
-            for i in range(self.__max_slop):
-                phrase_queries.append(
-                    {
-                        "match_phrase": {
-                            self.__standard_field: {
-                                "query": search_request,
-                                "slop": i,
-                                "boost": 2 - i / self.__max_slop
-                            }
-                        }
-                    }
-                )
-
-        return phrase_queries
+        return get_phrase_queries(search_request, self.__standard_field, self.__max_slop)
 
     def get_query(self, search_request: str, context: Optional[List[str]]) -> SearchQuery:
         search_query = SearchQuery()

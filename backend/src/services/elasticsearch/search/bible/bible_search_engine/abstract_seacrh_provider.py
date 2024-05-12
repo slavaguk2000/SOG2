@@ -6,9 +6,9 @@ from src.services.elasticsearch.search.SearchQuery import SearchQuery
 
 class SearchProvider(ABC):
     @abstractmethod
-    def match(self, search_request: str) -> bool:
+    def match(self, search_patterns: List[str]) -> bool:
         pass
 
     @abstractmethod
-    def get_query(self, search_request: str, context: Optional[List[str]]) -> SearchQuery:
+    def get_query(self, search_patterns: List[str], context: Optional[List[str]]) -> SearchQuery:
         pass
