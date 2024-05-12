@@ -94,6 +94,17 @@ def test_answer():
         get_place_by_short_write_template(short_write["search_line"], short_write['expected_locations'], bible_books)
 
 
-def test_highlight():
+def test_highlighting_1():
     answer = bible_search2("мат 24 14", bible_id)
     assert answer[0]['search_content'] == 'От <span class="highlighted">Матфея</span> <span class="highlighted">24</span>:<span class="highlighted">14</span> И проповедано будет сие Евангелие Царствия по всей вселенной, во свидетельство всем народам; и тогда придет конец.'
+    assert answer[1]['search_content'] == 'От <span class="highlighted">Матфея</span> <span class="highlighted">14</span>:<span class="highlighted">24</span> А лодка была уже на средине моря, и ее било волнами, потому что ветер был противный.'
+
+
+def test_highlighting_2():
+    answer = bible_search2("мат 12", bible_id)
+    assert answer[11]['search_content'] == 'От <span class="highlighted">Матфея</span> <span class="highlighted">12</span>:<span class="highlighted">12</span> Сколько же лучше человек овцы! Итак можно в субботы делать добро.'
+
+
+def test_highlighting_3():
+    answer = bible_search2("а 8 скита", bible_id)
+    assert answer[11]['search_content'] == '<span class="highlighted">Амоса</span> <span class="highlighted">8</span>:11 Вот наступают дни, говорит Господь Бог, когда Я пошлю на землю голод, --не голод хлеба, не жажду воды, но жажду слышания слов Господних.'
