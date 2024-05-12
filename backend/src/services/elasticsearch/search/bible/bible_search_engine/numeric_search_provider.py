@@ -85,7 +85,7 @@ class NumericSearchProvider(SearchProvider):
     def __get_chapter_verse_queries(chapter_verse_number_patterns: List[Pattern]):
         chapter_verse_queries = []
         chapter_verse_combinations = generate_combinations(chapter_verse_number_patterns, ["verse", "chapter"])
-        for chapter_verse_combination in chapter_verse_combinations:
+        for i, chapter_verse_combination in enumerate(chapter_verse_combinations):
             chapter_verse_must = []
             if "chapter" in chapter_verse_combination:
                 chapter_pattern = chapter_verse_combination["chapter"]
@@ -94,7 +94,7 @@ class NumericSearchProvider(SearchProvider):
                         "chapter": {
                             "value": chapter_pattern.pattern_string,
                             "boost": 2.1 if chapter_pattern.preferably_chapter else 1.3,
-                            "_name": "chapter",
+                            "_name": f"chapter{i}",
                         }
                     }
                 })
@@ -106,7 +106,7 @@ class NumericSearchProvider(SearchProvider):
                         "verse_number": {
                             "value": chapter_pattern.pattern_string,
                             "boost": 2 if chapter_pattern.preferably_verse_number else 1.2,
-                            "_name": "verse",
+                            "_name": f"verse{i}",
                         }
                     }
                 })
