@@ -15,17 +15,13 @@ def get_highlighted_book(hit: dict):
 
 def get_highlighted_chapter(hit: dict):
     chapter_number = str(hit["_source"]['chapter'])
-    matched_chapter = 'matched_queries' in hit and (
-            'primary_chapter' in hit['matched_queries'] or 'secondary_chapter' in hit['matched_queries']
-    )
+    matched_chapter = 'matched_queries' in hit and ('chapter' in hit['matched_queries'])
     return f"{highlight_pre_tag}{chapter_number}{highlight_post_tag}" if matched_chapter else chapter_number
 
 
 def get_highlighted_verse_number(hit: dict):
     verse_number = str(hit["_source"]['verse_number'])
-    matched_verse_number = 'matched_queries' in hit and (
-            'primary_verse' in hit['matched_queries'] or 'secondary_verse' in hit['matched_queries']
-    )
+    matched_verse_number = 'matched_queries' in hit and ('verse' in hit['matched_queries'])
     return f"{highlight_pre_tag}{verse_number}{highlight_post_tag}" if matched_verse_number else verse_number
 
 

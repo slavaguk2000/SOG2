@@ -94,6 +94,7 @@ class NumericSearchProvider(SearchProvider):
                         "chapter": {
                             "value": chapter_pattern.pattern_string,
                             "boost": 2.1 if chapter_pattern.preferably_chapter else 1.3,
+                            "_name": "chapter",
                         }
                     }
                 })
@@ -105,6 +106,7 @@ class NumericSearchProvider(SearchProvider):
                         "verse_number": {
                             "value": chapter_pattern.pattern_string,
                             "boost": 2 if chapter_pattern.preferably_verse_number else 1.2,
+                            "_name": "verse",
                         }
                     }
                 })

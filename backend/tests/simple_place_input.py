@@ -86,12 +86,12 @@ short_writes = [
 ]
 
 
-# def test_answer():
-#     bible_books = get_bible_books_by_bible_id(bible_id)
-#     # [print(i, book["name"]) for i, book in enumerate(bible_books)]
-#
-#     for short_write in short_writes:
-#         get_place_by_short_write_template(short_write["search_line"], short_write['expected_locations'], bible_books)
+def test_answer():
+    bible_books = get_bible_books_by_bible_id(bible_id)
+    # [print(i, book["name"]) for i, book in enumerate(bible_books)]
+
+    for short_write in short_writes:
+        get_place_by_short_write_template(short_write["search_line"], short_write['expected_locations'], bible_books)
 
 
 def test_highlight():
