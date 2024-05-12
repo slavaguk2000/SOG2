@@ -9,8 +9,9 @@ import os
 
 elastic_host = os.getenv("ELASTIC_URL")
 elastic_password = os.getenv("ELASTIC_PWD")
+elastic_port = os.getenv("ELASTIC_PORT")
 
-elastic_address = f'http://{elastic_host if elastic_host else "localhost"}:9210'
+elastic_address = f'http://{elastic_host if elastic_host else "localhost"}:{elastic_port if elastic_port else "9200"}'
 user = 'elastic'
 password = elastic_password if elastic_password else 'q1Z3ArlE7ky=4eoxB*cn'
 
