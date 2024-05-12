@@ -168,10 +168,10 @@ const SearchLine = () => {
   return (
     <SearchLineWrapper>
       <SearchLineAutocomplete
-        open={autocompleteOpen || true}
+        open={autocompleteOpen}
         freeSolo
-        // clearOnBlur
-        // clearOnEscape
+        clearOnBlur
+        clearOnEscape
         fullWidth
         filterOptions={(options) => options} //need to show popup on "Gen 2 5" for example
         autoComplete
