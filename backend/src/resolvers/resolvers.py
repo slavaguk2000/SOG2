@@ -5,7 +5,7 @@ from src.services.database_helpers.bible import get_bible_books_by_bible_id, get
 from src.services.database_helpers.sermon import get_sermons, get_sermon_by_id, get_sermon_paragraph_by_id, \
     add_slide_audio_mapping
 from src.services.elasticsearch.search.bible.bible_getters import get_bible_history
-from src.services.elasticsearch.search.bible.bible_search_engine.bible_search_engine import bible_search2
+from src.services.elasticsearch.search.bible.bible_search_engine.bible_search_engine import bible_search
 from src.services.elasticsearch.sync.sermon import sync_sermons
 from src.services.parsers.bibleParsers.sog_parser import SimpleBibleParser
 from asyncio import Queue
@@ -25,7 +25,7 @@ subscribers_queues = []
 @convert_kwargs_to_snake_case
 def resolve_search(*_, search_pattern: str, tab_type: str, **kwargs):
     if tab_type == 'Bible':
-        return bible_search2(search_pattern, kwargs["id"] if kwargs.get("id") else "607e6be1-dc31-498e-ba8b-f73ddd8806fb")
+        return bible_search(search_pattern, kwargs["id"] if kwargs.get("id") else "607e6be1-dc31-498e-ba8b-f73ddd8806fb")
     if tab_type == 'Sermon':
         return sermon_search(search_pattern, "0", kwargs.get("id"))
     return []
