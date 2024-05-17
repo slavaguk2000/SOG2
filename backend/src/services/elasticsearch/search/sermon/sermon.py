@@ -178,7 +178,7 @@ def sermon_search(search_pattern: str, sermon_collection_id: str, current_sermon
         }
     }
 
-    # print(str(query).replace("'", '"'))
+    print(str(query).replace("'", '"'))
 
     result = el.search(
         index=sermon_mapping.index,
