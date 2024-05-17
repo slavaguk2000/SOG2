@@ -5,7 +5,7 @@ import regex
 
 from src.services.elasticsearch.search.sermon.search_providers.default_search_provider import DefaultSearchProvider
 
-pattern = r'^(\p{L}+\s)?(\d+)(\s\p{L}+)?$'
+pattern = r'^([\p{L}\s]*)(\d+)([\p{L}\s]*)$'
 
 
 class SermonChapterContentSearchProvider(SearchProvider):

@@ -83,3 +83,9 @@ def test_context():
 def test_find_by_sermon_name():
     answer = sermon_search("рас св ден", "0", None)
     assert answer[0]['search_content'] == "64-0726 <span class=\"highlighted\">Распознай</span> <span class=\"highlighted\">свой</span> <span class=\"highlighted\">день</span> и его послание (VGR) 1 Доброе утро, друзья. Не садитесь пока, пожалуйста."
+
+
+def test_search_by_name_and_chapter():
+    answer = sermon_search("бог ми 143", "0", None)
+    assert answer[0]['search_content'] == '65-0119 <span class="highlighted">Бог</span>, <span class="highlighted">богатый</span> <span class="highlighted">милостью</span> (VGR) <span class="highlighted">143</span> Но прежде чем мы это сделаем, из–за того, что здесь могут находиться прибывшие впервые, избавимся от всех суеверий. Это не суеверие. Это проявление обетования Божьего. Все зависит от того, на что вы смотрите. Ни в одном человеке нет добродетели. Ни в одном человеке нет силы. Но мы как верующие имеем власть, не силу, но власть.'
+    assert answer[1]['search_content'] == '65-0119 <span class="highlighted">Бог</span> <span class="highlighted">богатый</span> <span class="highlighted">милостью</span> (Вильнюс) <span class="highlighted">143</span> Но прежде чем мы это сделаем, если здесь находятся новоприбывшие, выбросьте все суеверия…Это не суеверие. Это проявление обетования Божьего. Все зависит от того, на что вы смотрите. Ни в одном человеке нет добродетели. Ни в одном человеке нет силы. Но мы как верующие имеем власть, не силу, но власть.'
