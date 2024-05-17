@@ -113,10 +113,19 @@ sermon_mapping = Mapping(
             },
             "sermon_name": {
                 "type": "text",
-                "analyzer": "lowercase_analyzer",
+                "analyzer": "standard",
                 "fields": {
                     "keyword": {
                         "type": "keyword"
+                    },
+                    "lowercase": {
+                        "type": "text",
+                        "analyzer": "lowercase_analyzer"
+                    },
+                    "edge_ngram": {
+                        "type": "text",
+                        "analyzer": "edge_ngram_analyzer",
+                        "search_analyzer": "standard"
                     }
                 }
             },
@@ -149,11 +158,28 @@ sermon_mapping = Mapping(
     },
     settings={
         "analysis": {
+            "tokenizer": {
+                "whitespace_tokenizer": {
+                    "type": "whitespace"
+                }
+            },
+            "filter": {
+                "edge_ngram_filter": {
+                    "type": "edge_ngram",
+                    "min_gram": 1,
+                    "max_gram": 5
+                }
+            },
             "analyzer": {
                 "lowercase_analyzer": {
                     "type": "custom",
                     "tokenizer": "keyword",
                     "filter": ["lowercase"]
+                },
+                "edge_ngram_analyzer": {
+                    "type": "custom",
+                    "tokenizer": "whitespace_tokenizer",
+                    "filter": ["lowercase", "edge_ngram_filter"]
                 }
             }
         }
