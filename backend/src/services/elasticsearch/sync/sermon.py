@@ -7,6 +7,27 @@ from src.services.elasticsearch.mappings import sermon_mapping
 el = Elastic()
 
 
+def replace_english_letters_to_russian_equivalent(input_string: str):
+    for en, ru in [
+        ("C", "С"), ("c", "с"),
+        ("O", "О"), ("o", "о"),
+        ("X", "Х"), ("x", "х"),
+        ("A", "А"), ("a", "а"),
+        ("B", "В"),
+        ("E", "Е"), ("e", "е"),
+        ("K", "К"), ("k", "к"),
+        ("M", "М"), ("m", "м"),
+        ("H", "Н"), ("h", "Н"),
+        ("P", "Р"), ("p", "р"),
+        ("T", "Т"), ("t", "т"),
+        ("n", "п"),
+        ("u", "и"),
+        ("y", "у")
+    ]:
+        input_string = input_string.replace(en, ru)
+    return input_string
+
+
 def sync_sermons() -> bool:
     if not el.ping():
         print('Elastic was not available')
@@ -26,11 +47,12 @@ def sync_sermons() -> bool:
                 "_id": paragraph.id,
                 "sermon_id": paragraph.sermon_id,
                 "paragraph_order": paragraph.paragraph_order,
-                "sermon_name": paragraph.sermon.name,
+                "sermon_name": replace_english_letters_to_russian_equivalent(paragraph.sermon.name),
+                "sermon_name_length": len(paragraph.sermon.name.split()),
                 "sermon_translation": paragraph.sermon.translation,
                 "sermon_date": paragraph.sermon.date,
                 "chapter": paragraph.chapter,
-                "chapter_content": paragraph.content,
+                "chapter_content": replace_english_letters_to_russian_equivalent(paragraph.content),
             } for paragraph in paragraphs
         ])
         return True
