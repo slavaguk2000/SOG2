@@ -5,6 +5,8 @@ from src.services.elasticsearch.mappings import sermon_mapping
 from src.services.elasticsearch.search.SearchQuery import SearchQuery
 from src.services.elasticsearch.search.sermon.search_providers.abstract_seacrh_provider import SearchProvider
 from src.services.elasticsearch.search.sermon.search_providers.default_search_provider import DefaultSearchProvider
+from src.services.elasticsearch.search.sermon.search_providers.new_default_search_provider import \
+    NewDefaultSearchProvider
 from src.services.elasticsearch.search.sermon.search_providers.sermon_chapter_content_search_provider import \
     SermonChapterContentSearchProvider
 from src.services.elasticsearch.utils import insert_highlights_into_original_str
@@ -157,6 +159,7 @@ def search(search_request: str, providers: List[SearchProvider], current_sermon_
 def sermon_search(search_pattern: str, sermon_collection_id: str, current_sermon_id: str | None):
     search_query = search(search_pattern.strip(), [
         SermonChapterContentSearchProvider(),
+        NewDefaultSearchProvider(),
         DefaultSearchProvider(),
     ], current_sermon_id)
 

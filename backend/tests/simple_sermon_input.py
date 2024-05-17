@@ -64,7 +64,7 @@ def test_short_writes():
 
 def test_highlight():
     answer = sermon_search("рас 189 лже", "0", None)
-    assert answer[0]['search_content'] == '64-0726 <span class="highlighted">Распознай</span> cвой день и его послание (VGR) <span class="highlighted">189</span> Вот, тот же самый человек поставил кассету и сказал: "Взгляните сюда, Пятидесятники, — сказал, — и вы, Баптисты. Этот человек, <span class="highlighted">лжепророк</span> Уилльям Бранхам сказал, что Орал Роберте и Билли Грэйем были в Содоме." Смотрите, потом обрезал ленту; вот и все, понимаете.'
+    assert answer[0]['search_content'] == '64-0726 <span class="highlighted">Распознай</span> свой день и его послание (VGR) <span class="highlighted">189</span> Вот, тот же самый человек поставил кассету и сказал: "Взгляните сюда, Пятидесятники, — сказал, — и вы, Баптисты. Этот человек, <span class="highlighted">лжепророк</span> Уилльям Бранхам сказал, что Орал Роберте и Билли Грэйем были в Содоме." Смотрите, потом обрезал ленту; вот и все, понимаете.'
 
 
 def test_context():
@@ -77,4 +77,9 @@ def test_context():
         assert start_answer['location'][1] == test_sermon_id
     for every_answer in answers:
         highlighted_parts = re.findall(r'<span class="highlighted">([^<]+)</span>', every_answer['search_content'])
-        assert any(highlighted.startswith(search_pattern) for highlighted in highlighted_parts)
+        assert any(highlighted.lower().startswith(search_pattern) for highlighted in highlighted_parts)
+
+
+def test_find_by_sermon_name():
+    answer = sermon_search("рас св ден", "0", None)
+    assert answer[0]['search_content'] == "64-0726 <span class=\"highlighted\">Распознай</span> <span class=\"highlighted\">свой</span> <span class=\"highlighted\">день</span> и его послание (VGR) 1 Доброе утро, друзья. Не садитесь пока, пожалуйста."
