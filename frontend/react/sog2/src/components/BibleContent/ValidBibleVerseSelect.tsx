@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 
 import { Box } from '@mui/material';
 
@@ -6,10 +6,11 @@ import { useBibleData } from 'src/providers/bibleDataProvider';
 import { getVerseNumberFromSlide } from 'src/providers/bibleDataProvider/provider';
 import { Slide } from 'src/utils/gql/types';
 
+import PreselectBox from '../../hooks/useFastNumberSelection/PreselectBox';
+import useFastNumberSelection from '../../hooks/useFastNumberSelection/useFastNumberSelection';
 import { useInstrumentsField } from '../../providers/instrumentsFieldProvider';
 
 import BibleEntityItem from './BibleEntityItem';
-import { VersePreselectBox } from './styled';
 
 const verseModifier = (slide: Slide) => {
   const { content, location } = slide;
@@ -26,7 +27,6 @@ const debounceSeconds = 0.7;
 const ValidBibleVerseSelect = () => {
   const { currentSlide } = useInstrumentsField();
   const { handleUpdateSlide, versesData, lastSlide, slideInChapter } = useBibleData();
-  const [preselectNumberVerse, setPreselectNumber] = useState<number>(0);
   const versesRef = useRef<HTMLElement>(null);
 
   const verses = useMemo(() => versesData?.bibleVerses.map(verseModifier), [versesData]);
@@ -42,48 +42,9 @@ const ValidBibleVerseSelect = () => {
     [handleUpdateSlide, verses],
   );
 
-  useEffect(() => {
-    const selectPreselectNumberVerseCallback = setTimeout(() => {
-      if (preselectNumberVerse) {
-        changeVerseByNumber(preselectNumberVerse);
-
-        setPreselectNumber(0);
-      }
-    }, 1000 * debounceSeconds);
-
-    return () => clearTimeout(selectPreselectNumberVerseCallback);
-  }, [changeVerseByNumber, preselectNumberVerse]);
-
-  const handleNumberPressed = (pressedNumber: number): boolean => {
-    if (!verses || pressedNumber > verses.length) {
-      return false;
-    }
-
-    setPreselectNumber((prev) => {
-      const maybeNewPreselect = prev * 10 + pressedNumber;
-
-      if (maybeNewPreselect * 10 > verses.length) {
-        changeVerseByNumber(maybeNewPreselect > verses.length ? prev : maybeNewPreselect);
-
-        return 0;
-      }
-
-      return maybeNewPreselect;
-    });
-
-    return true;
-  };
-
-  const handleKeyDown = (event: React.KeyboardEvent) => {
-    switch (event.key) {
-      default:
-        if (event.key.length === 1 && /[0-9]/.test(event.key)) {
-          if (handleNumberPressed(Number(event.key))) {
-            event.stopPropagation();
-          }
-        }
-    }
-  };
+  const { preselectNumber, handleKeyDown } = useFastNumberSelection(changeVerseByNumber, Number(verses?.length), {
+    debounceSeconds,
+  });
 
   const selectedVerseNumber = currentSlide && getVerseNumberFromSlide(currentSlide);
 
@@ -95,11 +56,7 @@ const ValidBibleVerseSelect = () => {
 
   return (
     <Box tabIndex={0} onKeyDown={handleKeyDown} ref={versesRef}>
-      {preselectNumberVerse ? (
-        <VersePreselectBox debounceSeconds={debounceSeconds} key={preselectNumberVerse}>
-          {preselectNumberVerse}
-        </VersePreselectBox>
-      ) : undefined}
+      <PreselectBox preselectNumber={preselectNumber} debounceSeconds={debounceSeconds} />
       {verses?.map(({ text, location, slide }, idx) => (
         <BibleEntityItem
           key={location ? location[location.length - 1] : idx}
