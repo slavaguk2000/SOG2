@@ -67,6 +67,7 @@ type_defs = gql("""
       syncBibleToElastic(bibleId: ID): Boolean
       syncSermonsToElastic: Boolean
       parseSermonsFromBranhamRu: Boolean
+      addPsalmsFromSog(sogFileSrc: String!, language: String!): Boolean
     }
     
     type Subscription {

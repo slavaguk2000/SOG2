@@ -12,6 +12,6 @@ class PsalmBook(Base):
 
     id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     name = Column(String, nullable=False)
-    psalms = relationship("Psalm", secondary=psalms_book_psalms,  back_populates="psalm_book")
+    psalms = relationship("Psalm", secondary=psalms_book_psalms,  back_populates="psalm_books")
     # ISO 639-3
     language = Column(String, nullable=False)
