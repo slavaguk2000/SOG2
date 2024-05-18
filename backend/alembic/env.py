@@ -24,6 +24,10 @@ from src.models.paragraph import Paragraph
 from src.models.slide_audio_mapping import SlideAudioMapping
 from src.models.sermon_audio_mapping import SermonAudioMapping
 from src.models.sermon import Sermon
+from src.models.couplete import Couplet
+from src.models.psalm import Psalm
+from src.models.psalms_book import PsalmBook
+from src.models.psalms_book_psalms import psalms_book_psalms
 target_metadata = Base.metadata
 for table in Base.metadata.tables.items():
     print(table)
