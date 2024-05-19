@@ -12,6 +12,7 @@ import SermonsContent from './components/SermonsContent';
 import AudioMappingProvider from './providers/AudioMapping/provider';
 import BibleContext from './providers/dataProviders/bibleDataProvider/context';
 import BibleDataProvider from './providers/dataProviders/bibleDataProvider/provider';
+import PsalmsDataProvider, { PsalmsContext } from './providers/dataProviders/psalmsDataProvider';
 import SermonDataProviderContext from './providers/dataProviders/sermanDataProvider/context';
 import SermonDataProvider from './providers/dataProviders/sermanDataProvider/provider';
 import FreeSlideDialogProvider from './providers/FreeSlideDialogProvider/provider';
@@ -53,6 +54,16 @@ function App() {
                                 <SermonsContent />
                               </MainView>
                             </SermonDataProvider>
+                          }
+                        />
+                        <Route
+                          path="/psalms"
+                          element={
+                            <PsalmsDataProvider>
+                              <MainView dataProviderContext={PsalmsContext}>
+                                <PsalmsContent />
+                              </MainView>
+                            </PsalmsDataProvider>
                           }
                         />
                       </Routes>

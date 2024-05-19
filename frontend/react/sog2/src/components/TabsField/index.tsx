@@ -20,7 +20,7 @@ const TabsField: FC = () => {
       <Tabs onChange={handleChangeTab} value={pathname}>
         <Tab label={'Bible'} value="/bible" />
         <Tab label={'Sermon'} value="/sermon" />
-        {/*<Tab label={'Songs'} />*/}
+        <Tab label={'Psalms'} value="/psalms" />
       </Tabs>
     </TabsFieldWrapper>
   );

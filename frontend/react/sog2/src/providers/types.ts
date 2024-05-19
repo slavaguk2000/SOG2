@@ -45,6 +45,14 @@ export interface BibleContextType extends DataProvider {
   getReadableBiblePlace: (slide: Slide, withVerse?: boolean) => string;
 }
 
+export interface PsalmsContextType extends DataProvider {
+  psalmsBookId: string;
+  psalmId: string;
+  psalmsBooksData?: Query['psalmsBooks'];
+  psalmsData?: Query['psalms'];
+  psalmSlides?: Query['psalm'];
+}
+
 export interface PresentationContextType {
   setText: (text: string, location: string, options?: { currentLastUp?: boolean; multiScreenShow?: boolean }) => void;
   captureTextScreen: () => void;

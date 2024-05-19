@@ -30,6 +30,7 @@ export type BibleBook = {
 export type Mutation = {
   __typename?: 'Mutation';
   addBibleFromSog?: Maybe<Scalars['Boolean']['output']>;
+  addPsalmsFromSog?: Maybe<Scalars['Boolean']['output']>;
   parseSermonsFromBranhamRu?: Maybe<Scalars['Boolean']['output']>;
   setActiveSlide?: Maybe<Scalars['Boolean']['output']>;
   setActiveSlideOffset?: Maybe<Scalars['Boolean']['output']>;
@@ -43,6 +44,12 @@ export type MutationAddBibleFromSogArgs = {
   language: Scalars['String']['input'];
   sogFileSrc: Scalars['String']['input'];
   translation: Scalars['String']['input'];
+};
+
+
+export type MutationAddPsalmsFromSogArgs = {
+  language: Scalars['String']['input'];
+  sogFileSrc: Scalars['String']['input'];
 };
 
 
@@ -71,11 +78,26 @@ export type MutationSyncBibleToElasticArgs = {
   bibleId?: InputMaybe<Scalars['ID']['input']>;
 };
 
+export type Psalm = {
+  __typename?: 'Psalm';
+  id?: Maybe<Scalars['ID']['output']>;
+  name?: Maybe<Scalars['String']['output']>;
+};
+
+export type PsalmsBook = {
+  __typename?: 'PsalmsBook';
+  id?: Maybe<Scalars['ID']['output']>;
+  name?: Maybe<Scalars['String']['output']>;
+};
+
 export type Query = {
   __typename?: 'Query';
   bibleBooks: Array<BibleBook>;
   bibleHistory: Array<Slide>;
   bibleVerses: Array<Slide>;
+  psalm: Array<Slide>;
+  psalms: Array<Maybe<Psalm>>;
+  psalmsBooks: Array<Maybe<PsalmsBook>>;
   search: Array<Slide>;
   sermon: Array<Slide>;
   sermons: Array<Sermon>;
@@ -98,6 +120,16 @@ export type QueryBibleVersesArgs = {
   bibleId: Scalars['ID']['input'];
   bookId: Scalars['ID']['input'];
   chapter: Scalars['Int']['input'];
+};
+
+
+export type QueryPsalmArgs = {
+  psalmId: Scalars['ID']['input'];
+};
+
+
+export type QueryPsalmsArgs = {
+  psalmsBookId: Scalars['ID']['input'];
 };
 
 

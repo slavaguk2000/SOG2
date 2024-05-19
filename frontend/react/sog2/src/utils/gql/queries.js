@@ -106,3 +106,32 @@ export const ActiveSlideSubscription = gql`
     }
   }
 `;
+
+export const psalmsBooks = gql`
+  query psalmsBooks {
+    psalmsBooks {
+      id
+      name
+    }
+  }
+`;
+
+export const psalms = gql`
+  query psalms($psalmsBookId: ID!) {
+    psalms(psalmsBookId: $psalmsBookId) {
+      id
+      name
+    }
+  }
+`;
+
+export const psalm = gql`
+  query psalm($psalmId: ID!) {
+    psalm(psalmId: $psalmId) {
+      id
+      content
+      searchContent
+      location
+    }
+  }
+`;
