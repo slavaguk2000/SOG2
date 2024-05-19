@@ -13,6 +13,19 @@ type_defs = gql("""
         bibleHistory(bibleId: ID!, start: Int, size: Int): [Slide!]!
         sermon(sermonId: ID!): [Slide!]!
         sermons(sermonsCollectionId: ID!): [Sermon!]!
+        psalmsBooks: [PsalmsBook]!
+        psalms(psalmsBookId: ID!): [Psalm]!
+        psalm(psalmId: ID!): [Slide!]!
+    }
+    
+    type PsalmsBook {
+        id: ID
+        name: String
+    }
+    
+    type Psalm {
+        id: ID
+        name: String
     }
     
     type SlideAudioMapping {

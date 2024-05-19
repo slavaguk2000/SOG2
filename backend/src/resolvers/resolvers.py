@@ -2,6 +2,7 @@ from ariadne import convert_kwargs_to_snake_case, ObjectType, QueryType, Mutatio
 
 from src.services.bible_helper import update_bible_slide_usage
 from src.services.database_helpers.bible import get_bible_books_by_bible_id, get_chapter_verses, get_bible_slide_by_id
+from src.services.database_helpers.psalm import get_psalms_books, get_psalms, get_psalm_by_id
 from src.services.database_helpers.sermon import get_sermons, get_sermon_by_id, get_sermon_paragraph_by_id, \
     add_slide_audio_mapping
 from src.services.elasticsearch.search.bible.bible_getters import get_bible_history
@@ -42,6 +43,24 @@ def sermon(*_, sermon_id: str):
 @convert_kwargs_to_snake_case
 def sermons(*_, sermons_collection_id: str):
     return get_sermons(sermons_collection_id)
+
+
+@query.field("psalmsBooks")
+@convert_kwargs_to_snake_case
+def resolve_psalms_books(*_):
+    return get_psalms_books()
+
+
+@query.field("psalms")
+@convert_kwargs_to_snake_case
+def resolve_psalms(*_, psalms_book_id: str):
+    return get_psalms(psalms_book_id)
+
+
+@query.field("psalm")
+@convert_kwargs_to_snake_case
+def resolve_psalm(*_, psalm_id: str):
+    return get_psalm_by_id(psalm_id)
 
 
 @query.field("bibleBooks")

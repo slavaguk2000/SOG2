@@ -11,7 +11,6 @@ class Psalm(Base):
     __tablename__ = 'psalms'
 
     id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
-    psalm_book_id = Column(String(36), ForeignKey('psalm_books.id'), nullable=False)
     psalm_number = Column(String, nullable=False)
     name = Column(String, nullable=False)
     default_tonality = Column(Enum(MusicalKey), nullable=True)

@@ -11,8 +11,8 @@ from src.services.database import engine
 class CoupletData:
     def __init__(self, couplet_data: str, order: int):
         parsed_couplet_data = regex.match(r"^([\d\.\s\*]*)(.+)", couplet_data)
-        self.marker = parsed_couplet_data.group(1) if parsed_couplet_data else ""
-        self.content = parsed_couplet_data.group(2) if parsed_couplet_data else ""
+        self.marker = parsed_couplet_data.group(1).strip() if parsed_couplet_data else ""
+        self.content = parsed_couplet_data.group(2).strip() if parsed_couplet_data else ""
         self.order = order
 
     def __str__(self):
@@ -77,13 +77,13 @@ class SimplePsalmParser:
                 session.commit()
                 psalms_objects = [
                     Psalm(
-                        psalm_book_id=new_psalms_book.id,
                         psalm_number=psalm_data.identifier,
                         name=psalm_data.name,
                         default_tonality=psalm_data.tonality,
                         couplets=[Couplet(
                             marker=couplet_data.marker,
                             couplet_content=couplet_data.content,
+                            initial_order=couplet_data.order,
                         ) for couplet_data in psalm_data.couplets],
                         psalm_books=[new_psalms_book],
                     ) for psalm_data in psalms]
