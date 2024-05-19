@@ -28,12 +28,10 @@ def upgrade() -> None:
     )
     op.create_table('psalms',
     sa.Column('id', sa.String(length=36), nullable=False),
-    sa.Column('psalm_book_id', sa.String(length=36), nullable=False),
     sa.Column('psalm_number', sa.String(), nullable=False),
     sa.Column('name', sa.String(), nullable=False),
     sa.Column('default_tonality', sa.Enum('C', 'CSharp', 'Db', 'D', 'DSharp', 'Eb', 'E', 'F', 'FSharp', 'Gb', 'G', 'GSharp', 'Ab', 'A', 'ASharp', 'Bb', 'B', name='musicalkey'), nullable=True),
     sa.Column('couplets_order', sa.String(), nullable=True),
-    sa.ForeignKeyConstraint(['psalm_book_id'], ['psalm_books.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('couplets',
@@ -41,6 +39,7 @@ def upgrade() -> None:
     sa.Column('psalm_id', sa.String(length=36), nullable=False),
     sa.Column('marker', sa.String(), nullable=False),
     sa.Column('couplet_content', sa.Text(), nullable=False),
+    sa.Column('initial_order', sa.Integer(), server_default='0', nullable=False),
     sa.ForeignKeyConstraint(['psalm_id'], ['psalms.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
