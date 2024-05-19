@@ -4,7 +4,7 @@ import { useQuery } from '@apollo/client';
 import HistoryIcon from '@mui/icons-material/History';
 import { CircularProgress, IconButton, MenuItem, MenuList, Popover, Tooltip, Typography } from '@mui/material';
 
-import { useBibleData } from '../../../providers/bibleDataProvider';
+import { useBibleData } from '../../../providers/dataProviders/bibleDataProvider';
 import { bibleHistory } from '../../../utils/gql/queries';
 import { Query, QueryBibleHistoryArgs, Slide } from '../../../utils/gql/types';
 

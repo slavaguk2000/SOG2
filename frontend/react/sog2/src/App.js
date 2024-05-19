@@ -7,17 +7,18 @@ import { ThemeProvider } from '@mui/material';
 import { theme } from 'src/theme';
 
 import BibleContent from './components/BibleContent';
+import PsalmsContent from './components/PsalmsContent';
 import SermonsContent from './components/SermonsContent';
 import AudioMappingProvider from './providers/AudioMapping/provider';
-import BibleContext from './providers/bibleDataProvider/context';
-import BibleDataProvider from './providers/bibleDataProvider/provider';
+import BibleContext from './providers/dataProviders/bibleDataProvider/context';
+import BibleDataProvider from './providers/dataProviders/bibleDataProvider/provider';
+import SermonDataProviderContext from './providers/dataProviders/sermanDataProvider/context';
+import SermonDataProvider from './providers/dataProviders/sermanDataProvider/provider';
 import FreeSlideDialogProvider from './providers/FreeSlideDialogProvider/provider';
 import InstrumentsFieldProvider from './providers/instrumentsFieldProvider/provider';
 import MainScreenRatioProvider from './providers/MainScreenSegmentationDataProvider/provider';
 import PlayerContextProvider from './providers/playerProvider';
 import { PresentationProvider } from './providers/presentationProvider/provider';
-import SermonDataProviderContext from './providers/sermanDataProvider/context';
-import SermonDataProvider from './providers/sermanDataProvider/provider';
 import { AppRoot } from './styled';
 import MainView from './views/MainView/MainView';
 

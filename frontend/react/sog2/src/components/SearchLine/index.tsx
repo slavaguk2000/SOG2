@@ -9,8 +9,8 @@ import { debounceInputDelay, minimumSearchLength } from 'src/constants/behaviorC
 import { search } from 'src/utils/gql/queries';
 import { Query, QuerySearchArgs, Slide, TabType } from 'src/utils/gql/types';
 
-import BibleContext from '../../providers/bibleDataProvider/context';
-import SermonDataProviderContext from '../../providers/sermanDataProvider/context';
+import BibleContext from '../../providers/dataProviders/bibleDataProvider/context';
+import SermonDataProviderContext from '../../providers/dataProviders/sermanDataProvider/context';
 import { DataProvider } from '../../providers/types';
 
 import SearchLineAutocompleteItem from './SearchLineAutocompleteItem';
