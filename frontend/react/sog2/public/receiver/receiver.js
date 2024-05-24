@@ -110,9 +110,12 @@ function resizeText(proposalCurrentScreen, lastUp, multiScreenShow) {
   const forwardStep = 1;
   const backwardStep = 0.1;
   div.style.fontSize = `${fontSize}vw`;
+  div.style.position = 'absolute';
   const currentScreenCount = multiScreenShow ? getScreenCount(div.scrollHeight, div.clientHeight, overflow) : 1;
 
-  div.style.position = currentScreenCount > 1 ? 'absolute' : 'static';
+  if (currentScreenCount <= 1) {
+    div.style.position = 'static';
+  }
 
   while (
     getScreenCount(div.scrollHeight, div.clientHeight, overflow) <= currentScreenCount &&
