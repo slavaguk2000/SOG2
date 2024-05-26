@@ -5,6 +5,41 @@ type_defs = gql("""
       Bible
       Sermon
     }
+    
+    enum MusicalKey {
+        C
+        CSharp
+        Db
+        D
+        DSharp
+        Eb
+        E
+        F
+        FSharp
+        Gb
+        G
+        GSharp
+        Ab
+        A
+        ASharp
+        Bb
+        B
+    }
+    
+    enum SortingDirection {
+      ASC
+      DESC
+    }
+    
+    enum PsalmsSortingKeys {
+      NAME
+      NUMBER
+    }
+    
+    input PsalmsSorting {
+        sortingKey: PsalmsSortingKeys!,
+        sortDirection: SortingDirection!
+    }
 
     type Query {
         search(searchPattern: String!, tabType: TabType!, id: ID): [Slide!]!
@@ -13,8 +48,8 @@ type_defs = gql("""
         bibleHistory(bibleId: ID!, start: Int, size: Int): [Slide!]!
         sermon(sermonId: ID!): [Slide!]!
         sermons(sermonsCollectionId: ID!): [Sermon!]!
-        psalmsBooks: [PsalmsBook]!
-        psalms(psalmsBookId: ID!): [Psalm]!
+        psalmsBooks: [PsalmsBook!]!
+        psalms(psalmsBookId: ID!, psalmsSorting: PsalmsSorting): [Psalm!]!
         psalm(psalmId: ID!): [Slide!]!
     }
     
@@ -24,8 +59,11 @@ type_defs = gql("""
     }
     
     type Psalm {
-        id: ID
-        name: String
+        id: ID!
+        name: String!
+        psalmNumber: String
+        coupletsOrder: String
+        defaultTonality: MusicalKey
     }
     
     type SlideAudioMapping {

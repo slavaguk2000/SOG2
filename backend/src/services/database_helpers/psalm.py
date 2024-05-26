@@ -1,13 +1,19 @@
+import enum
 from sqlalchemy.orm import Session
-from sqlalchemy import create_engine, select
+from sqlalchemy import select
 
 from src.models.psalms_book_psalms import psalms_book_psalms
-from src.services.common_utils.sermon import get_sermon_date_string_from_datetime
 from src.services.database import engine
 from src.models.psalms_book import PsalmBook
 from src.models.psalm import Psalm
 from src.models.couplete import Couplet
-from src.models.slide_audio_mapping import SlideAudioMapping
+from src.services.database_helpers.common import get_direction_function_by_direction
+from src.types.commonTypes import SortingDirection
+
+
+class PsalmsSortingKeys(enum.Enum):
+    NAME = 'name'
+    NUMBER = 'psalm_number'
 
 
 def get_psalms_books():
@@ -21,15 +27,26 @@ def get_psalms_books():
         ]
 
 
-def get_psalms(psalms_book_id: str):
+def get_psalms(
+    psalms_book_id: str,
+    sort_key: PsalmsSortingKeys = PsalmsSortingKeys.NUMBER,
+    sort_direction: SortingDirection = SortingDirection.ASC
+):
     with Session(engine) as session:
-        psalms_query = select(Psalm).join(psalms_book_psalms).join(PsalmBook).filter(PsalmBook.id == psalms_book_id)
+        psalms_query = select(Psalm)\
+            .join(psalms_book_psalms)\
+            .join(PsalmBook)\
+            .filter(PsalmBook.id == psalms_book_id)\
+            .order_by(get_direction_function_by_direction(sort_direction, f'psalms.{sort_key.value}'))
         psalms = session.execute(psalms_query).scalars().all()
         return [
             {
-                'id': psalms_book.id,
-                'name': psalms_book.name,
-            } for psalms_book in psalms
+                'id': psalm.id,
+                'name': psalm.name,
+                'psalm_number': psalm.psalm_number,
+                'couplets_order': psalm.couplets_order,
+                'default_tonality': psalm.default_tonality.name if psalm.default_tonality else None,
+            } for psalm in psalms
         ]
 
 

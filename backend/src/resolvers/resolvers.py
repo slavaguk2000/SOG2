@@ -2,7 +2,7 @@ from ariadne import convert_kwargs_to_snake_case, ObjectType, QueryType, Mutatio
 
 from src.services.bible_helper import update_bible_slide_usage
 from src.services.database_helpers.bible import get_bible_books_by_bible_id, get_chapter_verses, get_bible_slide_by_id
-from src.services.database_helpers.psalm import get_psalms_books, get_psalms, get_psalm_by_id
+from src.services.database_helpers.psalm import get_psalms_books, get_psalms, get_psalm_by_id, PsalmsSortingKeys
 from src.services.database_helpers.sermon import get_sermons, get_sermon_by_id, get_sermon_paragraph_by_id, \
     add_slide_audio_mapping
 from src.services.elasticsearch.search.bible.bible_getters import get_bible_history
@@ -14,6 +14,7 @@ from asyncio import Queue
 from src.services.elasticsearch.search.sermon.sermon import sermon_search
 from src.services.elasticsearch.sync.bible import sync_bible
 from src.services.parsers.psalmsParsers.sog_parser import SimplePsalmParser
+from src.types.commonTypes import SortingDirection
 
 active_slide_queue = Queue()
 query = QueryType()
@@ -53,8 +54,13 @@ def resolve_psalms_books(*_):
 
 @query.field("psalms")
 @convert_kwargs_to_snake_case
-def resolve_psalms(*_, psalms_book_id: str):
-    return get_psalms(psalms_book_id)
+def resolve_psalms(*_, psalms_book_id: str, **kwargs):
+    psalms_sorting = kwargs.get('psalms_sorting')
+    return get_psalms(
+        psalms_book_id,
+        PsalmsSortingKeys[psalms_sorting["sorting_key"]] if psalms_sorting else PsalmsSortingKeys.NUMBER,
+        SortingDirection[psalms_sorting["sort_direction"]] if psalms_sorting else SortingDirection.ASC,
+    )
 
 
 @query.field("psalm")
