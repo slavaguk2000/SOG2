@@ -121,6 +121,9 @@ export const psalms = gql`
     psalms(psalmsBookId: $psalmsBookId) {
       id
       name
+      psalmNumber
+      coupletsOrder
+      defaultTonality
     }
   }
 `;

@@ -27,6 +27,26 @@ export type BibleBook = {
   name: Scalars['String']['output'];
 };
 
+export enum MusicalKey {
+  A = 'A',
+  ASharp = 'ASharp',
+  Ab = 'Ab',
+  B = 'B',
+  Bb = 'Bb',
+  C = 'C',
+  CSharp = 'CSharp',
+  D = 'D',
+  DSharp = 'DSharp',
+  Db = 'Db',
+  E = 'E',
+  Eb = 'Eb',
+  F = 'F',
+  FSharp = 'FSharp',
+  G = 'G',
+  GSharp = 'GSharp',
+  Gb = 'Gb'
+}
+
 export type Mutation = {
   __typename?: 'Mutation';
   addBibleFromSog?: Maybe<Scalars['Boolean']['output']>;
@@ -80,8 +100,11 @@ export type MutationSyncBibleToElasticArgs = {
 
 export type Psalm = {
   __typename?: 'Psalm';
-  id?: Maybe<Scalars['ID']['output']>;
-  name?: Maybe<Scalars['String']['output']>;
+  coupletsOrder?: Maybe<Scalars['String']['output']>;
+  defaultTonality?: Maybe<MusicalKey>;
+  id: Scalars['ID']['output'];
+  name: Scalars['String']['output'];
+  psalmNumber?: Maybe<Scalars['String']['output']>;
 };
 
 export type PsalmsBook = {
@@ -90,14 +113,24 @@ export type PsalmsBook = {
   name?: Maybe<Scalars['String']['output']>;
 };
 
+export type PsalmsSorting = {
+  sortDirection: SortingDirection;
+  sortingKey: PsalmsSortingKeys;
+};
+
+export enum PsalmsSortingKeys {
+  Name = 'NAME',
+  Number = 'NUMBER'
+}
+
 export type Query = {
   __typename?: 'Query';
   bibleBooks: Array<BibleBook>;
   bibleHistory: Array<Slide>;
   bibleVerses: Array<Slide>;
   psalm: Array<Slide>;
-  psalms: Array<Maybe<Psalm>>;
-  psalmsBooks: Array<Maybe<PsalmsBook>>;
+  psalms: Array<Psalm>;
+  psalmsBooks: Array<PsalmsBook>;
   search: Array<Slide>;
   sermon: Array<Slide>;
   sermons: Array<Sermon>;
@@ -130,6 +163,7 @@ export type QueryPsalmArgs = {
 
 export type QueryPsalmsArgs = {
   psalmsBookId: Scalars['ID']['input'];
+  psalmsSorting?: InputMaybe<PsalmsSorting>;
 };
 
 
@@ -185,6 +219,11 @@ export type SlideMappingInput = {
   slideCollectionAudioMappingId: Scalars['ID']['input'];
   timePoint: Scalars['Int']['input'];
 };
+
+export enum SortingDirection {
+  Asc = 'ASC',
+  Desc = 'DESC'
+}
 
 export type Subscription = {
   __typename?: 'Subscription';

@@ -1,4 +1,4 @@
-import React, { createContext, PropsWithChildren, useCallback, useContext, useEffect } from 'react';
+import React, { createContext, PropsWithChildren, useCallback, useContext, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 import { useQuery } from '@apollo/client';
@@ -14,6 +14,7 @@ const defaultValue: PsalmsContextType = {
   handleUpdateLocation: () => true,
   handlePrevSlide: () => true,
   handleNextSlide: () => true,
+  handlePsalmSelect: () => true,
 };
 
 export const PsalmsContext = createContext<PsalmsContextType>(defaultValue);
@@ -83,6 +84,11 @@ const PsalmsDataProvider = ({ children }: PropsWithChildren) => {
     }
   }, [handlePsalmSelect, psalmId, psalmsData?.psalms]);
 
+  const currentPsalms = useMemo(
+    () => psalmsData?.psalms.find(({ id }) => psalmId === id),
+    [psalmId, psalmsData?.psalms],
+  );
+
   return (
     <PsalmsContext.Provider
       value={{
@@ -95,6 +101,8 @@ const PsalmsDataProvider = ({ children }: PropsWithChildren) => {
         psalmsBooksData: psalmsBooksData?.psalmsBooks,
         psalmsData: psalmsData?.psalms,
         psalmSlides: currentPsalmData?.psalm,
+        currentPsalms,
+        handlePsalmSelect,
       }}
     >
       {children}
