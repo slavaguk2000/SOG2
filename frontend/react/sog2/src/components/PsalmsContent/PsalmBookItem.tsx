@@ -55,7 +55,10 @@ const PsalmBookItem = ({ psalmsBookData, selected, onClick }: PsalmBookItemProps
   return (
     <Tooltip placement="right" title={favourite ? 'Favourite' : psalmsBookData?.name ?? 'Unknown'}>
       <PsalmBookItemWrapper selected={selected} onClick={onClick}>
-        <Avatar {...avatarBGProps((!favourite && psalmsBookData?.name) || undefined)}>
+        <Avatar
+          {...avatarBGProps((!favourite && psalmsBookData?.name) || undefined)}
+          src={psalmsBookData?.iconSrc ?? undefined}
+        >
           {favourite ? <BookmarkBorderIcon /> : initials}
         </Avatar>
       </PsalmBookItemWrapper>
