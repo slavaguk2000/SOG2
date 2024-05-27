@@ -6,7 +6,7 @@ import BibleEntityItem from '../BibleContent/BibleEntityItem';
 import { PsalmSelectWrapper } from './styled';
 
 const PsalmSelect = () => {
-  const { psalmsData, handlePsalmSelect, currentPsalms } = usePsalmsData();
+  const { psalmsData, handlePsalmSelect, currentPsalm } = usePsalmsData();
 
   const preparedData = useMemo(
     () =>
@@ -26,7 +26,7 @@ const PsalmSelect = () => {
           key={id}
           name={name}
           onClick={() => handlePsalmSelect(id)}
-          selected={id === currentPsalms?.id}
+          selected={id === currentPsalm?.id}
         />
       ))}
     </PsalmSelectWrapper>

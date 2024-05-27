@@ -6,6 +6,7 @@ import {
   BibleBook,
   InputMaybe,
   Psalm,
+  PsalmsBook,
   Query,
   Sermon,
   Slide,
@@ -61,7 +62,9 @@ export interface PsalmsContextType extends DataProvider {
   psalmsData?: Query['psalms'];
   psalmSlides?: Query['psalm'];
   handlePsalmSelect: (selectedId: string) => void;
-  currentPsalms?: Psalm;
+  handlePsalmBookSelect: (selectedId: string) => void;
+  currentPsalm?: Psalm;
+  currentPsalmBook?: PsalmsBook;
 }
 
 export interface PresentationContextType {

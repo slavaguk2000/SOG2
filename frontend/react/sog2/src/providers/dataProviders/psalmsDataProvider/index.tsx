@@ -16,6 +16,7 @@ const defaultValue: PsalmsContextType = {
   handlePrevSlide: () => true,
   handleNextSlide: () => true,
   handlePsalmSelect: () => true,
+  handlePsalmBookSelect: () => true,
 };
 
 export const PsalmsContext = createContext<PsalmsContextType>(defaultValue);
@@ -104,7 +105,22 @@ const PsalmsDataProvider = ({ children }: PropsWithChildren) => {
     }
   }, [handlePsalmSelect, psalmId, psalmsData]);
 
-  const currentPsalms = useMemo(() => psalmsData?.find(({ id }) => psalmId === id), [psalmId, psalmsData]);
+  const currentPsalm = useMemo(() => psalmsData?.find(({ id }) => psalmId === id), [psalmId, psalmsData]);
+
+  useEffect(() => {
+    if (psalmId && psalmsData && !currentPsalm) {
+      setSearchParams((prev) => {
+        prev.delete('psalmId');
+
+        return prev;
+      });
+    }
+  }, [currentPsalm, psalmId, psalmsData, setSearchParams]);
+
+  const currentPsalmBook = useMemo(
+    () => psalmsBooksData?.psalmsBooks.find(({ id }) => psalmsBookId === id),
+    [psalmsBookId, psalmsBooksData?.psalmsBooks],
+  );
 
   const { handleUpdateSlide: instrumentsHandleUpdateSlide, currentSlide } = useInstrumentsField();
 
@@ -165,8 +181,10 @@ const PsalmsDataProvider = ({ children }: PropsWithChildren) => {
         psalmsBooksData: psalmsBooksData?.psalmsBooks,
         psalmsData,
         psalmSlides: currentPsalmData?.psalm,
-        currentPsalms,
+        currentPsalm,
+        currentPsalmBook,
         handlePsalmSelect,
+        handlePsalmBookSelect,
       }}
     >
       {children}
