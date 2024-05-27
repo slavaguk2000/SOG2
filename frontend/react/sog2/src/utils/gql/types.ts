@@ -109,8 +109,10 @@ export type Psalm = {
 
 export type PsalmsBook = {
   __typename?: 'PsalmsBook';
-  id?: Maybe<Scalars['ID']['output']>;
-  name?: Maybe<Scalars['String']['output']>;
+  iconSrc?: Maybe<Scalars['String']['output']>;
+  id: Scalars['ID']['output'];
+  isFavourite?: Maybe<Scalars['Boolean']['output']>;
+  name: Scalars['String']['output'];
 };
 
 export type PsalmsSorting = {

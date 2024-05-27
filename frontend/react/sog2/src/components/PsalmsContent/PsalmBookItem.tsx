@@ -10,7 +10,6 @@ import { PsalmBookItemWrapper } from './styled';
 
 interface PsalmBookItemProps {
   psalmsBookData?: PsalmsBook;
-  favourite?: boolean;
   selected?: boolean;
   onClick?: () => void;
 }
@@ -43,7 +42,7 @@ const avatarBGProps = (name?: string) => {
   };
 };
 
-const PsalmBookItem = ({ psalmsBookData, favourite, selected, onClick }: PsalmBookItemProps) => {
+const PsalmBookItem = ({ psalmsBookData, selected, onClick }: PsalmBookItemProps) => {
   const initials = useMemo(() => {
     if (!psalmsBookData?.name) return '';
     const nameArray = psalmsBookData.name.split(' ');
@@ -51,10 +50,12 @@ const PsalmBookItem = ({ psalmsBookData, favourite, selected, onClick }: PsalmBo
     return initials.toUpperCase();
   }, [psalmsBookData]);
 
+  const favourite = psalmsBookData?.isFavourite;
+
   return (
     <Tooltip placement="right" title={favourite ? 'Favourite' : psalmsBookData?.name ?? 'Unknown'}>
       <PsalmBookItemWrapper selected={selected} onClick={onClick}>
-        <Avatar {...avatarBGProps(psalmsBookData?.name ?? undefined)}>
+        <Avatar {...avatarBGProps((!favourite && psalmsBookData?.name) || undefined)}>
           {favourite ? <BookmarkBorderIcon /> : initials}
         </Avatar>
       </PsalmBookItemWrapper>

@@ -1,6 +1,6 @@
 import enum
 from sqlalchemy.orm import Session
-from sqlalchemy import select
+from sqlalchemy import select, desc
 
 from src.models.psalms_book_psalms import psalms_book_psalms
 from src.services.database import engine
@@ -18,11 +18,13 @@ class PsalmsSortingKeys(enum.Enum):
 
 def get_psalms_books():
     with Session(engine) as session:
-        psalms_books = session.query(PsalmBook).all()
+        psalms_books = session.query(PsalmBook).order_by(desc('is_favourite')).all()
         return [
             {
                 'id': psalms_book.id,
                 'name': psalms_book.name,
+                'icon_src': psalms_book.icon_src,
+                'is_favourite': psalms_book.is_favourite,
             } for psalms_book in psalms_books
         ]
 

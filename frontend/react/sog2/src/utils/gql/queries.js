@@ -112,6 +112,8 @@ export const psalmsBooks = gql`
     psalmsBooks {
       id
       name
+      isFavourite
+      iconSrc
     }
   }
 `;

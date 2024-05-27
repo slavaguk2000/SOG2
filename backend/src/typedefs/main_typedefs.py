@@ -54,8 +54,10 @@ type_defs = gql("""
     }
     
     type PsalmsBook {
-        id: ID
-        name: String
+        id: ID!
+        name: String!
+        iconSrc: String
+        isFavourite: Boolean
     }
     
     type Psalm {
