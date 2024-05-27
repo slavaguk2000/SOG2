@@ -58,6 +58,7 @@ type_defs = gql("""
         name: String!
         iconSrc: String
         isFavourite: Boolean
+        psalmsCount: Int!
     }
     
     type Psalm {

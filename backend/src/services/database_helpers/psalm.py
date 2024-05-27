@@ -1,6 +1,6 @@
 import enum
 from sqlalchemy.orm import Session
-from sqlalchemy import select, desc
+from sqlalchemy import select, desc, func
 
 from src.models.psalms_book_psalms import psalms_book_psalms
 from src.services.database import engine
@@ -18,13 +18,23 @@ class PsalmsSortingKeys(enum.Enum):
 
 def get_psalms_books():
     with Session(engine) as session:
-        psalms_books = session.query(PsalmBook).order_by(desc('is_favourite')).all()
+        psalms_books_query = session.query(
+            PsalmBook,
+            func.count(Psalm.id).label('psalm_count')
+        ).outerjoin(psalms_book_psalms, PsalmBook.id == psalms_book_psalms.c.psalms_book_id) \
+            .outerjoin(Psalm, Psalm.id == psalms_book_psalms.c.psalm_id) \
+            .group_by(PsalmBook.id) \
+            .order_by(desc('is_favourite'))
+
+        psalms_books = psalms_books_query.all()
+
         return [
             {
-                'id': psalms_book.id,
-                'name': psalms_book.name,
-                'icon_src': psalms_book.icon_src,
-                'is_favourite': psalms_book.is_favourite,
+                'id': psalms_book.PsalmBook.id,
+                'name': psalms_book.PsalmBook.name,
+                'icon_src': psalms_book.PsalmBook.icon_src,
+                'is_favourite': psalms_book.PsalmBook.is_favourite,
+                'psalms_count': psalms_book.psalm_count
             } for psalms_book in psalms_books
         ]
 
