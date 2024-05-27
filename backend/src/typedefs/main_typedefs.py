@@ -67,6 +67,7 @@ type_defs = gql("""
         psalmNumber: String
         coupletsOrder: String
         defaultTonality: MusicalKey
+        inFavourite: Boolean
     }
     
     type SlideAudioMapping {
@@ -122,6 +123,8 @@ type_defs = gql("""
       syncSermonsToElastic: Boolean
       parseSermonsFromBranhamRu: Boolean
       addPsalmsFromSog(sogFileSrc: String!, language: String!): Boolean
+      addPsalmToFavourite(psalmId: ID): Boolean
+      removePsalmFromFavourite(psalmId: ID): Boolean
     }
     
     type Subscription {

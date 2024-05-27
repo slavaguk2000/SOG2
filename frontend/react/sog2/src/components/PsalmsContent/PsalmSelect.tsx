@@ -1,8 +1,8 @@
 import React, { useMemo } from 'react';
 
 import { usePsalmsData } from '../../providers/dataProviders/psalmsDataProvider';
-import BibleEntityItem from '../BibleContent/BibleEntityItem';
 
+import PsalmSelectItem from './PsalmSelectItem';
 import { PsalmSelectWrapper } from './styled';
 
 const PsalmSelect = () => {
@@ -10,10 +10,11 @@ const PsalmSelect = () => {
 
   const preparedData = useMemo(
     () =>
-      psalmsData?.map(({ id, name, psalmNumber, defaultTonality }) => {
+      psalmsData?.map(({ id, name, psalmNumber, defaultTonality, inFavourite }) => {
         return {
           id,
           name: `${psalmNumber ? `${psalmNumber} ` : ''}${name}${defaultTonality ? ` (${defaultTonality})` : ''}`,
+          inFavourite,
         };
       }),
     [psalmsData],
@@ -21,12 +22,14 @@ const PsalmSelect = () => {
 
   return (
     <PsalmSelectWrapper>
-      {preparedData?.map(({ name, id }) => (
-        <BibleEntityItem
+      {preparedData?.map(({ name, id, inFavourite }) => (
+        <PsalmSelectItem
           key={id}
-          name={name}
-          onClick={() => handlePsalmSelect(id)}
+          psalmName={name}
           selected={id === currentPsalm?.id}
+          onClick={() => handlePsalmSelect(id)}
+          psalmId={id}
+          inFavourite={inFavourite ?? undefined}
         />
       ))}
     </PsalmSelectWrapper>

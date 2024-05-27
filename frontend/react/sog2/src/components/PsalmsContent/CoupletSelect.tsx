@@ -21,8 +21,6 @@ const CoupletSelect = () => {
   const { psalmSlides, handleUpdateSlide } = usePsalmsData();
   const { currentSlide } = useInstrumentsField();
 
-  console.log(psalmSlides);
-
   const preparedData = useMemo(
     () =>
       psalmSlides?.map((slide) => ({

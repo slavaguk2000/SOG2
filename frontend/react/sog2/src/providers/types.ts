@@ -65,6 +65,7 @@ export interface PsalmsContextType extends DataProvider {
   handlePsalmBookSelect: (selectedId: string) => void;
   currentPsalm?: Psalm;
   currentPsalmBook?: PsalmsBook;
+  psalmsQueryDataLoading: boolean;
 }
 
 export interface PresentationContextType {

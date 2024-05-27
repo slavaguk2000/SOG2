@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
-import { Tooltip } from '@mui/material';
+import { Collapse, Tooltip } from '@mui/material';
 import Avatar from '@mui/material/Avatar';
 
 import { PsalmsBook } from '../../utils/gql/types';
@@ -53,16 +53,18 @@ const PsalmBookItem = ({ psalmsBookData, selected, onClick }: PsalmBookItemProps
   const favourite = psalmsBookData?.isFavourite;
 
   return (
-    <Tooltip placement="right" title={favourite ? 'Favourite' : psalmsBookData?.name ?? 'Unknown'}>
-      <PsalmBookItemWrapper selected={selected} onClick={onClick}>
-        <Avatar
-          {...avatarBGProps((!favourite && psalmsBookData?.name) || undefined)}
-          src={psalmsBookData?.iconSrc ?? undefined}
-        >
-          {favourite ? <BookmarkBorderIcon /> : initials}
-        </Avatar>
-      </PsalmBookItemWrapper>
-    </Tooltip>
+    <Collapse timeout={1000} in={!!psalmsBookData?.psalmsCount}>
+      <Tooltip placement="right" title={favourite ? 'Favourite' : psalmsBookData?.name ?? 'Unknown'}>
+        <PsalmBookItemWrapper selected={selected} onClick={onClick}>
+          <Avatar
+            {...avatarBGProps((!favourite && psalmsBookData?.name) || undefined)}
+            src={psalmsBookData?.iconSrc ?? undefined}
+          >
+            {favourite ? <BookmarkBorderIcon /> : initials}
+          </Avatar>
+        </PsalmBookItemWrapper>
+      </Tooltip>
+    </Collapse>
   );
 };
 

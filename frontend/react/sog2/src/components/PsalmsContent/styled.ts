@@ -1,4 +1,4 @@
-import { Box, styled } from '@mui/material';
+import { Box, IconButton, styled } from '@mui/material';
 
 export const PsalmsContentWrapper = styled(Box)`
   display: flex;
@@ -57,4 +57,9 @@ export const PsalmBookItemWrapper = styled(Box, {
           background-color: ${action.hover};
         }
   `}
+`;
+
+export const StyledIconButton = styled(IconButton)`
+  margin: -5px 0;
+  width: 34px;
 `;

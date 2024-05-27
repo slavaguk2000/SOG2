@@ -114,6 +114,7 @@ export const psalmsBooks = gql`
       name
       isFavourite
       iconSrc
+      psalmsCount
     }
   }
 `;
@@ -126,6 +127,7 @@ export const psalms = gql`
       psalmNumber
       coupletsOrder
       defaultTonality
+      inFavourite
     }
   }
 `;
@@ -138,5 +140,38 @@ export const psalm = gql`
       searchContent
       location
     }
+  }
+`;
+
+export const addPsalmToFavourite = gql`
+  mutation addPsalmToFavourite($psalmId: ID) {
+    addPsalmToFavourite(psalmId: $psalmId)
+  }
+`;
+
+export const removePsalmFromFavourite = gql`
+  mutation removePsalmFromFavourite($psalmId: ID) {
+    removePsalmFromFavourite(psalmId: $psalmId)
+  }
+`;
+
+export const PSALMS_BOOK_FRAGMENT = gql`
+  fragment PsalmsBookFragment on PsalmsBook {
+    id
+    name
+    isFavourite
+    iconSrc
+    psalmsCount
+  }
+`;
+
+export const PSALM_FRAGMENT = gql`
+  fragment PsalmFragment on Psalm {
+    id
+    name
+    psalmNumber
+    coupletsOrder
+    defaultTonality
+    inFavourite
   }
 `;

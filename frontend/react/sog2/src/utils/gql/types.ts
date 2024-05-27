@@ -50,8 +50,10 @@ export enum MusicalKey {
 export type Mutation = {
   __typename?: 'Mutation';
   addBibleFromSog?: Maybe<Scalars['Boolean']['output']>;
+  addPsalmToFavourite?: Maybe<Scalars['Boolean']['output']>;
   addPsalmsFromSog?: Maybe<Scalars['Boolean']['output']>;
   parseSermonsFromBranhamRu?: Maybe<Scalars['Boolean']['output']>;
+  removePsalmFromFavourite?: Maybe<Scalars['Boolean']['output']>;
   setActiveSlide?: Maybe<Scalars['Boolean']['output']>;
   setActiveSlideOffset?: Maybe<Scalars['Boolean']['output']>;
   setFreeSlide?: Maybe<Scalars['Boolean']['output']>;
@@ -67,9 +69,19 @@ export type MutationAddBibleFromSogArgs = {
 };
 
 
+export type MutationAddPsalmToFavouriteArgs = {
+  psalmId?: InputMaybe<Scalars['ID']['input']>;
+};
+
+
 export type MutationAddPsalmsFromSogArgs = {
   language: Scalars['String']['input'];
   sogFileSrc: Scalars['String']['input'];
+};
+
+
+export type MutationRemovePsalmFromFavouriteArgs = {
+  psalmId?: InputMaybe<Scalars['ID']['input']>;
 };
 
 
@@ -103,6 +115,7 @@ export type Psalm = {
   coupletsOrder?: Maybe<Scalars['String']['output']>;
   defaultTonality?: Maybe<MusicalKey>;
   id: Scalars['ID']['output'];
+  inFavourite?: Maybe<Scalars['Boolean']['output']>;
   name: Scalars['String']['output'];
   psalmNumber?: Maybe<Scalars['String']['output']>;
 };
@@ -113,6 +126,7 @@ export type PsalmsBook = {
   id: Scalars['ID']['output'];
   isFavourite?: Maybe<Scalars['Boolean']['output']>;
   name: Scalars['String']['output'];
+  psalmsCount: Scalars['Int']['output'];
 };
 
 export type PsalmsSorting = {

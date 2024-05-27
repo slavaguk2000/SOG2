@@ -1,6 +1,6 @@
 import enum
 from sqlalchemy.orm import Session
-from sqlalchemy import select, desc, func
+from sqlalchemy import select, desc, func, exists, literal_column
 
 from src.models.psalms_book_psalms import psalms_book_psalms
 from src.services.database import engine
@@ -40,25 +40,53 @@ def get_psalms_books():
 
 
 def get_psalms(
-    psalms_book_id: str,
-    sort_key: PsalmsSortingKeys = PsalmsSortingKeys.NUMBER,
-    sort_direction: SortingDirection = SortingDirection.ASC
+        psalms_book_id: str,
+        sort_key: PsalmsSortingKeys = PsalmsSortingKeys.NUMBER,
+        sort_direction: SortingDirection = SortingDirection.ASC
 ):
     with Session(engine) as session:
-        psalms_query = select(Psalm)\
-            .join(psalms_book_psalms)\
-            .join(PsalmBook)\
-            .filter(PsalmBook.id == psalms_book_id)\
+        psalms_subquery = (
+            select(
+                Psalm.id,
+                Psalm.psalm_number,
+                Psalm.name,
+                Psalm.default_tonality,
+                Psalm.couplets_order
+            )
+            .join(psalms_book_psalms, Psalm.id == psalms_book_psalms.c.psalm_id)
+            .join(PsalmBook, PsalmBook.id == psalms_book_psalms.c.psalms_book_id)
+            .where(PsalmBook.id == psalms_book_id)
             .order_by(get_direction_function_by_direction(sort_direction, f'psalms.{sort_key.value}'))
-        psalms = session.execute(psalms_query).scalars().all()
+        ).subquery()
+
+        psalms_query = (
+            select(
+                psalms_subquery.c.id,
+                psalms_subquery.c.psalm_number,
+                psalms_subquery.c.name,
+                psalms_subquery.c.default_tonality,
+                psalms_subquery.c.couplets_order,
+                exists(
+                    select(literal_column('1'))
+                    .select_from(psalms_book_psalms)
+                    .join(PsalmBook, PsalmBook.id == psalms_book_psalms.c.psalms_book_id)
+                    .where(psalms_book_psalms.c.psalm_id == psalms_subquery.c.id)
+                    .where(PsalmBook.is_favourite == True)
+                ).label('in_favourite')
+            ).correlate(Psalm)
+        )
+
+        results = session.execute(psalms_query).all()
+
         return [
             {
-                'id': psalm.id,
-                'name': psalm.name,
-                'psalm_number': psalm.psalm_number,
-                'couplets_order': psalm.couplets_order,
-                'default_tonality': psalm.default_tonality.name if psalm.default_tonality else None,
-            } for psalm in psalms
+                'id': psalm_id,
+                'name': name,
+                'psalm_number': psalm_number,
+                'couplets_order': couplets_order,
+                'default_tonality': default_tonality.name if default_tonality else None,
+                'in_favourite': in_favourite
+            } for psalm_id, psalm_number, name, default_tonality, couplets_order, in_favourite in results
         ]
 
 
@@ -79,3 +107,60 @@ def get_psalm_by_id(psalm_id: str):
                 couplet.marker
             ]
         } for idx, couplet in enumerate(couplets)]
+
+
+def get_favourite_psalm_book(session: Session) -> PsalmBook:
+    return session.query(PsalmBook).filter(PsalmBook.is_favourite == True).first()
+
+
+def add_psalm_to_favourites(psalm_id: str) -> bool:
+    with Session(engine) as session:
+        favourite_psalm_book = get_favourite_psalm_book(session)
+        if not favourite_psalm_book:
+            raise ValueError("No favourite psalm book found")
+
+        # Check if the psalm is already in favourites
+        already_favourite = session.query(
+            exists().where(
+                psalms_book_psalms.c.psalm_id == psalm_id,
+                psalms_book_psalms.c.psalms_book_id == favourite_psalm_book.id
+            )
+        ).scalar()
+
+        if already_favourite:
+            return False
+
+        # Add psalm to favourite psalm book
+        session.execute(
+            psalms_book_psalms.insert().values(psalm_id=psalm_id, psalms_book_id=favourite_psalm_book.id)
+        )
+        session.commit()
+        return True
+
+
+def remove_psalm_from_favourites(psalm_id: str) -> bool:
+    with Session(engine) as session:
+        favourite_psalm_book = get_favourite_psalm_book(session)
+        if not favourite_psalm_book:
+            raise ValueError("No favourite psalm book found")
+
+        # Check if the psalm is in favourites
+        in_favourites = session.query(
+            exists().where(
+                psalms_book_psalms.c.psalm_id == psalm_id,
+                psalms_book_psalms.c.psalms_book_id == favourite_psalm_book.id
+            )
+        ).scalar()
+
+        if not in_favourites:
+            return False
+
+        # Remove psalm from favourite psalm book
+        session.execute(
+            psalms_book_psalms.delete().where(
+                psalms_book_psalms.c.psalm_id == psalm_id,
+                psalms_book_psalms.c.psalms_book_id == favourite_psalm_book.id
+            )
+        )
+        session.commit()
+        return True

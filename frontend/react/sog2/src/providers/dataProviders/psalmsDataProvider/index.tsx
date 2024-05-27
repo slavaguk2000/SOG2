@@ -17,6 +17,7 @@ const defaultValue: PsalmsContextType = {
   handleNextSlide: () => true,
   handlePsalmSelect: () => true,
   handlePsalmBookSelect: () => true,
+  psalmsQueryDataLoading: false,
 };
 
 export const PsalmsContext = createContext<PsalmsContextType>(defaultValue);
@@ -72,21 +73,31 @@ const PsalmsDataProvider = ({ children }: PropsWithChildren) => {
     fetchPolicy: 'cache-first',
   });
 
-  const { data: psalmsQueryData } = useQuery<Pick<Query, 'psalms'>, QueryPsalmsArgs>(psalms, {
-    variables: {
-      psalmsBookId,
+  const { data: psalmsQueryData, loading: psalmsQueryDataLoading } = useQuery<Pick<Query, 'psalms'>, QueryPsalmsArgs>(
+    psalms,
+    {
+      variables: {
+        psalmsBookId,
+      },
+      fetchPolicy: 'cache-first',
+      skip: !psalmsBookId,
     },
-    fetchPolicy: 'cache-first',
-    skip: !psalmsBookId,
-  });
+  );
 
   const psalmsData = psalmsQueryData?.psalms;
 
+  const currentPsalmBook = useMemo(
+    () => psalmsBooksData?.psalmsBooks.find(({ id }) => psalmsBookId === id),
+    [psalmsBookId, psalmsBooksData?.psalmsBooks],
+  );
+
   useEffect(() => {
-    if (!psalmsBookId && psalmsBooksData?.psalmsBooks[0]?.id) {
-      handlePsalmBookSelect(psalmsBooksData.psalmsBooks[0].id);
+    const potentialValidPsalmsBooks = psalmsBooksData?.psalmsBooks?.filter(({ psalmsCount }) => psalmsCount);
+
+    if (!(psalmsBookId && currentPsalmBook?.psalmsCount) && potentialValidPsalmsBooks?.[0]?.id) {
+      handlePsalmBookSelect(potentialValidPsalmsBooks[0].id);
     }
-  }, [handlePsalmBookSelect, psalmsBookId, psalmsBooksData?.psalmsBooks]);
+  }, [currentPsalmBook?.psalmsCount, handlePsalmBookSelect, psalmsBookId, psalmsBooksData?.psalmsBooks]);
 
   const { data: currentPsalmData, loading: currentPsalmDataLoading } = useQuery<Pick<Query, 'psalm'>, QueryPsalmArgs>(
     psalm,
@@ -116,11 +127,6 @@ const PsalmsDataProvider = ({ children }: PropsWithChildren) => {
       });
     }
   }, [currentPsalm, psalmId, psalmsData, setSearchParams]);
-
-  const currentPsalmBook = useMemo(
-    () => psalmsBooksData?.psalmsBooks.find(({ id }) => psalmsBookId === id),
-    [psalmsBookId, psalmsBooksData?.psalmsBooks],
-  );
 
   const { handleUpdateSlide: instrumentsHandleUpdateSlide, currentSlide } = useInstrumentsField();
 
@@ -185,6 +191,7 @@ const PsalmsDataProvider = ({ children }: PropsWithChildren) => {
         currentPsalmBook,
         handlePsalmSelect,
         handlePsalmBookSelect,
+        psalmsQueryDataLoading,
       }}
     >
       {children}
