@@ -87,13 +87,16 @@ const PsalmsDataProvider = ({ children }: PropsWithChildren) => {
     }
   }, [handlePsalmBookSelect, psalmsBookId, psalmsBooksData?.psalmsBooks]);
 
-  const { data: currentPsalmData } = useQuery<Pick<Query, 'psalm'>, QueryPsalmArgs>(psalm, {
-    variables: {
-      psalmId,
+  const { data: currentPsalmData, loading: currentPsalmDataLoading } = useQuery<Pick<Query, 'psalm'>, QueryPsalmArgs>(
+    psalm,
+    {
+      variables: {
+        psalmId,
+      },
+      fetchPolicy: 'cache-first',
+      skip: !psalmId,
     },
-    fetchPolicy: 'cache-first',
-    skip: !psalmId,
-  });
+  );
 
   useEffect(() => {
     if (!psalmId && psalmsData?.[0]?.id) {
@@ -103,7 +106,7 @@ const PsalmsDataProvider = ({ children }: PropsWithChildren) => {
 
   const currentPsalms = useMemo(() => psalmsData?.find(({ id }) => psalmId === id), [psalmId, psalmsData]);
 
-  const { handleUpdateSlide: instrumentsHandleUpdateSlide } = useInstrumentsField();
+  const { handleUpdateSlide: instrumentsHandleUpdateSlide, currentSlide } = useInstrumentsField();
 
   const getPsalmName = (currentSlide: Slide) =>
     psalmsData?.find(({ id }) => currentSlide?.location?.[1] === id)?.name ?? '';
@@ -125,14 +128,39 @@ const PsalmsDataProvider = ({ children }: PropsWithChildren) => {
     );
   };
 
+  const validPsalmData = !currentPsalmDataLoading && currentPsalmData;
+
+  const getCurrentSlideIndex = () =>
+    currentSlide && validPsalmData ? validPsalmData.psalm.findIndex(({ id }) => id && currentSlide?.id === id) : -1;
+
+  const handleNextSlide = () => {
+    if (validPsalmData && currentSlide) {
+      const nextVerseIdx = getCurrentSlideIndex() + 1;
+
+      if (nextVerseIdx > 0 && nextVerseIdx < validPsalmData.psalm.length) {
+        handleUpdateSlide(validPsalmData.psalm[nextVerseIdx]);
+      }
+    }
+  };
+
+  const handlePrevSlide = () => {
+    if (validPsalmData && currentSlide) {
+      const prevVerseIdx = getCurrentSlideIndex() - 1;
+
+      if (prevVerseIdx >= 0) {
+        handleUpdateSlide(validPsalmData.psalm[prevVerseIdx]);
+      }
+    }
+  };
+
   return (
     <PsalmsContext.Provider
       value={{
         psalmsBookId,
         psalmId,
         handleUpdateLocation: () => true,
-        handlePrevSlide: () => true,
-        handleNextSlide: () => true,
+        handlePrevSlide,
+        handleNextSlide,
         handleUpdateSlide,
         psalmsBooksData: psalmsBooksData?.psalmsBooks,
         psalmsData,
