@@ -2,8 +2,13 @@ import React, { useEffect, useMemo, useRef } from 'react';
 
 import PreselectBox from '../../hooks/useFastNumberSelection/PreselectBox';
 import useFastNumberSelection from '../../hooks/useFastNumberSelection/useFastNumberSelection';
-import { getPsalmSlideContentFromSlide, usePsalmsData } from '../../providers/dataProviders/psalmsDataProvider';
+import {
+  extractCoupletPrefixFromLocation,
+  getPsalmSlideContentFromSlide,
+  usePsalmsData,
+} from '../../providers/dataProviders/psalmsDataProvider';
 import { useInstrumentsField } from '../../providers/instrumentsFieldProvider';
+import { Slide } from '../../utils/gql/types';
 import BibleEntityItem from '../BibleContent/BibleEntityItem';
 
 import { CoupletSelectWrapper } from './styled';
@@ -28,20 +33,42 @@ const CoupletSelect = () => {
     [psalmSlides],
   );
 
+  const { numberToSlideMap, maxNumber } = useMemo(
+    () =>
+      (psalmSlides ?? []).reduce(
+        (acc, slide) => {
+          if (slide?.location) {
+            const coupletPrefix = extractCoupletPrefixFromLocation(slide?.location);
+
+            const numberString = /^\d+/.exec(coupletPrefix.trim())?.[0];
+
+            if (numberString) {
+              const number = parseInt(numberString);
+              acc.numberToSlideMap[number] = slide;
+              acc.maxNumber = Math.max(acc.maxNumber, number);
+            }
+          }
+
+          return acc;
+        },
+        {
+          numberToSlideMap: {} as Record<number, Slide>,
+          maxNumber: 0,
+        },
+      ),
+    [psalmSlides],
+  );
+
   const changeCoupletByNumber = (requestedNumber: number) => {
-    // const requestedSlide = numberToSlideMap?.[requestedNumber];
-    // if (requestedSlide) {
-    //   handleUpdateSlide(requestedSlide);
-    // }
+    const requestedSlide = numberToSlideMap?.[requestedNumber];
+    if (requestedSlide) {
+      handleUpdateSlide(requestedSlide);
+    }
   };
 
-  const { preselectNumber, handleKeyDown } = useFastNumberSelection(
-    changeCoupletByNumber,
-    Number(psalmSlides?.length ?? 0),
-    {
-      debounceSeconds,
-    },
-  );
+  const { preselectNumber, handleKeyDown } = useFastNumberSelection(changeCoupletByNumber, maxNumber, {
+    debounceSeconds,
+  });
 
   useEffect(() => {
     if (currentSlide) {

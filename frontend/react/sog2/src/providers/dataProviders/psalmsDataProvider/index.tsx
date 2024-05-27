@@ -26,7 +26,7 @@ export const usePsalmsData = () => {
   return useContext(PsalmsContext);
 };
 
-const extractCoupletPrefixFromLocation = (location: string[]) => {
+export const extractCoupletPrefixFromLocation = (location: string[]) => {
   return location[location.length - 1].trim();
 };
 
