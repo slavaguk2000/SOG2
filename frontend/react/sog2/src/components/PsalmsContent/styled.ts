@@ -8,12 +8,17 @@ export const PsalmsContentWrapper = styled(Box)`
   overflow-y: auto;
 `;
 
-export const PsalmSelectWrapper = styled(Box)`
+const PsalmsEntitySelectWrapper = styled(Box)`
   display: flex;
   flex-direction: column;
+  height: 100%;
+  overflow-y: scroll;
 `;
 
-export const CoupletSelectWrapper = styled(Box)`
-  display: flex;
-  flex-direction: column;
+export const PsalmSelectWrapper = styled(PsalmsEntitySelectWrapper)`
+  max-width: 400px;
+`;
+
+export const CoupletSelectWrapper = styled(PsalmsEntitySelectWrapper)`
+  width: 100%;
 `;
