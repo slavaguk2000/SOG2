@@ -29,7 +29,7 @@ export type BibleBook = {
 
 export type Couplet = {
   __typename?: 'Couplet';
-  coupletContent?: Maybe<Array<Maybe<CoupletContent>>>;
+  coupletContent: Array<CoupletContent>;
   id: Scalars['ID']['output'];
   initialOrder: Scalars['Int']['output'];
   marker: Scalars['String']['output'];
@@ -38,11 +38,18 @@ export type Couplet = {
 
 export type CoupletContent = {
   __typename?: 'CoupletContent';
-  chordModifier: Scalars['String']['output'];
+  chord: CoupletContentChord;
   id: Scalars['ID']['output'];
   line: Scalars['Int']['output'];
-  rootNote: Scalars['Int']['output'];
   text: Scalars['String']['output'];
+};
+
+export type CoupletContentChord = {
+  __typename?: 'CoupletContentChord';
+  bassNote?: Maybe<Scalars['Int']['output']>;
+  chordTemplate: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  rootNote: Scalars['Int']['output'];
 };
 
 export enum MusicalKey {
@@ -133,9 +140,14 @@ export type Psalm = {
   coupletsOrder?: Maybe<Scalars['String']['output']>;
   defaultTonality?: Maybe<MusicalKey>;
   id: Scalars['ID']['output'];
-  inFavourite?: Maybe<Scalars['Boolean']['output']>;
   name: Scalars['String']['output'];
   psalmNumber?: Maybe<Scalars['String']['output']>;
+};
+
+export type PsalmData = {
+  __typename?: 'PsalmData';
+  couplets: Array<Couplet>;
+  psalm: Psalm;
 };
 
 export type PsalmsBook = {
@@ -162,7 +174,7 @@ export type Query = {
   bibleBooks: Array<BibleBook>;
   bibleHistory: Array<Slide>;
   bibleVerses: Array<Slide>;
-  psalm: Array<Couplet>;
+  psalm: PsalmData;
   psalms: Array<Psalm>;
   psalmsBooks: Array<PsalmsBook>;
   search: Array<Slide>;

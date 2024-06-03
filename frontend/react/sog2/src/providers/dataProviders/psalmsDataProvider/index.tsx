@@ -183,14 +183,16 @@ const PsalmsDataProvider = ({ children }: PropsWithChildren) => {
   const validPsalmData = !currentPsalmDataLoading && currentPsalmData;
 
   const getCurrentSlideIndex = () =>
-    currentSlide && validPsalmData ? validPsalmData.psalm.findIndex(({ id }) => id && currentSlide?.id === id) : -1;
+    currentSlide && validPsalmData
+      ? validPsalmData.psalm.couplets.findIndex(({ id }) => id && currentSlide?.id === id)
+      : -1;
 
   const handleNextSlide = () => {
     if (validPsalmData && currentSlide) {
       const nextVerseIdx = getCurrentSlideIndex() + 1;
 
-      if (nextVerseIdx > 0 && nextVerseIdx < validPsalmData.psalm.length) {
-        handleUpdateSlide(validPsalmData.psalm[nextVerseIdx].slide);
+      if (nextVerseIdx > 0 && nextVerseIdx < validPsalmData.psalm.couplets.length) {
+        handleUpdateSlide(validPsalmData.psalm.couplets[nextVerseIdx].slide);
       }
     }
   };
@@ -200,7 +202,7 @@ const PsalmsDataProvider = ({ children }: PropsWithChildren) => {
       const prevVerseIdx = getCurrentSlideIndex() - 1;
 
       if (prevVerseIdx >= 0) {
-        handleUpdateSlide(validPsalmData.psalm[prevVerseIdx].slide);
+        handleUpdateSlide(validPsalmData.psalm.couplets[prevVerseIdx].slide);
       }
     }
   };
@@ -216,7 +218,7 @@ const PsalmsDataProvider = ({ children }: PropsWithChildren) => {
         handleUpdateSlide,
         psalmsBooksData: psalmsBooksData?.psalmsBooks,
         psalmsData,
-        psalmCouplets: currentPsalmData?.psalm,
+        psalmData: currentPsalmData?.psalm,
         currentPsalm,
         currentPsalmBook,
         handlePsalmSelect,

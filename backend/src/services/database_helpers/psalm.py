@@ -1,4 +1,6 @@
 import enum
+from typing import Type
+
 from sqlalchemy.orm import Session
 from sqlalchemy import select, desc, func, exists, literal_column
 
@@ -40,6 +42,16 @@ def get_psalms_books():
         ]
 
 
+def get_psalm_dict_from_psalm(psalm: Type[Psalm]):
+    return {
+        'id': psalm.id,
+        'name': psalm.name,
+        'psalm_number': psalm.psalm_number,
+        'couplets_order': psalm.couplets_order,
+        'default_tonality': psalm.default_tonality.name if psalm.default_tonality else None,
+    }
+
+
 def get_psalms(
     psalms_book_id: str,
     sort_key: PsalmsSortingKeys = PsalmsSortingKeys.NUMBER,
@@ -53,13 +65,7 @@ def get_psalms(
             .order_by(get_direction_function_by_direction(sort_direction, f'psalms.{sort_key.value}'))
         psalms = session.execute(psalms_query).scalars().all()
         return [
-            {
-                'id': psalm.id,
-                'name': psalm.name,
-                'psalm_number': psalm.psalm_number,
-                'couplets_order': psalm.couplets_order,
-                'default_tonality': psalm.default_tonality.name if psalm.default_tonality else None,
-            } for psalm in psalms
+            get_psalm_dict_from_psalm(psalm) for psalm in psalms
         ]
 
 
@@ -77,36 +83,41 @@ def get_linear_contents_from_couplet(couplet: CoupletContent):
 
 def get_psalm_by_id(psalm_id: str):
     with Session(engine) as session:
-        couplets = session.query(Couplet).filter(
-            Couplet.psalm_id == psalm_id,
-        ).order_by(Couplet.initial_order.asc()).all()
+        psalm = session.get(Psalm, psalm_id)
 
-        return [{
-            "id": couplet.id,
-            "marker": couplet.marker,
-            "initial_order": couplet.initial_order,
-            "couplet_content": [{
-                "id": content.id,
-                "text": content.text_content,
-                "line":  content.line,
-                "chord": {
-                    "id": content.chord.id,
-                    "root_note": content.chord.root_note,
-                    "bass_note": content.chord.bass_note,
-                    "chord_template": content.chord.chord_template,
-                }
-            } for content in couplet.couplet_content],
-            "slide": {
+        if not psalm:
+            raise "Psalm with such id was not found"
+
+        return {
+            "psalm": get_psalm_dict_from_psalm(psalm),
+            "couplets": [{
                 "id": couplet.id,
-                **get_linear_contents_from_couplet(couplet),
-                "location": [
-                    couplet.psalm.psalm_books[0].id,
-                    couplet.psalm_id,
-                    couplet.id,
-                    couplet.marker
-                ]
-            }
-        } for idx, couplet in enumerate(sorted(couplets, key=lambda x:x.initial_order))]
+                "marker": couplet.marker,
+                "initial_order": couplet.initial_order,
+                "couplet_content": [{
+                    "id": content.id,
+                    "text": content.text_content,
+                    "line":  content.line,
+                    "chord": {
+                        "id": content.chord.id,
+                        "root_note": content.chord.root_note,
+                        "bass_note": content.chord.bass_note,
+                        "chord_template": content.chord.chord_template,
+                    }
+                } for content in sorted(couplet.couplet_content, key=lambda x:x.order)],
+                "slide": {
+                    "id": couplet.id,
+                    **get_linear_contents_from_couplet(couplet),
+                    "location": [
+                        couplet.psalm.psalm_books[0].id,
+                        couplet.psalm_id,
+                        couplet.id,
+                        couplet.marker
+                    ]
+                }
+            } for idx, couplet in enumerate(sorted(psalm.couplets, key=lambda x:x.initial_order))
+        ]
+    }
 
 
 def get_favourite_psalm_book(session: Session) -> PsalmBook:

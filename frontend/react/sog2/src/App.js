@@ -7,6 +7,7 @@ import { ThemeProvider } from '@mui/material';
 import { theme } from 'src/theme';
 
 import BibleContent from './components/BibleContent';
+import PsalmChordsView from './components/psalmChordsView';
 import PsalmsContent from './components/PsalmsContent';
 import SermonsContent from './components/SermonsContent';
 import AudioMappingProvider from './providers/AudioMapping/provider';
@@ -66,6 +67,7 @@ function App() {
                             </PsalmsDataProvider>
                           }
                         />
+                        <Route path="/psalm-chords" element={<PsalmChordsView />} />
                       </Routes>
                     </InstrumentsFieldProvider>
                   </AudioMappingProvider>

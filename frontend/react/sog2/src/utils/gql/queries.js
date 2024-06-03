@@ -134,11 +134,13 @@ export const psalms = gql`
 export const psalm = gql`
   query psalm($psalmId: ID!) {
     psalm(psalmId: $psalmId) {
-      slide {
-        id
-        content
-        searchContent
-        location
+      couplets {
+        slide {
+          id
+          content
+          searchContent
+          location
+        }
       }
     }
   }
