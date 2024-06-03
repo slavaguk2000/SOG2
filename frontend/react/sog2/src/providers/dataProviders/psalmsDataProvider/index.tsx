@@ -73,6 +73,19 @@ const PsalmsDataProvider = ({ children }: PropsWithChildren) => {
     fetchPolicy: 'cache-first',
   });
 
+  const favouritePsalmsBook = useMemo(
+    () => psalmsBooksData?.psalmsBooks.find(({ isFavourite }) => isFavourite),
+    [psalmsBooksData],
+  );
+
+  const { data: favouritePsalmsQueryData } = useQuery<Pick<Query, 'psalms'>, QueryPsalmsArgs>(psalms, {
+    variables: {
+      psalmsBookId: favouritePsalmsBook?.id || '',
+    },
+    fetchPolicy: 'cache-first',
+    skip: !favouritePsalmsBook,
+  });
+
   const { data: psalmsQueryData, loading: psalmsQueryDataLoading } = useQuery<Pick<Query, 'psalms'>, QueryPsalmsArgs>(
     psalms,
     {
@@ -84,7 +97,24 @@ const PsalmsDataProvider = ({ children }: PropsWithChildren) => {
     },
   );
 
-  const psalmsData = psalmsQueryData?.psalms;
+  const favouritePsalmsQueryDataMap = useMemo(
+    () =>
+      favouritePsalmsQueryData?.psalms.reduce((acc: Record<string, boolean>, { id }) => {
+        acc[id] = true;
+
+        return acc;
+      }, {}),
+    [favouritePsalmsQueryData?.psalms],
+  );
+
+  const psalmsData = useMemo(
+    () =>
+      psalmsQueryData?.psalms.map((psalmData) => ({
+        ...psalmData,
+        inFavourite: !!favouritePsalmsQueryDataMap?.[psalmData.id],
+      })),
+    [favouritePsalmsQueryDataMap, psalmsQueryData?.psalms],
+  );
 
   const currentPsalmBook = useMemo(
     () => psalmsBooksData?.psalmsBooks.find(({ id }) => psalmsBookId === id),
@@ -160,7 +190,7 @@ const PsalmsDataProvider = ({ children }: PropsWithChildren) => {
       const nextVerseIdx = getCurrentSlideIndex() + 1;
 
       if (nextVerseIdx > 0 && nextVerseIdx < validPsalmData.psalm.length) {
-        handleUpdateSlide(validPsalmData.psalm[nextVerseIdx]);
+        handleUpdateSlide(validPsalmData.psalm[nextVerseIdx].slide);
       }
     }
   };
@@ -170,7 +200,7 @@ const PsalmsDataProvider = ({ children }: PropsWithChildren) => {
       const prevVerseIdx = getCurrentSlideIndex() - 1;
 
       if (prevVerseIdx >= 0) {
-        handleUpdateSlide(validPsalmData.psalm[prevVerseIdx]);
+        handleUpdateSlide(validPsalmData.psalm[prevVerseIdx].slide);
       }
     }
   };
@@ -186,7 +216,7 @@ const PsalmsDataProvider = ({ children }: PropsWithChildren) => {
         handleUpdateSlide,
         psalmsBooksData: psalmsBooksData?.psalmsBooks,
         psalmsData,
-        psalmSlides: currentPsalmData?.psalm,
+        psalmCouplets: currentPsalmData?.psalm,
         currentPsalm,
         currentPsalmBook,
         handlePsalmSelect,

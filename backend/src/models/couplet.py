@@ -11,7 +11,7 @@ class Couplet(Base):
     id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     psalm_id = Column(String(36), ForeignKey('psalms.id'), nullable=False)
     marker = Column(String, nullable=False)
-    couplet_content = Column(Text, nullable=False)
     initial_order = Column(Integer, nullable=False, server_default='0')
 
+    couplet_content = relationship('CoupletContent', back_populates='couplet')
     psalm = relationship('Psalm', back_populates='couplets')

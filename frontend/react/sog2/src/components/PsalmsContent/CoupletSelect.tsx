@@ -18,23 +18,23 @@ const debounceSeconds = 0.7;
 const CoupletSelect = () => {
   const coupletsRef = useRef<HTMLElement>(null);
 
-  const { psalmSlides, handleUpdateSlide } = usePsalmsData();
+  const { psalmCouplets, handleUpdateSlide } = usePsalmsData();
   const { currentSlide } = useInstrumentsField();
 
   const preparedData = useMemo(
     () =>
-      psalmSlides?.map((slide) => ({
+      psalmCouplets?.map(({ slide }) => ({
         id: slide.id,
         content: getPsalmSlideContentFromSlide(slide),
         slide,
       })),
-    [psalmSlides],
+    [psalmCouplets],
   );
 
   const { numberToSlideMap, maxNumber } = useMemo(
     () =>
-      (psalmSlides ?? []).reduce(
-        (acc, slide) => {
+      (psalmCouplets ?? []).reduce(
+        (acc, { slide }) => {
           if (slide?.location) {
             const coupletPrefix = extractCoupletPrefixFromLocation(slide?.location);
 
@@ -54,7 +54,7 @@ const CoupletSelect = () => {
           maxNumber: 0,
         },
       ),
-    [psalmSlides],
+    [psalmCouplets],
   );
 
   const changeCoupletByNumber = (requestedNumber: number) => {

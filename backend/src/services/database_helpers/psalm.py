@@ -2,11 +2,12 @@ import enum
 from sqlalchemy.orm import Session
 from sqlalchemy import select, desc, func, exists, literal_column
 
+from src.models.couplet_content import CoupletContent
 from src.models.psalms_book_psalms import psalms_book_psalms
 from src.services.database import engine
 from src.models.psalms_book import PsalmBook
 from src.models.psalm import Psalm
-from src.models.couplete import Couplet
+from src.models.couplet import Couplet
 from src.services.database_helpers.common import get_direction_function_by_direction
 from src.types.commonTypes import SortingDirection
 
@@ -40,54 +41,38 @@ def get_psalms_books():
 
 
 def get_psalms(
-        psalms_book_id: str,
-        sort_key: PsalmsSortingKeys = PsalmsSortingKeys.NUMBER,
-        sort_direction: SortingDirection = SortingDirection.ASC
+    psalms_book_id: str,
+    sort_key: PsalmsSortingKeys = PsalmsSortingKeys.NUMBER,
+    sort_direction: SortingDirection = SortingDirection.ASC
 ):
     with Session(engine) as session:
-        psalms_subquery = (
-            select(
-                Psalm.id,
-                Psalm.psalm_number,
-                Psalm.name,
-                Psalm.default_tonality,
-                Psalm.couplets_order
-            )
-            .join(psalms_book_psalms, Psalm.id == psalms_book_psalms.c.psalm_id)
-            .join(PsalmBook, PsalmBook.id == psalms_book_psalms.c.psalms_book_id)
-            .where(PsalmBook.id == psalms_book_id)
+        psalms_query = select(Psalm)\
+            .join(psalms_book_psalms)\
+            .join(PsalmBook)\
+            .filter(PsalmBook.id == psalms_book_id)\
             .order_by(get_direction_function_by_direction(sort_direction, f'psalms.{sort_key.value}'))
-        ).subquery()
-
-        psalms_query = (
-            select(
-                psalms_subquery.c.id,
-                psalms_subquery.c.psalm_number,
-                psalms_subquery.c.name,
-                psalms_subquery.c.default_tonality,
-                psalms_subquery.c.couplets_order,
-                exists(
-                    select(literal_column('1'))
-                    .select_from(psalms_book_psalms)
-                    .join(PsalmBook, PsalmBook.id == psalms_book_psalms.c.psalms_book_id)
-                    .where(psalms_book_psalms.c.psalm_id == psalms_subquery.c.id)
-                    .where(PsalmBook.is_favourite == True)
-                ).label('in_favourite')
-            ).correlate(Psalm)
-        )
-
-        results = session.execute(psalms_query).all()
-
+        psalms = session.execute(psalms_query).scalars().all()
         return [
             {
-                'id': psalm_id,
-                'name': name,
-                'psalm_number': psalm_number,
-                'couplets_order': couplets_order,
-                'default_tonality': default_tonality.name if default_tonality else None,
-                'in_favourite': in_favourite
-            } for psalm_id, psalm_number, name, default_tonality, couplets_order, in_favourite in results
+                'id': psalm.id,
+                'name': psalm.name,
+                'psalm_number': psalm.psalm_number,
+                'couplets_order': psalm.couplets_order,
+                'default_tonality': psalm.default_tonality.name if psalm.default_tonality else None,
+            } for psalm in psalms
         ]
+
+
+def get_linear_contents_from_couplet(couplet: CoupletContent):
+    print(couplet.couplet_content)
+    linear_content = ''.join(
+        [content.text_content for content in sorted(couplet.couplet_content, key=lambda x: x.order)]
+    )
+
+    return {
+        "search_content": linear_content,
+        "content": linear_content,
+    }
 
 
 def get_psalm_by_id(psalm_id: str):
@@ -98,15 +83,30 @@ def get_psalm_by_id(psalm_id: str):
 
         return [{
             "id": couplet.id,
-            "search_content": couplet.couplet_content,
-            "content": couplet.couplet_content,
-            "location": [
-                couplet.psalm.psalm_books[0].id,
-                couplet.psalm_id,
-                couplet.id,
-                couplet.marker
-            ]
-        } for idx, couplet in enumerate(couplets)]
+            "marker": couplet.marker,
+            "initial_order": couplet.initial_order,
+            "couplet_content": [{
+                "id": content.id,
+                "text": content.text_content,
+                "line":  content.line,
+                "chord": {
+                    "id": content.chord.id,
+                    "root_note": content.chord.root_note,
+                    "bass_note": content.chord.bass_note,
+                    "chord_template": content.chord.chord_template,
+                }
+            } for content in couplet.couplet_content],
+            "slide": {
+                "id": couplet.id,
+                **get_linear_contents_from_couplet(couplet),
+                "location": [
+                    couplet.psalm.psalm_books[0].id,
+                    couplet.psalm_id,
+                    couplet.id,
+                    couplet.marker
+                ]
+            }
+        } for idx, couplet in enumerate(sorted(couplets, key=lambda x:x.initial_order))]
 
 
 def get_favourite_psalm_book(session: Session) -> PsalmBook:

@@ -55,12 +55,16 @@ export interface BibleContextType extends DataProvider {
   getReadableBiblePlace: (slide: Slide, withVerse?: boolean) => string;
 }
 
+interface PsalmData extends Psalm {
+  inFavourite: boolean;
+}
+
 export interface PsalmsContextType extends DataProvider {
   psalmsBookId: string;
   psalmId: string;
   psalmsBooksData?: Query['psalmsBooks'];
-  psalmsData?: Query['psalms'];
-  psalmSlides?: Query['psalm'];
+  psalmsData?: Array<PsalmData>;
+  psalmCouplets?: Query['psalm'];
   handlePsalmSelect: (selectedId: string) => void;
   handlePsalmBookSelect: (selectedId: string) => void;
   currentPsalm?: Psalm;

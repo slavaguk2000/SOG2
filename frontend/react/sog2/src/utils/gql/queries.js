@@ -127,7 +127,6 @@ export const psalms = gql`
       psalmNumber
       coupletsOrder
       defaultTonality
-      inFavourite
     }
   }
 `;
@@ -135,10 +134,12 @@ export const psalms = gql`
 export const psalm = gql`
   query psalm($psalmId: ID!) {
     psalm(psalmId: $psalmId) {
-      id
-      content
-      searchContent
-      location
+      slide {
+        id
+        content
+        searchContent
+        location
+      }
     }
   }
 `;
@@ -162,16 +163,5 @@ export const PSALMS_BOOK_FRAGMENT = gql`
     isFavourite
     iconSrc
     psalmsCount
-  }
-`;
-
-export const PSALM_FRAGMENT = gql`
-  fragment PsalmFragment on Psalm {
-    id
-    name
-    psalmNumber
-    coupletsOrder
-    defaultTonality
-    inFavourite
   }
 `;

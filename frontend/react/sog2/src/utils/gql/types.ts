@@ -27,6 +27,24 @@ export type BibleBook = {
   name: Scalars['String']['output'];
 };
 
+export type Couplet = {
+  __typename?: 'Couplet';
+  coupletContent?: Maybe<Array<Maybe<CoupletContent>>>;
+  id: Scalars['ID']['output'];
+  initialOrder: Scalars['Int']['output'];
+  marker: Scalars['String']['output'];
+  slide: Slide;
+};
+
+export type CoupletContent = {
+  __typename?: 'CoupletContent';
+  chordModifier: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  line: Scalars['Int']['output'];
+  rootNote: Scalars['Int']['output'];
+  text: Scalars['String']['output'];
+};
+
 export enum MusicalKey {
   A = 'A',
   ASharp = 'ASharp',
@@ -144,7 +162,7 @@ export type Query = {
   bibleBooks: Array<BibleBook>;
   bibleHistory: Array<Slide>;
   bibleVerses: Array<Slide>;
-  psalm: Array<Slide>;
+  psalm: Array<Couplet>;
   psalms: Array<Psalm>;
   psalmsBooks: Array<PsalmsBook>;
   search: Array<Slide>;

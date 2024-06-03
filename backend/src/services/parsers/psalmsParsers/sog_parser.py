@@ -1,7 +1,10 @@
 from regex import regex
 from sqlalchemy.orm import Session
 
-from src.models.couplete import Couplet
+from src.models.couplet import Couplet
+
+from src.models.couplet_content import CoupletContent
+from src.models.couplet_content_chord import CoupletContentChord
 from src.models.musical_key import get_musical_key_by_str
 from src.models.psalm import Psalm
 from src.models.psalms_book import PsalmBook
@@ -82,7 +85,10 @@ class SimplePsalmParser:
                         default_tonality=psalm_data.tonality,
                         couplets=[Couplet(
                             marker=couplet_data.marker,
-                            couplet_content=couplet_data.content,
+                            couplet_content=[CoupletContent(
+                                text_content=couplet_data.content,
+                                chord=CoupletContentChord()
+                            )],
                             initial_order=couplet_data.order,
                         ) for couplet_data in psalm_data.couplets],
                         psalm_books=[new_psalms_book],

@@ -5,12 +5,7 @@ import TurnedInIcon from '@mui/icons-material/TurnedIn';
 import TurnedInNotIcon from '@mui/icons-material/TurnedInNot';
 
 import { usePsalmsData } from '../../providers/dataProviders/psalmsDataProvider';
-import {
-  addPsalmToFavourite,
-  PSALMS_BOOK_FRAGMENT,
-  PSALM_FRAGMENT,
-  removePsalmFromFavourite,
-} from '../../utils/gql/queries';
+import { addPsalmToFavourite, PSALMS_BOOK_FRAGMENT, removePsalmFromFavourite } from '../../utils/gql/queries';
 import {
   Mutation,
   MutationAddPsalmToFavouriteArgs,
@@ -47,24 +42,6 @@ const addSongsCountToPsalmBookInCache = (cache: ApolloCache<unknown>, psalmsBook
   }
 };
 
-const setInFavouriteStatus = (cache: ApolloCache<unknown>, psalmId: string, inFavourite: boolean) => {
-  const psalmsBookData: PsalmsBook | null = cache.readFragment({
-    id: psalmId,
-    fragment: PSALM_FRAGMENT,
-  });
-
-  if (psalmsBookData) {
-    return cache.writeFragment({
-      id: psalmId,
-      fragment: PSALM_FRAGMENT,
-      data: {
-        ...psalmsBookData,
-        inFavourite,
-      },
-    });
-  }
-};
-
 const PsalmSelectItem = ({ psalmName, selected, onClick, inFavourite, psalmId }: PsalmSelectItemProps) => {
   const [internalFavouriteState, setInternalFavouriteState] = useState(inFavourite);
   const { psalmsBooksData } = usePsalmsData();
@@ -87,7 +64,6 @@ const PsalmSelectItem = ({ psalmName, selected, onClick, inFavourite, psalmId }:
     update(cache, { data }) {
       if (favouriteBookCacheId && data?.addPsalmToFavourite) {
         addSongsCountToPsalmBookInCache(cache, favouriteBookCacheId, 1);
-        setInFavouriteStatus(cache, psalmCacheId, true);
         cache.evict({
           fieldName: `psalms({"psalmsBookId":"${favouriteBookId}"})`,
         });
@@ -104,7 +80,6 @@ const PsalmSelectItem = ({ psalmName, selected, onClick, inFavourite, psalmId }:
     update(cache, { data }) {
       if (favouriteBookCacheId && data?.removePsalmFromFavourite) {
         addSongsCountToPsalmBookInCache(cache, favouriteBookCacheId, -1);
-        setInFavouriteStatus(cache, psalmCacheId, false);
         cache.modify({
           fields: {
             [`psalms({"psalmsBookId":"${favouriteBookId}"})`](existingPsalms) {
