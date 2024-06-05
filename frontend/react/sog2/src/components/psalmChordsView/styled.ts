@@ -3,8 +3,11 @@ import { Box, styled } from '@mui/material';
 export const PsalmChordsViewWrapper = styled(Box)`
   display: flex;
   flex-direction: column;
+  align-items: center;
   width: 100%;
   padding: 10px;
+  background: white;
+  color: black;
 `;
 
 export const PsalmChordsViewTitleWrapper = styled(Box)`
@@ -17,18 +20,16 @@ export const PsalmChordsViewTitleWrapper = styled(Box)`
 
 export const PsalmChordsViewContentWrapper = styled(Box)`
   display: flex;
-  width: 100%;
   height: 100%;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   gap: 2%;
 `;
 
 export const PsalmChordsViewCoupletWrapper = styled(Box)`
   display: flex;
   flex-direction: column;
-  width: 100%;
-  align-items: center;
+  align-items: flex-start;
 `;
 
 export const ChordWrapper = styled('span', {
@@ -50,4 +51,5 @@ export const ChordWrapper = styled('span', {
 export const ChordAndContentWrapper = styled('span')`
   position: relative;
   vertical-align: sub;
+  font-family: 'Times New Roman', sans-serif;
 `;

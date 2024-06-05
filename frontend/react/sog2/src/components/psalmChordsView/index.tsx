@@ -317,7 +317,7 @@ const PsalmChordsView = ({ data = testData }: PsalmChordsView) => {
       <PsalmChordsViewTitleWrapper>
         <Typography
           fontWeight="bold"
-          fontSize={fontSize * 1.1}
+          fontSize={fontSize * 0.9}
           variant="h4"
         >{`${data.psalm.psalmNumber} ${data.psalm.name}`}</Typography>
       </PsalmChordsViewTitleWrapper>
