@@ -10,6 +10,7 @@ import BibleContent from './components/BibleContent';
 import PsalmChordsView from './components/psalmChordsView';
 import PsalmsContent from './components/PsalmsContent';
 import SermonsContent from './components/SermonsContent';
+import PsalmChordEditPage from './pages/psalmChordEditPage';
 import AudioMappingProvider from './providers/AudioMapping/provider';
 import BibleContext from './providers/dataProviders/bibleDataProvider/context';
 import BibleDataProvider from './providers/dataProviders/bibleDataProvider/provider';
@@ -68,6 +69,7 @@ function App() {
                           }
                         />
                         <Route path="/psalm-chords" element={<PsalmChordsView />} />
+                        <Route path="/psalm-chords-edit" element={<PsalmChordEditPage />} />
                       </Routes>
                     </InstrumentsFieldProvider>
                   </AudioMappingProvider>
