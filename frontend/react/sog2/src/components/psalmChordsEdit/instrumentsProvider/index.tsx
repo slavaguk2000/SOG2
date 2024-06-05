@@ -1,6 +1,6 @@
 import React, { createContext, PropsWithChildren, useContext, useEffect, useState } from 'react';
 
-import { Box, ButtonGroup } from '@mui/material';
+import { Box, ButtonGroup, Tooltip } from '@mui/material';
 
 import { NewLineIcon, SelectableButton } from '../styled';
 
@@ -25,6 +25,7 @@ const ChordsEditInstrumentsProvider = ({ children }: PropsWithChildren) => {
       key: 'cut',
       label: 'CUT',
       icon: <NewLineIcon />,
+      tooltip: 'Cut line',
     },
     {
       key: 'one',
@@ -71,14 +72,12 @@ const ChordsEditInstrumentsProvider = ({ children }: PropsWithChildren) => {
       <Box display="flex" width="100%">
         <Box width="50px">
           <ButtonGroup orientation="vertical" aria-label="Vertical button group" variant="text">
-            {instruments.map(({ label, key, icon }) => (
-              <SelectableButton
-                selected={selectedInstrument === key}
-                onClick={() => handleInstrumentClick(key)}
-                key={key}
-              >
-                {icon ?? label}
-              </SelectableButton>
+            {instruments.map(({ label, key, icon, tooltip }) => (
+              <Tooltip title={tooltip} key={key} placement="right">
+                <SelectableButton selected={selectedInstrument === key} onClick={() => handleInstrumentClick(key)}>
+                  {icon ?? label}
+                </SelectableButton>
+              </Tooltip>
             ))}
           </ButtonGroup>
         </Box>
