@@ -1,4 +1,4 @@
-import React, { createContext, PropsWithChildren, useContext, useState } from 'react';
+import React, { createContext, PropsWithChildren, useContext, useEffect, useState } from 'react';
 
 import { Box, ButtonGroup } from '@mui/material';
 
@@ -45,6 +45,21 @@ const ChordsEditInstrumentsProvider = ({ children }: PropsWithChildren) => {
       return key;
     });
   };
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.code === 'Escape') {
+        event.preventDefault();
+        setSelectedInstrument(null);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
 
   return (
     <ChordsEditInstrumentsContext.Provider
