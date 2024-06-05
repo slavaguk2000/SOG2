@@ -36,10 +36,15 @@ interface EditableChordsDataProviderProps extends PropsWithChildren {
 const EditableChordsDataProvider = ({ children, initialData }: EditableChordsDataProviderProps) => {
   const [chordsData, setChordsData] = useState<PsalmData>(initialData);
 
-  const {} = usePreviousVersions(initialData);
+  const { handleAddNewVersion } = usePreviousVersions(initialData, setChordsData);
+
+  const setNewChordsData = (newChordsData: PsalmData) => {
+    handleAddNewVersion(newChordsData);
+    setChordsData(newChordsData);
+  };
 
   const handleCutToNextLine = (coupletId: string, coupletContentId: string, charPosition: number) => {
-    setChordsData({
+    setNewChordsData({
       psalm: chordsData.psalm,
       couplets: chordsData.couplets.map((couplet) => {
         if (couplet.id === coupletId) {

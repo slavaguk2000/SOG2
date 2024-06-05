@@ -1,11 +1,11 @@
-import { useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 interface PreviousVersions {
   versionsArray: string[];
   currentVersion: number;
 }
 
-const usePreviousVersions = (initialData: Record<string, unknown>) => {
+const usePreviousVersions = <T>(initialData: T, onUpdate: (newVersion: T) => void) => {
   const initialPreviousVersionsState = useMemo(
     () => ({
       versionsArray: [JSON.stringify(initialData)],
@@ -27,8 +27,67 @@ const usePreviousVersions = (initialData: Record<string, unknown>) => {
     });
   };
 
+  const handleUndo = useCallback(() => {
+    setPreviousVersions((prev) => {
+      if (prev.currentVersion && prev.versionsArray.length) {
+        const newCurrentVersion = Math.max(0, Math.min(prev.currentVersion - 1, prev.versionsArray.length - 1));
+
+        onUpdate(JSON.parse(prev.versionsArray[newCurrentVersion]));
+
+        return {
+          ...prev,
+          currentVersion: newCurrentVersion,
+        };
+      }
+
+      return prev;
+    });
+  }, [onUpdate]);
+
+  const handleRedo = useCallback(() => {
+    setPreviousVersions((prev) => {
+      if (prev.currentVersion < prev.versionsArray.length - 1) {
+        const newCurrentVersion = prev.currentVersion + 1;
+
+        onUpdate(JSON.parse(prev.versionsArray[newCurrentVersion]));
+
+        return {
+          ...prev,
+          currentVersion: newCurrentVersion,
+        };
+      }
+
+      return prev;
+    });
+  }, [onUpdate]);
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if ((event.ctrlKey || event.metaKey) && event.code === 'KeyZ') {
+        event.preventDefault();
+        if (event.shiftKey) {
+          handleRedo();
+        } else {
+          handleUndo();
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [handleRedo, handleUndo]);
+
+  const hasUndo = !!previousVersions.currentVersion;
+
+  const hasRedo = previousVersions.currentVersion < previousVersions.versionsArray.length - 1;
+
   return {
     handleAddNewVersion,
+    hasUndo,
+    hasRedo,
   };
 };
 
