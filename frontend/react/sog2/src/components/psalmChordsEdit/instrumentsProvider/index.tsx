@@ -18,11 +18,15 @@ export const useChordsEditInstrumentsContext = () => {
   return useContext(ChordsEditInstrumentsContext);
 };
 
+export enum ChordsEditInstruments {
+  CUT_TO_NEXT_LINE = 'cut',
+}
+
 const ChordsEditInstrumentsProvider = ({ children }: PropsWithChildren) => {
   // instruments
   const instruments = [
     {
-      key: 'cut',
+      key: ChordsEditInstruments.CUT_TO_NEXT_LINE,
       label: 'CUT',
       icon: <NewLineIcon />,
       tooltip: 'Cut line',

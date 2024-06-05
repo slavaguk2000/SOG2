@@ -3,7 +3,7 @@ import React from 'react';
 import { CoupletContentChord } from '../../utils/gql/types';
 import CuttableText from '../CuttableText';
 
-import { useChordsEditInstrumentsContext } from './instrumentsProvider';
+import { ChordsEditInstruments, useChordsEditInstrumentsContext } from './instrumentsProvider';
 import { ChordAndContentWrapper, ChordWrapper } from './styled';
 import { scaleDegreeToKey } from './utils';
 
@@ -18,7 +18,7 @@ interface ChordAndContentProps {
 const ChordAndContent = ({ chord, fontSize, mainKey, textContent, onCut }: ChordAndContentProps) => {
   const { currentInstrument } = useChordsEditInstrumentsContext();
 
-  const isCutting = currentInstrument === 'cut';
+  const isCutting = currentInstrument === ChordsEditInstruments.CUT_TO_NEXT_LINE;
 
   return (
     <ChordAndContentWrapper>
