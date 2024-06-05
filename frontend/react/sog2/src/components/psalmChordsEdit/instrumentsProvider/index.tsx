@@ -2,7 +2,7 @@ import React, { createContext, PropsWithChildren, useContext, useEffect, useStat
 
 import { Box, ButtonGroup } from '@mui/material';
 
-import { SelectableButton } from '../styled';
+import { NewLineIcon, SelectableButton } from '../styled';
 
 type ChordsEditInstrumentsContextType = {
   currentInstrument?: string;
@@ -24,6 +24,7 @@ const ChordsEditInstrumentsProvider = ({ children }: PropsWithChildren) => {
     {
       key: 'cut',
       label: 'CUT',
+      icon: <NewLineIcon />,
     },
     {
       key: 'one',
@@ -70,13 +71,13 @@ const ChordsEditInstrumentsProvider = ({ children }: PropsWithChildren) => {
       <Box display="flex" width="100%">
         <Box width="50px">
           <ButtonGroup orientation="vertical" aria-label="Vertical button group" variant="text">
-            {instruments.map(({ label, key }) => (
+            {instruments.map(({ label, key, icon }) => (
               <SelectableButton
                 selected={selectedInstrument === key}
                 onClick={() => handleInstrumentClick(key)}
                 key={key}
               >
-                {label}
+                {icon ?? label}
               </SelectableButton>
             ))}
           </ButtonGroup>

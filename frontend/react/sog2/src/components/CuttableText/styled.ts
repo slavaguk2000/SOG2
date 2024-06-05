@@ -7,7 +7,7 @@ export const CuttableTextChar = styled('span')`
     padding: 0 0 0 10px;
 
     & > span {
-      border-left: 1px solid #00f3;
+      border-left: 3px dashed #00f3;
     }
   }
 `;
