@@ -60,14 +60,17 @@ export const SelectableButton = styled(Button, {
     return propName !== 'selected';
   },
 })<{ selected: boolean }>`
+  border-radius: 0;
+
   ${({ selected }) =>
     selected
       ? `
-  background: #0000ff55;
-  &:hover {
-    background: #0000ff66;
-  }
-  `
+        background: #0000ff55;
+        
+        &:hover {
+            background: #0000ff66;
+        }
+      `
       : ''}
 `;
 

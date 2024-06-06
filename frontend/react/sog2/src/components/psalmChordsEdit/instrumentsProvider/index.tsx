@@ -1,7 +1,12 @@
 import React, { createContext, PropsWithChildren, useContext, useEffect, useState } from 'react';
 
+import EditNoteIcon from '@mui/icons-material/EditNote';
+import TextDecreaseIcon from '@mui/icons-material/TextDecrease';
+import TextIncreaseIcon from '@mui/icons-material/TextIncrease';
+import TypeSpecimenIcon from '@mui/icons-material/TypeSpecimen';
 import { Box, ButtonGroup, Tooltip } from '@mui/material';
 
+import EditChordIcon from '../../../icons/EditChordIcon';
 import { NewLineIcon, SelectableButton } from '../styled';
 
 type ChordsEditInstrumentsContextType = {
@@ -20,6 +25,11 @@ export const useChordsEditInstrumentsContext = () => {
 
 export enum ChordsEditInstruments {
   CUT_TO_NEXT_LINE = 'cut',
+  EDIT_CHORD = 'editChord',
+  REMOVE_CHORD = 'removeChord',
+  ADD_CHORD = 'addChord',
+  LINK_CHORDS = 'linkChords',
+  EDIT_TEXT = 'editText',
 }
 
 const ChordsEditInstrumentsProvider = ({ children }: PropsWithChildren) => {
@@ -27,17 +37,33 @@ const ChordsEditInstrumentsProvider = ({ children }: PropsWithChildren) => {
   const instruments = [
     {
       key: ChordsEditInstruments.CUT_TO_NEXT_LINE,
-      label: 'CUT',
       icon: <NewLineIcon />,
       tooltip: 'Cut line',
     },
     {
-      key: 'one',
-      label: 'one',
+      key: ChordsEditInstruments.REMOVE_CHORD,
+      icon: <TextDecreaseIcon />,
+      tooltip: 'Remove chord',
     },
     {
-      key: 'two',
-      label: 'two',
+      key: ChordsEditInstruments.EDIT_CHORD,
+      icon: <EditChordIcon />,
+      tooltip: 'Edit chord',
+    },
+    {
+      key: ChordsEditInstruments.ADD_CHORD,
+      icon: <TextIncreaseIcon />,
+      tooltip: 'Add chord',
+    },
+    {
+      key: ChordsEditInstruments.LINK_CHORDS,
+      icon: <TypeSpecimenIcon />,
+      tooltip: 'Link chords',
+    },
+    {
+      key: ChordsEditInstruments.EDIT_TEXT,
+      icon: <EditNoteIcon />,
+      tooltip: 'Edit text',
     },
   ];
   const [selectedInstrument, setSelectedInstrument] = useState<string | null>(null);
@@ -75,11 +101,11 @@ const ChordsEditInstrumentsProvider = ({ children }: PropsWithChildren) => {
     >
       <Box display="flex" width="100%">
         <Box width="50px">
-          <ButtonGroup orientation="vertical" aria-label="Vertical button group" variant="text">
-            {instruments.map(({ label, key, icon, tooltip }) => (
+          <ButtonGroup orientation="vertical" aria-label="Vertical button group" variant="text" fullWidth>
+            {instruments.map(({ key, icon, tooltip }) => (
               <Tooltip title={tooltip} key={key} placement="right">
                 <SelectableButton selected={selectedInstrument === key} onClick={() => handleInstrumentClick(key)}>
-                  {icon ?? label}
+                  {icon}
                 </SelectableButton>
               </Tooltip>
             ))}
