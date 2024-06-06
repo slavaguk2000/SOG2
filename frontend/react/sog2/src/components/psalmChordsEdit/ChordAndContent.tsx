@@ -3,7 +3,7 @@ import React from 'react';
 import { CoupletContentChord } from '../../utils/gql/types';
 import CuttableText from '../CuttableText';
 
-import { ChordsEditInstruments, useChordsEditInstrumentsContext } from './instrumentsProvider';
+import { useChordsEditInstrumentsContext } from './instrumentsProvider';
 import { ChordAndContentWrapper, ChordWrapper } from './styled';
 import { scaleDegreeToKey } from './utils';
 
@@ -13,17 +13,36 @@ interface ChordAndContentProps {
   mainKey: number;
   textContent: string;
   onCut: (charPosition: number) => void;
+  onDeleteRequest: () => void;
+  firstInLine?: boolean;
 }
 
-const ChordAndContent = ({ chord, fontSize, mainKey, textContent, onCut }: ChordAndContentProps) => {
-  const { currentInstrument } = useChordsEditInstrumentsContext();
+const ChordAndContent = ({
+  chord,
+  fontSize,
+  mainKey,
+  textContent,
+  onCut,
+  onDeleteRequest,
+  firstInLine,
+}: ChordAndContentProps) => {
+  const { isCutting, isChordDeleting } = useChordsEditInstrumentsContext();
 
-  const isCutting = currentInstrument === ChordsEditInstruments.CUT_TO_NEXT_LINE;
+  const handleChordClick = () => {
+    if (isChordDeleting) {
+      onDeleteRequest();
+    }
+  };
 
   return (
     <ChordAndContentWrapper>
       {chord && (
-        <ChordWrapper contentFontSize={fontSize}>
+        <ChordWrapper
+          nonDeletable={firstInLine}
+          onClick={handleChordClick}
+          isChordDeleting={isChordDeleting}
+          contentFontSize={fontSize}
+        >
           {chord.chordTemplate.replace('$', scaleDegreeToKey[(mainKey + chord.rootNote) % 12] ?? '')}
         </ChordWrapper>
       )}

@@ -10,10 +10,22 @@ import EditChordIcon from '../../../icons/EditChordIcon';
 import { NewLineIcon, SelectableButton } from '../styled';
 
 type ChordsEditInstrumentsContextType = {
-  currentInstrument?: string;
+  isCutting: boolean;
+  isChordEditing: boolean;
+  isChordDeleting: boolean;
+  isChordAdding: boolean;
+  isChordLinking: boolean;
+  isTextEditing: boolean;
 };
 
-const defaultValue: ChordsEditInstrumentsContextType = {};
+const defaultValue: ChordsEditInstrumentsContextType = {
+  isCutting: false,
+  isChordEditing: false,
+  isChordDeleting: false,
+  isChordAdding: false,
+  isChordLinking: false,
+  isTextEditing: false,
+};
 
 export const ChordsEditInstrumentsContext = createContext<ChordsEditInstrumentsContextType>(defaultValue);
 
@@ -96,7 +108,12 @@ const ChordsEditInstrumentsProvider = ({ children }: PropsWithChildren) => {
   return (
     <ChordsEditInstrumentsContext.Provider
       value={{
-        currentInstrument: selectedInstrument ?? undefined,
+        isCutting: selectedInstrument === ChordsEditInstruments.CUT_TO_NEXT_LINE,
+        isChordEditing: selectedInstrument === ChordsEditInstruments.EDIT_CHORD,
+        isChordDeleting: selectedInstrument === ChordsEditInstruments.REMOVE_CHORD,
+        isChordAdding: selectedInstrument === ChordsEditInstruments.ADD_CHORD,
+        isChordLinking: selectedInstrument === ChordsEditInstruments.LINK_CHORDS,
+        isTextEditing: selectedInstrument === ChordsEditInstruments.EDIT_TEXT,
       }}
     >
       <Box display="flex" width="100%">

@@ -14,9 +14,17 @@ interface PsalmCoupletViewProps {
   mainKey: number;
   splitByLines?: boolean;
   onCut: (coupletContentId: string, charPosition: number) => void;
+  onRemoveChord: (coupletContentId: string) => void;
 }
 
-const PsalmCoupletView = ({ coupletContent, fontSize, mainKey, splitByLines, onCut }: PsalmCoupletViewProps) => {
+const PsalmCoupletView = ({
+  coupletContent,
+  fontSize,
+  mainKey,
+  splitByLines,
+  onCut,
+  onRemoveChord,
+}: PsalmCoupletViewProps) => {
   const filteredCoupletContent = useMemo(
     () =>
       coupletContent.map((content, idx) => ({
@@ -50,14 +58,16 @@ const PsalmCoupletView = ({ coupletContent, fontSize, mainKey, splitByLines, onC
     <PsalmChordsViewCoupletWrapper>
       {contentByLines.map((coupletContentLine, idx) => (
         <Typography key={idx} align="left" lineHeight={2} fontSize={fontSize} variant="body1">
-          {coupletContentLine.map(({ text, id: contentId, chord }) => (
+          {coupletContentLine.map(({ text, id: contentId, chord }, idxInLine) => (
             <ChordAndContent
+              firstInLine={!idxInLine}
               key={contentId}
               chord={chord ?? undefined}
               fontSize={fontSize}
               mainKey={mainKey}
               textContent={text}
               onCut={(charPosition) => onCut(contentId, charPosition)}
+              onDeleteRequest={() => onRemoveChord(contentId)}
             />
           ))}
         </Typography>

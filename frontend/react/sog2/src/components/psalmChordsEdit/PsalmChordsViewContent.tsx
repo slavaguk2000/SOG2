@@ -10,7 +10,7 @@ interface PsalmChordsViewContent {
 }
 
 const PsalmChordsViewContent = ({ fontSize, mainKey }: PsalmChordsViewContent) => {
-  const { handleCutToNextLine, chordsData } = useEditableChordsData();
+  const { handleCutToNextLine, handleRemoveChord, chordsData } = useEditableChordsData();
 
   return (
     <PsalmChordsViewContentWrapper>
@@ -22,6 +22,7 @@ const PsalmChordsViewContent = ({ fontSize, mainKey }: PsalmChordsViewContent) =
           mainKey={mainKey}
           splitByLines
           onCut={(coupletContentId, charPosition) => handleCutToNextLine(id, coupletContentId, charPosition)}
+          onRemoveChord={(coupletContentId) => handleRemoveChord(id, coupletContentId)}
         />
       ))}
     </PsalmChordsViewContentWrapper>

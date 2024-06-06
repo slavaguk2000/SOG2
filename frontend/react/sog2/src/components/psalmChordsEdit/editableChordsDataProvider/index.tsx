@@ -4,10 +4,12 @@ import usePreviousVersions from '../../../hooks/usePreviousVersions';
 import { PsalmData } from '../../../utils/gql/types';
 
 import implementCutToNextLine from './implementCutToNextLine';
+import implementRemoveChord from './implementRemoveChord';
 
 type ChordsDataContextType = {
   chordsData: PsalmData;
   handleCutToNextLine: (coupletId: string, coupletContentId: string, charPosition: number) => void;
+  handleRemoveChord: (coupletId: string, coupletContentId: string) => void;
 };
 
 const defaultValue: ChordsDataContextType = {
@@ -19,6 +21,7 @@ const defaultValue: ChordsDataContextType = {
     },
   },
   handleCutToNextLine: () => true,
+  handleRemoveChord: () => true,
 };
 
 export const ChordsDataContextTypeContext = createContext<ChordsDataContextType>(defaultValue);
@@ -48,11 +51,17 @@ const EditableChordsDataProvider = ({ children, initialData }: EditableChordsDat
     chordsData,
   });
 
+  const { handleRemoveChord } = implementRemoveChord({
+    setNewChordsData,
+    chordsData,
+  });
+
   return (
     <ChordsDataContextTypeContext.Provider
       value={{
         chordsData,
         handleCutToNextLine,
+        handleRemoveChord,
       }}
     >
       {children}

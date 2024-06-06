@@ -9,6 +9,7 @@ export const PsalmChordsViewWrapper = styled(Box)`
   padding: 10px;
   background: white;
   color: black;
+  user-select: none;
 `;
 
 export const PsalmChordsViewTitleWrapper = styled(Box)`
@@ -33,20 +34,41 @@ export const PsalmChordsViewCoupletWrapper = styled(Box)`
   align-items: flex-start;
 `;
 
+interface ChordWrapperProps {
+  contentFontSize: number;
+  isChordDeleting?: boolean;
+  nonDeletable?: boolean;
+}
+
 export const ChordWrapper = styled('span', {
   shouldForwardProp(propName: PropertyKey) {
-    return propName !== 'contentFontSize';
+    return !(['contentFontSize', 'isChordDeleting'] as PropertyKey[]).includes(propName);
   },
-})<{ contentFontSize: number }>`
+})<ChordWrapperProps>`
   display: flex;
   position: absolute;
   translate: -30%;
-  ${({ contentFontSize }) => contentFontSize && `top: -${contentFontSize * 0.75}px;`}
   left: 0;
   line-height: 1;
   letter-spacing: -0.1em;
   font-style: italic;
   font-weight: bold;
+  transition: color ease-in 1s;
+
+  ${({ isChordDeleting, nonDeletable }) =>
+    isChordDeleting && !nonDeletable
+      ? `
+      &:hover {
+        text-decoration: line-through red;
+        cursor: none;
+        color: red;
+      }
+  `
+      : ''}
+
+  ${({ contentFontSize }) => contentFontSize && `top: -${contentFontSize * 0.75}px;`}
+  
+  ${({ nonDeletable, isChordDeleting }) => (nonDeletable && isChordDeleting ? `opacity: 0.3;` : '')}
 `;
 
 export const ChordAndContentWrapper = styled('span')`
