@@ -2,9 +2,10 @@ import React, { useMemo } from 'react';
 
 import { Typography } from '@mui/material';
 
-import { CoupletContent } from '../../utils/gql/types';
+import { CoupletContent, CoupletContentChord } from '../../utils/gql/types';
 
 import ChordAndContent from './ChordAndContent';
+import { useChordsEditInstrumentsContext } from './instrumentsProvider';
 import { PsalmChordsViewCoupletWrapper } from './styled';
 import { isChordsEquals } from './utils';
 
@@ -15,6 +16,7 @@ interface PsalmCoupletViewProps {
   splitByLines?: boolean;
   onCut: (coupletContentId: string, charPosition: number) => void;
   onRemoveChord: (coupletContentId: string) => void;
+  onAddChord: (coupletContentId: string, charPosition: number, chord: CoupletContentChord) => void;
 }
 
 const PsalmCoupletView = ({
@@ -24,14 +26,18 @@ const PsalmCoupletView = ({
   splitByLines,
   onCut,
   onRemoveChord,
+  onAddChord,
 }: PsalmCoupletViewProps) => {
+  const { isChordAdding } = useChordsEditInstrumentsContext();
+
   const filteredCoupletContent = useMemo(
     () =>
       coupletContent.map((content, idx) => ({
         ...content,
-        chord: idx && isChordsEquals(content.chord, coupletContent[idx - 1].chord) ? null : content.chord,
+        chord:
+          !isChordAdding && idx && isChordsEquals(content.chord, coupletContent[idx - 1].chord) ? null : content.chord,
       })),
-    [coupletContent],
+    [coupletContent, isChordAdding],
   );
 
   const { contentByLines } = useMemo(
@@ -68,6 +74,7 @@ const PsalmCoupletView = ({
               textContent={text}
               onCut={(charPosition) => onCut(contentId, charPosition)}
               onDeleteRequest={() => onRemoveChord(contentId)}
+              onAddChord={(newChordData, charPosition) => onAddChord(contentId, charPosition, newChordData)}
             />
           ))}
         </Typography>

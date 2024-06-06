@@ -5,9 +5,13 @@ import TextDecreaseIcon from '@mui/icons-material/TextDecrease';
 import TextIncreaseIcon from '@mui/icons-material/TextIncrease';
 import TypeSpecimenIcon from '@mui/icons-material/TypeSpecimen';
 import { Box, ButtonGroup, Tooltip } from '@mui/material';
+import { v4 as uuidv4 } from 'uuid';
 
 import EditChordIcon from '../../../icons/EditChordIcon';
+import { CoupletContentChord } from '../../../utils/gql/types';
 import { NewLineIcon, SelectableButton } from '../styled';
+
+import ChordEditorDialog, { ChordDialogState } from './ChordEditorDialog';
 
 type ChordsEditInstrumentsContextType = {
   isCutting: boolean;
@@ -16,6 +20,11 @@ type ChordsEditInstrumentsContextType = {
   isChordAdding: boolean;
   isChordLinking: boolean;
   isTextEditing: boolean;
+  openChordEditorDialog: (
+    chordData: CoupletContentChord,
+    mainKey: number,
+    cb: (newChordData: CoupletContentChord) => void,
+  ) => void;
 };
 
 const defaultValue: ChordsEditInstrumentsContextType = {
@@ -25,6 +34,7 @@ const defaultValue: ChordsEditInstrumentsContextType = {
   isChordAdding: false,
   isChordLinking: false,
   isTextEditing: false,
+  openChordEditorDialog: () => true,
 };
 
 export const ChordsEditInstrumentsContext = createContext<ChordsEditInstrumentsContextType>(defaultValue);
@@ -44,41 +54,51 @@ export enum ChordsEditInstruments {
   EDIT_TEXT = 'editText',
 }
 
+const instruments = [
+  {
+    key: ChordsEditInstruments.CUT_TO_NEXT_LINE,
+    icon: <NewLineIcon />,
+    tooltip: 'Cut line',
+  },
+  {
+    key: ChordsEditInstruments.REMOVE_CHORD,
+    icon: <TextDecreaseIcon />,
+    tooltip: 'Remove chord',
+  },
+  {
+    key: ChordsEditInstruments.EDIT_CHORD,
+    icon: <EditChordIcon />,
+    tooltip: 'Edit chord',
+  },
+  {
+    key: ChordsEditInstruments.ADD_CHORD,
+    icon: <TextIncreaseIcon />,
+    tooltip: 'Add chord',
+  },
+  {
+    key: ChordsEditInstruments.LINK_CHORDS,
+    icon: <TypeSpecimenIcon />,
+    tooltip: 'Link chords',
+  },
+  {
+    key: ChordsEditInstruments.EDIT_TEXT,
+    icon: <EditNoteIcon />,
+    tooltip: 'Edit text',
+  },
+];
+
 const ChordsEditInstrumentsProvider = ({ children }: PropsWithChildren) => {
-  // instruments
-  const instruments = [
-    {
-      key: ChordsEditInstruments.CUT_TO_NEXT_LINE,
-      icon: <NewLineIcon />,
-      tooltip: 'Cut line',
-    },
-    {
-      key: ChordsEditInstruments.REMOVE_CHORD,
-      icon: <TextDecreaseIcon />,
-      tooltip: 'Remove chord',
-    },
-    {
-      key: ChordsEditInstruments.EDIT_CHORD,
-      icon: <EditChordIcon />,
-      tooltip: 'Edit chord',
-    },
-    {
-      key: ChordsEditInstruments.ADD_CHORD,
-      icon: <TextIncreaseIcon />,
-      tooltip: 'Add chord',
-    },
-    {
-      key: ChordsEditInstruments.LINK_CHORDS,
-      icon: <TypeSpecimenIcon />,
-      tooltip: 'Link chords',
-    },
-    {
-      key: ChordsEditInstruments.EDIT_TEXT,
-      icon: <EditNoteIcon />,
-      tooltip: 'Edit text',
-    },
-  ];
   const [selectedInstrument, setSelectedInstrument] = useState<string | null>(null);
+  const [chordEditorDialogState, setChordEditorDialogState] = useState<ChordDialogState>({
+    open: false,
+    chordData: {
+      id: uuidv4(),
+      chordTemplate: '$m',
+      rootNote: 0,
+    },
+    mainKey: 0,
+    cb: () => true,
+  });
 
   const handleInstrumentClick = (key: string) => {
     setSelectedInstrument((p) => {
@@ -105,6 +125,19 @@ const ChordsEditInstrumentsProvider = ({ children }: PropsWithChildren) => {
     };
   }, []);
 
+  const handleOpenChordEditorDialog = (
+    chordData: CoupletContentChord,
+    mainKey: number,
+    cb: (newChordData: CoupletContentChord) => void,
+  ) => {
+    setChordEditorDialogState({
+      open: true,
+      chordData,
+      mainKey,
+      cb,
+    });
+  };
+
   return (
     <ChordsEditInstrumentsContext.Provider
       value={{
@@ -114,6 +147,7 @@ const ChordsEditInstrumentsProvider = ({ children }: PropsWithChildren) => {
         isChordAdding: selectedInstrument === ChordsEditInstruments.ADD_CHORD,
         isChordLinking: selectedInstrument === ChordsEditInstruments.LINK_CHORDS,
         isTextEditing: selectedInstrument === ChordsEditInstruments.EDIT_TEXT,
+        openChordEditorDialog: handleOpenChordEditorDialog,
       }}
     >
       <Box display="flex" width="100%">
@@ -129,6 +163,7 @@ const ChordsEditInstrumentsProvider = ({ children }: PropsWithChildren) => {
           </ButtonGroup>
         </Box>
         {children}
+        <ChordEditorDialog state={chordEditorDialogState} setState={setChordEditorDialogState} />
       </Box>
     </ChordsEditInstrumentsContext.Provider>
   );

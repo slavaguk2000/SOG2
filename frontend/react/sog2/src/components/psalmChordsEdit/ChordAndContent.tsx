@@ -3,6 +3,7 @@ import React from 'react';
 import { CoupletContentChord } from '../../utils/gql/types';
 import CuttableText from '../CuttableText';
 
+import ChordableText from './ChordableText';
 import { useChordsEditInstrumentsContext } from './instrumentsProvider';
 import { ChordAndContentWrapper, ChordWrapper } from './styled';
 import { scaleDegreeToKey } from './utils';
@@ -15,6 +16,7 @@ interface ChordAndContentProps {
   onCut: (charPosition: number) => void;
   onDeleteRequest: () => void;
   firstInLine?: boolean;
+  onAddChord: (newChordData: CoupletContentChord, charPosition: number) => void;
 }
 
 const ChordAndContent = ({
@@ -25,8 +27,9 @@ const ChordAndContent = ({
   onCut,
   onDeleteRequest,
   firstInLine,
+  onAddChord,
 }: ChordAndContentProps) => {
-  const { isCutting, isChordDeleting } = useChordsEditInstrumentsContext();
+  const { isCutting, isChordAdding, isChordDeleting } = useChordsEditInstrumentsContext();
 
   const handleChordClick = () => {
     if (isChordDeleting) {
@@ -35,7 +38,11 @@ const ChordAndContent = ({
   };
 
   return (
-    <ChordAndContentWrapper>
+    <ChordAndContentWrapper
+      sx={{
+        verticalAlign: 'sub',
+      }}
+    >
       {chord && (
         <ChordWrapper
           nonDeletable={firstInLine}
@@ -46,7 +53,13 @@ const ChordAndContent = ({
           {chord.chordTemplate.replace('$', scaleDegreeToKey[(mainKey + chord.rootNote) % 12] ?? '')}
         </ChordWrapper>
       )}
-      {isCutting ? <CuttableText onCharClick={onCut} text={textContent} /> : textContent}
+      {isCutting ? (
+        <CuttableText onCharClick={onCut} text={textContent} />
+      ) : isChordAdding ? (
+        <ChordableText fontSize={fontSize} text={textContent} onAddChord={onAddChord} />
+      ) : (
+        textContent
+      )}
     </ChordAndContentWrapper>
   );
 };

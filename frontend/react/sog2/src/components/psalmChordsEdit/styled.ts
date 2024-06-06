@@ -73,7 +73,6 @@ export const ChordWrapper = styled('span', {
 
 export const ChordAndContentWrapper = styled('span')`
   position: relative;
-  vertical-align: sub;
   font-family: 'Times New Roman', sans-serif;
 `;
 

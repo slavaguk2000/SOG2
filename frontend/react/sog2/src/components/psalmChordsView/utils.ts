@@ -39,3 +39,5 @@ export const isChordsEquals = (chordA: CoupletContentChord, chordB: CoupletConte
   (['rootNote', 'chordTemplate', 'bassNote'] as Array<keyof CoupletContentChord>).every(
     (key) => chordB[key] === chordA[key],
   );
+
+export const getScaleDegreeByMainKey = (mainKey: number, rootNote: number) => (mainKey + rootNote) % 12;

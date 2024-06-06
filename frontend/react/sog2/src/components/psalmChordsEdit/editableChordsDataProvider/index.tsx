@@ -1,8 +1,10 @@
 import React, { createContext, PropsWithChildren, useContext, useState } from 'react';
 
 import usePreviousVersions from '../../../hooks/usePreviousVersions';
-import { PsalmData } from '../../../utils/gql/types';
+import { CoupletContentChord, PsalmData } from '../../../utils/gql/types';
+import { keyToScaleDegree } from '../utils';
 
+import implementAddChord from './implementAddChord';
 import implementCutToNextLine from './implementCutToNextLine';
 import implementRemoveChord from './implementRemoveChord';
 
@@ -10,6 +12,13 @@ type ChordsDataContextType = {
   chordsData: PsalmData;
   handleCutToNextLine: (coupletId: string, coupletContentId: string, charPosition: number) => void;
   handleRemoveChord: (coupletId: string, coupletContentId: string) => void;
+  handleAddChord: (
+    coupletId: string,
+    coupletContentId: string,
+    charPosition: number,
+    chord: CoupletContentChord,
+  ) => void;
+  mainKey: number;
 };
 
 const defaultValue: ChordsDataContextType = {
@@ -22,6 +31,8 @@ const defaultValue: ChordsDataContextType = {
   },
   handleCutToNextLine: () => true,
   handleRemoveChord: () => true,
+  handleAddChord: () => true,
+  mainKey: 0,
 };
 
 export const ChordsDataContextTypeContext = createContext<ChordsDataContextType>(defaultValue);
@@ -56,12 +67,21 @@ const EditableChordsDataProvider = ({ children, initialData }: EditableChordsDat
     chordsData,
   });
 
+  const { handleAddChord } = implementAddChord({
+    setNewChordsData,
+    chordsData,
+  });
+
+  const mainKey = keyToScaleDegree[chordsData.psalm.defaultTonality as string] ?? 0;
+
   return (
     <ChordsDataContextTypeContext.Provider
       value={{
         chordsData,
         handleCutToNextLine,
         handleRemoveChord,
+        handleAddChord,
+        mainKey,
       }}
     >
       {children}

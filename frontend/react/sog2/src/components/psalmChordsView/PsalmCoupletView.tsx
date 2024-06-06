@@ -5,7 +5,7 @@ import { Typography } from '@mui/material';
 import { CoupletContent } from '../../utils/gql/types';
 
 import { ChordAndContentWrapper, ChordWrapper, PsalmChordsViewCoupletWrapper } from './styled';
-import { isChordsEquals, scaleDegreeToKey } from './utils';
+import { getScaleDegreeByMainKey, isChordsEquals, scaleDegreeToKey } from './utils';
 
 interface PsalmCoupletViewProps {
   coupletContent: CoupletContent[];
@@ -52,7 +52,10 @@ const PsalmCoupletView = ({ coupletContent, fontSize, mainKey, splitByLines }: P
             <ChordAndContentWrapper key={contentId}>
               {chord && (
                 <ChordWrapper contentFontSize={fontSize}>
-                  {chord.chordTemplate.replace('$', scaleDegreeToKey[(mainKey + chord.rootNote) % 12] ?? '')}
+                  {chord.chordTemplate.replace(
+                    '$',
+                    scaleDegreeToKey[getScaleDegreeByMainKey(mainKey, chord.rootNote)] ?? '',
+                  )}
                 </ChordWrapper>
               )}
               {text}
