@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { v4 as uuidv4 } from 'uuid';
+
 import PsalmChordsEdit from '../components/psalmChordsEdit';
 import EditableChordsDataProvider from '../components/psalmChordsEdit/editableChordsDataProvider';
 import { MusicalKey } from '../utils/gql/types';
@@ -284,7 +286,16 @@ const testData = {
         ],
       },
     },
-  ],
+  ].map((couplet) => ({
+    ...couplet,
+    coupletContent: couplet.coupletContent.map((content) => ({
+      ...content,
+      chord: {
+        ...content.chord,
+        id: uuidv4(),
+      },
+    })),
+  })),
 };
 
 const PsalmChordEditPage = () => {

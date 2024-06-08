@@ -4,6 +4,7 @@ import { CoupletContentChord } from '../../utils/gql/types';
 import CuttableText from '../CuttableText';
 
 import ChordableText from './ChordableText';
+import { useEditableChordsData } from './editableChordsDataProvider';
 import { useChordsEditInstrumentsContext } from './instrumentsProvider';
 import { ChordAndContentWrapper, ChordWrapper } from './styled';
 import { scaleDegreeToKey } from './utils';
@@ -29,11 +30,15 @@ const ChordAndContent = ({
   firstInLine,
   onAddChord,
 }: ChordAndContentProps) => {
-  const { isCutting, isChordAdding, isChordDeleting } = useChordsEditInstrumentsContext();
+  const { isCutting, isChordAdding, isChordDeleting, isChordEditing, openChordEditorDialog } =
+    useChordsEditInstrumentsContext();
+  const { handleEditChord } = useEditableChordsData();
 
   const handleChordClick = () => {
     if (isChordDeleting) {
       onDeleteRequest();
+    } else if (isChordEditing && chord) {
+      openChordEditorDialog(chord, mainKey, handleEditChord);
     }
   };
 
@@ -49,6 +54,7 @@ const ChordAndContent = ({
           onClick={handleChordClick}
           isChordDeleting={isChordDeleting}
           contentFontSize={fontSize}
+          isChordEditing={isChordEditing}
         >
           {chord.chordTemplate.replace('$', scaleDegreeToKey[(mainKey + chord.rootNote) % 12] ?? '')}
         </ChordWrapper>

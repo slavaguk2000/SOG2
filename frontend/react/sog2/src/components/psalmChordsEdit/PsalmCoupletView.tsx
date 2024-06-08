@@ -28,16 +28,18 @@ const PsalmCoupletView = ({
   onRemoveChord,
   onAddChord,
 }: PsalmCoupletViewProps) => {
-  const { isChordAdding } = useChordsEditInstrumentsContext();
+  const { isChordAdding, isChordEditing } = useChordsEditInstrumentsContext();
 
   const filteredCoupletContent = useMemo(
     () =>
       coupletContent.map((content, idx) => ({
         ...content,
         chord:
-          !isChordAdding && idx && isChordsEquals(content.chord, coupletContent[idx - 1].chord) ? null : content.chord,
+          !(isChordAdding || isChordEditing) && idx && isChordsEquals(content.chord, coupletContent[idx - 1].chord)
+            ? null
+            : content.chord,
       })),
-    [coupletContent, isChordAdding],
+    [coupletContent, isChordAdding, isChordEditing],
   );
 
   const { contentByLines } = useMemo(
