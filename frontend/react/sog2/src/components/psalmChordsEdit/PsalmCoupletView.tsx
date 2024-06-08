@@ -41,18 +41,20 @@ const PsalmCoupletView = ({
   onLinkChord,
   onStartLinkingChord,
 }: PsalmCoupletViewProps) => {
-  const { isChordAdding, isChordEditing } = useChordsEditInstrumentsContext();
+  const { isChordAdding, isChordEditing, isChordLinking } = useChordsEditInstrumentsContext();
 
   const filteredCoupletContent: Array<FilteredCoupletContent> = useMemo(
     () =>
       coupletContent.map((content, idx) => ({
         ...content,
         chord:
-          !(isChordAdding || isChordEditing) && idx && isChordsEquals(content.chord, coupletContent[idx - 1].chord)
+          !(isChordAdding || isChordEditing || isChordLinking) &&
+          idx &&
+          isChordsEquals(content.chord, coupletContent[idx - 1].chord)
             ? null
             : content.chord,
       })),
-    [coupletContent, isChordAdding, isChordEditing],
+    [coupletContent, isChordAdding, isChordEditing, isChordLinking],
   );
 
   const { contentByLines } = useMemo(

@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 
-import { getChordByLinkingChordData, isChordsEquals } from '../../utils/chordUtils';
+import { getChordByLinkingChordData } from '../../utils/chordUtils';
 import { CoupletContentChord } from '../../utils/gql/types';
 
 import { useEditableChordsData } from './editableChordsDataProvider';
@@ -31,27 +31,19 @@ const PsalmChordsViewContent = ({ fontSize, mainKey }: PsalmChordsViewContent) =
         return prev;
       }
 
-      let nextData = {
+      const nextData = {
         ...prev,
+        coupletContentIdx: prev.coupletContentIdx + 1,
       };
 
-      do {
-        nextData = {
-          ...nextData,
-          coupletContentIdx: nextData.coupletContentIdx + 1,
-        };
+      if (nextData.coupletContentIdx >= chordsData.couplets[nextData.coupletIdx]?.coupletContent.length ?? 0) {
+        nextData.coupletIdx++;
+        nextData.coupletContentIdx = 0;
 
-        if (nextData.coupletContentIdx >= chordsData.couplets[nextData.coupletIdx]?.coupletContent.length ?? 0) {
-          nextData.coupletIdx++;
-          nextData.coupletContentIdx = 0;
-
-          if (nextData.coupletIdx >= chordsData.couplets.length) {
-            return null;
-          }
+        if (nextData.coupletIdx >= chordsData.couplets.length) {
+          return null;
         }
-      } while (
-        isChordsEquals(getChordByLinkingChordData(chordsData, prev), getChordByLinkingChordData(chordsData, nextData))
-      );
+      }
 
       return nextData;
     });
