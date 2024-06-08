@@ -2,8 +2,13 @@ import { styled } from '@mui/material';
 
 import { ChordAndContentWrapper, ChordWrapper } from '../styled';
 
-export const ChordableCharChordWrapper = styled(ChordWrapper)`
+export const ChordableCharChordWrapper = styled(ChordWrapper, {
+  shouldForwardProp(propName: PropertyKey) {
+    return propName !== 'color';
+  },
+})<{ color?: string }>`
   opacity: 0;
+  ${({ color }) => (color ? `color: ${color}` : '')}
 `;
 
 export const ChordableCharChordAndContentWrapper = styled(ChordAndContentWrapper, {

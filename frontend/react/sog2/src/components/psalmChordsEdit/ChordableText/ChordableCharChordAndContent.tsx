@@ -20,6 +20,7 @@ interface ChordableCharChordAndContentProps {
   onAddChord: (newChordData: CoupletContentChord) => void;
   onLinkChord: (chordData: CoupletContentChord) => void;
   existingChordData?: ChordWithMainKeyData;
+  chordColor?: string;
 }
 
 const ChordableCharChordAndContent = ({
@@ -28,6 +29,7 @@ const ChordableCharChordAndContent = ({
   onAddChord,
   onLinkChord,
   existingChordData,
+  chordColor,
 }: ChordableCharChordAndContentProps) => {
   const { openChordEditorDialog } = useChordsEditInstrumentsContext();
   const { mainKey } = useEditableChordsData();
@@ -50,7 +52,7 @@ const ChordableCharChordAndContent = ({
 
   return (
     <ChordableCharChordAndContentWrapper onClick={handleChordClick}>
-      <ChordableCharChordWrapper contentFontSize={fontSize}>
+      <ChordableCharChordWrapper contentFontSize={fontSize} color={chordColor}>
         {existingChordData ? getChordText(existingChordData.chord, existingChordData.mainKey) : 'A'}
       </ChordableCharChordWrapper>
       {char}

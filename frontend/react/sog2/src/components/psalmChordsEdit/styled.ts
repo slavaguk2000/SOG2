@@ -41,6 +41,7 @@ interface ChordWrapperProps {
   isChordEditing?: boolean;
   isSourceChordChoosing?: boolean;
   isCurrentChordLinking?: boolean;
+  isDestinationChordChoosing?: boolean;
 }
 
 export const ChordWrapper = styled('span', {
@@ -53,6 +54,7 @@ export const ChordWrapper = styled('span', {
         'nonDeletable',
         'isSourceChordChoosing',
         'isCurrentChordLinking',
+        'isDestinationChordChoosing',
       ] as PropertyKey[]
     ).includes(propName);
   },
@@ -79,12 +81,13 @@ export const ChordWrapper = styled('span', {
   `
       : ''}
 
-  ${({ isChordEditing, isSourceChordChoosing }) =>
-    isChordEditing || isSourceChordChoosing
+  ${({ isChordEditing, isSourceChordChoosing, isDestinationChordChoosing }) =>
+    isChordEditing || isSourceChordChoosing || isDestinationChordChoosing
       ? `
       &:hover {
         cursor: pointer;
         scale: 1.2;
+        ${isDestinationChordChoosing ? 'color: #37f;' : ''}
       }
   `
       : ''}

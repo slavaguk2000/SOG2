@@ -50,6 +50,18 @@ const ChordAndContent = ({
   const isSourceChordChoosing = isChordLinking && !linkingChordData;
   const isDestinationChordChoosing = isChordLinking && !!linkingChordData;
 
+  const linkingChordDataChord =
+    linkingChordData &&
+    chordsData.couplets[linkingChordData.coupletIdx]?.coupletContent[linkingChordData.coupletContentIdx]?.chord;
+
+  const existingChordData =
+    isDestinationChordChoosing && linkingChordData && linkingChordDataChord
+      ? {
+          chord: linkingChordDataChord,
+          mainKey,
+        }
+      : undefined;
+
   const handleChordClick = () => {
     if (isChordDeleting) {
       onDeleteRequest();
@@ -58,13 +70,11 @@ const ChordAndContent = ({
         openChordEditorDialog(chord, mainKey, handleEditChord);
       } else if (isSourceChordChoosing) {
         onStartLinkingChord();
+      } else if (isDestinationChordChoosing && existingChordData) {
+        onLinkChord(existingChordData.chord, 0);
       }
     }
   };
-
-  const linkingChordDataChord =
-    linkingChordData &&
-    chordsData.couplets[linkingChordData.coupletIdx]?.coupletContent[linkingChordData.coupletContentIdx]?.chord;
 
   return (
     <ChordAndContentWrapper
@@ -80,6 +90,7 @@ const ChordAndContent = ({
           contentFontSize={fontSize}
           isChordEditing={isChordEditing}
           isSourceChordChoosing={isSourceChordChoosing}
+          isDestinationChordChoosing={isDestinationChordChoosing}
           isCurrentChordLinking={!!(linkingChordId && linkingChordId === chord.id)}
         >
           {getChordText(chord, mainKey)}
@@ -93,14 +104,8 @@ const ChordAndContent = ({
           text={textContent}
           onAddChord={onAddChord}
           onLinkChord={onLinkChord}
-          existingChordData={
-            isDestinationChordChoosing && linkingChordData && linkingChordDataChord
-              ? {
-                  chord: linkingChordDataChord,
-                  mainKey,
-                }
-              : undefined
-          }
+          existingChordData={existingChordData}
+          chordColor={isDestinationChordChoosing ? '#37f' : undefined}
         />
       ) : (
         textContent
