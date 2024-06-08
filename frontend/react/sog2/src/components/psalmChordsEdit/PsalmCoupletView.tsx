@@ -2,12 +2,12 @@ import React, { useMemo } from 'react';
 
 import { Typography } from '@mui/material';
 
+import { isChordsEquals } from '../../utils/chordUtils';
 import { CoupletContent, CoupletContentChord } from '../../utils/gql/types';
 
 import ChordAndContent from './ChordAndContent';
 import { useChordsEditInstrumentsContext } from './instrumentsProvider';
 import { PsalmChordsViewCoupletWrapper } from './styled';
-import { isChordsEquals } from './utils';
 
 interface PsalmCoupletViewProps {
   coupletContent: CoupletContent[];
@@ -17,6 +17,17 @@ interface PsalmCoupletViewProps {
   onCut: (coupletContentId: string, charPosition: number) => void;
   onRemoveChord: (coupletContentId: string) => void;
   onAddChord: (coupletContentId: string, charPosition: number, chord: CoupletContentChord) => void;
+  onLinkChord: (coupletContentId: string, charPosition: number, chord: CoupletContentChord) => void;
+  onStartLinkingChord: (coupletContentIdx: number) => void;
+}
+
+interface FilteredCoupletContent extends Omit<CoupletContent, 'chord'> {
+  chord: null | CoupletContentChord;
+}
+
+interface NumberedCoupletContent {
+  content: FilteredCoupletContent;
+  idx: number;
 }
 
 const PsalmCoupletView = ({
@@ -27,10 +38,12 @@ const PsalmCoupletView = ({
   onCut,
   onRemoveChord,
   onAddChord,
+  onLinkChord,
+  onStartLinkingChord,
 }: PsalmCoupletViewProps) => {
   const { isChordAdding, isChordEditing } = useChordsEditInstrumentsContext();
 
-  const filteredCoupletContent = useMemo(
+  const filteredCoupletContent: Array<FilteredCoupletContent> = useMemo(
     () =>
       coupletContent.map((content, idx) => ({
         ...content,
@@ -46,19 +59,23 @@ const PsalmCoupletView = ({
     () =>
       splitByLines
         ? filteredCoupletContent.reduce(
-            (acc: { contentByLines: Array<typeof filteredCoupletContent>; prevLine: null | number }, content) => {
+            (acc: { contentByLines: Array<Array<NumberedCoupletContent>>; prevLine: null | number }, content, idx) => {
               if (acc.prevLine !== content.line) {
                 acc.contentByLines.push([]);
                 acc.prevLine = content.line;
               }
 
-              acc.contentByLines[acc.contentByLines.length - 1].push(content);
+              acc.contentByLines[acc.contentByLines.length - 1].push({ content, idx });
 
               return acc;
             },
             { contentByLines: [], prevLine: null },
           )
-        : { contentByLines: [filteredCoupletContent] },
+        : {
+            contentByLines: [
+              filteredCoupletContent.map((content, idx) => ({ content, idx } as NumberedCoupletContent)),
+            ],
+          },
     [filteredCoupletContent, splitByLines],
   );
 
@@ -66,7 +83,7 @@ const PsalmCoupletView = ({
     <PsalmChordsViewCoupletWrapper>
       {contentByLines.map((coupletContentLine, idx) => (
         <Typography key={idx} align="left" lineHeight={2} fontSize={fontSize} variant="body1">
-          {coupletContentLine.map(({ text, id: contentId, chord }, idxInLine) => (
+          {coupletContentLine.map(({ content: { text, id: contentId, chord }, idx }, idxInLine) => (
             <ChordAndContent
               firstInLine={!idxInLine}
               key={contentId}
@@ -77,6 +94,8 @@ const PsalmCoupletView = ({
               onCut={(charPosition) => onCut(contentId, charPosition)}
               onDeleteRequest={() => onRemoveChord(contentId)}
               onAddChord={(newChordData, charPosition) => onAddChord(contentId, charPosition, newChordData)}
+              onLinkChord={(chordData, charPosition) => onLinkChord(contentId, charPosition, chordData)}
+              onStartLinkingChord={() => onStartLinkingChord(idx)}
             />
           ))}
         </Typography>

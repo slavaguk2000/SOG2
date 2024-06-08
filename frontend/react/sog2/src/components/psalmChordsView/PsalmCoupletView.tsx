@@ -2,10 +2,11 @@ import React, { useMemo } from 'react';
 
 import { Typography } from '@mui/material';
 
+import { isChordsEquals } from '../../utils/chordUtils';
 import { CoupletContent } from '../../utils/gql/types';
 
 import { ChordAndContentWrapper, ChordWrapper, PsalmChordsViewCoupletWrapper } from './styled';
-import { getScaleDegreeByMainKey, isChordsEquals, scaleDegreeToKey } from './utils';
+import { getScaleDegreeByMainKey, scaleDegreeToKey } from './utils';
 
 interface PsalmCoupletViewProps {
   coupletContent: CoupletContent[];

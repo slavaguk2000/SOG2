@@ -1,5 +1,3 @@
-import { CoupletContentChord } from '../../utils/gql/types';
-
 export const keyToScaleDegree: Record<string, number> = {
   C: 0,
   'C#': 1,
@@ -34,8 +32,3 @@ export const scaleDegreeToKey: Record<number, string> = {
   10: 'A#',
   11: 'B',
 };
-
-export const isChordsEquals = (chordA: CoupletContentChord, chordB: CoupletContentChord) =>
-  (['rootNote', 'chordTemplate', 'bassNote'] as Array<keyof CoupletContentChord>).every(
-    (key) => chordB[key] === chordA[key],
-  );

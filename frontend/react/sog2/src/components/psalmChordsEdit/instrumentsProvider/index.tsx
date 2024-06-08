@@ -1,4 +1,12 @@
-import React, { createContext, PropsWithChildren, useContext, useEffect, useState } from 'react';
+import React, {
+  createContext,
+  Dispatch,
+  PropsWithChildren,
+  SetStateAction,
+  useContext,
+  useEffect,
+  useState,
+} from 'react';
 
 import EditNoteIcon from '@mui/icons-material/EditNote';
 import TextDecreaseIcon from '@mui/icons-material/TextDecrease';
@@ -13,6 +21,11 @@ import { NewLineIcon, SelectableButton } from '../styled';
 
 import ChordEditorDialog, { ChordDialogState } from './ChordEditorDialog';
 
+export interface LinkingChordData {
+  coupletIdx: number;
+  coupletContentIdx: number;
+}
+
 type ChordsEditInstrumentsContextType = {
   isCutting: boolean;
   isChordEditing: boolean;
@@ -25,6 +38,8 @@ type ChordsEditInstrumentsContextType = {
     mainKey: number,
     cb: (newChordData: CoupletContentChord) => void,
   ) => void;
+  linkingChordData?: LinkingChordData | null;
+  setLinkingChordData: Dispatch<SetStateAction<LinkingChordData | null>>;
 };
 
 const defaultValue: ChordsEditInstrumentsContextType = {
@@ -35,6 +50,7 @@ const defaultValue: ChordsEditInstrumentsContextType = {
   isChordLinking: false,
   isTextEditing: false,
   openChordEditorDialog: () => true,
+  setLinkingChordData: () => true,
 };
 
 export const ChordsEditInstrumentsContext = createContext<ChordsEditInstrumentsContextType>(defaultValue);
@@ -89,6 +105,7 @@ const instruments = [
 
 const ChordsEditInstrumentsProvider = ({ children }: PropsWithChildren) => {
   const [selectedInstrument, setSelectedInstrument] = useState<string | null>(null);
+  const [linkingChordData, setLinkingChordData] = useState<LinkingChordData | null>(null);
   const [chordEditorDialogState, setChordEditorDialogState] = useState<ChordDialogState>({
     open: false,
     chordData: {
@@ -101,6 +118,7 @@ const ChordsEditInstrumentsProvider = ({ children }: PropsWithChildren) => {
   });
 
   const handleInstrumentClick = (key: string) => {
+    setLinkingChordData(null);
     setSelectedInstrument((p) => {
       if (key === p) {
         return null;
@@ -113,8 +131,14 @@ const ChordsEditInstrumentsProvider = ({ children }: PropsWithChildren) => {
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.code === 'Escape') {
+        setLinkingChordData((p) => {
+          if (!p) {
+            setSelectedInstrument(null);
+          }
+
+          return null;
+        });
         event.preventDefault();
-        setSelectedInstrument(null);
       }
     };
 
@@ -148,6 +172,8 @@ const ChordsEditInstrumentsProvider = ({ children }: PropsWithChildren) => {
         isChordLinking: selectedInstrument === ChordsEditInstruments.LINK_CHORDS,
         isTextEditing: selectedInstrument === ChordsEditInstruments.EDIT_TEXT,
         openChordEditorDialog: handleOpenChordEditorDialog,
+        linkingChordData,
+        setLinkingChordData,
       }}
     >
       <Box display="flex" width="100%">

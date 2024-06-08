@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { getChordText } from '../../utils/chordUtils';
 import { CoupletContentChord } from '../../utils/gql/types';
 import CuttableText from '../CuttableText';
 
@@ -7,7 +8,6 @@ import ChordableText from './ChordableText';
 import { useEditableChordsData } from './editableChordsDataProvider';
 import { useChordsEditInstrumentsContext } from './instrumentsProvider';
 import { ChordAndContentWrapper, ChordWrapper } from './styled';
-import { scaleDegreeToKey } from './utils';
 
 interface ChordAndContentProps {
   chord?: CoupletContentChord;
@@ -18,6 +18,8 @@ interface ChordAndContentProps {
   onDeleteRequest: () => void;
   firstInLine?: boolean;
   onAddChord: (newChordData: CoupletContentChord, charPosition: number) => void;
+  onLinkChord: (chordData: CoupletContentChord, charPosition: number) => void;
+  onStartLinkingChord: () => void;
 }
 
 const ChordAndContent = ({
@@ -29,18 +31,38 @@ const ChordAndContent = ({
   onDeleteRequest,
   firstInLine,
   onAddChord,
+  onLinkChord,
+  onStartLinkingChord,
 }: ChordAndContentProps) => {
-  const { isCutting, isChordAdding, isChordDeleting, isChordEditing, openChordEditorDialog } =
-    useChordsEditInstrumentsContext();
-  const { handleEditChord } = useEditableChordsData();
+  const {
+    isCutting,
+    isChordAdding,
+    isChordDeleting,
+    isChordEditing,
+    openChordEditorDialog,
+    isChordLinking,
+    linkingChordData,
+  } = useChordsEditInstrumentsContext();
+  const { chordsData, handleEditChord } = useEditableChordsData();
+
+  const isSourceChordChoosing = isChordLinking && !linkingChordData;
+  const isDestinationChordChoosing = isChordLinking && !!linkingChordData;
 
   const handleChordClick = () => {
     if (isChordDeleting) {
       onDeleteRequest();
-    } else if (isChordEditing && chord) {
-      openChordEditorDialog(chord, mainKey, handleEditChord);
+    } else if (chord) {
+      if (isChordEditing) {
+        openChordEditorDialog(chord, mainKey, handleEditChord);
+      } else if (isSourceChordChoosing) {
+        onStartLinkingChord();
+      }
     }
   };
+
+  const linkingChordDataChord =
+    linkingChordData &&
+    chordsData.couplets[linkingChordData.coupletIdx]?.coupletContent[linkingChordData.coupletContentIdx]?.chord;
 
   return (
     <ChordAndContentWrapper
@@ -55,14 +77,28 @@ const ChordAndContent = ({
           isChordDeleting={isChordDeleting}
           contentFontSize={fontSize}
           isChordEditing={isChordEditing}
+          isSourceChordChoosing={isSourceChordChoosing}
         >
-          {chord.chordTemplate.replace('$', scaleDegreeToKey[(mainKey + chord.rootNote) % 12] ?? '')}
+          {getChordText(chord, mainKey)}
         </ChordWrapper>
       )}
       {isCutting ? (
         <CuttableText onCharClick={onCut} text={textContent} />
-      ) : isChordAdding ? (
-        <ChordableText fontSize={fontSize} text={textContent} onAddChord={onAddChord} />
+      ) : isChordAdding || isDestinationChordChoosing ? (
+        <ChordableText
+          fontSize={fontSize}
+          text={textContent}
+          onAddChord={onAddChord}
+          onLinkChord={onLinkChord}
+          existingChordData={
+            isDestinationChordChoosing && linkingChordData && linkingChordDataChord
+              ? {
+                  chord: linkingChordDataChord,
+                  mainKey,
+                }
+              : undefined
+          }
+        />
       ) : (
         textContent
       )}
