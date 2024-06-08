@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 
 import { getChordByLinkingChordData } from '../../utils/chordUtils';
 import { CoupletContentChord } from '../../utils/gql/types';
@@ -55,6 +55,11 @@ const PsalmChordsViewContent = ({ fontSize, mainKey }: PsalmChordsViewContent) =
     }
   }, [chordsData, linkingChordData, setLinkingChordData]);
 
+  const linkingChordId = useMemo(
+    () => (linkingChordData && getChordByLinkingChordData(chordsData, linkingChordData)?.id) ?? undefined,
+    [chordsData, linkingChordData],
+  );
+
   return (
     <PsalmChordsViewContentWrapper>
       {chordsData.couplets.map(({ coupletContent, id }, coupletIdx) => (
@@ -73,6 +78,7 @@ const PsalmChordsViewContent = ({ fontSize, mainKey }: PsalmChordsViewContent) =
             onLinkChord(id, coupletContentId, charPosition, chord)
           }
           onStartLinkingChord={(coupletContentIdx) => setLinkingChordData({ coupletIdx, coupletContentIdx })}
+          linkingChordId={linkingChordId}
         />
       ))}
     </PsalmChordsViewContentWrapper>

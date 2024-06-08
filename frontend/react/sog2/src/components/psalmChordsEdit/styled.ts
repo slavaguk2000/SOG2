@@ -40,12 +40,20 @@ interface ChordWrapperProps {
   nonDeletable?: boolean;
   isChordEditing?: boolean;
   isSourceChordChoosing?: boolean;
+  isCurrentChordLinking?: boolean;
 }
 
 export const ChordWrapper = styled('span', {
   shouldForwardProp(propName: PropertyKey) {
     return !(
-      ['contentFontSize', 'isChordDeleting', 'isChordEditing', 'nonDeletable', 'isSourceChordChoosing'] as PropertyKey[]
+      [
+        'contentFontSize',
+        'isChordDeleting',
+        'isChordEditing',
+        'nonDeletable',
+        'isSourceChordChoosing',
+        'isCurrentChordLinking',
+      ] as PropertyKey[]
     ).includes(propName);
   },
 })<ChordWrapperProps>`
@@ -57,11 +65,12 @@ export const ChordWrapper = styled('span', {
   letter-spacing: -0.1em;
   font-style: italic;
   font-weight: bold;
-  transition: color ease-in 1s;
 
   ${({ isChordDeleting, nonDeletable }) =>
     isChordDeleting && !nonDeletable
       ? `
+      transition: color ease-in 1s;
+
       &:hover {
         text-decoration: line-through red;
         cursor: none;
@@ -81,8 +90,10 @@ export const ChordWrapper = styled('span', {
       : ''}
 
   ${({ contentFontSize }) => contentFontSize && `top: -${contentFontSize * 0.75}px;`}
-  
+
   ${({ nonDeletable, isChordDeleting }) => (nonDeletable && isChordDeleting ? `opacity: 0.3;` : '')}
+  
+  ${({ isCurrentChordLinking }) => (isCurrentChordLinking ? `color: #37f;` : '')}
 `;
 
 export const ChordAndContentWrapper = styled('span')`

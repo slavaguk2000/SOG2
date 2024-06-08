@@ -20,6 +20,7 @@ interface ChordAndContentProps {
   onAddChord: (newChordData: CoupletContentChord, charPosition: number) => void;
   onLinkChord: (chordData: CoupletContentChord, charPosition: number) => void;
   onStartLinkingChord: () => void;
+  linkingChordId?: string;
 }
 
 const ChordAndContent = ({
@@ -33,6 +34,7 @@ const ChordAndContent = ({
   onAddChord,
   onLinkChord,
   onStartLinkingChord,
+  linkingChordId,
 }: ChordAndContentProps) => {
   const {
     isCutting,
@@ -78,6 +80,7 @@ const ChordAndContent = ({
           contentFontSize={fontSize}
           isChordEditing={isChordEditing}
           isSourceChordChoosing={isSourceChordChoosing}
+          isCurrentChordLinking={!!(linkingChordId && linkingChordId === chord.id)}
         >
           {getChordText(chord, mainKey)}
         </ChordWrapper>
