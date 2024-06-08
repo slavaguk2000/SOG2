@@ -79,6 +79,11 @@ const PsalmChordsViewContent = ({ fontSize, mainKey }: PsalmChordsViewContent) =
           }
           onStartLinkingChord={(coupletContentIdx) => setLinkingChordData({ coupletIdx, coupletContentIdx })}
           linkingChordId={linkingChordId}
+          currentLinkingChordIdx={
+            linkingChordData && linkingChordData.coupletIdx === coupletIdx
+              ? linkingChordData.coupletContentIdx
+              : undefined
+          }
         />
       ))}
     </PsalmChordsViewContentWrapper>

@@ -41,6 +41,7 @@ interface ChordWrapperProps {
   isChordEditing?: boolean;
   isSourceChordChoosing?: boolean;
   isCurrentChordLinking?: boolean;
+  isSameChordLinking?: boolean;
   isDestinationChordChoosing?: boolean;
 }
 
@@ -55,6 +56,7 @@ export const ChordWrapper = styled('span', {
         'isSourceChordChoosing',
         'isCurrentChordLinking',
         'isDestinationChordChoosing',
+        'isSameChordLinking',
       ] as PropertyKey[]
     ).includes(propName);
   },
@@ -96,7 +98,13 @@ export const ChordWrapper = styled('span', {
 
   ${({ nonDeletable, isChordDeleting }) => (nonDeletable && isChordDeleting ? `opacity: 0.3;` : '')}
   
-  ${({ isCurrentChordLinking }) => (isCurrentChordLinking ? `color: #37f;` : '')}
+  ${({ isSameChordLinking, isCurrentChordLinking }) =>
+    isSameChordLinking
+      ? `
+    color: #37f;
+    ${isCurrentChordLinking ? 'text-decoration: underline;' : ''}
+  `
+      : ''}
 `;
 
 export const ChordAndContentWrapper = styled('span')`

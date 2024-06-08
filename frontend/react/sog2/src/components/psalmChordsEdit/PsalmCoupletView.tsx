@@ -20,6 +20,7 @@ interface PsalmCoupletViewProps {
   onLinkChord: (coupletContentId: string, charPosition: number, chord: CoupletContentChord) => void;
   onStartLinkingChord: (coupletContentIdx: number) => void;
   linkingChordId?: string;
+  currentLinkingChordIdx?: number;
 }
 
 interface FilteredCoupletContent extends Omit<CoupletContent, 'chord'> {
@@ -42,6 +43,7 @@ const PsalmCoupletView = ({
   onLinkChord,
   onStartLinkingChord,
   linkingChordId,
+  currentLinkingChordIdx,
 }: PsalmCoupletViewProps) => {
   const { isChordAdding, isChordEditing, isChordLinking } = useChordsEditInstrumentsContext();
 
@@ -101,6 +103,7 @@ const PsalmCoupletView = ({
               onLinkChord={(chordData, charPosition) => onLinkChord(contentId, charPosition, chordData)}
               onStartLinkingChord={() => onStartLinkingChord(idx)}
               linkingChordId={linkingChordId}
+              currentChordLinking={currentLinkingChordIdx !== undefined && currentLinkingChordIdx === idx}
             />
           ))}
         </Typography>
