@@ -14,18 +14,11 @@ interface PsalmChordsViewContent {
 }
 
 const PsalmChordsViewContent = ({ fontSize, mainKey }: PsalmChordsViewContent) => {
-  const { setLinkingChordData, linkingChordData } = useChordsEditInstrumentsContext();
+  const { setLinkingChordData, linkingChordData, isChordLinking } = useChordsEditInstrumentsContext();
   const { handleCutToNextLine, handleRemoveChord, handleAddChord, chordsData, handleLinkChords } =
     useEditableChordsData();
 
-  const onLinkChord = (
-    coupletId: string,
-    coupletContentId: string,
-    charPosition: number,
-    chord: CoupletContentChord,
-  ) => {
-    handleLinkChords(coupletId, coupletContentId, charPosition, chord);
-
+  const handleNextLinkingChord = (option?: { nullOnError?: boolean }) => {
     setLinkingChordData((prev) => {
       if (!prev) {
         return prev;
@@ -41,12 +34,71 @@ const PsalmChordsViewContent = ({ fontSize, mainKey }: PsalmChordsViewContent) =
         nextData.coupletContentIdx = 0;
 
         if (nextData.coupletIdx >= chordsData.couplets.length) {
-          return null;
+          return option?.nullOnError ? null : prev;
         }
       }
 
       return nextData;
     });
+  };
+
+  const handlePrevLinkingChord = (option?: { nullOnError?: boolean }) => {
+    setLinkingChordData((prev) => {
+      if (!prev) {
+        return prev;
+      }
+
+      const nextData = {
+        ...prev,
+        coupletContentIdx: prev.coupletContentIdx - 1,
+      };
+
+      if (nextData.coupletContentIdx < 0) {
+        nextData.coupletIdx--;
+
+        if (nextData.coupletIdx < 0 || !chordsData.couplets[nextData.coupletIdx]) {
+          return option?.nullOnError ? null : prev;
+        }
+
+        nextData.coupletContentIdx = chordsData.couplets[nextData.coupletIdx].coupletContent.length - 1;
+      }
+
+      return nextData;
+    });
+  };
+
+  const isLinkingChordSelected = !!(isChordLinking && linkingChordData);
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.code === 'ArrowRight') {
+        handleNextLinkingChord();
+      } else if (event.code === 'ArrowLeft') {
+        handlePrevLinkingChord();
+      } else {
+        return null;
+      }
+      if (isLinkingChordSelected) {
+        event.preventDefault();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [handleNextLinkingChord, handlePrevLinkingChord, isLinkingChordSelected]);
+
+  const onLinkChord = (
+    coupletId: string,
+    coupletContentId: string,
+    charPosition: number,
+    chord: CoupletContentChord,
+  ) => {
+    handleLinkChords(coupletId, coupletContentId, charPosition, chord);
+
+    handleNextLinkingChord({ nullOnError: true });
   };
 
   useEffect(() => {
