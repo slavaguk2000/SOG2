@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-import { Box, Link, Menu, MenuItem } from '@mui/material';
+import { Box, Menu, MenuItem } from '@mui/material';
 
 import { usePsalmsData } from '../../providers/dataProviders/psalmsDataProvider';
 
@@ -10,6 +11,7 @@ import { PsalmSelectWrapper } from './styled';
 const PsalmSelect = () => {
   const [menuAnchorData, setMenuAnchorData] = useState<null | { anchor: HTMLElement; psalmId: string }>(null);
   const { psalmsData, handlePsalmSelect, currentPsalm } = usePsalmsData();
+  const navigate = useNavigate();
 
   const preparedData = useMemo(
     () =>
@@ -30,6 +32,13 @@ const PsalmSelect = () => {
 
   const handleMenuClose = () => {
     setMenuAnchorData(null);
+  };
+
+  const handleEditChords = () => {
+    if (menuAnchorData) {
+      navigate(`/psalms/chords-edit?psalmId=${menuAnchorData.psalmId}`);
+    }
+    handleMenuClose();
   };
 
   return (
@@ -59,10 +68,8 @@ const PsalmSelect = () => {
         }}
       >
         {menuAnchorData && (
-          <MenuItem tabIndex={-1} onClick={handleMenuClose}>
-            <Link underline="none" color="inherit" href={`/psalms/chords-edit?psalmId=${menuAnchorData.psalmId}`}>
-              Edit chords
-            </Link>
+          <MenuItem tabIndex={-1} onClick={handleEditChords}>
+            Edit chords
           </MenuItem>
         )}
       </Menu>

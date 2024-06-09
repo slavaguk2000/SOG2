@@ -14,13 +14,10 @@ const CuttableText = ({ text, onCharClick }: CuttableTextProps) => {
     return null;
   }
 
-  const [firstChar, ...restChars] = chars;
-
   return (
     <span>
-      <span>{firstChar}</span>
-      {restChars.map((char, idx) => (
-        <CuttableTextChar onClick={() => onCharClick(idx + 1)} key={idx}>
+      {chars.map((char, idx) => (
+        <CuttableTextChar onClick={() => onCharClick(idx)} key={idx}>
           <span>{char}</span>
         </CuttableTextChar>
       ))}
