@@ -3,8 +3,12 @@ import { useNavigate } from 'react-router-dom';
 
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
 
+import { useEditableChordsData } from '../editableChordsDataProvider';
+
 export enum ChordsEditLowerInstruments {
   SAVE = 'save',
+  UNDO = 'undo',
+  REDO = 'redo',
 }
 
 export interface LowerInstrument {
@@ -15,14 +19,19 @@ export interface LowerInstrument {
 
 const useLowerInstruments = (lowerInstruments: Array<LowerInstrument>) => {
   const navigate = useNavigate();
+  const { hasUndo, hasRedo, handleUndo, handleRedo } = useEditableChordsData();
 
-  const lowerInstrumentsWithHandlers = useMemo(() => {
+  const lowerInstrumentsWithOnlyHandlers = useMemo(() => {
     const getLowerInstrumentsHandler = (key: ChordsEditLowerInstruments) => {
       switch (key) {
         case ChordsEditLowerInstruments.SAVE:
           return () => {
             navigate(-1);
           };
+        case ChordsEditLowerInstruments.REDO:
+          return handleRedo;
+        case ChordsEditLowerInstruments.UNDO:
+          return handleUndo;
       }
     };
 
@@ -30,7 +39,25 @@ const useLowerInstruments = (lowerInstruments: Array<LowerInstrument>) => {
       ...instrument,
       handler: getLowerInstrumentsHandler(instrument.key),
     }));
-  }, [lowerInstruments, navigate]);
+  }, [handleRedo, handleUndo, lowerInstruments, navigate]);
+
+  const lowerInstrumentsWithHandlers = useMemo(() => {
+    const getLowerInstrumentsDisabled = (key: ChordsEditLowerInstruments) => {
+      switch (key) {
+        case ChordsEditLowerInstruments.REDO:
+          return !hasRedo;
+        case ChordsEditLowerInstruments.UNDO:
+          return !hasUndo;
+      }
+
+      return false;
+    };
+
+    return lowerInstrumentsWithOnlyHandlers.map((instrument) => ({
+      ...instrument,
+      disabled: getLowerInstrumentsDisabled(instrument.key),
+    }));
+  }, [hasRedo, hasUndo, lowerInstrumentsWithOnlyHandlers]);
 
   return { lowerInstrumentsWithHandlers };
 };

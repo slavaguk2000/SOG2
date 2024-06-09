@@ -10,10 +10,12 @@ import React, {
 
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
 import EditNoteIcon from '@mui/icons-material/EditNote';
+import RedoIcon from '@mui/icons-material/Redo';
 import SaveIcon from '@mui/icons-material/Save';
 import TextDecreaseIcon from '@mui/icons-material/TextDecrease';
 import TextIncreaseIcon from '@mui/icons-material/TextIncrease';
 import TypeSpecimenIcon from '@mui/icons-material/TypeSpecimen';
+import UndoIcon from '@mui/icons-material/Undo';
 import { Box, ButtonGroup, Tooltip } from '@mui/material';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -118,6 +120,16 @@ const upperInstruments: Array<UpperInstrument> = [
 
 const lowerInstruments = [
   {
+    key: ChordsEditLowerInstruments.UNDO,
+    icon: <UndoIcon />,
+    tooltip: 'Undo',
+  },
+  {
+    key: ChordsEditLowerInstruments.REDO,
+    icon: <RedoIcon />,
+    tooltip: 'Redo',
+  },
+  {
     key: ChordsEditLowerInstruments.SAVE,
     icon: <SaveIcon />,
     tooltip: 'Save',
@@ -221,9 +233,11 @@ const ChordsEditInstrumentsProvider = ({ children }: PropsWithChildren) => {
           </ButtonGroup>
 
           <ButtonGroup orientation="vertical" aria-label="Vertical button group" variant="text" fullWidth>
-            {lowerInstrumentsWithHandlers.map(({ key, icon, tooltip, handler }) => (
+            {lowerInstrumentsWithHandlers.map(({ key, icon, tooltip, handler, disabled }) => (
               <Tooltip title={tooltip} key={key} placement="right">
-                <SelectableButton onClick={handler}>{icon}</SelectableButton>
+                <SelectableButton disabled={disabled} onClick={handler}>
+                  {icon}
+                </SelectableButton>
               </Tooltip>
             ))}
           </ButtonGroup>

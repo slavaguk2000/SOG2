@@ -88,6 +88,8 @@ const usePreviousVersions = <T>(initialData: T, onUpdate: (newVersion: T) => voi
     handleAddNewVersion,
     hasUndo,
     hasRedo,
+    handleUndo,
+    handleRedo,
   };
 };
 

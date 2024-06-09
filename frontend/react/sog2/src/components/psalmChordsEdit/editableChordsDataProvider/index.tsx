@@ -30,6 +30,10 @@ type ChordsDataContextType = {
   handleEditChord: (chord: CoupletContentChord) => void;
   handleEditText: (coupletContentId: string, newText: string) => void;
   mainKey: number;
+  hasUndo: boolean;
+  hasRedo: boolean;
+  handleUndo: () => void;
+  handleRedo: () => void;
 };
 
 const defaultValue: ChordsDataContextType = {
@@ -47,6 +51,10 @@ const defaultValue: ChordsDataContextType = {
   handleLinkChords: () => true,
   handleEditText: () => true,
   mainKey: 0,
+  hasUndo: false,
+  hasRedo: false,
+  handleUndo: () => true,
+  handleRedo: () => true,
 };
 
 export const ChordsDataContextTypeContext = createContext<ChordsDataContextType>(defaultValue);
@@ -64,7 +72,10 @@ interface EditableChordsDataProviderProps extends PropsWithChildren {
 const EditableChordsDataProvider = ({ children, initialData }: EditableChordsDataProviderProps) => {
   const [chordsData, setChordsData] = useState<PsalmData>(initialData);
 
-  const { handleAddNewVersion } = usePreviousVersions(initialData, setChordsData);
+  const { handleAddNewVersion, hasRedo, hasUndo, handleRedo, handleUndo } = usePreviousVersions(
+    initialData,
+    setChordsData,
+  );
 
   const setNewChordsData = (newChordsData: PsalmData) => {
     handleAddNewVersion(newChordsData);
@@ -114,6 +125,10 @@ const EditableChordsDataProvider = ({ children, initialData }: EditableChordsDat
         handleEditChord,
         handleEditText,
         mainKey,
+        hasUndo,
+        hasRedo,
+        handleUndo,
+        handleRedo,
       }}
     >
       {children}
