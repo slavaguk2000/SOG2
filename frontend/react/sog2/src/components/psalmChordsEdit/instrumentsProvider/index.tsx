@@ -8,7 +8,9 @@ import React, {
   useState,
 } from 'react';
 
+import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
 import EditNoteIcon from '@mui/icons-material/EditNote';
+import SaveIcon from '@mui/icons-material/Save';
 import TextDecreaseIcon from '@mui/icons-material/TextDecrease';
 import TextIncreaseIcon from '@mui/icons-material/TextIncrease';
 import TypeSpecimenIcon from '@mui/icons-material/TypeSpecimen';
@@ -20,6 +22,7 @@ import { CoupletContentChord } from '../../../utils/gql/types';
 import { NewLineIcon, SelectableButton } from '../styled';
 
 import ChordEditorDialog, { ChordDialogState } from './ChordEditorDialog';
+import useLowerInstruments, { ChordsEditLowerInstruments } from './useLowerInstruments';
 
 export interface LinkingChordData {
   coupletIdx: number;
@@ -74,7 +77,13 @@ export enum ChordsEditInstruments {
   EDIT_TEXT = 'editText',
 }
 
-const instruments = [
+export interface UpperInstrument {
+  key: ChordsEditInstruments;
+  icon: ReactJSXElement;
+  tooltip: string;
+}
+
+const upperInstruments: Array<UpperInstrument> = [
   {
     key: ChordsEditInstruments.CUT_TO_NEXT_LINE,
     icon: <NewLineIcon />,
@@ -107,6 +116,14 @@ const instruments = [
   },
 ];
 
+const lowerInstruments = [
+  {
+    key: ChordsEditLowerInstruments.SAVE,
+    icon: <SaveIcon />,
+    tooltip: 'Save',
+  },
+];
+
 const ChordsEditInstrumentsProvider = ({ children }: PropsWithChildren) => {
   const [selectedInstrument, setSelectedInstrument] = useState<string | null>(null);
   const [linkingChordData, setLinkingChordData] = useState<LinkingChordData | null>(null);
@@ -122,7 +139,7 @@ const ChordsEditInstrumentsProvider = ({ children }: PropsWithChildren) => {
     cb: () => true,
   });
 
-  const handleInstrumentClick = (key: string) => {
+  const handleUpperInstrumentClick = (key: string) => {
     setLinkingChordData(null);
     setSelectedInstrument((p) => {
       if (key === p) {
@@ -173,6 +190,8 @@ const ChordsEditInstrumentsProvider = ({ children }: PropsWithChildren) => {
     });
   };
 
+  const { lowerInstrumentsWithHandlers } = useLowerInstruments(lowerInstruments);
+
   return (
     <ChordsEditInstrumentsContext.Provider
       value={{
@@ -190,13 +209,21 @@ const ChordsEditInstrumentsProvider = ({ children }: PropsWithChildren) => {
       }}
     >
       <Box display="flex" width="100%">
-        <Box width="50px">
+        <Box width="50px" display="flex" flexDirection="column" justifyContent="space-between">
           <ButtonGroup orientation="vertical" aria-label="Vertical button group" variant="text" fullWidth>
-            {instruments.map(({ key, icon, tooltip }) => (
+            {upperInstruments.map(({ key, icon, tooltip }) => (
               <Tooltip title={tooltip} key={key} placement="right">
-                <SelectableButton selected={selectedInstrument === key} onClick={() => handleInstrumentClick(key)}>
+                <SelectableButton selected={selectedInstrument === key} onClick={() => handleUpperInstrumentClick(key)}>
                   {icon}
                 </SelectableButton>
+              </Tooltip>
+            ))}
+          </ButtonGroup>
+
+          <ButtonGroup orientation="vertical" aria-label="Vertical button group" variant="text" fullWidth>
+            {lowerInstrumentsWithHandlers.map(({ key, icon, tooltip, handler }) => (
+              <Tooltip title={tooltip} key={key} placement="right">
+                <SelectableButton onClick={handler}>{icon}</SelectableButton>
               </Tooltip>
             ))}
           </ButtonGroup>

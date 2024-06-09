@@ -23,4 +23,7 @@ export const palette: PaletteOptions = {
     selected: '#4af',
     focus: lightBlue[100],
   },
+  common: {
+    white: '#fff',
+  },
 };

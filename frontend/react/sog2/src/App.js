@@ -69,7 +69,7 @@ function App() {
                           }
                         />
                         <Route path="/psalm-chords" element={<PsalmChordsView />} />
-                        <Route path="/psalm-chords-edit" element={<PsalmChordEditPage />} />
+                        <Route path="/psalms/chords-edit" element={<PsalmChordEditPage />} />
                       </Routes>
                     </InstrumentsFieldProvider>
                   </AudioMappingProvider>

@@ -1,10 +1,13 @@
 import React from 'react';
+import { useSearchParams } from 'react-router-dom';
 
+import { useQuery } from '@apollo/client';
 import { v4 as uuidv4 } from 'uuid';
 
 import PsalmChordsEdit from '../components/psalmChordsEdit';
 import EditableChordsDataProvider from '../components/psalmChordsEdit/editableChordsDataProvider';
-import { MusicalKey } from '../utils/gql/types';
+import { psalm } from '../utils/gql/queries';
+import { MusicalKey, Query, QueryPsalmArgs } from '../utils/gql/types';
 
 const testData = {
   psalm: {
@@ -299,10 +302,23 @@ const testData = {
 };
 
 const PsalmChordEditPage = () => {
+  const [searchParams] = useSearchParams();
+  const psalmId = searchParams.get('psalmId') ?? '';
+
+  const { data: currentPsalmData } = useQuery<Pick<Query, 'psalm'>, QueryPsalmArgs>(psalm, {
+    variables: {
+      psalmId,
+    },
+    fetchPolicy: 'cache-first',
+    skip: !psalmId,
+  });
+
   return (
-    <EditableChordsDataProvider initialData={testData}>
-      <PsalmChordsEdit />
-    </EditableChordsDataProvider>
+    currentPsalmData && (
+      <EditableChordsDataProvider initialData={currentPsalmData.psalm}>
+        <PsalmChordsEdit />
+      </EditableChordsDataProvider>
+    )
   );
 };
 

@@ -131,7 +131,7 @@ export const SelectableButton = styled(Button, {
   shouldForwardProp(propName: PropertyKey) {
     return propName !== 'selected';
   },
-})<{ selected: boolean }>`
+})<{ selected?: boolean }>`
   border-radius: 0;
 
   ${({ selected }) =>
