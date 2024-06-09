@@ -40,6 +40,8 @@ type ChordsEditInstrumentsContextType = {
   ) => void;
   linkingChordData?: LinkingChordData | null;
   setLinkingChordData: Dispatch<SetStateAction<LinkingChordData | null>>;
+  setEditingTextContentId: Dispatch<SetStateAction<string | null>>;
+  editingTextContentId: string | null;
 };
 
 const defaultValue: ChordsEditInstrumentsContextType = {
@@ -51,6 +53,8 @@ const defaultValue: ChordsEditInstrumentsContextType = {
   isTextEditing: false,
   openChordEditorDialog: () => true,
   setLinkingChordData: () => true,
+  setEditingTextContentId: () => true,
+  editingTextContentId: null,
 };
 
 export const ChordsEditInstrumentsContext = createContext<ChordsEditInstrumentsContextType>(defaultValue);
@@ -106,6 +110,7 @@ const instruments = [
 const ChordsEditInstrumentsProvider = ({ children }: PropsWithChildren) => {
   const [selectedInstrument, setSelectedInstrument] = useState<string | null>(null);
   const [linkingChordData, setLinkingChordData] = useState<LinkingChordData | null>(null);
+  const [editingTextContentId, setEditingTextContentId] = useState<string | null>(null);
   const [chordEditorDialogState, setChordEditorDialogState] = useState<ChordDialogState>({
     open: false,
     chordData: {
@@ -133,7 +138,13 @@ const ChordsEditInstrumentsProvider = ({ children }: PropsWithChildren) => {
       if (event.code === 'Escape') {
         setLinkingChordData((p) => {
           if (!p) {
-            setSelectedInstrument(null);
+            setEditingTextContentId((etp) => {
+              if (!etp) {
+                setSelectedInstrument(null);
+              }
+
+              return null;
+            });
           }
 
           return null;
@@ -174,6 +185,8 @@ const ChordsEditInstrumentsProvider = ({ children }: PropsWithChildren) => {
         openChordEditorDialog: handleOpenChordEditorDialog,
         linkingChordData,
         setLinkingChordData,
+        editingTextContentId,
+        setEditingTextContentId,
       }}
     >
       <Box display="flex" width="100%">

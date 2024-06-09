@@ -107,9 +107,24 @@ export const ChordWrapper = styled('span', {
       : ''}
 `;
 
-export const ChordAndContentWrapper = styled('span')`
+export const ChordAndContentWrapper = styled('span', {
+  shouldForwardProp(propName: PropertyKey) {
+    return propName !== 'hoverable';
+  },
+})<{ hoverable?: boolean }>`
   position: relative;
   font-family: 'Times New Roman', sans-serif;
+
+  ${({ hoverable }) =>
+    hoverable
+      ? `
+    &:hover {
+      border-radius: 5px;
+      background-color: #adf;
+      cursor: pointer;
+    }
+  `
+      : ''}
 `;
 
 export const SelectableButton = styled(Button, {
@@ -133,4 +148,15 @@ export const SelectableButton = styled(Button, {
 
 export const NewLineIcon = styled(ShortcutIcon)`
   transform: rotate(180deg);
+`;
+
+export const TextContentEditingField = styled('input', {
+  shouldForwardProp(propName: PropertyKey) {
+    return propName !== 'fontSize';
+  },
+})<{ fontSize: number }>`
+  font-family: 'Times New Roman', sans-serif;
+  font-size: ${({ fontSize }) => fontSize}px;
+  padding: 8.5px 5px;
+  border-radius: 10px;
 `;

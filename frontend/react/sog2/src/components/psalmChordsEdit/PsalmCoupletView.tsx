@@ -6,6 +6,7 @@ import { isChordsEquals } from '../../utils/chordUtils';
 import { CoupletContent, CoupletContentChord } from '../../utils/gql/types';
 
 import ChordAndContent from './ChordAndContent';
+import { useEditableChordsData } from './editableChordsDataProvider';
 import { useChordsEditInstrumentsContext } from './instrumentsProvider';
 import { PsalmChordsViewCoupletWrapper } from './styled';
 
@@ -45,20 +46,28 @@ const PsalmCoupletView = ({
   linkingChordId,
   currentLinkingChordIdx,
 }: PsalmCoupletViewProps) => {
-  const { isChordAdding, isChordEditing, isChordLinking } = useChordsEditInstrumentsContext();
+  const {
+    isChordAdding,
+    isChordEditing,
+    isChordLinking,
+    isTextEditing,
+    setEditingTextContentId,
+    editingTextContentId,
+  } = useChordsEditInstrumentsContext();
+  const { handleEditText } = useEditableChordsData();
 
   const filteredCoupletContent: Array<FilteredCoupletContent> = useMemo(
     () =>
       coupletContent.map((content, idx) => ({
         ...content,
         chord:
-          !(isChordAdding || isChordEditing || isChordLinking) &&
+          !(isChordAdding || isChordEditing || isChordLinking || isTextEditing) &&
           idx &&
           isChordsEquals(content.chord, coupletContent[idx - 1].chord)
             ? null
             : content.chord,
       })),
-    [coupletContent, isChordAdding, isChordEditing, isChordLinking],
+    [coupletContent, isChordAdding, isChordEditing, isChordLinking, isTextEditing],
   );
 
   const { contentByLines } = useMemo(
@@ -104,6 +113,9 @@ const PsalmCoupletView = ({
               onStartLinkingChord={() => onStartLinkingChord(idx)}
               linkingChordId={linkingChordId}
               currentChordLinking={currentLinkingChordIdx !== undefined && currentLinkingChordIdx === idx}
+              onContentClick={isTextEditing ? () => setEditingTextContentId(contentId) : undefined}
+              textContentEditing={contentId === editingTextContentId}
+              onTextChange={(newText) => handleEditText(contentId, newText)}
             />
           ))}
         </Typography>

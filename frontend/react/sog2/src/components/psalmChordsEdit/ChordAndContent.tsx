@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import { getChordText } from '../../utils/chordUtils';
 import { CoupletContentChord } from '../../utils/gql/types';
@@ -8,6 +8,7 @@ import ChordableText from './ChordableText';
 import { useEditableChordsData } from './editableChordsDataProvider';
 import { useChordsEditInstrumentsContext } from './instrumentsProvider';
 import { ChordAndContentWrapper, ChordWrapper } from './styled';
+import TextContentEditor from './TextContentEditor';
 
 interface ChordAndContentProps {
   chord?: CoupletContentChord;
@@ -20,8 +21,11 @@ interface ChordAndContentProps {
   onAddChord: (newChordData: CoupletContentChord, charPosition: number) => void;
   onLinkChord: (chordData: CoupletContentChord, charPosition: number) => void;
   onStartLinkingChord: () => void;
+  onContentClick?: () => void;
   linkingChordId?: string;
   currentChordLinking?: boolean;
+  textContentEditing?: boolean;
+  onTextChange: (newText: string) => void;
 }
 
 const ChordAndContent = ({
@@ -37,6 +41,9 @@ const ChordAndContent = ({
   onStartLinkingChord,
   linkingChordId,
   currentChordLinking,
+  onContentClick,
+  textContentEditing,
+  onTextChange,
 }: ChordAndContentProps) => {
   const {
     isCutting,
@@ -46,8 +53,10 @@ const ChordAndContent = ({
     openChordEditorDialog,
     isChordLinking,
     linkingChordData,
+    isTextEditing,
   } = useChordsEditInstrumentsContext();
   const { chordsData, handleEditChord } = useEditableChordsData();
+  const [editingData, setEditingData] = useState<string>('');
 
   const isSourceChordChoosing = isChordLinking && !linkingChordData;
   const isDestinationChordChoosing = isChordLinking && !!linkingChordData;
@@ -78,11 +87,21 @@ const ChordAndContent = ({
     }
   };
 
+  const handleClick = () => {
+    if (isTextEditing && !textContentEditing) {
+      setEditingData(textContent);
+    }
+
+    onContentClick?.();
+  };
+
   return (
     <ChordAndContentWrapper
       sx={{
         verticalAlign: 'sub',
       }}
+      hoverable={isTextEditing && !textContentEditing}
+      onClick={handleClick}
     >
       {chord && (
         <ChordWrapper
@@ -109,6 +128,13 @@ const ChordAndContent = ({
           onLinkChord={onLinkChord}
           existingChordData={existingChordData}
           chordColor={isDestinationChordChoosing ? '#37f' : undefined}
+        />
+      ) : textContentEditing ? (
+        <TextContentEditor
+          value={editingData}
+          onChange={setEditingData}
+          fontSize={fontSize}
+          onSubmit={() => onTextChange(editingData)}
         />
       ) : (
         textContent

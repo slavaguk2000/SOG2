@@ -7,6 +7,7 @@ import { keyToScaleDegree } from '../utils';
 import implementAddChord from './implementAddChord';
 import implementCutToNextLine from './implementCutToNextLine';
 import implementEditChord from './implementEditChord';
+import implementEditText from './implementEditText';
 import implementLinkChords from './implementLinkChords';
 import implementRemoveChord from './implementRemoveChord';
 
@@ -27,6 +28,7 @@ type ChordsDataContextType = {
     chord: CoupletContentChord,
   ) => void;
   handleEditChord: (chord: CoupletContentChord) => void;
+  handleEditText: (coupletContentId: string, newText: string) => void;
   mainKey: number;
 };
 
@@ -43,6 +45,7 @@ const defaultValue: ChordsDataContextType = {
   handleAddChord: () => true,
   handleEditChord: () => true,
   handleLinkChords: () => true,
+  handleEditText: () => true,
   mainKey: 0,
 };
 
@@ -93,6 +96,11 @@ const EditableChordsDataProvider = ({ children, initialData }: EditableChordsDat
     chordsData,
   });
 
+  const { handleEditText } = implementEditText({
+    setNewChordsData,
+    chordsData,
+  });
+
   const mainKey = keyToScaleDegree[chordsData.psalm.defaultTonality as string] ?? 0;
 
   return (
@@ -104,6 +112,7 @@ const EditableChordsDataProvider = ({ children, initialData }: EditableChordsDat
         handleAddChord,
         handleLinkChords,
         handleEditChord,
+        handleEditText,
         mainKey,
       }}
     >
