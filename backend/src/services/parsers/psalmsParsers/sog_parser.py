@@ -74,9 +74,11 @@ class SimplePsalmParser:
             if len(bare_psalms_data) < 3:
                 return False
             with Session(engine) as session:
-                psalms = SimplePsalmParser.__parse_data_from_sog_psalms_strings(bare_psalms_data)
+                psalms = SimplePsalmParser.__parse_data_from_sog_psalms_strings(bare_psalms_data)[10:11]
                 new_psalms_book = PsalmBook(language=language, name=song_book_name)
                 session.add(new_psalms_book)
+                psalm_chords = [CoupletContentChord() for _ in psalms]
+                session.add_all(psalm_chords)
                 session.commit()
                 psalms_objects = [
                     Psalm(
@@ -87,12 +89,12 @@ class SimplePsalmParser:
                             marker=couplet_data.marker,
                             couplet_content=[CoupletContent(
                                 text_content=couplet_data.content,
-                                chord=CoupletContentChord()
+                                chord=psalm_chords[i]
                             )],
                             initial_order=couplet_data.order,
                         ) for couplet_data in psalm_data.couplets],
                         psalm_books=[new_psalms_book],
-                    ) for psalm_data in psalms]
+                    ) for i, psalm_data in enumerate(psalms)]
                 session.add_all(psalms_objects)
                 session.commit()
                 print(f"Added new psalms book with ID: {new_psalms_book.id}")

@@ -9,7 +9,6 @@ from src.models.psalms_book_psalms import psalms_book_psalms
 from src.services.database import engine
 from src.models.psalms_book import PsalmBook
 from src.models.psalm import Psalm
-from src.models.couplet import Couplet
 from src.services.database_helpers.common import get_direction_function_by_direction
 from src.types.commonTypes import SortingDirection
 

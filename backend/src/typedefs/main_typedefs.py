@@ -74,6 +74,19 @@ type_defs = gql("""
         couplets: [Couplet!]!
     }
     
+    input PsalmInput {
+        id: ID!
+        name: String!
+        psalmNumber: String
+        coupletsOrder: String
+        defaultTonality: MusicalKey
+    }
+    
+    input PsalmDataInput {
+        psalm: PsalmInput!
+        couplets: [CoupletInput!]!
+    }
+    
     type CoupletContent {
         id: ID!
         text: String!
@@ -81,7 +94,21 @@ type_defs = gql("""
         chord: CoupletContentChord!
     }
     
+    input CoupletContentInput {
+        id: ID!
+        text: String!
+        line: Int!
+        chord: CoupletContentChordInput!
+    }
+    
     type CoupletContentChord {
+        id: ID!
+        rootNote: Int!
+        bassNote: Int
+        chordTemplate: String!
+    }
+    
+    input CoupletContentChordInput {
         id: ID!
         rootNote: Int!
         bassNote: Int
@@ -94,6 +121,13 @@ type_defs = gql("""
         initialOrder: Int!
         coupletContent: [CoupletContent!]!
         slide: Slide!
+    }
+    
+    input CoupletInput {
+        id: ID!
+        marker: String!
+        initialOrder: Int!
+        coupletContent: [CoupletContentInput!]!
     }
     
     type SlideAudioMapping {
@@ -151,6 +185,7 @@ type_defs = gql("""
       addPsalmsFromSog(sogFileSrc: String!, language: String!): Boolean
       addPsalmToFavourite(psalmId: ID): Boolean
       removePsalmFromFavourite(psalmId: ID): Boolean
+      updatePsalm(psalmData: PsalmDataInput!): PsalmData!
     }
     
     type Subscription {
