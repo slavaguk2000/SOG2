@@ -52,6 +52,27 @@ export type CoupletContentChord = {
   rootNote: Scalars['Int']['output'];
 };
 
+export type CoupletContentChordInput = {
+  bassNote?: InputMaybe<Scalars['Int']['input']>;
+  chordTemplate: Scalars['String']['input'];
+  id: Scalars['ID']['input'];
+  rootNote: Scalars['Int']['input'];
+};
+
+export type CoupletContentInput = {
+  chord: CoupletContentChordInput;
+  id: Scalars['ID']['input'];
+  line: Scalars['Int']['input'];
+  text: Scalars['String']['input'];
+};
+
+export type CoupletInput = {
+  coupletContent: Array<CoupletContentInput>;
+  id: Scalars['ID']['input'];
+  initialOrder: Scalars['Int']['input'];
+  marker: Scalars['String']['input'];
+};
+
 export enum MusicalKey {
   A = 'A',
   ASharp = 'ASharp',
@@ -84,6 +105,7 @@ export type Mutation = {
   setFreeSlide?: Maybe<Scalars['Boolean']['output']>;
   syncBibleToElastic?: Maybe<Scalars['Boolean']['output']>;
   syncSermonsToElastic?: Maybe<Scalars['Boolean']['output']>;
+  updatePsalm: PsalmData;
 };
 
 
@@ -135,6 +157,11 @@ export type MutationSyncBibleToElasticArgs = {
   bibleId?: InputMaybe<Scalars['ID']['input']>;
 };
 
+
+export type MutationUpdatePsalmArgs = {
+  psalmData: PsalmDataInput;
+};
+
 export type Psalm = {
   __typename?: 'Psalm';
   coupletsOrder?: Maybe<Scalars['String']['output']>;
@@ -148,6 +175,19 @@ export type PsalmData = {
   __typename?: 'PsalmData';
   couplets: Array<Couplet>;
   psalm: Psalm;
+};
+
+export type PsalmDataInput = {
+  couplets: Array<CoupletInput>;
+  psalm: PsalmInput;
+};
+
+export type PsalmInput = {
+  coupletsOrder?: InputMaybe<Scalars['String']['input']>;
+  defaultTonality?: InputMaybe<MusicalKey>;
+  id: Scalars['ID']['input'];
+  name: Scalars['String']['input'];
+  psalmNumber?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type PsalmsBook = {

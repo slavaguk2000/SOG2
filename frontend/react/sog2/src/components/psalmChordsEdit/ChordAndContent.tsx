@@ -55,15 +55,19 @@ const ChordAndContent = ({
     linkingChordData,
     isTextEditing,
   } = useChordsEditInstrumentsContext();
-  const { chordsData, handleEditChord } = useEditableChordsData();
+  const { psalmData, handleEditChord } = useEditableChordsData();
   const [editingData, setEditingData] = useState<string>('');
+
+  if (!psalmData) {
+    return null;
+  }
 
   const isSourceChordChoosing = isChordLinking && !linkingChordData;
   const isDestinationChordChoosing = isChordLinking && !!linkingChordData;
 
   const linkingChordDataChord =
     linkingChordData &&
-    chordsData.couplets[linkingChordData.coupletIdx]?.coupletContent[linkingChordData.coupletContentIdx]?.chord;
+    psalmData.couplets[linkingChordData.coupletIdx]?.coupletContent[linkingChordData.coupletContentIdx]?.chord;
 
   const existingChordData =
     isDestinationChordChoosing && linkingChordData && linkingChordDataChord

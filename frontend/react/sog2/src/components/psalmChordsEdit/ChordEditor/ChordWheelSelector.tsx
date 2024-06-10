@@ -24,7 +24,7 @@ const ChordWheelSelector = ({ height, paddings = 0, values, onChange, initIdx = 
     if (containerRef?.current) {
       containerRef.current.scrollTop = initIdx * height;
     }
-  }, []);
+  }, [height, initIdx]);
 
   useEffect(() => {
     if (containerRef?.current) {

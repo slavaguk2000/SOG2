@@ -18,11 +18,11 @@ const maxFontSize = 35;
 
 const PsalmChordsEdit = ({ data }: PsalmChordsView) => {
   const viewRef = useRef<null | HTMLDivElement>(null);
-  const { chordsData } = useEditableChordsData();
+  const { psalmData } = useEditableChordsData();
 
-  const currentData = data ?? chordsData;
+  const currentData = data ?? psalmData;
 
-  const mainKey = keyToScaleDegree[currentData.psalm.defaultTonality as string];
+  const mainKey = currentData ? keyToScaleDegree[currentData.psalm.defaultTonality as string] : 0;
   const [fontSize, setFontSize] = useState(maxFontSize);
 
   useLayoutEffect(() => {
@@ -34,6 +34,10 @@ const PsalmChordsEdit = ({ data }: PsalmChordsView) => {
   useEffect(() => {
     setFontSize(maxFontSize);
   }, [currentData]);
+
+  if (!currentData) {
+    return null;
+  }
 
   return (
     <ChordsEditInstrumentsProvider>

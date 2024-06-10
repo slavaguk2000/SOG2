@@ -12,7 +12,7 @@ import implementLinkChords from './implementLinkChords';
 import implementRemoveChord from './implementRemoveChord';
 
 type ChordsDataContextType = {
-  chordsData: PsalmData;
+  psalmData?: PsalmData;
   handleCutToNextLine: (coupletId: string, coupletContentId: string, charPosition: number) => void;
   handleRemoveChord: (coupletId: string, coupletContentId: string) => void;
   handleAddChord: (
@@ -37,13 +37,6 @@ type ChordsDataContextType = {
 };
 
 const defaultValue: ChordsDataContextType = {
-  chordsData: {
-    couplets: [],
-    psalm: {
-      id: 'unknown',
-      name: 'unknown',
-    },
-  },
   handleCutToNextLine: () => true,
   handleRemoveChord: () => true,
   handleAddChord: () => true,
@@ -117,7 +110,7 @@ const EditableChordsDataProvider = ({ children, initialData }: EditableChordsDat
   return (
     <ChordsDataContextTypeContext.Provider
       value={{
-        chordsData,
+        psalmData: chordsData,
         handleCutToNextLine,
         handleRemoveChord,
         handleAddChord,

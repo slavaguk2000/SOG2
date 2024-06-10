@@ -188,3 +188,33 @@ export const PSALMS_BOOK_FRAGMENT = gql`
     psalmsCount
   }
 `;
+
+export const updatePsalm = gql`
+  mutation updatePsalm($psalmData: PsalmDataInput!) {
+    updatePsalm(psalmData: $psalmData) {
+      psalm {
+        id
+        name
+        psalmNumber
+        coupletsOrder
+        defaultTonality
+      }
+      couplets {
+        id
+        initialOrder
+        marker
+        coupletContent {
+          id
+          text
+          line
+          chord {
+            id
+            bassNote
+            chordTemplate
+            rootNote
+          }
+        }
+      }
+    }
+  }
+`;
