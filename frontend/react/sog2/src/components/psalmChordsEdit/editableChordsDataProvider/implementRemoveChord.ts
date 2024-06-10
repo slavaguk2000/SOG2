@@ -24,7 +24,7 @@ const implementRemoveChord = ({ setNewChordsData, chordsData }: ImplementRemoveC
                 return acc;
               }
 
-              acc.push(coupletContentItem);
+              acc.push({ ...coupletContentItem });
 
               return acc;
             }, []),
