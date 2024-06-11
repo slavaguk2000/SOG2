@@ -8,6 +8,7 @@ interface ImplementRemoveChordProps {
 const implementRemoveChord = ({ setNewChordsData, chordsData }: ImplementRemoveChordProps) => {
   const handleRemoveChord = (coupletId: string, coupletContentId: string) => {
     setNewChordsData({
+      id: chordsData.id,
       psalm: chordsData.psalm,
       couplets: chordsData.couplets.map((couplet) => {
         if (couplet.id === coupletId) {

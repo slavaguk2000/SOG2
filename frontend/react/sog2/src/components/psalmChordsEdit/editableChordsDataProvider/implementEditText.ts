@@ -8,6 +8,7 @@ interface ImplementEditTextProps {
 const implementEditText = ({ setNewChordsData, chordsData }: ImplementEditTextProps) => {
   const handleEditText = (coupletContentId: string, newText: string) => {
     setNewChordsData({
+      id: chordsData.id,
       psalm: chordsData.psalm,
       couplets: chordsData.couplets.map((couplet) => ({
         ...couplet,

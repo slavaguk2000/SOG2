@@ -15,6 +15,7 @@ const implementLinkChords = ({ setNewChordsData, chordsData }: ImplementLinkChor
     chord: CoupletContentChord,
   ) => {
     setNewChordsData({
+      id: chordsData.id,
       psalm: chordsData.psalm,
       couplets: chordsData.couplets.map((couplet) => {
         if (couplet.id === coupletId) {

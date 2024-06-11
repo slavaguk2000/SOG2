@@ -10,6 +10,7 @@ interface ImplementCutToNextLineProps {
 const implementCutToNextLine = ({ setNewChordsData, chordsData }: ImplementCutToNextLineProps) => {
   const handleCutToNextLine = (coupletId: string, coupletContentId: string, charPosition: number) => {
     setNewChordsData({
+      id: chordsData.id,
       psalm: chordsData.psalm,
       couplets: chordsData.couplets.map((couplet) => {
         if (couplet.id === coupletId) {

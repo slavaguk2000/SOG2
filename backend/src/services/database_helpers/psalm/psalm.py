@@ -91,19 +91,22 @@ def get_psalm_by_id(psalm_id: str):
             "psalm": get_psalm_dict_from_psalm(psalm),
             "couplets": [{
                 "id": couplet.id,
-                "marker": couplet.marker,
-                "initial_order": couplet.initial_order,
-                "couplet_content": [{
-                    "id": content.id,
-                    "text": content.text_content,
-                    "line":  content.line,
-                    "chord": {
-                        "id": content.chord.id,
-                        "root_note": content.chord.root_note,
-                        "bass_note": content.chord.bass_note,
-                        "chord_template": content.chord.chord_template,
-                    }
-                } for content in sorted(couplet.couplet_content, key=lambda x:x.order)],
+                "couplet": {
+                    "id": couplet.id,
+                    "marker": couplet.marker,
+                    "initial_order": couplet.initial_order,
+                    "couplet_content": [{
+                        "id": content.id,
+                        "text": content.text_content,
+                        "line":  content.line,
+                        "chord": {
+                            "id": content.chord.id,
+                            "root_note": content.chord.root_note,
+                            "bass_note": content.chord.bass_note,
+                            "chord_template": content.chord.chord_template,
+                        }
+                    } for content in sorted(couplet.couplet_content, key=lambda x:x.order)],
+                },
                 "slide": {
                     "id": couplet.id,
                     **get_linear_contents_from_couplet(couplet),

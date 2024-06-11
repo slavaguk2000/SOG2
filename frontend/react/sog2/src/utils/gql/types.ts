@@ -33,7 +33,6 @@ export type Couplet = {
   id: Scalars['ID']['output'];
   initialOrder: Scalars['Int']['output'];
   marker: Scalars['String']['output'];
-  slide: Slide;
 };
 
 export type CoupletContent = {
@@ -71,6 +70,13 @@ export type CoupletInput = {
   id: Scalars['ID']['input'];
   initialOrder: Scalars['Int']['input'];
   marker: Scalars['String']['input'];
+};
+
+export type CoupletWithSlide = {
+  __typename?: 'CoupletWithSlide';
+  couplet: Couplet;
+  id: Scalars['ID']['output'];
+  slide: Slide;
 };
 
 export enum MusicalKey {
@@ -174,12 +180,20 @@ export type Psalm = {
 export type PsalmData = {
   __typename?: 'PsalmData';
   couplets: Array<Couplet>;
+  id: Scalars['ID']['output'];
   psalm: Psalm;
 };
 
 export type PsalmDataInput = {
   couplets: Array<CoupletInput>;
   psalm: PsalmInput;
+};
+
+export type PsalmDataWithSlides = {
+  __typename?: 'PsalmDataWithSlides';
+  couplets: Array<CoupletWithSlide>;
+  id: Scalars['ID']['output'];
+  psalm: Psalm;
 };
 
 export type PsalmInput = {
@@ -214,7 +228,7 @@ export type Query = {
   bibleBooks: Array<BibleBook>;
   bibleHistory: Array<Slide>;
   bibleVerses: Array<Slide>;
-  psalm: PsalmData;
+  psalm: PsalmDataWithSlides;
   psalms: Array<Psalm>;
   psalmsBooks: Array<PsalmsBook>;
   search: Array<Slide>;

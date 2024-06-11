@@ -1,7 +1,7 @@
 import React, { createContext, PropsWithChildren, useContext, useState } from 'react';
 
 import usePreviousVersions from '../../../hooks/usePreviousVersions';
-import { CoupletContentChord, PsalmData } from '../../../utils/gql/types';
+import { Couplet, CoupletContentChord, Psalm, PsalmData, Scalars } from '../../../utils/gql/types';
 import { keyToScaleDegree } from '../utils';
 
 import implementAddChord from './implementAddChord';
@@ -59,7 +59,11 @@ export const useEditableChordsData = () => {
 };
 
 interface EditableChordsDataProviderProps extends PropsWithChildren {
-  initialData: PsalmData;
+  initialData: {
+    id: string;
+    couplets: Array<Omit<Couplet, '__typename'>>;
+    psalm: Psalm;
+  };
 }
 
 const EditableChordsDataProvider = ({ children, initialData }: EditableChordsDataProviderProps) => {

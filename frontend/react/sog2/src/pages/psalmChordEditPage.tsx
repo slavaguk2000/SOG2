@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import { useQuery } from '@apollo/client';
@@ -27,9 +27,19 @@ const PsalmChordEditPage = () => {
     }
   }, [currentPsalmData, loading, navigate]);
 
+  const initialData = useMemo(
+    () =>
+      currentPsalmData && {
+        id: currentPsalmData.psalm.id,
+        psalm: currentPsalmData.psalm.psalm,
+        couplets: currentPsalmData.psalm.couplets.map(({ couplet }) => couplet),
+      },
+    [currentPsalmData],
+  );
+
   return (
-    currentPsalmData && (
-      <EditableChordsDataProvider initialData={currentPsalmData.psalm}>
+    initialData && (
+      <EditableChordsDataProvider initialData={initialData}>
         <PsalmChordsEdit />
       </EditableChordsDataProvider>
     )

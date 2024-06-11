@@ -143,17 +143,20 @@ export const psalm = gql`
       }
       couplets {
         id
-        initialOrder
-        marker
-        coupletContent {
+        couplet {
           id
-          text
-          line
-          chord {
+          initialOrder
+          marker
+          coupletContent {
             id
-            bassNote
-            chordTemplate
-            rootNote
+            text
+            line
+            chord {
+              id
+              bassNote
+              chordTemplate
+              rootNote
+            }
           }
         }
         slide {

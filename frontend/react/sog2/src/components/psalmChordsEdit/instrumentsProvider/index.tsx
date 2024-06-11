@@ -233,13 +233,21 @@ const ChordsEditInstrumentsProvider = ({ children }: PropsWithChildren) => {
           </ButtonGroup>
 
           <ButtonGroup orientation="vertical" aria-label="Vertical button group" variant="text" fullWidth>
-            {lowerInstrumentsWithHandlers.map(({ key, icon, tooltip, handler, disabled }) => (
-              <Tooltip title={tooltip} key={key} placement="right">
-                <SelectableButton disabled={disabled} onClick={handler}>
+            {lowerInstrumentsWithHandlers.map(({ key, icon, tooltip, handler, disabled }) => {
+              const button = (
+                <SelectableButton key={key} disabled={disabled} onClick={handler}>
                   {icon}
                 </SelectableButton>
-              </Tooltip>
-            ))}
+              );
+
+              return disabled ? (
+                button
+              ) : (
+                <Tooltip title={tooltip} key={key} placement="right">
+                  {button}
+                </Tooltip>
+              );
+            })}
           </ButtonGroup>
         </Box>
         {children}

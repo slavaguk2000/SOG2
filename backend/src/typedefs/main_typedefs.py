@@ -50,7 +50,7 @@ type_defs = gql("""
         sermons(sermonsCollectionId: ID!): [Sermon!]!
         psalmsBooks: [PsalmsBook!]!
         psalms(psalmsBookId: ID!, psalmsSorting: PsalmsSorting): [Psalm!]!
-        psalm(psalmId: ID!): PsalmData!
+        psalm(psalmId: ID!): PsalmDataWithSlides!
     }
     
     type PsalmsBook {
@@ -70,8 +70,15 @@ type_defs = gql("""
     }
     
     type PsalmData {
+        id: ID!
         psalm: Psalm!
         couplets: [Couplet!]!
+    }
+    
+    type PsalmDataWithSlides {
+        id: ID!
+        psalm: Psalm!
+        couplets: [CoupletWithSlide!]!
     }
     
     input PsalmInput {
@@ -115,12 +122,17 @@ type_defs = gql("""
         chordTemplate: String!
     }
     
+    type CoupletWithSlide {
+        id: ID!
+        couplet: Couplet!
+        slide: Slide!
+    }
+    
     type Couplet {
         id: ID!
         marker: String!
         initialOrder: Int!
         coupletContent: [CoupletContent!]!
-        slide: Slide!
     }
     
     input CoupletInput {
