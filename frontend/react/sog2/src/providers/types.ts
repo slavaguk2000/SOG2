@@ -76,7 +76,10 @@ export interface PresentationContextType {
   setText: (text: string, location: string, options?: { currentLastUp?: boolean; multiScreenShow?: boolean }) => void;
   captureTextScreen: () => void;
   releaseTextScreen: () => void;
-  validSession: boolean;
+  validTextSession: boolean;
+  captureChordScreen: () => void;
+  releaseChordScreen: () => void;
+  validChordSession: boolean;
 }
 
 export interface FreeSlideDialogContextType {
