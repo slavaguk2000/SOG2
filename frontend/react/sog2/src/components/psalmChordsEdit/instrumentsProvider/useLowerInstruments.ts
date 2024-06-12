@@ -72,7 +72,7 @@ const useLowerInstruments = (lowerInstruments: Array<LowerInstrument>) => {
       ...instrument,
       handler: getLowerInstrumentsHandler(instrument.key),
     }));
-  }, [handleRedo, handleUndo, lowerInstruments, psalmData, updatePsalmMutation]);
+  }, [handleRedo, handleUndo, lowerInstruments, navigate, psalmData, updatePsalmMutation]);
 
   const lowerInstrumentsWithHandlers = useMemo(() => {
     const getLowerInstrumentsDisabled = (key: ChordsEditLowerInstruments) => {

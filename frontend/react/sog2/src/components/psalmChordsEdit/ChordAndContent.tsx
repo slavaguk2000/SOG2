@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 
-import { getChordText } from '../../utils/chordUtils';
 import { CoupletContentChord } from '../../utils/gql/types';
 import CuttableText from '../CuttableText';
 
+import Chord from './Chord';
 import ChordableText from './ChordableText';
 import { useEditableChordsData } from './editableChordsDataProvider';
 import { useChordsEditInstrumentsContext } from './instrumentsProvider';
-import { ChordAndContentWrapper, ChordWrapper } from './styled';
+import { ChordAndContentWrapper } from './styled';
 import TextContentEditor from './TextContentEditor';
 
 interface ChordAndContentProps {
@@ -26,6 +26,7 @@ interface ChordAndContentProps {
   currentChordLinking?: boolean;
   textContentEditing?: boolean;
   onTextChange: (newText: string) => void;
+  onLinkedChordMenu: (anchor: HTMLElement) => void;
 }
 
 const ChordAndContent = ({
@@ -44,6 +45,7 @@ const ChordAndContent = ({
   onContentClick,
   textContentEditing,
   onTextChange,
+  onLinkedChordMenu,
 }: ChordAndContentProps) => {
   const {
     isCutting,
@@ -77,12 +79,15 @@ const ChordAndContent = ({
         }
       : undefined;
 
-  const handleChordClick = () => {
+  const handleChordClick = (e: React.MouseEvent<HTMLSpanElement>) => {
     if (isChordDeleting) {
       onDeleteRequest();
     } else if (chord) {
       if (isChordEditing) {
-        openChordEditorDialog(chord, mainKey, handleEditChord);
+        openChordEditorDialog(chord, mainKey, handleEditChord, {
+          left: e.pageX,
+          top: e.pageY,
+        });
       } else if (isSourceChordChoosing) {
         onStartLinkingChord();
       } else if (isDestinationChordChoosing && existingChordData) {
@@ -108,7 +113,8 @@ const ChordAndContent = ({
       onClick={handleClick}
     >
       {chord && (
-        <ChordWrapper
+        <Chord
+          chordData={chord}
           nonDeletable={firstInLine}
           onClick={handleChordClick}
           isChordDeleting={isChordDeleting}
@@ -118,9 +124,9 @@ const ChordAndContent = ({
           isDestinationChordChoosing={isDestinationChordChoosing}
           isSameChordLinking={!!(linkingChordId && linkingChordId === chord.id)}
           isCurrentChordLinking={currentChordLinking}
-        >
-          {getChordText(chord, mainKey)}
-        </ChordWrapper>
+          mainKey={mainKey}
+          onLinkedChordMenu={onLinkedChordMenu}
+        />
       )}
       {isCutting ? (
         <CuttableText onCharClick={onCut} text={textContent} />

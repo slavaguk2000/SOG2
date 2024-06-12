@@ -1,7 +1,7 @@
 import React, { createContext, PropsWithChildren, useContext, useState } from 'react';
 
 import usePreviousVersions from '../../../hooks/usePreviousVersions';
-import { Couplet, CoupletContentChord, Psalm, PsalmData, Scalars } from '../../../utils/gql/types';
+import { Couplet, CoupletContentChord, Psalm, PsalmData } from '../../../utils/gql/types';
 import { keyToScaleDegree } from '../utils';
 
 import implementAddChord from './implementAddChord';
@@ -10,6 +10,7 @@ import implementEditChord from './implementEditChord';
 import implementEditText from './implementEditText';
 import implementLinkChords from './implementLinkChords';
 import implementRemoveChord from './implementRemoveChord';
+import implementUnlinkChord from './implementUnlinkChord';
 
 type ChordsDataContextType = {
   psalmData?: PsalmData;
@@ -29,6 +30,7 @@ type ChordsDataContextType = {
   ) => void;
   handleEditChord: (chord: CoupletContentChord) => void;
   handleEditText: (coupletContentId: string, newText: string) => void;
+  handleUnlinkChord: (coupletContentId: string) => void;
   mainKey: number;
   hasUndo: boolean;
   hasRedo: boolean;
@@ -43,6 +45,7 @@ const defaultValue: ChordsDataContextType = {
   handleEditChord: () => true,
   handleLinkChords: () => true,
   handleEditText: () => true,
+  handleUnlinkChord: () => true,
   mainKey: 0,
   hasUndo: false,
   hasRedo: false,
@@ -109,6 +112,11 @@ const EditableChordsDataProvider = ({ children, initialData }: EditableChordsDat
     chordsData,
   });
 
+  const { handleUnlinkChord } = implementUnlinkChord({
+    setNewChordsData,
+    chordsData,
+  });
+
   const mainKey = keyToScaleDegree[chordsData.psalm.defaultTonality as string] ?? 0;
 
   return (
@@ -121,6 +129,7 @@ const EditableChordsDataProvider = ({ children, initialData }: EditableChordsDat
         handleLinkChords,
         handleEditChord,
         handleEditText,
+        handleUnlinkChord,
         mainKey,
         hasUndo,
         hasRedo,

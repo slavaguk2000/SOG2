@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 
 import { Typography } from '@mui/material';
 
@@ -8,6 +8,7 @@ import { CoupletContent, CoupletContentChord } from '../../utils/gql/types';
 import ChordAndContent from './ChordAndContent';
 import { useEditableChordsData } from './editableChordsDataProvider';
 import { useChordsEditInstrumentsContext } from './instrumentsProvider';
+import LinkChordMenu, { MenuAnchorChordData } from './LinkChordMenu';
 import { PsalmChordsViewCoupletWrapper } from './styled';
 
 interface PsalmCoupletViewProps {
@@ -46,8 +47,10 @@ const PsalmCoupletView = ({
   linkingChordId,
   currentLinkingChordIdx,
 }: PsalmCoupletViewProps) => {
+  const [menuAnchorChordData, setMenuAnchorChordData] = useState<null | MenuAnchorChordData>(null);
   const {
     isChordAdding,
+    isChordDeleting,
     isChordEditing,
     isChordLinking,
     isTextEditing,
@@ -61,13 +64,13 @@ const PsalmCoupletView = ({
       coupletContent.map((content, idx) => ({
         ...content,
         chord:
-          !(isChordAdding || isChordEditing || isChordLinking || isTextEditing) &&
+          !(isChordAdding || isChordDeleting || isChordEditing || isChordLinking || isTextEditing) &&
           idx &&
           isChordsEquals(content.chord, coupletContent[idx - 1].chord)
             ? null
             : content.chord,
       })),
-    [coupletContent, isChordAdding, isChordEditing, isChordLinking, isTextEditing],
+    [coupletContent, isChordAdding, isChordDeleting, isChordEditing, isChordLinking, isTextEditing],
   );
 
   const { contentByLines } = useMemo(
@@ -116,10 +119,12 @@ const PsalmCoupletView = ({
               onContentClick={isTextEditing ? () => setEditingTextContentId(contentId) : undefined}
               textContentEditing={contentId === editingTextContentId}
               onTextChange={(newText) => handleEditText(contentId, newText)}
+              onLinkedChordMenu={(anchor) => setMenuAnchorChordData({ anchor, contentId })}
             />
           ))}
         </Typography>
       ))}
+      <LinkChordMenu menuAnchorChordData={menuAnchorChordData} onClose={() => setMenuAnchorChordData(null)} />
     </PsalmChordsViewCoupletWrapper>
   );
 };

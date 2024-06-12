@@ -42,6 +42,10 @@ type ChordsEditInstrumentsContextType = {
     chordData: CoupletContentChord,
     mainKey: number,
     cb: (newChordData: CoupletContentChord) => void,
+    position?: {
+      left: number;
+      top: number;
+    },
   ) => void;
   linkingChordData?: LinkingChordData | null;
   setLinkingChordData: Dispatch<SetStateAction<LinkingChordData | null>>;
@@ -193,12 +197,17 @@ const ChordsEditInstrumentsProvider = ({ children }: PropsWithChildren) => {
     chordData: CoupletContentChord,
     mainKey: number,
     cb: (newChordData: CoupletContentChord) => void,
+    position?: {
+      left: number;
+      top: number;
+    },
   ) => {
     setChordEditorDialogState({
       open: true,
       chordData,
       mainKey,
       cb,
+      position,
     });
   };
 

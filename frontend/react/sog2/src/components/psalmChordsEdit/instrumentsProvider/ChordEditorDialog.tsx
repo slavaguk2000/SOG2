@@ -15,6 +15,10 @@ export interface ChordDialogState {
   chordData: CoupletContentChord;
   mainKey: number;
   cb: (newChordData: CoupletContentChord) => void;
+  position?: {
+    left: number;
+    top: number;
+  };
 }
 interface ChordEditorDialogProps {
   state: ChordDialogState;
@@ -73,12 +77,24 @@ const ChordEditorDialog = ({ state, setState }: ChordEditorDialogProps) => {
     handleCloseChordEditorDialog();
   };
 
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === 'Enter') {
+      handleSubmit();
+    }
+  };
+
   return (
-    <StyledDialog open={state.open} onClose={handleCloseChordEditorDialog}>
+    <StyledDialog
+      onKeyPress={handleKeyPress}
+      onSubmit={handleSubmit}
+      position={state.position}
+      open={state.open}
+      onClose={handleCloseChordEditorDialog}
+    >
       <DialogContentWrapper>
         <TextField
           inputProps={{
-            sx: { textAlign: 'end' },
+            sx: { textAlign: 'end', width: '30px' },
           }}
           variant="standard"
           value={prevValue}
