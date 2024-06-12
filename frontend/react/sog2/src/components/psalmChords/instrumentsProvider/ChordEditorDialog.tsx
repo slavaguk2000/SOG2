@@ -5,8 +5,8 @@ import DoneIcon from '@mui/icons-material/Done';
 import { Box, Button, IconButton, TextField } from '@mui/material';
 
 import { CoupletContentChord } from '../../../utils/gql/types';
-import { keyToScaleDegree } from '../../psalmChordsView/utils';
 import ChordEditor, { getIdxByScaleDegree } from '../ChordEditor/ChordEditor';
+import { keyToScaleDegree } from '../utils';
 
 import { DialogContentWrapper, StyledDialog } from './styled';
 

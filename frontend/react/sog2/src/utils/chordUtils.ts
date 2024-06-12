@@ -1,5 +1,5 @@
-import { LinkingChordData } from '../components/psalmChordsEdit/instrumentsProvider';
-import { scaleDegreeToKey } from '../components/psalmChordsEdit/utils';
+import { LinkingChordData } from '../components/psalmChords/instrumentsProvider';
+import { scaleDegreeToKey } from '../components/psalmChords/utils';
 
 import { CoupletContentChord, PsalmData } from './gql/types';
 

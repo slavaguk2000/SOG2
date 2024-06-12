@@ -3,8 +3,8 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import { useQuery } from '@apollo/client';
 
-import PsalmChordsEdit from '../components/psalmChordsEdit';
-import EditableChordsDataProvider from '../components/psalmChordsEdit/editableChordsDataProvider';
+import PsalmChordsEdit from '../components/psalmChords';
+import EditableChordsDataProvider from '../components/psalmChords/editableChordsDataProvider';
 import { psalm } from '../utils/gql/queries';
 import { Query, QueryPsalmArgs } from '../utils/gql/types';
 

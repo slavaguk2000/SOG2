@@ -104,8 +104,10 @@ export type Mutation = {
   addBibleFromSog?: Maybe<Scalars['Boolean']['output']>;
   addPsalmToFavourite?: Maybe<Scalars['Boolean']['output']>;
   addPsalmsFromSog?: Maybe<Scalars['Boolean']['output']>;
+  deletePsalmBook?: Maybe<Scalars['Boolean']['output']>;
   parseSermonsFromBranhamRu?: Maybe<Scalars['Boolean']['output']>;
   removePsalmFromFavourite?: Maybe<Scalars['Boolean']['output']>;
+  setActivePsalm?: Maybe<Scalars['Boolean']['output']>;
   setActiveSlide?: Maybe<Scalars['Boolean']['output']>;
   setActiveSlideOffset?: Maybe<Scalars['Boolean']['output']>;
   setFreeSlide?: Maybe<Scalars['Boolean']['output']>;
@@ -133,7 +135,17 @@ export type MutationAddPsalmsFromSogArgs = {
 };
 
 
+export type MutationDeletePsalmBookArgs = {
+  psalmBookId?: InputMaybe<Scalars['ID']['input']>;
+};
+
+
 export type MutationRemovePsalmFromFavouriteArgs = {
+  psalmId?: InputMaybe<Scalars['ID']['input']>;
+};
+
+
+export type MutationSetActivePsalmArgs = {
   psalmId?: InputMaybe<Scalars['ID']['input']>;
 };
 
@@ -327,10 +339,12 @@ export enum SortingDirection {
 
 export type Subscription = {
   __typename?: 'Subscription';
+  activePsalmChordsSubscription?: Maybe<PsalmData>;
   activeSlideSubscription?: Maybe<Slide>;
 };
 
 export enum TabType {
   Bible = 'Bible',
+  Psalm = 'Psalm',
   Sermon = 'Sermon'
 }

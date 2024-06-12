@@ -192,32 +192,50 @@ export const PSALMS_BOOK_FRAGMENT = gql`
   }
 `;
 
+const psalmData = `
+  psalm {
+    id
+    name
+    psalmNumber
+    coupletsOrder
+    defaultTonality
+  }
+  couplets {
+    id
+    initialOrder
+    marker
+    coupletContent {
+      id
+      text
+      line
+      chord {
+        id
+        bassNote
+        chordTemplate
+        rootNote
+      }
+    }
+  }
+`;
+
 export const updatePsalm = gql`
   mutation updatePsalm($psalmData: PsalmDataInput!) {
     updatePsalm(psalmData: $psalmData) {
-      psalm {
-        id
-        name
-        psalmNumber
-        coupletsOrder
-        defaultTonality
-      }
-      couplets {
-        id
-        initialOrder
-        marker
-        coupletContent {
-          id
-          text
-          line
-          chord {
-            id
-            bassNote
-            chordTemplate
-            rootNote
-          }
-        }
-      }
+      ${psalmData}
+    }
+  }
+`;
+
+export const setActivePsalm = gql`
+  mutation setActivePsalm($psalmId: ID) {
+    setActivePsalm(psalmId: $psalmId)
+  }
+`;
+
+export const activePsalmChordsSubscription = gql`
+  subscription activePsalmChordsSubscription {
+    activePsalmChordsSubscription {
+      ${psalmData}
     }
   }
 `;

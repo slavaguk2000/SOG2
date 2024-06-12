@@ -1,10 +1,17 @@
 import React, { createContext, PropsWithChildren, useCallback, useContext, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
-import { useQuery } from '@apollo/client';
+import { useMutation, useQuery } from '@apollo/client';
 
-import { psalm, psalms, psalmsBooks } from '../../../utils/gql/queries';
-import { Query, QueryPsalmArgs, QueryPsalmsArgs, Slide } from '../../../utils/gql/types';
+import { psalm, psalms, psalmsBooks, setActivePsalm } from '../../../utils/gql/queries';
+import {
+  Mutation,
+  MutationSetActivePsalmArgs,
+  Query,
+  QueryPsalmArgs,
+  QueryPsalmsArgs,
+  Slide,
+} from '../../../utils/gql/types';
 import { useInstrumentsField } from '../../instrumentsFieldProvider';
 import { PsalmsContextType } from '../../types';
 
@@ -58,6 +65,10 @@ const PsalmsDataProvider = ({ children }: PropsWithChildren) => {
     [setSearchParams],
   );
 
+  const [updatePsalmMutation] = useMutation<Pick<Mutation, 'setActivePsalm'>, MutationSetActivePsalmArgs>(
+    setActivePsalm,
+  );
+
   const handlePsalmSelect = useCallback(
     (id: string) => {
       setSearchParams((prev) => {
@@ -65,8 +76,13 @@ const PsalmsDataProvider = ({ children }: PropsWithChildren) => {
 
         return prev;
       });
+      updatePsalmMutation({
+        variables: {
+          psalmId: id,
+        },
+      }).catch((e) => console.error(e));
     },
-    [setSearchParams],
+    [setSearchParams, updatePsalmMutation],
   );
 
   const { data: psalmsBooksData } = useQuery<Pick<Query, 'psalmsBooks'>>(psalmsBooks, {

@@ -3,7 +3,7 @@ from ariadne import convert_kwargs_to_snake_case, ObjectType, QueryType, Mutatio
 from src.services.bible_helper import update_bible_slide_usage
 from src.services.database_helpers.bible import get_bible_books_by_bible_id, get_chapter_verses, get_bible_slide_by_id
 from src.services.database_helpers.psalm.psalm import get_psalms_books, get_psalms, get_psalm_by_id, PsalmsSortingKeys, \
-    add_psalm_to_favourites, remove_psalm_from_favourites
+    add_psalm_to_favourites, remove_psalm_from_favourites, delete_psalm_book
 from src.services.database_helpers.psalm.update_psalm import update_psalm
 from src.services.database_helpers.sermon import get_sermons, get_sermon_by_id, get_sermon_paragraph_by_id, \
     add_slide_audio_mapping
@@ -23,7 +23,9 @@ query = QueryType()
 mutation = MutationType()
 subscription = SubscriptionType()
 current_active_slide = None
-subscribers_queues = []
+current_active_psalm_chords = None
+slide_subscribers_queues = []
+psalm_chords_subscribers_queues = []
 
 
 @query.field("search")
@@ -105,15 +107,35 @@ def resolve_set_active_slide(*_, slide_id=None, **kwargs):
                     slide_audio_mapping['time_point'],
                     offset=0,
                 )
-        else:
+        elif kwargs.get('type') == 'Bible':
             active_slide = get_bible_slide_by_id(slide_id)
             update_bible_slide_usage(slide_id)
 
     current_active_slide = active_slide
     print(current_active_slide)
 
-    for subscriber_queue in subscribers_queues:
+    for subscriber_queue in slide_subscribers_queues:
         subscriber_queue.put_nowait(active_slide)
+
+    return True
+
+
+@mutation.field("setActivePsalm")
+@convert_kwargs_to_snake_case
+def resolve_set_active_psalm(*_, psalm_id=None):
+    global current_active_psalm_chords
+    active_psalm_chords = None
+    if psalm_id:
+        raw_active_psalm_chords = get_psalm_by_id(psalm_id)
+        active_psalm_chords = {
+            **raw_active_psalm_chords,
+            "couplets": [item["couplet"] for item in raw_active_psalm_chords["couplets"]]
+        }
+
+    current_active_psalm_chords = active_psalm_chords
+
+    for subscriber_queue in psalm_chords_subscribers_queues:
+        subscriber_queue.put_nowait(active_psalm_chords)
 
     return True
 
@@ -137,11 +159,11 @@ def resolve_set_active_slide_offset(*_, slide_id=None, **kwargs):
 
 @mutation.field("setFreeSlide")
 @convert_kwargs_to_snake_case
-def resolve_set_active_slide(*_, text: str, title: str):
+def resolve_set_active_free_slide(*_, text: str, title: str):
     global current_active_slide
     current_active_slide = {"content": text, "title": title}
 
-    for subscriber_queue in subscribers_queues:
+    for subscriber_queue in slide_subscribers_queues:
         subscriber_queue.put_nowait(current_active_slide)
 
     return True
@@ -196,10 +218,16 @@ def sync_sermons_to_elastic(*_):
     sync_sermons()
 
 
+@mutation.field("deletePsalmBook")
+@convert_kwargs_to_snake_case
+def resolve_delete_psalm_book(*_, psalm_book_id: str):
+    return delete_psalm_book(psalm_book_id)
+
+
 @subscription.source("activeSlideSubscription")
 async def resolve_active_slide_subscription(*_):
     queue = Queue()
-    subscribers_queues.append(queue)
+    slide_subscribers_queues.append(queue)
     yield current_active_slide
 
     try:
@@ -207,12 +235,31 @@ async def resolve_active_slide_subscription(*_):
             active_slide = await queue.get()
             yield active_slide
     finally:
-        subscribers_queues.remove(queue)
+        slide_subscribers_queues.remove(queue)
 
 
 @subscription.field("activeSlideSubscription")
 def resolve_active_slide_subscription_slide(active_slide, *_):
     return active_slide
+
+
+@subscription.source("activePsalmChordsSubscription")
+async def resolve_active_psalm_chords_subscription(*_):
+    queue = Queue()
+    psalm_chords_subscribers_queues.append(queue)
+    yield current_active_psalm_chords
+
+    try:
+        while True:
+            psalm_data = await queue.get()
+            yield psalm_data
+    finally:
+        psalm_chords_subscribers_queues.remove(queue)
+
+
+@subscription.field("activePsalmChordsSubscription")
+def resolve_active_psalm_chords_subscription_psalm_chords(psalm_data, *_):
+    return psalm_data
 
 
 slide = ObjectType("Slide")

@@ -74,7 +74,7 @@ class SimplePsalmParser:
             if len(bare_psalms_data) < 3:
                 return False
             with Session(engine) as session:
-                psalms = SimplePsalmParser.__parse_data_from_sog_psalms_strings(bare_psalms_data)[10:11]
+                psalms = SimplePsalmParser.__parse_data_from_sog_psalms_strings(bare_psalms_data)
                 new_psalms_book = PsalmBook(language=language, name=song_book_name)
                 session.add(new_psalms_book)
                 psalm_chords = [CoupletContentChord() for _ in psalms]

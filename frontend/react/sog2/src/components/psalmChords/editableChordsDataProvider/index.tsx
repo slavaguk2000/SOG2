@@ -67,9 +67,15 @@ interface EditableChordsDataProviderProps extends PropsWithChildren {
     couplets: Array<Omit<Couplet, '__typename'>>;
     psalm: Psalm;
   };
+  // TODO : temporary decision to reuse this provider for static chords view
+  forceData?: {
+    id: string;
+    couplets: Array<Omit<Couplet, '__typename'>>;
+    psalm: Psalm;
+  };
 }
 
-const EditableChordsDataProvider = ({ children, initialData }: EditableChordsDataProviderProps) => {
+const EditableChordsDataProvider = ({ children, initialData, forceData }: EditableChordsDataProviderProps) => {
   const [chordsData, setChordsData] = useState<PsalmData>(initialData);
 
   const { handleAddNewVersion, hasRedo, hasUndo, handleRedo, handleUndo } = usePreviousVersions(
@@ -117,12 +123,14 @@ const EditableChordsDataProvider = ({ children, initialData }: EditableChordsDat
     chordsData,
   });
 
-  const mainKey = keyToScaleDegree[chordsData.psalm.defaultTonality as string] ?? 0;
+  const currentData = forceData ?? chordsData;
+
+  const mainKey = keyToScaleDegree[currentData.psalm.defaultTonality as string] ?? 0;
 
   return (
     <ChordsDataContextTypeContext.Provider
       value={{
-        psalmData: chordsData,
+        psalmData: currentData,
         handleCutToNextLine,
         handleRemoveChord,
         handleAddChord,

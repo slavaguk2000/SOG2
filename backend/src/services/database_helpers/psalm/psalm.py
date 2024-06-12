@@ -4,7 +4,9 @@ from typing import Type
 from sqlalchemy.orm import Session
 from sqlalchemy import select, desc, func, exists, literal_column
 
+from src.models.couplet import Couplet
 from src.models.couplet_content import CoupletContent
+from src.models.couplet_content_chord import CoupletContentChord
 from src.models.psalms_book_psalms import psalms_book_psalms
 from src.services.database import engine
 from src.models.psalms_book import PsalmBook
@@ -117,9 +119,8 @@ def get_psalm_by_id(psalm_id: str):
                         couplet.marker
                     ]
                 }
-            } for idx, couplet in enumerate(sorted(psalm.couplets, key=lambda x:x.initial_order))
-        ]
-    }
+            } for idx, couplet in enumerate(sorted(psalm.couplets, key=lambda x:x.initial_order))]
+        }
 
 
 def get_favourite_psalm_book(session: Session) -> PsalmBook:
@@ -175,5 +176,39 @@ def remove_psalm_from_favourites(psalm_id: str) -> bool:
                 psalms_book_psalms.c.psalms_book_id == favourite_psalm_book.id
             )
         )
+        session.commit()
+        return True
+
+
+def delete_psalm_book(psalm_book_id: str):
+    with Session(engine) as session:
+        psalm_book = session.query(PsalmBook).filter(PsalmBook.id == psalm_book_id).first()
+        if not psalm_book:
+            raise "Psalm Book with such id not found"
+
+        if psalm_book.is_favourite:
+            raise "You can't delete \"favourite\" psalm book"
+
+        psalms = psalm_book.psalms
+
+        for psalm in psalms:
+            couplets = session.query(Couplet).filter(Couplet.psalm_id == psalm.id).all()
+            for couplet in couplets:
+                couplet_contents = session.query(CoupletContent).filter(CoupletContent.couplet_id == couplet.id).all()
+                for content in couplet_contents:
+                    session.delete(content)
+                session.delete(couplet)
+
+            session.delete(psalm)
+
+        session.delete(psalm_book)
+        session.commit()
+
+        chords_to_delete = session.query(CoupletContentChord).filter(
+            ~CoupletContentChord.couplet_contents.any()
+        ).all()
+        for chord in chords_to_delete:
+            session.delete(chord)
+
         session.commit()
         return True

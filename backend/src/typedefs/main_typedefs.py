@@ -4,6 +4,7 @@ type_defs = gql("""
     enum TabType {
       Bible
       Sermon
+      Psalm
     }
     
     enum MusicalKey {
@@ -188,6 +189,7 @@ type_defs = gql("""
     
     type Mutation {
       setActiveSlide(slideId: ID, type: TabType, slideAudioMapping: SlideMappingInput): Boolean
+      setActivePsalm(psalmId: ID): Boolean
       setActiveSlideOffset(slideId: ID!, type: TabType!, slideAudioMapping: SlideMappingInput, offset: Float!): Boolean
       setFreeSlide(text: String!, title: String!): Boolean
       addBibleFromSog(sogFileSrc: String!, language: String!, translation: String!): Boolean
@@ -195,6 +197,7 @@ type_defs = gql("""
       syncSermonsToElastic: Boolean
       parseSermonsFromBranhamRu: Boolean
       addPsalmsFromSog(sogFileSrc: String!, language: String!): Boolean
+      deletePsalmBook(psalmBookId: ID): Boolean
       addPsalmToFavourite(psalmId: ID): Boolean
       removePsalmFromFavourite(psalmId: ID): Boolean
       updatePsalm(psalmData: PsalmDataInput!): PsalmData!
@@ -202,5 +205,6 @@ type_defs = gql("""
     
     type Subscription {
       activeSlideSubscription: Slide
+      activePsalmChordsSubscription: PsalmData
     }
 """)
