@@ -101,7 +101,7 @@ const ChordEditorDialog = ({ state, setState }: ChordEditorDialogProps) => {
           onChange={({ target }) => handleChangeTemplate('prevValue', target)}
         />
         <ChordEditor
-          fontSize={28}
+          fontSize={40}
           onChange={(value) => handleChangeChord('rootNote', value)}
           initIdx={getIdxByScaleDegree(state.mainKey + state.chordData.rootNote)}
         />
@@ -118,7 +118,7 @@ const ChordEditorDialog = ({ state, setState }: ChordEditorDialogProps) => {
           }}
         />
         <Box height="min-content">/</Box>
-        <ChordEditor fontSize={28} withEmpty onChange={(value) => handleChangeChord('bassNote', value)} />
+        <ChordEditor fontSize={40} withEmpty onChange={(value) => handleChangeChord('bassNote', value)} />
         <Button onClick={handleSubmit}>
           <DoneIcon />
         </Button>

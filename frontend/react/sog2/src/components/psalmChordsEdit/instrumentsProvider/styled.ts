@@ -42,7 +42,7 @@ export const DialogContentWrapper = styled(Box)`
 
   .MuiInputBase-input {
     color: #61dafb;
-    font-size: 24px;
+    font-size: 40px;
     font-family: 'Times New Roman', sans-serif;
     font-weight: bold;
     font-style: italic;

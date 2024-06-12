@@ -20,7 +20,7 @@ export const getIdxByScaleDegree = (scaleDegree: number) => (offsetAC + scaleDeg
 
 const ChordEditor = ({ fontSize, withEmpty, onChange, initIdx }: ChordEditorProps) => {
   return (
-    <ChordEditorWrapper>
+    <ChordEditorWrapper fontSize={fontSize}>
       <ChordWheelSelector
         height={fontSize}
         paddings={10}
