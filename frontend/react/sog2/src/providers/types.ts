@@ -5,6 +5,8 @@ import {
   AudioMapping,
   BibleBook,
   InputMaybe,
+  Maybe,
+  MusicalKey,
   Psalm,
   PsalmsBook,
   Query,
@@ -56,6 +58,7 @@ export interface BibleContextType extends DataProvider {
 }
 
 interface PsalmData extends Psalm {
+  tonality?: Maybe<MusicalKey>;
   inFavourite: boolean;
 }
 

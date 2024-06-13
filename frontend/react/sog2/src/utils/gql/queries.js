@@ -119,18 +119,22 @@ export const psalmsBooks = gql`
   }
 `;
 
+const psalmBookItem = `
+  id
+  psalm {
+    id
+    name
+    psalmNumber
+    coupletsOrder
+    defaultTonality
+  }
+  transpositionSteps
+`;
+
 export const psalms = gql`
   query psalms($psalmsBookId: ID!) {
     psalms(psalmsBookId: $psalmsBookId) {
-      id
-      psalm {
-        id
-        name
-        psalmNumber
-        coupletsOrder
-        defaultTonality
-      }
-      transpositionSteps
+      ${psalmBookItem}
     }
   }
 `;
@@ -233,6 +237,14 @@ export const updatePsalm = gql`
 export const setActivePsalm = gql`
   mutation setActivePsalm($psalmId: ID) {
     setActivePsalm(psalmId: $psalmId)
+  }
+`;
+
+export const updatePsalmTransposition = gql`
+  mutation updatePsalmTransposition($psalmBookId: ID!, $psalmId: ID!, $transposition: Int!) {
+    updatePsalmTransposition(psalmBookId: $psalmBookId, psalmId: $psalmId, transposition: $transposition) {
+      ${psalmBookItem}
+    }
   }
 `;
 

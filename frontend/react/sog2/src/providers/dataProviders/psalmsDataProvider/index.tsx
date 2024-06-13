@@ -129,7 +129,8 @@ const PsalmsDataProvider = ({ children }: PropsWithChildren) => {
     () =>
       psalmsQueryData?.psalms.map(({ psalm, transpositionSteps }) => ({
         ...psalm,
-        defaultTonality:
+        defaultTonality: psalm.defaultTonality,
+        tonality:
           psalm.defaultTonality && transpositionSteps
             ? (scaleDegreeToKey[
                 keyToScaleDegree[psalm.defaultTonality.replace('Sharp', '#')] + (transpositionSteps % 12)

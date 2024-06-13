@@ -43,16 +43,20 @@ def get_psalms_books():
         ]
 
 
-def get_psalm_dict_from_psalm(psalm: Type[Psalm] | Psalm, psalms_book_id: str, transposition_steps: int):
+def get_psalm_dict_from_psalm(psalm: Type[Psalm] | Psalm):
+    return {
+        'id': psalm.id,
+        'name': psalm.name,
+        'psalm_number': psalm.psalm_number,
+        'couplets_order': psalm.couplets_order,
+        'default_tonality': psalm.default_tonality.name if psalm.default_tonality else None,
+    }
+
+
+def get_psalm_book_item_dict_from_psalm(psalm: Type[Psalm] | Psalm, psalms_book_id: str, transposition_steps: int):
     return {
         'id': f"{psalms_book_id}{psalm.id}",
-        "psalm": {
-            'id': psalm.id,
-            'name': psalm.name,
-            'psalm_number': psalm.psalm_number,
-            'couplets_order': psalm.couplets_order,
-            'default_tonality': psalm.default_tonality.name if psalm.default_tonality else None,
-        },
+        "psalm": get_psalm_dict_from_psalm(psalm),
         "transposition_steps": transposition_steps,
     }
 
@@ -75,7 +79,7 @@ def get_psalms(
         psalms = session.execute(psalms_query).all()
 
         return [
-            get_psalm_dict_from_psalm(psalm, psalms_book_id, transposition_steps) for psalm, transposition_steps in
+            get_psalm_book_item_dict_from_psalm(psalm, psalms_book_id, transposition_steps) for psalm, transposition_steps in
             psalms
         ]
 
@@ -257,7 +261,7 @@ def update_psalm_transposition(psalm_book_id: str, psalm_id: str, transposition:
         if not result:
             raise "Invalid ids"
 
-        return get_psalm_dict_from_psalm(Psalm(
+        return get_psalm_book_item_dict_from_psalm(Psalm(
             id=result.id,
             name=result.name,
             psalm_number=result.psalm_number,
