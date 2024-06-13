@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 
 import { Box, Collapse } from '@mui/material';
 
@@ -32,4 +32,4 @@ const Header = () => {
   );
 };
 
-export default Header;
+export default memo(Header);

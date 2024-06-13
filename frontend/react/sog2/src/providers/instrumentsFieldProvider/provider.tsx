@@ -32,15 +32,6 @@ const InstrumentsFieldProvider: FC<PropsWithChildren> = ({ children }) => {
   const tabType = pathname === '/bible' ? TabType.Bible : TabType.Sermon;
 
   const sendActiveSlide = (newSlideData?: SlideData) => {
-    console.log({
-      variables: {
-        slideId: newSlideData?.slide?.id,
-        type: tabType,
-        slideAudioMapping: mappingRecording ? newSlideData?.slideAudioMapping : undefined,
-      },
-      refetchQueries: mappingRecording ? ['sermon'] : [],
-      mappingRecording,
-    });
     setActiveSlideMutation({
       variables: {
         slideId: newSlideData?.slide?.id,
