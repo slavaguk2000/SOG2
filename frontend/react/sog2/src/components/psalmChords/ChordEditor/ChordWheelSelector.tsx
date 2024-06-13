@@ -2,28 +2,51 @@ import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 're
 
 import { ChordWheelSelectorContentWrapper, ChordWheelSelectorWrapper, ChordWheelSelectorItemWrapper } from './styled';
 
-interface ChordWheelSelectorProps {
+type Value<T> =
+  | string
+  | {
+      key: T;
+      label: string;
+    };
+
+type ChordWheelSelectorProps<T> = {
   height: number;
   paddings?: number;
-  values: string[];
-  onChange?: (newValue: string) => void;
+  values: Value<T>[];
+  onChange?: (newValue: T | string) => void;
   initIdx?: number;
   thresholdPercentage?: number;
-}
+};
 
 interface ScrollingContainer extends HTMLSpanElement {
   onscrollend: () => void;
   scrollTop: number;
 }
 
-const ChordWheelSelector = ({
+const valueToLabel = <T,>(value: Value<T>) => {
+  if (typeof value === 'string') {
+    return value;
+  }
+
+  return value.label;
+};
+
+const valueToKey = <T,>(value: Value<T>) => {
+  if (typeof value === 'string') {
+    return value;
+  }
+
+  return value.key;
+};
+
+const ChordWheelSelector = <T extends { toString: () => string }>({
   height,
   paddings = 0,
   values,
   onChange,
   initIdx = 0,
   thresholdPercentage = 10,
-}: ChordWheelSelectorProps) => {
+}: ChordWheelSelectorProps<T>) => {
   const containerRef = useRef<ScrollingContainer>(null);
   const [lastDownWheel, setLastDownWheel] = useState<boolean>(false);
 
@@ -49,7 +72,7 @@ const ChordWheelSelector = ({
           ? Math.ceil(rawChoise - realThresholdPercentage)
           : Math.floor(rawChoise + realThresholdPercentage);
         anchor.scrollTop = currentChoice * height;
-        onChange?.(values[currentChoice]);
+        onChange?.(valueToKey(values[currentChoice]));
       };
     }
   }, [containerRef, height, lastDownWheel, onChange, realThresholdPercentage, values]);
@@ -67,9 +90,9 @@ const ChordWheelSelector = ({
   return (
     <ChordWheelSelectorWrapper onWheel={handleWheel} height={`${parentHeight}px`} ref={containerRef}>
       <ChordWheelSelectorContentWrapper padding={`${paddings}px 0`} height={`${fullHeight}px`}>
-        {values.map((key) => (
-          <ChordWheelSelectorItemWrapper height={`${height}px`} key={key}>
-            {key}
+        {values.map((value) => (
+          <ChordWheelSelectorItemWrapper height={height} key={valueToKey(value).toString()}>
+            {valueToLabel(value)}
           </ChordWheelSelectorItemWrapper>
         ))}
       </ChordWheelSelectorContentWrapper>

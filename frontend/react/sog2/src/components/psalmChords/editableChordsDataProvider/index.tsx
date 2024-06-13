@@ -1,7 +1,7 @@
 import React, { createContext, PropsWithChildren, useContext, useState } from 'react';
 
 import usePreviousVersions from '../../../hooks/usePreviousVersions';
-import { Couplet, CoupletContentChord, Psalm, PsalmData } from '../../../utils/gql/types';
+import { Couplet, CoupletContentChord, MusicalKey, Psalm, PsalmData } from '../../../utils/gql/types';
 import { keyToScaleDegree } from '../utils';
 
 import implementAddChord from './implementAddChord';
@@ -11,6 +11,7 @@ import implementEditText from './implementEditText';
 import implementLinkChords from './implementLinkChords';
 import implementRemoveChord from './implementRemoveChord';
 import implementUnlinkChord from './implementUnlinkChord';
+import MustProvideDefaultTonalityDialog from './MustProvideDefaultTonalityDialog';
 
 type ChordsDataContextType = {
   psalmData?: PsalmData;
@@ -127,6 +128,16 @@ const EditableChordsDataProvider = ({ children, initialData, forceData }: Editab
 
   const mainKey = keyToScaleDegree[currentData.psalm.defaultTonality as string] ?? 0;
 
+  const handleSetNewTonality = (newTonality: MusicalKey) => {
+    setChordsData((p) => ({
+      ...p,
+      psalm: {
+        ...p.psalm,
+        defaultTonality: newTonality,
+      },
+    }));
+  };
+
   return (
     <ChordsDataContextTypeContext.Provider
       value={{
@@ -146,6 +157,10 @@ const EditableChordsDataProvider = ({ children, initialData, forceData }: Editab
       }}
     >
       {children}
+      <MustProvideDefaultTonalityDialog
+        setNewTonality={handleSetNewTonality}
+        open={!chordsData.psalm.defaultTonality}
+      />
     </ChordsDataContextTypeContext.Provider>
   );
 };

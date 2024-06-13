@@ -26,9 +26,13 @@ export const ChordWheelSelectorContentWrapper = styled(Box)`
   flex-direction: column;
 `;
 
-export const ChordWheelSelectorItemWrapper = styled(Box)<{ height: string }>`
+export const ChordWheelSelectorItemWrapper = styled(Box, {
+  shouldForwardProp: (prop) => prop !== 'height',
+})<{ height: number }>`
   display: flex;
-  height: ${({ height }) => height};
+  height: ${({ height }) => height}px;
+  font-size: ${({ height }) => (height * 6) / 7}px;
   width: 100%;
   justify-content: center;
+  align-items: center;
 `;
