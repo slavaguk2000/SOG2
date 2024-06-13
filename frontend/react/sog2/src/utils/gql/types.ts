@@ -114,6 +114,7 @@ export type Mutation = {
   syncBibleToElastic?: Maybe<Scalars['Boolean']['output']>;
   syncSermonsToElastic?: Maybe<Scalars['Boolean']['output']>;
   updatePsalm: PsalmData;
+  updatePsalmTransposition: PsalmsBookItem;
 };
 
 
@@ -125,7 +126,7 @@ export type MutationAddBibleFromSogArgs = {
 
 
 export type MutationAddPsalmToFavouriteArgs = {
-  psalmId?: InputMaybe<Scalars['ID']['input']>;
+  psalmId: Scalars['ID']['input'];
 };
 
 
@@ -136,12 +137,12 @@ export type MutationAddPsalmsFromSogArgs = {
 
 
 export type MutationDeletePsalmBookArgs = {
-  psalmBookId?: InputMaybe<Scalars['ID']['input']>;
+  psalmBookId: Scalars['ID']['input'];
 };
 
 
 export type MutationRemovePsalmFromFavouriteArgs = {
-  psalmId?: InputMaybe<Scalars['ID']['input']>;
+  psalmId: Scalars['ID']['input'];
 };
 
 
@@ -178,6 +179,13 @@ export type MutationSyncBibleToElasticArgs = {
 
 export type MutationUpdatePsalmArgs = {
   psalmData: PsalmDataInput;
+};
+
+
+export type MutationUpdatePsalmTranspositionArgs = {
+  psalmBookId: Scalars['ID']['input'];
+  psalmId: Scalars['ID']['input'];
+  transposition: Scalars['Int']['input'];
 };
 
 export type Psalm = {
@@ -225,6 +233,13 @@ export type PsalmsBook = {
   psalmsCount: Scalars['Int']['output'];
 };
 
+export type PsalmsBookItem = {
+  __typename?: 'PsalmsBookItem';
+  id: Scalars['ID']['output'];
+  psalm: Psalm;
+  transpositionSteps: Scalars['Int']['output'];
+};
+
 export type PsalmsSorting = {
   sortDirection: SortingDirection;
   sortingKey: PsalmsSortingKeys;
@@ -241,7 +256,7 @@ export type Query = {
   bibleHistory: Array<Slide>;
   bibleVerses: Array<Slide>;
   psalm: PsalmDataWithSlides;
-  psalms: Array<Psalm>;
+  psalms: Array<PsalmsBookItem>;
   psalmsBooks: Array<PsalmsBook>;
   search: Array<Slide>;
   sermon: Array<Slide>;

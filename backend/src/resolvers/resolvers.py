@@ -3,7 +3,7 @@ from ariadne import convert_kwargs_to_snake_case, ObjectType, QueryType, Mutatio
 from src.services.bible_helper import update_bible_slide_usage
 from src.services.database_helpers.bible import get_bible_books_by_bible_id, get_chapter_verses, get_bible_slide_by_id
 from src.services.database_helpers.psalm.psalm import get_psalms_books, get_psalms, get_psalm_by_id, PsalmsSortingKeys, \
-    add_psalm_to_favourites, remove_psalm_from_favourites, delete_psalm_book
+    add_psalm_to_favourites, remove_psalm_from_favourites, delete_psalm_book, update_psalm_transposition
 from src.services.database_helpers.psalm.update_psalm import update_psalm
 from src.services.database_helpers.sermon import get_sermons, get_sermon_by_id, get_sermon_paragraph_by_id, \
     add_slide_audio_mapping
@@ -192,6 +192,12 @@ def resolve_add_psalm_to_favourite(*_, psalm_id: str):
 @convert_kwargs_to_snake_case
 def resolve_update_psalm(*_, psalm_data: dict):
     return update_psalm(psalm_data)
+
+
+@mutation.field("updatePsalmTransposition")
+@convert_kwargs_to_snake_case
+def resolve_update_psalm_transposition(*_, psalm_book_id: str, psalm_id: str, transposition: int):
+    return update_psalm_transposition(psalm_book_id, psalm_id, transposition)
 
 
 @mutation.field("removePsalmFromFavourite")

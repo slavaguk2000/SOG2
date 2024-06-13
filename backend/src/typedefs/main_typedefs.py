@@ -50,7 +50,7 @@ type_defs = gql("""
         sermon(sermonId: ID!): [Slide!]!
         sermons(sermonsCollectionId: ID!): [Sermon!]!
         psalmsBooks: [PsalmsBook!]!
-        psalms(psalmsBookId: ID!, psalmsSorting: PsalmsSorting): [Psalm!]!
+        psalms(psalmsBookId: ID!, psalmsSorting: PsalmsSorting): [PsalmsBookItem!]!
         psalm(psalmId: ID!): PsalmDataWithSlides!
     }
     
@@ -60,6 +60,12 @@ type_defs = gql("""
         iconSrc: String
         isFavourite: Boolean
         psalmsCount: Int!
+    }
+    
+    type PsalmsBookItem {
+        id: ID!
+        psalm: Psalm!
+        transpositionSteps: Int!
     }
     
     type Psalm {
@@ -197,10 +203,11 @@ type_defs = gql("""
       syncSermonsToElastic: Boolean
       parseSermonsFromBranhamRu: Boolean
       addPsalmsFromSog(sogFileSrc: String!, language: String!): Boolean
-      deletePsalmBook(psalmBookId: ID): Boolean
-      addPsalmToFavourite(psalmId: ID): Boolean
-      removePsalmFromFavourite(psalmId: ID): Boolean
+      deletePsalmBook(psalmBookId: ID!): Boolean
+      addPsalmToFavourite(psalmId: ID!): Boolean
+      removePsalmFromFavourite(psalmId: ID!): Boolean
       updatePsalm(psalmData: PsalmDataInput!): PsalmData!
+      updatePsalmTransposition(psalmBookId: ID!, psalmId: ID!, transposition: Int!): PsalmsBookItem!
     }
     
     type Subscription {

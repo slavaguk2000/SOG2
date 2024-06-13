@@ -3,8 +3,10 @@ import { useSearchParams } from 'react-router-dom';
 
 import { useMutation, useQuery } from '@apollo/client';
 
+import { keyToScaleDegree, scaleDegreeToKey } from '../../../components/psalmChords/utils';
 import { psalm, psalms, psalmsBooks, setActivePsalm } from '../../../utils/gql/queries';
 import {
+  MusicalKey,
   Mutation,
   MutationSetActivePsalmArgs,
   Query,
@@ -125,9 +127,15 @@ const PsalmsDataProvider = ({ children }: PropsWithChildren) => {
 
   const psalmsData = useMemo(
     () =>
-      psalmsQueryData?.psalms.map((psalmData) => ({
-        ...psalmData,
-        inFavourite: !!favouritePsalmsQueryDataMap?.[psalmData.id],
+      psalmsQueryData?.psalms.map(({ psalm, transpositionSteps }) => ({
+        ...psalm,
+        defaultTonality:
+          psalm.defaultTonality && transpositionSteps
+            ? (scaleDegreeToKey[
+                keyToScaleDegree[psalm.defaultTonality.replace('Sharp', '#')] + (transpositionSteps % 12)
+              ] as MusicalKey)
+            : psalm.defaultTonality,
+        inFavourite: !!favouritePsalmsQueryDataMap?.[psalm.id],
       })),
     [favouritePsalmsQueryDataMap, psalmsQueryData?.psalms],
   );

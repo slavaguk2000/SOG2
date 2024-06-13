@@ -123,10 +123,14 @@ export const psalms = gql`
   query psalms($psalmsBookId: ID!) {
     psalms(psalmsBookId: $psalmsBookId) {
       id
-      name
-      psalmNumber
-      coupletsOrder
-      defaultTonality
+      psalm {
+        id
+        name
+        psalmNumber
+        coupletsOrder
+        defaultTonality
+      }
+      transpositionSteps
     }
   }
 `;

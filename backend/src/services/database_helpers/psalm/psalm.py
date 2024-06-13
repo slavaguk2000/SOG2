@@ -2,7 +2,7 @@ import enum
 from typing import Type
 
 from sqlalchemy.orm import Session
-from sqlalchemy import select, desc, func, exists, literal_column
+from sqlalchemy import select, desc, func, exists, literal_column, update
 
 from src.models.couplet import Couplet
 from src.models.couplet_content import CoupletContent
@@ -43,13 +43,17 @@ def get_psalms_books():
         ]
 
 
-def get_psalm_dict_from_psalm(psalm: Type[Psalm]):
+def get_psalm_dict_from_psalm(psalm: Type[Psalm] | Psalm, psalms_book_id: str, transposition_steps: int):
     return {
-        'id': psalm.id,
-        'name': psalm.name,
-        'psalm_number': psalm.psalm_number,
-        'couplets_order': psalm.couplets_order,
-        'default_tonality': psalm.default_tonality.name if psalm.default_tonality else None,
+        'id': f"{psalms_book_id}{psalm.id}",
+        "psalm": {
+            'id': psalm.id,
+            'name': psalm.name,
+            'psalm_number': psalm.psalm_number,
+            'couplets_order': psalm.couplets_order,
+            'default_tonality': psalm.default_tonality.name if psalm.default_tonality else None,
+        },
+        "transposition_steps": transposition_steps,
     }
 
 
@@ -59,14 +63,20 @@ def get_psalms(
     sort_direction: SortingDirection = SortingDirection.ASC
 ):
     with Session(engine) as session:
-        psalms_query = select(Psalm)\
-            .join(psalms_book_psalms)\
-            .join(PsalmBook)\
-            .filter(PsalmBook.id == psalms_book_id)\
+        psalms_query = select(
+            Psalm,
+            psalms_book_psalms.c.transposition_steps
+        ) \
+            .join(psalms_book_psalms, Psalm.id == psalms_book_psalms.c.psalm_id) \
+            .join(PsalmBook, PsalmBook.id == psalms_book_psalms.c.psalms_book_id) \
+            .filter(PsalmBook.id == psalms_book_id) \
             .order_by(get_direction_function_by_direction(sort_direction, f'psalms.{sort_key.value}'))
-        psalms = session.execute(psalms_query).scalars().all()
+
+        psalms = session.execute(psalms_query).all()
+
         return [
-            get_psalm_dict_from_psalm(psalm) for psalm in psalms
+            get_psalm_dict_from_psalm(psalm, psalms_book_id, transposition_steps) for psalm, transposition_steps in
+            psalms
         ]
 
 
@@ -212,3 +222,45 @@ def delete_psalm_book(psalm_book_id: str):
 
         session.commit()
         return True
+
+
+def update_psalm_transposition(psalm_book_id: str, psalm_id: str, transposition: int):
+    with Session(engine) as session:
+        session.execute(
+            update(psalms_book_psalms)
+            .where(
+                psalms_book_psalms.c.psalms_book_id == psalm_book_id,
+                psalms_book_psalms.c.psalm_id == psalm_id
+            )
+            .values(transposition_steps=transposition)
+        )
+        session.commit()
+
+        result = session.execute(
+            select(
+                psalms_book_psalms.c.psalms_book_id,
+                psalms_book_psalms.c.psalm_id,
+                psalms_book_psalms.c.transposition_steps,
+                Psalm.id,
+                Psalm.name,
+                Psalm.psalm_number,
+                Psalm.couplets_order,
+                Psalm.default_tonality
+            )
+            .join(Psalm, Psalm.id == psalms_book_psalms.c.psalm_id)
+            .where(
+                psalms_book_psalms.c.psalms_book_id == psalm_book_id,
+                psalms_book_psalms.c.psalm_id == psalm_id
+            )
+        ).first()
+
+        if not result:
+            raise "Invalid ids"
+
+        return get_psalm_dict_from_psalm(Psalm(
+            id=result.id,
+            name=result.name,
+            psalm_number=result.psalm_number,
+            couplets_order=result.couplets_order,
+            default_tonality=result.default_tonality
+        ), result.psalms_book_id, result.transposition_steps)
