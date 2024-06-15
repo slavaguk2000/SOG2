@@ -61,6 +61,9 @@ export const PresentationProvider = ({ children }: PropsWithChildren<Presentatio
   >(undefined);
 
   const presentationTextRequest = useMemo(() => {
+    if (!('PresentationRequest' in window)) {
+      return;
+    }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars,@typescript-eslint/ban-ts-comment
     // @ts-ignore
     const request = new PresentationRequest(presUrls);
@@ -85,6 +88,10 @@ export const PresentationProvider = ({ children }: PropsWithChildren<Presentatio
   }, []);
 
   const presentationChordRequest = useMemo(() => {
+    if (!('PresentationRequest' in window)) {
+      return;
+    }
+
     // eslint-disable-next-line @typescript-eslint/no-unused-vars,@typescript-eslint/ban-ts-comment
     // @ts-ignore
     const request = new PresentationRequest(presChordsUrls);
