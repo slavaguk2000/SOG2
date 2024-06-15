@@ -4,7 +4,12 @@ import { scaleDegreeToKey } from '../components/psalmChords/utils';
 import { CoupletContentChord, MusicalKey, PsalmData } from './gql/types';
 
 export const getChordText = (chord: CoupletContentChord, mainKey: number) =>
-  chord.chordTemplate.replace('$', scaleDegreeToKey[(mainKey + chord.rootNote) % 12] ?? '');
+  chord.chordTemplate.replace(
+    '$',
+    `${scaleDegreeToKey[(mainKey + chord.rootNote) % 12] ?? ''}${
+      typeof chord.bassNote === 'number' ? `/${scaleDegreeToKey[(mainKey + chord.bassNote) % 12] ?? ''}` : ''
+    }`,
+  );
 
 export const getChordByLinkingChordData = (psalmData: PsalmData, { coupletIdx, coupletContentIdx }: LinkingChordData) =>
   psalmData.couplets[coupletIdx]?.coupletContent[coupletContentIdx]?.chord ?? null;
