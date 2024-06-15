@@ -36,7 +36,7 @@ const useTransposeSong = (
     const defaultTonalityScaleDegree = defaultTonality && keyToScaleDegree[defaultTonality];
     const newTonalityScaleDegree = keyToScaleDegree[newTonality];
 
-    if (newTonalityScaleDegree && defaultTonalityScaleDegree) {
+    if (typeof newTonalityScaleDegree === 'number' && typeof defaultTonalityScaleDegree === 'number') {
       setCurrentTransposition(newTonalityScaleDegree - defaultTonalityScaleDegree);
     }
   };
