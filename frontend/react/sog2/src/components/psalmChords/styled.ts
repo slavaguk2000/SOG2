@@ -114,6 +114,7 @@ export const ChordAndContentWrapper = styled('span', {
 })<{ hoverable?: boolean }>`
   position: relative;
   font-family: 'Times New Roman', sans-serif;
+  white-space: pre-wrap;
 
   ${({ hoverable }) =>
     hoverable
