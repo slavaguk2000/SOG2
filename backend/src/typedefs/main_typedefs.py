@@ -206,6 +206,7 @@ type_defs = gql("""
       addBibleFromSog(sogFileSrc: String!, language: String!, translation: String!): Boolean
       syncBibleToElastic(bibleId: ID): Boolean
       syncSermonsToElastic: Boolean
+      syncPsalmsToElastic: Boolean
       parseSermonsFromBranhamRu: Boolean
       addPsalmsFromSog(sogFileSrc: String!, language: String!): Boolean
       deletePsalmBook(psalmBookId: ID!): Boolean

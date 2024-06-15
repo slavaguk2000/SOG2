@@ -9,6 +9,7 @@ from src.services.database_helpers.sermon import get_sermons, get_sermon_by_id, 
     add_slide_audio_mapping
 from src.services.elasticsearch.search.bible.bible_getters import get_bible_history
 from src.services.elasticsearch.search.bible.bible_search_engine.bible_search_engine import bible_search
+from src.services.elasticsearch.sync.psalm import sync_psalms
 from src.services.elasticsearch.sync.sermon import sync_sermons
 from src.services.parsers.bibleParsers.sog_parser import SimpleBibleParser
 from asyncio import Queue
@@ -242,7 +243,13 @@ def sync_bible_to_elastic(*_, bible_id: str):
 @mutation.field("syncSermonsToElastic")
 @convert_kwargs_to_snake_case
 def sync_sermons_to_elastic(*_):
-    sync_sermons()
+    return sync_sermons()
+
+
+@mutation.field("syncPsalmsToElastic")
+@convert_kwargs_to_snake_case
+def sync_psalms_to_elastic(*_):
+    return sync_psalms()
 
 
 @mutation.field("deletePsalmBook")
