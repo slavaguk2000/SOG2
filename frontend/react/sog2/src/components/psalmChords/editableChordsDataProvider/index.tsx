@@ -164,7 +164,7 @@ const EditableChordsDataProvider = ({
       {children}
       <MustProvideDefaultTonalityDialog
         setNewTonality={handleSetNewTonality}
-        open={!chordsData.psalm.defaultTonality}
+        open={!(chordsData.psalm.defaultTonality || forceData)}
       />
     </ChordsDataContextTypeContext.Provider>
   );
