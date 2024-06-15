@@ -141,7 +141,7 @@ def get_favourite_psalm_book(session: Session) -> PsalmBook:
     return session.query(PsalmBook).filter(PsalmBook.is_favourite == True).first()
 
 
-def add_psalm_to_favourites(psalm_id: str) -> bool:
+def add_psalm_to_favourites(psalm_id: str, transposition: int) -> bool:
     with Session(engine) as session:
         favourite_psalm_book = get_favourite_psalm_book(session)
         if not favourite_psalm_book:
@@ -160,7 +160,11 @@ def add_psalm_to_favourites(psalm_id: str) -> bool:
 
         # Add psalm to favourite psalm book
         session.execute(
-            psalms_book_psalms.insert().values(psalm_id=psalm_id, psalms_book_id=favourite_psalm_book.id)
+            psalms_book_psalms.insert().values(
+                psalm_id=psalm_id,
+                psalms_book_id=favourite_psalm_book.id,
+                transposition_steps=transposition
+            )
         )
         session.commit()
         return True

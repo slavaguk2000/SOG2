@@ -60,6 +60,7 @@ export interface BibleContextType extends DataProvider {
 interface PsalmData extends Psalm {
   tonality?: Maybe<MusicalKey>;
   inFavourite: boolean;
+  transposition: number;
 }
 
 export interface PsalmsContextType extends DataProvider {

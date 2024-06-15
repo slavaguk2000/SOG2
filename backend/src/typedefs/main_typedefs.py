@@ -204,7 +204,7 @@ type_defs = gql("""
       parseSermonsFromBranhamRu: Boolean
       addPsalmsFromSog(sogFileSrc: String!, language: String!): Boolean
       deletePsalmBook(psalmBookId: ID!): Boolean
-      addPsalmToFavourite(psalmId: ID!): Boolean
+      addPsalmToFavourite(psalmId: ID!, transposition: Int): Boolean
       removePsalmFromFavourite(psalmId: ID!): Boolean
       updatePsalm(psalmData: PsalmDataInput!): PsalmData!
       updatePsalmTransposition(psalmBookId: ID!, psalmId: ID!, transposition: Int!): PsalmsBookItem!

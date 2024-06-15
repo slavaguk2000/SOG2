@@ -184,8 +184,8 @@ def resolve_add_psalms_from_sog(*_, sog_file_src: str, language: str):
 
 @mutation.field("addPsalmToFavourite")
 @convert_kwargs_to_snake_case
-def resolve_add_psalm_to_favourite(*_, psalm_id: str):
-    return add_psalm_to_favourites(psalm_id)
+def resolve_add_psalm_to_favourite(*_, psalm_id: str, transposition: int = 0):
+    return add_psalm_to_favourites(psalm_id, transposition)
 
 
 @mutation.field("updatePsalm")

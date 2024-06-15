@@ -22,12 +22,13 @@ const PsalmSelect = () => {
 
   const preparedData = useMemo(
     () =>
-      psalmsData?.map(({ id, name, psalmNumber, defaultTonality, tonality, inFavourite }) => {
+      psalmsData?.map(({ id, name, psalmNumber, defaultTonality, tonality, inFavourite, transposition }) => {
         return {
           id,
           name: `${psalmNumber ? `${psalmNumber} ` : ''}${name}${defaultTonality ? ` (${tonality})` : ''}`,
           inFavourite,
           defaultTonality,
+          transposition,
         };
       }),
     [psalmsData],
@@ -62,7 +63,7 @@ const PsalmSelect = () => {
 
   return (
     <PsalmSelectWrapper>
-      {preparedData?.map(({ name, id, inFavourite, defaultTonality }) => (
+      {preparedData?.map(({ name, id, inFavourite, defaultTonality, transposition }) => (
         <Box key={id} onContextMenu={(e) => handleContextMenu(e, id, defaultTonality)}>
           <PsalmSelectItem
             psalmName={name}
@@ -70,6 +71,7 @@ const PsalmSelect = () => {
             onClick={() => handlePsalmSelect(id)}
             psalmId={id}
             inFavourite={inFavourite ?? undefined}
+            transposition={transposition}
           />
         </Box>
       ))}

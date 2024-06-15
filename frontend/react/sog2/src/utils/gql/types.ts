@@ -127,6 +127,7 @@ export type MutationAddBibleFromSogArgs = {
 
 export type MutationAddPsalmToFavouriteArgs = {
   psalmId: Scalars['ID']['input'];
+  transposition?: InputMaybe<Scalars['Int']['input']>;
 };
 
 

@@ -22,6 +22,7 @@ interface PsalmSelectItemProps {
   onClick: () => void;
   psalmId: string;
   inFavourite?: boolean;
+  transposition: number;
 }
 
 const addSongsCountToPsalmBookInCache = (cache: ApolloCache<unknown>, psalmsBookId: string, songsToAdd: number) => {
@@ -42,7 +43,14 @@ const addSongsCountToPsalmBookInCache = (cache: ApolloCache<unknown>, psalmsBook
   }
 };
 
-const PsalmSelectItem = ({ psalmName, selected, onClick, inFavourite, psalmId }: PsalmSelectItemProps) => {
+const PsalmSelectItem = ({
+  psalmName,
+  selected,
+  onClick,
+  inFavourite,
+  psalmId,
+  transposition,
+}: PsalmSelectItemProps) => {
   const [internalFavouriteState, setInternalFavouriteState] = useState(inFavourite);
   const { psalmsBooksData } = usePsalmsData();
 
@@ -53,6 +61,7 @@ const PsalmSelectItem = ({ psalmName, selected, onClick, inFavourite, psalmId }:
   const commonOptions = {
     variables: {
       psalmId,
+      transposition,
     },
   };
 

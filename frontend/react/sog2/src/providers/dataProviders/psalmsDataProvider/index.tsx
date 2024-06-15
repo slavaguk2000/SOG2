@@ -137,6 +137,7 @@ const PsalmsDataProvider = ({ children }: PropsWithChildren) => {
               ] as MusicalKey)
             : psalm.defaultTonality,
         inFavourite: !!favouritePsalmsQueryDataMap?.[psalm.id],
+        transposition: transpositionSteps,
       })),
     [favouritePsalmsQueryDataMap, psalmsQueryData?.psalms],
   );
