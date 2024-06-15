@@ -7,7 +7,7 @@ import { Maybe, MusicalKey, Mutation, MutationUpdatePsalmTranspositionArgs } fro
 import { keyToScaleDegree } from '../psalmChords/utils';
 
 const useTransposeSong = (
-  psalmBookId?: string,
+  psalmsBookId?: string,
   psalmId?: string,
   defaultTonality?: Maybe<MusicalKey>,
   onTransposeFinished?: () => void,
@@ -20,11 +20,11 @@ const useTransposeSong = (
   >(updatePsalmTransposition);
 
   const handleTransposeSong = () => {
-    if (psalmBookId && defaultTonality && psalmId) {
+    if (psalmsBookId && defaultTonality && psalmId) {
       updatePsalmTranspositionMutation({
         variables: {
           psalmId,
-          psalmBookId,
+          psalmsBookId,
           transposition: currentTransposition,
         },
       }).catch((e) => console.error(e));

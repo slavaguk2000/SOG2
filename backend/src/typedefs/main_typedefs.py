@@ -82,6 +82,11 @@ type_defs = gql("""
         couplets: [Couplet!]!
     }
     
+    type SubscriptingPsalmData {
+        psalmData: PsalmData
+        rootTransposition: Int
+    }
+    
     type PsalmDataWithSlides {
         id: ID!
         psalm: Psalm!
@@ -195,7 +200,7 @@ type_defs = gql("""
     
     type Mutation {
       setActiveSlide(slideId: ID, type: TabType, slideAudioMapping: SlideMappingInput): Boolean
-      setActivePsalm(psalmId: ID): Boolean
+      setActivePsalm(psalmId: ID, psalmsBookId: ID, transposition: Int): Boolean
       setActiveSlideOffset(slideId: ID!, type: TabType!, slideAudioMapping: SlideMappingInput, offset: Float!): Boolean
       setFreeSlide(text: String!, title: String!): Boolean
       addBibleFromSog(sogFileSrc: String!, language: String!, translation: String!): Boolean
@@ -207,11 +212,11 @@ type_defs = gql("""
       addPsalmToFavourite(psalmId: ID!, transposition: Int): Boolean
       removePsalmFromFavourite(psalmId: ID!): Boolean
       updatePsalm(psalmData: PsalmDataInput!): PsalmData!
-      updatePsalmTransposition(psalmBookId: ID!, psalmId: ID!, transposition: Int!): PsalmsBookItem!
+      updatePsalmTransposition(psalmsBookId: ID!, psalmId: ID!, transposition: Int!): PsalmsBookItem!
     }
     
     type Subscription {
       activeSlideSubscription: Slide
-      activePsalmChordsSubscription: PsalmData
+      activePsalmChordsSubscription: SubscriptingPsalmData
     }
 """)

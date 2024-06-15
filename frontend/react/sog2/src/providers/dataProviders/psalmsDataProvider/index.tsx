@@ -67,24 +67,8 @@ const PsalmsDataProvider = ({ children }: PropsWithChildren) => {
     [setSearchParams],
   );
 
-  const [updatePsalmMutation] = useMutation<Pick<Mutation, 'setActivePsalm'>, MutationSetActivePsalmArgs>(
+  const [setActivePsalmMutation] = useMutation<Pick<Mutation, 'setActivePsalm'>, MutationSetActivePsalmArgs>(
     setActivePsalm,
-  );
-
-  const handlePsalmSelect = useCallback(
-    (id: string) => {
-      setSearchParams((prev) => {
-        prev.set('psalmId', id);
-
-        return prev;
-      });
-      updatePsalmMutation({
-        variables: {
-          psalmId: id,
-        },
-      }).catch((e) => console.error(e));
-    },
-    [setSearchParams, updatePsalmMutation],
   );
 
   const { data: psalmsBooksData } = useQuery<Pick<Query, 'psalmsBooks'>>(psalmsBooks, {
@@ -140,6 +124,24 @@ const PsalmsDataProvider = ({ children }: PropsWithChildren) => {
         transposition: transpositionSteps,
       })),
     [favouritePsalmsQueryDataMap, psalmsQueryData?.psalms],
+  );
+
+  const handlePsalmSelect = useCallback(
+    (id: string, transposition?: number) => {
+      setSearchParams((prev) => {
+        prev.set('psalmId', id);
+
+        return prev;
+      });
+      setActivePsalmMutation({
+        variables: {
+          psalmId: id,
+          psalmsBookId,
+          transposition,
+        },
+      }).catch((e) => console.error(e));
+    },
+    [setSearchParams, setActivePsalmMutation, psalmsBookId],
   );
 
   const currentPsalmBook = useMemo(

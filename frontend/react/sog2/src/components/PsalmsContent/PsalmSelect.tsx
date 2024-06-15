@@ -68,7 +68,7 @@ const PsalmSelect = () => {
           <PsalmSelectItem
             psalmName={name}
             selected={id === currentPsalm?.id}
-            onClick={() => handlePsalmSelect(id)}
+            onClick={() => handlePsalmSelect(id, transposition)}
             psalmId={id}
             inFavourite={inFavourite ?? undefined}
             transposition={transposition}

@@ -32,7 +32,8 @@ psalm_chords_subscribers_queues = []
 @convert_kwargs_to_snake_case
 def resolve_search(*_, search_pattern: str, tab_type: str, **kwargs):
     if tab_type == 'Bible':
-        return bible_search(search_pattern, kwargs["id"] if kwargs.get("id") else "607e6be1-dc31-498e-ba8b-f73ddd8806fb")
+        return bible_search(search_pattern,
+                            kwargs["id"] if kwargs.get("id") else "607e6be1-dc31-498e-ba8b-f73ddd8806fb")
     if tab_type == 'Sermon':
         return sermon_search(search_pattern, "0", kwargs.get("id"))
     return []
@@ -120,22 +121,31 @@ def resolve_set_active_slide(*_, slide_id=None, **kwargs):
     return True
 
 
+def notify_psalm_chords_subscribers():
+    for subscriber_queue in psalm_chords_subscribers_queues:
+        subscriber_queue.put_nowait(current_active_psalm_chords)
+
+
 @mutation.field("setActivePsalm")
 @convert_kwargs_to_snake_case
-def resolve_set_active_psalm(*_, psalm_id=None):
+def resolve_set_active_psalm(*_, psalm_id: str | None = None, psalms_book_id: str | None = None, transposition: int = 0):
     global current_active_psalm_chords
     active_psalm_chords = None
     if psalm_id:
         raw_active_psalm_chords = get_psalm_by_id(psalm_id)
         active_psalm_chords = {
-            **raw_active_psalm_chords,
-            "couplets": [item["couplet"] for item in raw_active_psalm_chords["couplets"]]
+            "psalm_data": {
+                "psalms_book_id": psalms_book_id,
+                **raw_active_psalm_chords,
+                "couplets": [item["couplet"] for item in raw_active_psalm_chords["couplets"]],
+            },
+            "root_transposition": transposition
         }
 
     current_active_psalm_chords = active_psalm_chords
+    print(current_active_psalm_chords)
 
-    for subscriber_queue in psalm_chords_subscribers_queues:
-        subscriber_queue.put_nowait(active_psalm_chords)
+    notify_psalm_chords_subscribers()
 
     return True
 
@@ -196,8 +206,19 @@ def resolve_update_psalm(*_, psalm_data: dict):
 
 @mutation.field("updatePsalmTransposition")
 @convert_kwargs_to_snake_case
-def resolve_update_psalm_transposition(*_, psalm_book_id: str, psalm_id: str, transposition: int):
-    return update_psalm_transposition(psalm_book_id, psalm_id, transposition)
+def resolve_update_psalm_transposition(*_, psalms_book_id: str, psalm_id: str, transposition: int):
+    global current_active_psalm_chords
+    res = update_psalm_transposition(psalms_book_id, psalm_id, transposition)
+
+    print(current_active_psalm_chords)
+    print(psalms_book_id, psalm_id, transposition)
+    if current_active_psalm_chords is not None \
+            and current_active_psalm_chords["psalm_data"]["id"] == psalm_id \
+            and current_active_psalm_chords["psalm_data"]["psalms_book_id"] == psalms_book_id:
+        current_active_psalm_chords["root_transposition"] = transposition
+        notify_psalm_chords_subscribers()
+
+    return res
 
 
 @mutation.field("removePsalmFromFavourite")

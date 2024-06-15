@@ -74,9 +74,15 @@ interface EditableChordsDataProviderProps extends PropsWithChildren {
     couplets: Array<Omit<Couplet, '__typename'>>;
     psalm: Psalm;
   };
+  rootTransposition?: number;
 }
 
-const EditableChordsDataProvider = ({ children, initialData, forceData }: EditableChordsDataProviderProps) => {
+const EditableChordsDataProvider = ({
+  children,
+  initialData,
+  forceData,
+  rootTransposition = 0,
+}: EditableChordsDataProviderProps) => {
   const [chordsData, setChordsData] = useState<PsalmData>(initialData);
 
   const { handleAddNewVersion, hasRedo, hasUndo, handleRedo, handleUndo } = usePreviousVersions(
@@ -125,8 +131,7 @@ const EditableChordsDataProvider = ({ children, initialData, forceData }: Editab
   });
 
   const currentData = forceData ?? chordsData;
-
-  const mainKey = keyToScaleDegree[currentData.psalm.defaultTonality as string] ?? 0;
+  const mainKey = (keyToScaleDegree[currentData.psalm.defaultTonality as string] ?? 0) + rootTransposition;
 
   const handleSetNewTonality = (newTonality: MusicalKey) => {
     setChordsData((p) => ({

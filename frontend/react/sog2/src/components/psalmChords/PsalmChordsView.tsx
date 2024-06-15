@@ -7,7 +7,6 @@ import { PsalmData } from '../../utils/gql/types';
 import { useEditableChordsData } from './editableChordsDataProvider';
 import PsalmChordsViewContent from './PsalmChordsViewContent';
 import { PsalmChordsViewTitleWrapper, PsalmChordsViewWrapper } from './styled';
-import { keyToScaleDegree } from './utils';
 
 export interface PsalmChordsViewProps {
   data?: PsalmData;
@@ -17,11 +16,10 @@ const maxFontSize = 35;
 
 const PsalmChordsView = ({ data }: PsalmChordsViewProps) => {
   const viewRef = useRef<null | HTMLDivElement>(null);
-  const { psalmData } = useEditableChordsData();
+  const { mainKey, psalmData } = useEditableChordsData();
 
   const currentData = data ?? psalmData;
 
-  const mainKey = currentData ? keyToScaleDegree[currentData.psalm.defaultTonality as string] : 0;
   const [fontSize, setFontSize] = useState(maxFontSize);
 
   useLayoutEffect(() => {

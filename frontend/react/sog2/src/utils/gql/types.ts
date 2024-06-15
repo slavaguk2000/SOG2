@@ -149,6 +149,8 @@ export type MutationRemovePsalmFromFavouriteArgs = {
 
 export type MutationSetActivePsalmArgs = {
   psalmId?: InputMaybe<Scalars['ID']['input']>;
+  psalmsBookId?: InputMaybe<Scalars['ID']['input']>;
+  transposition?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
@@ -184,8 +186,8 @@ export type MutationUpdatePsalmArgs = {
 
 
 export type MutationUpdatePsalmTranspositionArgs = {
-  psalmBookId: Scalars['ID']['input'];
   psalmId: Scalars['ID']['input'];
+  psalmsBookId: Scalars['ID']['input'];
   transposition: Scalars['Int']['input'];
 };
 
@@ -353,9 +355,15 @@ export enum SortingDirection {
   Desc = 'DESC'
 }
 
+export type SubscriptingPsalmData = {
+  __typename?: 'SubscriptingPsalmData';
+  psalmData?: Maybe<PsalmData>;
+  rootTransposition?: Maybe<Scalars['Int']['output']>;
+};
+
 export type Subscription = {
   __typename?: 'Subscription';
-  activePsalmChordsSubscription?: Maybe<PsalmData>;
+  activePsalmChordsSubscription?: Maybe<SubscriptingPsalmData>;
   activeSlideSubscription?: Maybe<Slide>;
 };
 

@@ -185,7 +185,7 @@ export const addPsalmToFavourite = gql`
 `;
 
 export const removePsalmFromFavourite = gql`
-  mutation removePsalmFromFavourite($psalmId: ID) {
+  mutation removePsalmFromFavourite($psalmId: ID!) {
     removePsalmFromFavourite(psalmId: $psalmId)
   }
 `;
@@ -235,14 +235,14 @@ export const updatePsalm = gql`
 `;
 
 export const setActivePsalm = gql`
-  mutation setActivePsalm($psalmId: ID) {
-    setActivePsalm(psalmId: $psalmId)
+  mutation setActivePsalm($psalmId: ID, $psalmsBookId: ID, $transposition: Int) {
+    setActivePsalm(psalmId: $psalmId, psalmsBookId: $psalmsBookId, transposition: $transposition)
   }
 `;
 
 export const updatePsalmTransposition = gql`
-  mutation updatePsalmTransposition($psalmBookId: ID!, $psalmId: ID!, $transposition: Int!) {
-    updatePsalmTransposition(psalmBookId: $psalmBookId, psalmId: $psalmId, transposition: $transposition) {
+  mutation updatePsalmTransposition($psalmsBookId: ID!, $psalmId: ID!, $transposition: Int!) {
+    updatePsalmTransposition(psalmsBookId: $psalmsBookId, psalmId: $psalmId, transposition: $transposition) {
       ${psalmBookItem}
     }
   }
@@ -251,7 +251,10 @@ export const updatePsalmTransposition = gql`
 export const activePsalmChordsSubscription = gql`
   subscription activePsalmChordsSubscription {
     activePsalmChordsSubscription {
-      ${psalmData}
+      psalmData {
+        ${psalmData}
+      }
+      rootTransposition
     }
   }
 `;

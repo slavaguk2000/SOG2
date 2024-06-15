@@ -11,10 +11,11 @@ const ActivePsalmChordsPage = () => {
   const { data } = useSubscription<Pick<Subscription, 'activePsalmChordsSubscription'>>(activePsalmChordsSubscription);
 
   return (
-    data?.activePsalmChordsSubscription && (
+    data?.activePsalmChordsSubscription?.psalmData && (
       <EditableChordsDataProvider
-        forceData={data.activePsalmChordsSubscription}
-        initialData={data.activePsalmChordsSubscription}
+        forceData={data.activePsalmChordsSubscription.psalmData}
+        initialData={data.activePsalmChordsSubscription.psalmData}
+        rootTransposition={data.activePsalmChordsSubscription?.rootTransposition ?? undefined}
       >
         <PsalmChordsView />
       </EditableChordsDataProvider>

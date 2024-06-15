@@ -104,6 +104,7 @@ def get_psalm_by_id(psalm_id: str):
             raise "Psalm with such id was not found"
 
         return {
+            "id": psalm_id,
             "psalm": get_psalm_dict_from_psalm(psalm),
             "couplets": [{
                 "id": couplet.id,
