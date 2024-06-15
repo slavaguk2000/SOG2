@@ -25,7 +25,7 @@ export const PsalmChordsViewContentWrapper = styled(Box)`
   height: 100%;
   flex-direction: column;
   align-items: flex-start;
-  gap: 40px;
+  gap: 20px;
 `;
 
 export const PsalmChordsViewCoupletWrapper = styled(Box)`
