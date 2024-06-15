@@ -7,9 +7,9 @@ import { IconButton, Tooltip } from '@mui/material';
 import { usePresentation } from 'src/providers/presentationProvider';
 
 const CaptureScreen = () => {
-  const { captureTextScreen, releaseTextScreen, validSession } = usePresentation();
+  const { captureTextScreen, releaseTextScreen, validTextSession } = usePresentation();
 
-  return validSession ? (
+  return validTextSession ? (
     <Tooltip title="Release screen">
       <IconButton onClick={releaseTextScreen}>
         <BrowserNotSupportedIcon />

@@ -6,7 +6,10 @@ const defaultValue: PresentationContextType = {
   setText: () => true,
   captureTextScreen: () => true,
   releaseTextScreen: () => true,
-  validSession: false,
+  validTextSession: false,
+  captureChordScreen: () => true,
+  releaseChordScreen: () => true,
+  validChordSession: false,
 };
 
 export const PresentationContext = createContext<PresentationContextType>(defaultValue);

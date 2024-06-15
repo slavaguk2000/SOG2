@@ -1,7 +1,19 @@
 import { Dispatch, SetStateAction } from 'react';
 
 import { FreeSlideDialogContent } from '../components/FreeSlideDialog';
-import { AudioMapping, BibleBook, InputMaybe, Query, Sermon, Slide, SlideMappingInput } from '../utils/gql/types';
+import {
+  AudioMapping,
+  BibleBook,
+  InputMaybe,
+  Maybe,
+  MusicalKey,
+  Psalm,
+  PsalmsBook,
+  Query,
+  Sermon,
+  Slide,
+  SlideMappingInput,
+} from '../utils/gql/types';
 
 export interface ChapterSelector {
   bookIdx?: number;
@@ -45,11 +57,33 @@ export interface BibleContextType extends DataProvider {
   getReadableBiblePlace: (slide: Slide, withVerse?: boolean) => string;
 }
 
+interface PsalmData extends Psalm {
+  tonality?: Maybe<MusicalKey>;
+  inFavourite: boolean;
+  transposition: number;
+}
+
+export interface PsalmsContextType extends DataProvider {
+  psalmsBookId: string;
+  psalmId: string;
+  psalmsBooksData?: Query['psalmsBooks'];
+  psalmsData?: Array<PsalmData>;
+  psalmData?: Query['psalm'];
+  handlePsalmSelect: (selectedId: string, transposition?: number) => void;
+  handlePsalmBookSelect: (selectedId: string) => void;
+  currentPsalm?: Psalm;
+  currentPsalmBook?: PsalmsBook;
+  psalmsQueryDataLoading: boolean;
+}
+
 export interface PresentationContextType {
   setText: (text: string, location: string, options?: { currentLastUp?: boolean; multiScreenShow?: boolean }) => void;
   captureTextScreen: () => void;
   releaseTextScreen: () => void;
-  validSession: boolean;
+  validTextSession: boolean;
+  captureChordScreen: () => void;
+  releaseChordScreen: () => void;
+  validChordSession: boolean;
 }
 
 export interface FreeSlideDialogContextType {

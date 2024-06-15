@@ -1,6 +1,6 @@
 import { createContext } from 'react';
 
-import { BibleContextType } from '../types';
+import { BibleContextType } from '../../types';
 
 const defaultValue: BibleContextType = {
   bibleId: '0',

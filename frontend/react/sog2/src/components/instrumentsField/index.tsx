@@ -1,6 +1,7 @@
 import React from 'react';
 
 import AudioPlayerButton from './AudioPlayerButton';
+import CaptureChordsScreen from './CaptureChordsScreen';
 import CaptureScreen from './CaptureScreen';
 import FreeSlideDialogButton from './FreeSlideDialogButton';
 import History from './history';
@@ -14,6 +15,7 @@ const InstrumentsField = () => {
       <History />
       <FreeSlideDialogButton />
       <SilentModeButton />
+      <CaptureChordsScreen />
       <CaptureScreen />
     </InstrumentsFieldWrapper>
   );

@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import { Slide } from '../../utils/gql/types';
+import { useSermonData } from '../dataProviders/sermanDataProvider';
 import { useMainScreenSegmentationData } from '../MainScreenSegmentationDataProvider';
 import { usePlayerContext } from '../playerProvider';
-import { useSermonData } from '../sermanDataProvider';
 
 import { useAudioMapping } from './provider';
 

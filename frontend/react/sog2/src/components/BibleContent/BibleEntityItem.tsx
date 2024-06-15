@@ -1,10 +1,10 @@
-import React, { useEffect, useRef } from 'react';
+import React, { PropsWithChildren, useEffect, useRef } from 'react';
 
 import { Tooltip } from '@mui/material';
 
 import { BibleEntityItemWrapper } from './styled';
 
-export interface BibleEntityItemProps {
+export interface BibleEntityItemProps extends PropsWithChildren {
   name: string;
   onClick: () => void;
   selected: boolean;
@@ -12,7 +12,7 @@ export interface BibleEntityItemProps {
   tooltip?: string;
 }
 
-const BibleEntityItem = ({ name, onClick, selected, preSelected, tooltip }: BibleEntityItemProps) => {
+const BibleEntityItem = ({ name, onClick, selected, preSelected, tooltip, children }: BibleEntityItemProps) => {
   const itemRef = useRef(null);
 
   useEffect(() => {
@@ -26,6 +26,7 @@ const BibleEntityItem = ({ name, onClick, selected, preSelected, tooltip }: Bibl
 
   const body = (
     <BibleEntityItemWrapper selected={selected} onClick={onClick} ref={itemRef} preSelected={preSelected}>
+      {children}
       {name}
     </BibleEntityItemWrapper>
   );

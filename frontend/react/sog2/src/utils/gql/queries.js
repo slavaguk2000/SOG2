@@ -106,3 +106,155 @@ export const ActiveSlideSubscription = gql`
     }
   }
 `;
+
+export const psalmsBooks = gql`
+  query psalmsBooks {
+    psalmsBooks {
+      id
+      name
+      isFavourite
+      iconSrc
+      psalmsCount
+    }
+  }
+`;
+
+const psalmBookItem = `
+  id
+  psalm {
+    id
+    name
+    psalmNumber
+    coupletsOrder
+    defaultTonality
+  }
+  transpositionSteps
+`;
+
+export const psalms = gql`
+  query psalms($psalmsBookId: ID!) {
+    psalms(psalmsBookId: $psalmsBookId) {
+      ${psalmBookItem}
+    }
+  }
+`;
+
+export const psalm = gql`
+  query psalm($psalmId: ID!) {
+    psalm(psalmId: $psalmId) {
+      psalm {
+        id
+        name
+        psalmNumber
+        coupletsOrder
+        defaultTonality
+      }
+      couplets {
+        id
+        couplet {
+          id
+          initialOrder
+          marker
+          coupletContent {
+            id
+            text
+            line
+            chord {
+              id
+              bassNote
+              chordTemplate
+              rootNote
+            }
+          }
+        }
+        slide {
+          id
+          content
+          searchContent
+          location
+        }
+      }
+    }
+  }
+`;
+
+export const addPsalmToFavourite = gql`
+  mutation addPsalmToFavourite($psalmId: ID!, $transposition: Int) {
+    addPsalmToFavourite(psalmId: $psalmId, transposition: $transposition)
+  }
+`;
+
+export const removePsalmFromFavourite = gql`
+  mutation removePsalmFromFavourite($psalmId: ID!) {
+    removePsalmFromFavourite(psalmId: $psalmId)
+  }
+`;
+
+export const PSALMS_BOOK_FRAGMENT = gql`
+  fragment PsalmsBookFragment on PsalmsBook {
+    id
+    name
+    isFavourite
+    iconSrc
+    psalmsCount
+  }
+`;
+
+const psalmData = `
+  psalm {
+    id
+    name
+    psalmNumber
+    coupletsOrder
+    defaultTonality
+  }
+  couplets {
+    id
+    initialOrder
+    marker
+    coupletContent {
+      id
+      text
+      line
+      chord {
+        id
+        bassNote
+        chordTemplate
+        rootNote
+      }
+    }
+  }
+`;
+
+export const updatePsalm = gql`
+  mutation updatePsalm($psalmData: PsalmDataInput!) {
+    updatePsalm(psalmData: $psalmData) {
+      ${psalmData}
+    }
+  }
+`;
+
+export const setActivePsalm = gql`
+  mutation setActivePsalm($psalmId: ID, $psalmsBookId: ID, $transposition: Int) {
+    setActivePsalm(psalmId: $psalmId, psalmsBookId: $psalmsBookId, transposition: $transposition)
+  }
+`;
+
+export const updatePsalmTransposition = gql`
+  mutation updatePsalmTransposition($psalmsBookId: ID!, $psalmId: ID!, $transposition: Int!) {
+    updatePsalmTransposition(psalmsBookId: $psalmsBookId, psalmId: $psalmId, transposition: $transposition) {
+      ${psalmBookItem}
+    }
+  }
+`;
+
+export const activePsalmChordsSubscription = gql`
+  subscription activePsalmChordsSubscription {
+    activePsalmChordsSubscription {
+      psalmData {
+        ${psalmData}
+      }
+      rootTransposition
+    }
+  }
+`;

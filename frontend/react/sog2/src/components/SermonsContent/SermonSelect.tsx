@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 
-import { useSermonData } from '../../providers/sermanDataProvider';
+import { useSermonData } from '../../providers/dataProviders/sermanDataProvider';
 import BibleEntityItem from '../BibleContent/BibleEntityItem';
 
 import { SermonSelectWrapper } from './styled';

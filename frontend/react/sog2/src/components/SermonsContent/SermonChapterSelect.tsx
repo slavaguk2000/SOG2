@@ -2,9 +2,9 @@ import React, { useEffect, useMemo, useRef } from 'react';
 
 import PreselectBox from '../../hooks/useFastNumberSelection/PreselectBox';
 import useFastNumberSelection from '../../hooks/useFastNumberSelection/useFastNumberSelection';
+import { useSermonData } from '../../providers/dataProviders/sermanDataProvider';
 import { useInstrumentsField } from '../../providers/instrumentsFieldProvider';
 import { usePlayerContext } from '../../providers/playerProvider';
-import { useSermonData } from '../../providers/sermanDataProvider';
 import { formatTime } from '../../utils';
 import { Slide } from '../../utils/gql/types';
 import SlideWithPreview from '../SlideWithPreview';

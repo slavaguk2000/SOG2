@@ -5,22 +5,29 @@ import { Tab, Tabs } from '@mui/material';
 
 import { TabsFieldWrapper } from './styled';
 
+const getKeyFprLocalStorageSavedTabParams = (path: string) => `savedTabParams.${path}`;
+
 const TabsField: FC = () => {
   const navigate = useNavigate();
 
+  const { pathname, search } = useLocation();
+
   const handleChangeTab = (e: React.SyntheticEvent, route: string) => {
     e.preventDefault();
-    navigate(route);
+    if (pathname === route) {
+      return;
+    }
+    localStorage.setItem(getKeyFprLocalStorageSavedTabParams(pathname), search);
+    const currentSavedParams = localStorage.getItem(getKeyFprLocalStorageSavedTabParams(route));
+    navigate(`${route}${currentSavedParams ?? ''}`);
   };
-
-  const { pathname } = useLocation();
 
   return (
     <TabsFieldWrapper>
       <Tabs onChange={handleChangeTab} value={pathname}>
         <Tab label={'Bible'} value="/bible" />
         <Tab label={'Sermon'} value="/sermon" />
-        {/*<Tab label={'Songs'} />*/}
+        <Tab label={'Psalms'} value="/psalms" />
       </Tabs>
     </TabsFieldWrapper>
   );

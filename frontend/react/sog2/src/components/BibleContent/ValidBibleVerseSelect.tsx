@@ -2,8 +2,8 @@ import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 
 import { Box } from '@mui/material';
 
-import { useBibleData } from 'src/providers/bibleDataProvider';
-import { getVerseNumberFromSlide } from 'src/providers/bibleDataProvider/provider';
+import { useBibleData } from 'src/providers/dataProviders/bibleDataProvider';
+import { getVerseNumberFromSlide } from 'src/providers/dataProviders/bibleDataProvider/provider';
 import { Slide } from 'src/utils/gql/types';
 
 import PreselectBox from '../../hooks/useFastNumberSelection/PreselectBox';

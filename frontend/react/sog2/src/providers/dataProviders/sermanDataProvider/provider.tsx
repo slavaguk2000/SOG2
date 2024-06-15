@@ -3,14 +3,14 @@ import { useSearchParams } from 'react-router-dom';
 
 import { useQuery } from '@apollo/client';
 
-import { compareSermonLocation } from '../../services/slidesService';
-import { arrayToMap } from '../../utils';
-import { sermon, sermons } from '../../utils/gql/queries';
-import { Query, QuerySermonArgs, QuerySermonsArgs, Slide } from '../../utils/gql/types';
-import AudioMappingFollower from '../AudioMapping/AudioMappingFollower';
-import { useInstrumentsField } from '../instrumentsFieldProvider';
-import { useMainScreenSegmentationData } from '../MainScreenSegmentationDataProvider';
-import { usePlayerContext } from '../playerProvider';
+import { compareSermonLocation } from '../../../services/slidesService';
+import { arrayToMap } from '../../../utils';
+import { sermon, sermons } from '../../../utils/gql/queries';
+import { Query, QuerySermonArgs, QuerySermonsArgs, Slide } from '../../../utils/gql/types';
+import AudioMappingFollower from '../../AudioMapping/AudioMappingFollower';
+import { useInstrumentsField } from '../../instrumentsFieldProvider';
+import { useMainScreenSegmentationData } from '../../MainScreenSegmentationDataProvider';
+import { usePlayerContext } from '../../playerProvider';
 
 import ChangePlayingSrcProposalDialog from './ChangePlayingSrcProposalDialog';
 import SermonDataProviderContext from './context';

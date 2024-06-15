@@ -25,6 +25,7 @@ enum ScreenMessages {
 }
 
 const presUrls = ['receiver/index.html'];
+const presChordsUrls = ['/active-psalm/chords'];
 
 const setTextInSession = (
   session: Session,
@@ -47,14 +48,22 @@ const setScreenInSession = (session: Session, newScreen: number) => {
 };
 
 export const PresentationProvider = ({ children }: PropsWithChildren<PresentationProviderProps>) => {
-  const [session, setSession] = useState<Session | null>(null);
+  const [textSession, setTextSession] = useState<Session | null>(null);
+  const [chordSession, setChordSession] = useState<Session | null>(null);
   const [presentationData, setPresentationData] = useState<PresentationData | null>(null);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [presentationRequestAvailability, setPresentationRequestAvailability] = useState<boolean | undefined>(
+  const [presentationTextRequestAvailability, setPresentationTextRequestAvailability] = useState<boolean | undefined>(
     undefined,
   );
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [presentationChordsRequestAvailability, setPresentationChordsRequestAvailability] = useState<
+    boolean | undefined
+  >(undefined);
 
-  const presentationRequest = useMemo(() => {
+  const presentationTextRequest = useMemo(() => {
+    if (!('PresentationRequest' in window)) {
+      return;
+    }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars,@typescript-eslint/ban-ts-comment
     // @ts-ignore
     const request = new PresentationRequest(presUrls);
@@ -66,13 +75,41 @@ export const PresentationProvider = ({ children }: PropsWithChildren<Presentatio
     request
       .getAvailability()
       .then((availability: Record<string, unknown>) => {
-        setPresentationRequestAvailability(Boolean(availability));
+        setPresentationTextRequestAvailability(Boolean(availability));
         availability.onchange = () => {
-          setPresentationRequestAvailability(Boolean(availability));
+          setPresentationTextRequestAvailability(Boolean(availability));
         };
       })
       .catch(() => {
-        setPresentationRequestAvailability(false);
+        setPresentationTextRequestAvailability(false);
+      });
+
+    return request;
+  }, []);
+
+  const presentationChordRequest = useMemo(() => {
+    if (!('PresentationRequest' in window)) {
+      return;
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars,@typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    const request = new PresentationRequest(presChordsUrls);
+
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    navigator.presentation.defaultRequest = request;
+
+    request
+      .getAvailability()
+      .then((availability: Record<string, unknown>) => {
+        setPresentationChordsRequestAvailability(Boolean(availability));
+        availability.onchange = () => {
+          setPresentationChordsRequestAvailability(Boolean(availability));
+        };
+      })
+      .catch(() => {
+        setPresentationChordsRequestAvailability(false);
       });
 
     return request;
@@ -89,18 +126,46 @@ export const PresentationProvider = ({ children }: PropsWithChildren<Presentatio
     { currentLastUp, multiScreenShow }: { currentLastUp?: boolean; multiScreenShow?: boolean } = {},
   ) => {
     resetScreens();
-    if (session) {
-      setTextInSession(session, text, location, currentLastUp ?? false, undefined, multiScreenShow ?? false);
+    if (textSession) {
+      setTextInSession(textSession, text, location, currentLastUp ?? false, undefined, multiScreenShow ?? false);
     }
     setPresentationData({ text, title: location, multiScreenShow });
   };
 
-  const captureTextScreen = () => {
-    if (!session) {
-      presentationRequest
+  const captureChordScreen = () => {
+    if (!chordSession) {
+      presentationChordRequest
         .start()
         .then((newSession: Session) => {
-          setSession(newSession);
+          setChordSession(newSession);
+
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          newSession.addEventListener('message', (event) => {
+            let message = event.data;
+            try {
+              message = JSON.parse(event.data);
+            } catch {}
+            console.log('Received echo:', message);
+          });
+        })
+        .catch((err: unknown) => console.log(err));
+    }
+  };
+
+  const releaseTextScreen = () => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    textSession?.terminate();
+    setTextSession(null);
+  };
+
+  const captureTextScreen = () => {
+    if (!textSession) {
+      presentationTextRequest
+        .start()
+        .then((newSession: Session) => {
+          setTextSession(newSession);
 
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
@@ -140,16 +205,16 @@ export const PresentationProvider = ({ children }: PropsWithChildren<Presentatio
     }
   };
 
-  const releaseTextScreen = () => {
+  const releaseChordScreen = () => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    session?.terminate();
-    setSession(null);
+    chordSession?.terminate();
+    setChordSession(null);
   };
 
   useEffect(() => {
-    if (session && currentScreen !== undefined) {
-      setScreenInSession(session, currentScreen);
+    if (textSession && currentScreen !== undefined) {
+      setScreenInSession(textSession, currentScreen);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentScreen]);
@@ -160,7 +225,10 @@ export const PresentationProvider = ({ children }: PropsWithChildren<Presentatio
         setText,
         captureTextScreen,
         releaseTextScreen,
-        validSession: Boolean(session),
+        validTextSession: Boolean(textSession),
+        captureChordScreen,
+        releaseChordScreen,
+        validChordSession: Boolean(chordSession),
       }}
     >
       <div>{children}</div>

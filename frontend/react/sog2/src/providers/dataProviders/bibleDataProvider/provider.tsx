@@ -6,8 +6,8 @@ import { useQuery } from '@apollo/client';
 import { bibleBooks, bibleVerses } from 'src/utils/gql/queries';
 import { BibleBook, Query, QueryBibleBooksArgs, QueryBibleVersesArgs, Slide } from 'src/utils/gql/types';
 
-import { useInstrumentsField } from '../instrumentsFieldProvider';
-import { ChapterSelector } from '../types';
+import { useInstrumentsField } from '../../instrumentsFieldProvider';
+import { ChapterSelector } from '../../types';
 
 import BibleContext from './context';
 

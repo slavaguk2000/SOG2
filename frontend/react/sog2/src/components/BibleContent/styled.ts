@@ -36,6 +36,7 @@ export const BibleEntityItemWrapper = styled(Box, {
   shouldForwardProp: (prop) => !(['selected', 'preSelected'] as PropertyKey[]).includes(prop),
 })<BibleEntityItemProps>`
   display: flex;
+  align-items: center;
   padding: 2px 5px;
   width: 100%;
   border-radius: 2px;

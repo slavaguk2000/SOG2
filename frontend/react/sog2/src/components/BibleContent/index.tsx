@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { useBibleData } from '../../providers/bibleDataProvider';
+import { useBibleData } from '../../providers/dataProviders/bibleDataProvider';
 
 import BibleBookSelect from './BibleBookSelect';
 import BibleChapterSelect from './BibleChapterSelect';

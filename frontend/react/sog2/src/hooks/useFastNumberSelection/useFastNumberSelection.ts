@@ -24,7 +24,7 @@ const useFastNumberSelection = (
     }, 1000 * debounceSeconds);
 
     return () => clearTimeout(selectPreselectNumberVerseCallback);
-  }, [changeSlideByNumber, preselectNumber, setPreselectNumber]);
+  }, [changeSlideByNumber, debounceSeconds, preselectNumber, setPreselectNumber]);
 
   const handleNumberPressed = (pressedNumber: number): boolean => {
     if (!maxLength || pressedNumber > maxLength) {
