@@ -51,7 +51,9 @@ export const SearchLineAutocompleteItemWrapper = styled(Box, {
   }
 `;
 
-export const SearchLineAutocompleteItemContentWrapper = styled(Box)``;
+export const SearchLineAutocompleteItemContentWrapper = styled(Box)`
+  color: ${({ theme }) => theme.palette.primary.contrastText};
+`;
 
 export const SearchLineAutocompleteItemContentPlaceWrapper = styled('span', {
   shouldForwardProp: (prop) => prop !== 'selected',

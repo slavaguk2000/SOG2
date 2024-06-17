@@ -33,7 +33,10 @@ const SearchLine = () => {
 
   const { pathname } = useLocation();
 
-  const tabType = pathname === '/bible' ? TabType.Bible : TabType.Sermon;
+  const tabType = pathname === '/bible' ? TabType.Bible : pathname === '/sermon' ? TabType.Sermon : TabType.Psalm;
+
+  const shouldSkip =
+    tabType === TabType.Psalm ? !debouncedSearchText.length : debouncedSearchText.length < minimumSearchLength;
 
   const { data } = useQuery<Pick<Query, 'search'>, QuerySearchArgs>(search, {
     variables: {
@@ -42,7 +45,7 @@ const SearchLine = () => {
       id: searchParams.get(pathname === '/bible' ? 'bibleId' : 'id'),
     },
     fetchPolicy: 'cache-first',
-    skip: debouncedSearchText.length < minimumSearchLength,
+    skip: shouldSkip,
   });
 
   const options: Slide[] = data?.search ?? [];
@@ -188,7 +191,9 @@ const SearchLine = () => {
           <TextField
             {...params}
             size="small"
-            label={`Search in ${tabType === TabType.Bible ? 'Bible' : 'Sermons'}`}
+            label={`Search in ${
+              tabType === TabType.Bible ? 'Bible' : tabType === TabType.Sermon ? 'Sermons' : 'Psalms'
+            }`}
             onKeyDown={handleKeyDown}
             inputRef={searchLineRef}
           />
