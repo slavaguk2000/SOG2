@@ -122,7 +122,7 @@ def get_psalm_by_id(psalm_id: str):
                             "bass_note": content.chord.bass_note,
                             "chord_template": content.chord.chord_template,
                         }
-                    } for content in sorted(couplet.couplet_content, key=lambda x:x.order)],
+                    } for content in sorted(couplet.couplet_content, key=lambda x: x.order)],
                 },
                 "slide": {
                     "id": couplet.id,

@@ -10,6 +10,7 @@ import { search } from 'src/utils/gql/queries';
 import { Query, QuerySearchArgs, Slide, TabType } from 'src/utils/gql/types';
 
 import BibleContext from '../../providers/dataProviders/bibleDataProvider/context';
+import { PsalmsContext } from '../../providers/dataProviders/psalmsDataProvider';
 import SermonDataProviderContext from '../../providers/dataProviders/sermanDataProvider/context';
 import { DataProvider } from '../../providers/types';
 
@@ -22,6 +23,37 @@ const handleSearch = debounce(
   { leading: true, trailing: true },
 );
 
+const getShouldSkip = (tabType: TabType, searchString: string) => {
+  switch (tabType) {
+    case TabType.Psalm:
+      return !searchString.length;
+    default:
+      return searchString.length < minimumSearchLength;
+  }
+};
+
+const getSearchParamKey = (tabType: TabType) => {
+  switch (tabType) {
+    case TabType.Psalm:
+      return 'psalmsBookId';
+    case TabType.Bible:
+      return 'bibleId';
+    default:
+      return 'id';
+  }
+};
+
+const getDataProviderContext = (tabType: TabType) => {
+  switch (tabType) {
+    case TabType.Psalm:
+      return PsalmsContext;
+    case TabType.Bible:
+      return BibleContext;
+    case TabType.Sermon:
+      return SermonDataProviderContext;
+  }
+};
+
 const SearchLine = () => {
   const [searchParams] = useSearchParams();
   const [debouncedSearchText, setDebouncedSearchText] = useState<string>('');
@@ -33,16 +65,16 @@ const SearchLine = () => {
 
   const { pathname } = useLocation();
 
-  const tabType = pathname === '/bible' ? TabType.Bible : TabType.Sermon;
+  const tabType = pathname === '/bible' ? TabType.Bible : pathname === '/sermon' ? TabType.Sermon : TabType.Psalm;
 
   const { data } = useQuery<Pick<Query, 'search'>, QuerySearchArgs>(search, {
     variables: {
       searchPattern: debouncedSearchText,
       tabType,
-      id: searchParams.get(pathname === '/bible' ? 'bibleId' : 'id'),
+      id: searchParams.get(getSearchParamKey(tabType)),
     },
     fetchPolicy: 'cache-first',
-    skip: debouncedSearchText.length < minimumSearchLength,
+    skip: getShouldSkip(tabType, debouncedSearchText),
   });
 
   const options: Slide[] = data?.search ?? [];
@@ -54,7 +86,7 @@ const SearchLine = () => {
   };
 
   const { handleUpdateSlide, handleUpdateLocation } = useContext<DataProvider>(
-    (tabType === TabType.Bible ? BibleContext : SermonDataProviderContext) as unknown as Context<DataProvider>,
+    getDataProviderContext(tabType) as unknown as Context<DataProvider>,
   );
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
@@ -188,7 +220,9 @@ const SearchLine = () => {
           <TextField
             {...params}
             size="small"
-            label={`Search in ${tabType === TabType.Bible ? 'Bible' : 'Sermons'}`}
+            label={`Search in ${
+              tabType === TabType.Bible ? 'Bible' : tabType === TabType.Sermon ? 'Sermons' : 'Psalms'
+            }`}
             onKeyDown={handleKeyDown}
             inputRef={searchLineRef}
           />

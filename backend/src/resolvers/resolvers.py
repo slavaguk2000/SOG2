@@ -9,6 +9,7 @@ from src.services.database_helpers.sermon import get_sermons, get_sermon_by_id, 
     add_slide_audio_mapping
 from src.services.elasticsearch.search.bible.bible_getters import get_bible_history
 from src.services.elasticsearch.search.bible.bible_search_engine.bible_search_engine import bible_search
+from src.services.elasticsearch.search.psalm.psalm import psalm_search
 from src.services.elasticsearch.sync.psalm import sync_psalms
 from src.services.elasticsearch.sync.sermon import sync_sermons
 from src.services.parsers.bibleParsers.sog_parser import SimpleBibleParser
@@ -37,6 +38,8 @@ def resolve_search(*_, search_pattern: str, tab_type: str, **kwargs):
                             kwargs["id"] if kwargs.get("id") else "607e6be1-dc31-498e-ba8b-f73ddd8806fb")
     if tab_type == 'Sermon':
         return sermon_search(search_pattern, "0", kwargs.get("id"))
+    if tab_type == 'Psalm':
+        return psalm_search(search_pattern, kwargs.get("id"))
     return []
 
 
