@@ -19,7 +19,8 @@ def sync_psalms() -> bool:
         couplets = session.query(
             Couplet,
             Psalm,
-            PsalmBook.id.label('psalm_book_id')
+            PsalmBook.id.label('psalms_book_id'),
+            PsalmBook.name.label('psalms_book_name')
          ). \
             join(Psalm, Couplet.psalm_id == Psalm.id). \
             join(psalms_book_psalms, psalms_book_psalms.c.psalm_id == Psalm.id). \
@@ -38,10 +39,16 @@ def sync_psalms() -> bool:
             {
                 "_id": couplet.id,
                 "psalm_id": psalm.id,
-                "psalm_book_id": psalm_book_id,
+                "psalms_book_id": psalms_book_id,
+                "psalms_book_name": psalms_book_name,
                 "psalm_name": psalm.name,
-                "couplet_content": "".join([content.text_content for content in couplet.couplet_content])
-            } for couplet, psalm, psalm_book_id in couplets
+                "psalm_name_length": len(psalm.name.split()),
+                "psalm_number": psalm.psalm_number,
+                "psalm_decimal_number": int(psalm.psalm_number) if psalm.psalm_number.isdigit() else None,
+                "marker": couplet.marker,
+                "couplet_content": "".join([content.text_content for content in couplet.couplet_content]),
+                "couplet_order": couplet.initial_order
+            } for couplet, psalm, psalms_book_id, psalms_book_name in couplets
         ])
         return True
 

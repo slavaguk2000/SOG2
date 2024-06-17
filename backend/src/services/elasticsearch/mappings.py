@@ -199,6 +199,30 @@ psalm_mapping = Mapping(
             "psalm_book_id": {
                 "type": "keyword"
             },
+            "psalm_number": {
+                "type": "text",
+                "analyzer": "standard",
+                "fields": {
+                    "keyword": {
+                        "type": "keyword"
+                    },
+                    "lowercase": {
+                        "type": "text",
+                        "analyzer": "lowercase_analyzer"
+                    },
+                    "edge_ngram": {
+                        "type": "text",
+                        "analyzer": "edge_ngram_analyzer",
+                        "search_analyzer": "standard"
+                    }
+                }
+            },
+            "psalm_decimal_number": {
+                "type": "integer",
+            },
+            "couplet_order": {
+                "type": "integer",
+            },
             "psalm_name": {
                 "type": "text",
                 "analyzer": "standard",
@@ -224,6 +248,11 @@ psalm_mapping = Mapping(
                     "standard": {
                         "type": "text",
                         "analyzer": "standard"
+                    },
+                    "edge_ngram": {
+                        "type": "text",
+                        "analyzer": "edge_ngram_analyzer",
+                        "search_analyzer": "standard"
                     }
                 }
             },
