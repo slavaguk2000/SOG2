@@ -101,7 +101,7 @@ const PsalmsDataProvider = ({ children }: PropsWithChildren) => {
 
   const favouritePsalmsQueryDataMap = useMemo(
     () =>
-      favouritePsalmsQueryData?.psalms.reduce((acc: Record<string, boolean>, { id }) => {
+      favouritePsalmsQueryData?.psalms.reduce((acc: Record<string, boolean>, { psalm: { id } }) => {
         acc[id] = true;
 
         return acc;
