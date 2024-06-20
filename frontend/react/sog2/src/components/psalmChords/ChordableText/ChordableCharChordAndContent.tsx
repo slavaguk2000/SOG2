@@ -31,12 +31,21 @@ const ChordableCharChordAndContent = ({
   existingChordData,
   chordColor,
 }: ChordableCharChordAndContentProps) => {
-  const { openChordEditorDialog } = useChordsEditInstrumentsContext();
+  const { openChordEditorDialog, isChordLinking, isChordCopying, setCopyingChordData } =
+    useChordsEditInstrumentsContext();
   const { mainKey } = useEditableChordsData();
 
   const handleChordClick = () => {
     if (existingChordData) {
-      onLinkChord(existingChordData.chord);
+      if (isChordLinking) {
+        onLinkChord(existingChordData.chord);
+      } else if (isChordCopying) {
+        onAddChord({
+          ...existingChordData.chord,
+          id: uuidv4(),
+        });
+        setCopyingChordData(null);
+      }
     } else {
       openChordEditorDialog(
         {

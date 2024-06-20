@@ -3,16 +3,16 @@ import React from 'react';
 import { getChordText } from '../../utils/chordUtils';
 import { CoupletContentChord } from '../../utils/gql/types';
 
+import { useChordsEditInstrumentsContext } from './instrumentsProvider';
 import { ChordWrapper } from './styled';
 
 interface ChordProps {
   chordData: CoupletContentChord;
   mainKey: number;
   nonDeletable?: boolean;
-  isChordDeleting?: boolean;
-  isChordEditing?: boolean;
-  isSourceChordChoosing?: boolean;
-  isDestinationChordChoosing?: boolean;
+  isLinkSourceChordChoosing?: boolean;
+  isCopySourceChordChoosing?: boolean;
+  isLinkDestinationChordChoosing?: boolean;
   isSameChordLinking?: boolean;
   isCurrentChordLinking?: boolean;
   contentFontSize: number;
@@ -25,10 +25,9 @@ const Chord = ({
   mainKey,
   nonDeletable,
   onClick,
-  isChordDeleting,
-  isChordEditing,
-  isSourceChordChoosing,
-  isDestinationChordChoosing,
+  isCopySourceChordChoosing,
+  isLinkSourceChordChoosing,
+  isLinkDestinationChordChoosing,
   isSameChordLinking,
   isCurrentChordLinking,
   contentFontSize,
@@ -41,14 +40,17 @@ const Chord = ({
     }
   };
 
+  const { isChordDeleting, isChordEditing } = useChordsEditInstrumentsContext();
+
   return (
     <ChordWrapper
       nonDeletable={nonDeletable}
       isChordDeleting={isChordDeleting}
       contentFontSize={contentFontSize}
       isChordEditing={isChordEditing}
-      isSourceChordChoosing={isSourceChordChoosing}
-      isDestinationChordChoosing={isDestinationChordChoosing}
+      isLinkSourceChordChoosing={isLinkSourceChordChoosing}
+      isCopySourceChordChoosing={isCopySourceChordChoosing}
+      isDestinationChordChoosing={isLinkDestinationChordChoosing}
       isSameChordLinking={isSameChordLinking}
       isCurrentChordLinking={isCurrentChordLinking}
       onClick={onClick}

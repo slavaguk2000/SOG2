@@ -53,6 +53,7 @@ const PsalmCoupletView = ({
     isChordDeleting,
     isChordEditing,
     isChordLinking,
+    isChordCopying,
     isTextEditing,
     setEditingTextContentId,
     editingTextContentId,
@@ -64,13 +65,13 @@ const PsalmCoupletView = ({
       coupletContent.map((content, idx) => ({
         ...content,
         chord:
-          !(isChordAdding || isChordDeleting || isChordEditing || isChordLinking || isTextEditing) &&
+          !(isChordAdding || isChordDeleting || isChordEditing || isChordLinking || isTextEditing || isChordCopying) &&
           idx &&
           isChordsEquals(content.chord, coupletContent[idx - 1].chord)
             ? null
             : content.chord,
       })),
-    [coupletContent, isChordAdding, isChordDeleting, isChordEditing, isChordLinking, isTextEditing],
+    [coupletContent, isChordAdding, isChordCopying, isChordDeleting, isChordEditing, isChordLinking, isTextEditing],
   );
 
   const { contentByLines } = useMemo(
