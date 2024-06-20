@@ -286,6 +286,7 @@ def get_psalm_slide_by_id(couplet_id: str):
         if couplet:
             return {
                 **get_slide_from_couplet(couplet),
+                "content_prefix": f"{couplet.marker} " if couplet.marker else None,
                 "title": f"{couplet.psalm.psalm_number} {couplet.psalm.name}"
             }
 

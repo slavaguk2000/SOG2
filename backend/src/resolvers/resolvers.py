@@ -120,7 +120,6 @@ def resolve_set_active_slide(*_, slide_id=None, **kwargs):
             active_slide = get_psalm_slide_by_id(slide_id)
 
     current_active_slide = active_slide
-    print(current_active_slide)
 
     for subscriber_queue in slide_subscribers_queues:
         subscriber_queue.put_nowait(active_slide)

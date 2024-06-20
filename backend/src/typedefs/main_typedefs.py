@@ -167,6 +167,7 @@ type_defs = gql("""
         content: String!
         searchContent: String
         title: String
+        contentPrefix: String
         audioMappings: [SlideAudioMapping!]
     }
 
