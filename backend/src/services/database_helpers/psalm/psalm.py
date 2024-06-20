@@ -96,6 +96,20 @@ def get_linear_contents_from_couplet(couplet: CoupletContent):
     }
 
 
+def get_slide_from_couplet(couplet: Couplet):
+    return {
+        "id": couplet.id,
+        **get_linear_contents_from_couplet(couplet),
+        "location": [
+            couplet.psalm.psalm_books[0].id,
+            couplet.psalm_id,
+            couplet.id,
+            couplet.initial_order,
+            couplet.marker
+        ]
+    }
+
+
 def get_psalm_by_id(psalm_id: str):
     with Session(engine) as session:
         psalm = session.get(Psalm, psalm_id)
@@ -124,17 +138,8 @@ def get_psalm_by_id(psalm_id: str):
                         }
                     } for content in sorted(couplet.couplet_content, key=lambda x: x.order)],
                 },
-                "slide": {
-                    "id": couplet.id,
-                    **get_linear_contents_from_couplet(couplet),
-                    "location": [
-                        couplet.psalm.psalm_books[0].id,
-                        couplet.psalm_id,
-                        couplet.id,
-                        couplet.marker
-                    ]
-                }
-            } for idx, couplet in enumerate(sorted(psalm.couplets, key=lambda x:x.initial_order))]
+                "slide": get_slide_from_couplet(couplet)
+            } for couplet in sorted(psalm.couplets, key=lambda x:x.initial_order)]
         }
 
 
@@ -273,3 +278,15 @@ def update_psalm_transposition(psalm_book_id: str, psalm_id: str, transposition:
             couplets_order=result.couplets_order,
             default_tonality=result.default_tonality
         ), result.psalms_book_id, result.transposition_steps)
+
+
+def get_psalm_slide_by_id(couplet_id: str):
+    with Session(engine) as session:
+        couplet = session.query(Couplet).filter(Couplet.id == couplet_id).first()
+        if couplet:
+            return {
+                **get_slide_from_couplet(couplet),
+                "title": f"{couplet.psalm.psalm_number} {couplet.psalm.name}"
+            }
+
+    return None
