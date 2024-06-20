@@ -53,6 +53,10 @@ def get_bible_slide_by_id(verse_id: str):
     with Session(engine) as session:
         verse = session.query(Verse).filter(Verse.id == verse_id).first()
         if verse:
-            return get_slide_by_verse(verse)
+            return {
+                **get_slide_by_verse(verse),
+                "content_prefix": f"{verse.verse_number}. ",
+                "title": f"{verse.bible_book.name} {verse.chapter}",
+            }
 
     return None

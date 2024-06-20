@@ -29,7 +29,7 @@ const InstrumentsFieldProvider: FC<PropsWithChildren> = ({ children }) => {
     MutationSetActiveSlideOffsetArgs
   >(setActiveSlideOffset);
 
-  const tabType = pathname === '/bible' ? TabType.Bible : TabType.Sermon;
+  const tabType = pathname === '/bible' ? TabType.Bible : pathname === '/sermon' ? TabType.Sermon : TabType.Psalm;
 
   const sendActiveSlide = (newSlideData?: SlideData) => {
     setActiveSlideMutation({

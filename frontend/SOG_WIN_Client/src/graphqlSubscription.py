@@ -20,6 +20,7 @@ subscription {
         title
         location
         searchContent
+        contentPrefix
     }
 }
 """)
@@ -38,23 +39,13 @@ class GraphQLSubscription:
                     transport=self.transport,
                     fetch_schema_from_transport=True,
             ) as session:
-                try:
-                    bible_books_data = (await session.execute(bible_books_query,
-                                                              variable_values={"bibleId": "0"}))['bibleBooks']
-                except BaseException as e:
-                    print(e)
-                    bible_books_data = None
-
                 async for result in session.subscribe(subscription_query):
                     slide = result.get("activeSlideSubscription")
                     if slide:
                         try:
-                            text = slide['content']
                             title = ''
-                            if 'location' in slide and slide["location"]:
-                                location = slide["location"]
-                                text = f"{location[-1]}. {slide['content']}"
-                                title = f'{bible_books_data[int(location[-3])]["name"] if bible_books_data else ""} {location[-2]}'
+                            text_prefix = slide['contentPrefix'] if slide['contentPrefix'] else ""
+                            text = f"{text_prefix}{slide['content']}"
                             if 'title' in slide and slide['title']:
                                 title = slide['title']
                             self.parent.update_signal.emit({

@@ -81,10 +81,11 @@ def get_sermon_paragraph_by_id(id: str):
             "location": [
                 "0",
                 paragraph.sermon_id,
+                chapter,
                 str(paragraph.paragraph_order),
-                chapter
             ],
-            "title": f"{get_sermon_date_string_from_datetime(sermon.date)} {sermon.name}"
+            "title": f"{get_sermon_date_string_from_datetime(sermon.date)} {sermon.name}",
+            "content_prefix": f"{chapter}. " if chapter else None,
         }
 
 
