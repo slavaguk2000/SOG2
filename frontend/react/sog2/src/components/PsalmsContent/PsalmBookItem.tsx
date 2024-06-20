@@ -43,12 +43,14 @@ const avatarBGProps = (name?: string) => {
 };
 
 const PsalmBookItem = ({ psalmsBookData, selected, onClick }: PsalmBookItemProps) => {
+  const name = psalmsBookData?.name;
+
   const initials = useMemo(() => {
-    if (!psalmsBookData?.name) return '';
-    const nameArray = psalmsBookData.name.split(' ');
+    if (!name) return '';
+    const nameArray = name.split(' ');
     const initials = nameArray.map((word) => word.charAt(0)).join('');
     return initials.toUpperCase();
-  }, [psalmsBookData]);
+  }, [name]);
 
   const favourite = psalmsBookData?.isFavourite;
 

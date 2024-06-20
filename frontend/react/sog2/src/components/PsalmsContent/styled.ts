@@ -16,7 +16,8 @@ const PsalmsEntitySelectWrapper = styled(Box)`
 `;
 
 export const PsalmBookSelectWrapper = styled(PsalmsEntitySelectWrapper)`
-  width: 70px;
+  min-width: 50px;
+  max-width: 50px;
   padding: 0;
 `;
 
