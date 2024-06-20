@@ -35,7 +35,7 @@ const ChordableCharChordAndContent = ({
     useChordsEditInstrumentsContext();
   const { mainKey } = useEditableChordsData();
 
-  const handleChordClick = () => {
+  const handleChordClick = (e: React.MouseEvent<HTMLSpanElement>) => {
     if (existingChordData) {
       if (isChordLinking) {
         onLinkChord(existingChordData.chord);
@@ -55,6 +55,10 @@ const ChordableCharChordAndContent = ({
         },
         mainKey,
         onAddChord,
+        {
+          left: e.pageX,
+          top: e.pageY,
+        },
       );
     }
   };
