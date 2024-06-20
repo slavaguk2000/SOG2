@@ -4,6 +4,7 @@ import { useSearchParams } from 'react-router-dom';
 import { useMutation, useQuery } from '@apollo/client';
 
 import { keyToScaleDegree, scaleDegreeToKey } from '../../../components/psalmChords/utils';
+import useSelectIntent from '../../../hooks/useSelectIntent';
 import { psalm, psalms, psalmsBooks, setActivePsalm } from '../../../utils/gql/queries';
 import {
   MusicalKey,
@@ -53,7 +54,7 @@ export const getPsalmSlideContentFromSlide = (slide?: Slide): string => {
 
 const PsalmsDataProvider = ({ children }: PropsWithChildren) => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const psalmsBookId = searchParams.get('psalmsBookId') ?? '';
+  const [psalmsBookId] = searchParams.get('psalmsBookId') ?? '';
   const psalmId = searchParams.get('psalmId') ?? '';
 
   const handlePsalmBookSelect = useCallback(
@@ -66,6 +67,12 @@ const PsalmsDataProvider = ({ children }: PropsWithChildren) => {
     },
     [setSearchParams],
   );
+
+  const { softSelected: softPsalmsBookIdSelected, setSoftSelected: setSoftPsalmsBookIdSelected } = useSelectIntent({
+    hardSelected: psalmsBookId,
+    setHardSelected: handlePsalmBookSelect,
+    timeout: 100,
+  });
 
   const [setActivePsalmMutation] = useMutation<Pick<Mutation, 'setActivePsalm'>, MutationSetActivePsalmArgs>(
     setActivePsalm,
@@ -92,10 +99,10 @@ const PsalmsDataProvider = ({ children }: PropsWithChildren) => {
     psalms,
     {
       variables: {
-        psalmsBookId,
+        psalmsBookId: softPsalmsBookIdSelected ?? '',
       },
       fetchPolicy: 'cache-first',
-      skip: !psalmsBookId,
+      skip: !softPsalmsBookIdSelected,
     },
   );
 
@@ -136,26 +143,31 @@ const PsalmsDataProvider = ({ children }: PropsWithChildren) => {
       setActivePsalmMutation({
         variables: {
           psalmId: id,
-          psalmsBookId,
+          psalmsBookId: softPsalmsBookIdSelected,
           transposition,
         },
       }).catch((e) => console.error(e));
     },
-    [setSearchParams, setActivePsalmMutation, psalmsBookId],
+    [setSearchParams, setActivePsalmMutation, softPsalmsBookIdSelected],
   );
 
   const currentPsalmBook = useMemo(
-    () => psalmsBooksData?.psalmsBooks.find(({ id }) => psalmsBookId === id),
-    [psalmsBookId, psalmsBooksData?.psalmsBooks],
+    () => psalmsBooksData?.psalmsBooks.find(({ id }) => softPsalmsBookIdSelected === id),
+    [softPsalmsBookIdSelected, psalmsBooksData?.psalmsBooks],
   );
 
   useEffect(() => {
     const potentialValidPsalmsBooks = psalmsBooksData?.psalmsBooks?.filter(({ psalmsCount }) => psalmsCount);
 
-    if (!(psalmsBookId && currentPsalmBook?.psalmsCount) && potentialValidPsalmsBooks?.[0]?.id) {
-      handlePsalmBookSelect(potentialValidPsalmsBooks[0].id);
+    if (!(softPsalmsBookIdSelected && currentPsalmBook?.psalmsCount) && potentialValidPsalmsBooks?.[0]?.id) {
+      setSoftPsalmsBookIdSelected(potentialValidPsalmsBooks[0].id);
     }
-  }, [currentPsalmBook?.psalmsCount, handlePsalmBookSelect, psalmsBookId, psalmsBooksData?.psalmsBooks]);
+  }, [
+    currentPsalmBook?.psalmsCount,
+    setSoftPsalmsBookIdSelected,
+    softPsalmsBookIdSelected,
+    psalmsBooksData?.psalmsBooks,
+  ]);
 
   const { data: currentPsalmData, loading: currentPsalmDataLoading } = useQuery<Pick<Query, 'psalm'>, QueryPsalmArgs>(
     psalm,
@@ -238,7 +250,7 @@ const PsalmsDataProvider = ({ children }: PropsWithChildren) => {
   return (
     <PsalmsContext.Provider
       value={{
-        psalmsBookId,
+        psalmsBookId: softPsalmsBookIdSelected ?? '',
         psalmId,
         handleUpdateLocation: () => true,
         handlePrevSlide,
@@ -250,7 +262,7 @@ const PsalmsDataProvider = ({ children }: PropsWithChildren) => {
         currentPsalm,
         currentPsalmBook,
         handlePsalmSelect,
-        handlePsalmBookSelect,
+        handlePsalmBookSelect: setSoftPsalmsBookIdSelected,
         psalmsQueryDataLoading,
       }}
     >

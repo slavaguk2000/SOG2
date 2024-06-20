@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { Box, Menu, MenuItem } from '@mui/material';
 
+import useSelectIntent from '../../hooks/useSelectIntent';
 import { usePsalmsData } from '../../providers/dataProviders/psalmsDataProvider';
 import { Maybe, MusicalKey } from '../../utils/gql/types';
 
@@ -19,6 +20,11 @@ const PsalmSelect = () => {
   }>(null);
   const { psalmsData, handlePsalmSelect, currentPsalm, currentPsalmBook } = usePsalmsData();
   const navigate = useNavigate();
+  const { softSelected, setSoftSelected } = useSelectIntent({
+    hardSelected: currentPsalm?.id,
+    setHardSelected: handlePsalmSelect,
+    timeout: 100,
+  });
 
   const preparedData = useMemo(
     () =>
@@ -67,8 +73,8 @@ const PsalmSelect = () => {
         <Box key={id} onContextMenu={(e) => handleContextMenu(e, id, defaultTonality)}>
           <PsalmSelectItem
             psalmName={name}
-            selected={id === currentPsalm?.id}
-            onClick={() => handlePsalmSelect(id, transposition)}
+            selected={id === softSelected}
+            onClick={() => setSoftSelected(id, transposition)}
             psalmId={id}
             inFavourite={inFavourite ?? undefined}
             transposition={transposition}
