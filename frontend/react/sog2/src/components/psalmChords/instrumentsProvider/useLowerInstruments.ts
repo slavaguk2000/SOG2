@@ -22,7 +22,7 @@ export interface LowerInstrument {
 
 const useLowerInstruments = (lowerInstruments: Array<LowerInstrument>) => {
   const navigate = useNavigate();
-  const { hasUndo, hasRedo, handleUndo, handleRedo, psalmData } = useEditableChordsData();
+  const { hasUndo, hasRedo, handleUndo, handleRedo, psalmData, clearLocalStorage } = useEditableChordsData();
 
   const [updatePsalmMutation] = useMutation<Pick<Mutation, 'updatePsalm'>, MutationUpdatePsalmArgs>(updatePsalm);
 
@@ -59,6 +59,7 @@ const useLowerInstruments = (lowerInstruments: Array<LowerInstrument>) => {
                   },
                 },
               });
+              clearLocalStorage();
             }
             navigate(-1);
           };
@@ -73,7 +74,7 @@ const useLowerInstruments = (lowerInstruments: Array<LowerInstrument>) => {
       ...instrument,
       handler: getLowerInstrumentsHandler(instrument.key),
     }));
-  }, [handleRedo, handleUndo, lowerInstruments, navigate, psalmData, updatePsalmMutation]);
+  }, [clearLocalStorage, handleRedo, handleUndo, lowerInstruments, navigate, psalmData, updatePsalmMutation]);
 
   const lowerInstrumentsWithHandlers = useMemo(() => {
     const getLowerInstrumentsDisabled = (key: ChordsEditLowerInstruments) => {
