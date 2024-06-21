@@ -87,5 +87,23 @@ def test_find_by_sermon_name():
 
 def test_search_by_name_and_chapter():
     answer = sermon_search("бог ми 143", "0", None)
-    assert answer[0]['search_content'] == '65-0119 <span class="highlighted">Бог</span>, <span class="highlighted">богатый</span> <span class="highlighted">милостью</span> (VGR) <span class="highlighted">143</span> Но прежде чем мы это сделаем, из–за того, что здесь могут находиться прибывшие впервые, избавимся от всех суеверий. Это не суеверие. Это проявление обетования Божьего. Все зависит от того, на что вы смотрите. Ни в одном человеке нет добродетели. Ни в одном человеке нет силы. Но мы как верующие имеем власть, не силу, но власть.'
-    assert answer[1]['search_content'] == '65-0119 <span class="highlighted">Бог</span> <span class="highlighted">богатый</span> <span class="highlighted">милостью</span> (Вильнюс) <span class="highlighted">143</span> Но прежде чем мы это сделаем, если здесь находятся новоприбывшие, выбросьте все суеверия…Это не суеверие. Это проявление обетования Божьего. Все зависит от того, на что вы смотрите. Ни в одном человеке нет добродетели. Ни в одном человеке нет силы. Но мы как верующие имеем власть, не силу, но власть.'
+    assert answer[0]['search_content'] == '65-0119 <span class="highlighted">Бог</span> <span class="highlighted">богатый</span> <span class="highlighted">милостью</span> (Вильнюс) <span class="highlighted">143</span> Но прежде чем мы это сделаем, если здесь находятся новоприбывшие, выбросьте все суеверия…Это не суеверие. Это проявление обетования Божьего. Все зависит от того, на что вы смотрите. Ни в одном человеке нет добродетели. Ни в одном человеке нет силы. Но мы как верующие имеем власть, не силу, но власть.'
+    assert answer[1]['search_content'] == '65-0119 <span class="highlighted">Бог</span>, <span class="highlighted">богатый</span> <span class="highlighted">милостью</span> (VGR) <span class="highlighted">143</span> Но прежде чем мы это сделаем, из–за того, что здесь могут находиться прибывшие впервые, избавимся от всех суеверий. Это не суеверие. Это проявление обетования Божьего. Все зависит от того, на что вы смотрите. Ни в одном человеке нет добродетели. Ни в одном человеке нет силы. Но мы как верующие имеем власть, не силу, но власть.'
+
+
+def test_search_by_full_phrase():
+    answer = sermon_search("это и есть благовестие", "0", None)
+    assert answer[0]['search_content'] == '60-0522 Усыновление (VGR) 57 <span class="highlighted">Это</span> <span class="highlighted">и</span> <span class="highlighted">есть</span> <span class="highlighted">Благовестие</span>. Прежде услышав Слово: "Покайтесь <span class="highlighted">и</span> креститесь во <span class="highlighted">Имя</span> <span class="highlighted">Иисуса</span> Христа для отпущения грехов". Убирает прочь все ваши грехи, взывая к <span class="highlighted">Имени</span> Господа <span class="highlighted">Иисуса</span> Христа об обетованной Земле. <span class="highlighted">Это</span> обетование всякому путнику на <span class="highlighted">этом</span> пути. Если ты вышел сегодня из дому грешником, со словами: "Я пойду в Скинию Бранхама". Бог в <span class="highlighted">этот</span> вечер дает тебе возможность. <span class="highlighted">И</span> только одно находится между тобою <span class="highlighted">и</span> обетованной Землей. Что такое обетованная Земля? Святой Дух. Что было между <span class="highlighted">Иисусом</span> Навиным <span class="highlighted">и</span> обетованной землей — <span class="highlighted">это</span> <span class="highlighted">Иордан</span>. Совершенно верно.'
+
+
+# def test_search_by_partial_phrase():
+#     answer = sermon_search("это и есть благовести", "0", None)
+#     assert answer[0]['search_content'] == '60-0522 Усыновление (VGR) 57 <span class="highlighted">Это</span> <span class="highlighted">и</span> <span class="highlighted">есть</span> <span class="highlighted">Благовестие</span>. Прежде услышав Слово: "Покайтесь <span class="highlighted">и</span> креститесь во <span class="highlighted">Имя</span> <span class="highlighted">Иисуса</span> Христа для отпущения грехов". Убирает прочь все ваши грехи, взывая к <span class="highlighted">Имени</span> Господа <span class="highlighted">Иисуса</span> Христа об обетованной Земле. <span class="highlighted">Это</span> обетование всякому путнику на <span class="highlighted">этом</span> пути. Если ты вышел сегодня из дому грешником, со словами: "Я пойду в Скинию Бранхама". Бог в <span class="highlighted">этот</span> вечер дает тебе возможность. <span class="highlighted">И</span> только одно находится между тобою <span class="highlighted">и</span> обетованной Землей. Что такое обетованная Земля? Святой Дух. Что было между <span class="highlighted">Иисусом</span> Навиным <span class="highlighted">и</span> обетованной землей — <span class="highlighted">это</span> <span class="highlighted">Иордан</span>. Совершенно верно.'
+
+#
+# def test_search_by_prefix_phrase():
+#     "это и есть благов"
+
+
+# def test_search_by_each_word_prefix_phrase():
+#     "эт и ес благов"

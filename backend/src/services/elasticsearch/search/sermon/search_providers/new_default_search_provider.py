@@ -37,7 +37,12 @@ class NewDefaultSearchProvider(SearchProvider):
         return True
 
     def __get_phrase_queries(self, search_request: str):
-        return get_phrase_queries(search_request, self.__standard_field, self.__max_slop)
+        external_boost = len(search_request.split())
+        return [
+            *get_phrase_queries(search_request, self.__standard_field, self.__max_slop, external_boost=external_boost),
+            *get_phrase_queries(search_request, self.__russian_field, self.__max_slop),
+            # *get_phrase_queries(search_request, self.__russian_field, self.__max_slop, prefix=True),
+        ]
 
     def get_query(self, search_request: str, context: Optional[List[str]]) -> SearchQuery:
         search_query = SearchQuery()
