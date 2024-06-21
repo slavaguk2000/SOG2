@@ -67,6 +67,7 @@ def update_couplets(psalm: Psalm, psalm_data: dict, session: Session):
             psalm.couplets.append(couplet)
 
         couplet.marker = couplet_data['marker']
+        couplet.styling = couplet_data['styling']
         couplet.initial_order = couplet_data['initial_order']
 
         for i, content_data in enumerate(couplet_data['couplet_content']):

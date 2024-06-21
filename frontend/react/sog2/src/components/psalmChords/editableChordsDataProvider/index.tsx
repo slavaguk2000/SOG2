@@ -39,6 +39,7 @@ type ChordsDataContextType = {
   handleUndo: () => void;
   handleRedo: () => void;
   toggleCoupletHighlighting: (coupletId: string) => void;
+  clearLocalStorage: () => void;
 };
 
 const defaultValue: ChordsDataContextType = {
@@ -55,6 +56,7 @@ const defaultValue: ChordsDataContextType = {
   handleUndo: () => true,
   handleRedo: () => true,
   toggleCoupletHighlighting: () => true,
+  clearLocalStorage: () => true,
 };
 
 export const ChordsDataContextTypeContext = createContext<ChordsDataContextType>(defaultValue);
@@ -88,9 +90,10 @@ const EditableChordsDataProvider = ({
 }: EditableChordsDataProviderProps) => {
   const [chordsData, setChordsData] = useState<PsalmData>(initialData);
 
-  const { handleAddNewVersion, hasRedo, hasUndo, handleRedo, handleUndo } = usePreviousVersions(
+  const { handleAddNewVersion, hasRedo, hasUndo, handleRedo, handleUndo, clearLocalStorage } = usePreviousVersions(
     initialData,
     setChordsData,
+    `chordsEdit.${initialData.psalm?.id}`,
   );
 
   const setNewChordsData = (newChordsData: SetStateAction<PsalmData>) => {
@@ -146,7 +149,8 @@ const EditableChordsDataProvider = ({
   });
 
   const currentData = forceData ?? chordsData;
-  const mainKey = (keyToScaleDegree[currentData.psalm.defaultTonality as string] ?? 0) + rootTransposition;
+  const mainKey =
+    ((currentData.psalm && keyToScaleDegree[currentData.psalm.defaultTonality as string]) ?? 0) + rootTransposition;
 
   const handleSetNewTonality = (newTonality: MusicalKey) => {
     setChordsData((p) => ({
@@ -175,12 +179,13 @@ const EditableChordsDataProvider = ({
         hasRedo,
         handleUndo,
         handleRedo,
+        clearLocalStorage,
       }}
     >
       {children}
       <MustProvideDefaultTonalityDialog
         setNewTonality={handleSetNewTonality}
-        open={!(chordsData.psalm.defaultTonality || forceData)}
+        open={!(chordsData.psalm?.defaultTonality || forceData)}
       />
     </ChordsDataContextTypeContext.Provider>
   );

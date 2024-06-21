@@ -5,7 +5,7 @@ interface PreviousVersions {
   currentVersion: number;
 }
 
-const usePreviousVersions = <T>(initialData: T, onUpdate: (newVersion: T) => void) => {
+const usePreviousVersions = <T>(initialData: T, onUpdate: (newVersion: T) => void, versionsStateKey?: string) => {
   const initialPreviousVersionsState = useMemo(
     () => ({
       versionsArray: [JSON.stringify(initialData)],
@@ -14,17 +14,42 @@ const usePreviousVersions = <T>(initialData: T, onUpdate: (newVersion: T) => voi
     [initialData],
   );
 
+  const storageKey = versionsStateKey && `previousVersions.${versionsStateKey}`;
+
   const [previousVersions, setPreviousVersions] = useState<PreviousVersions>(initialPreviousVersionsState);
+
+  useEffect(() => {
+    if (storageKey) {
+      const savedStateJSON = localStorage.getItem(storageKey);
+      if (savedStateJSON) {
+        const savedState = JSON.parse(savedStateJSON);
+        setPreviousVersions(savedState);
+        onUpdate(JSON.parse(savedState.versionsArray[savedState.currentVersion]));
+      }
+    }
+  }, [onUpdate, storageKey]);
 
   const handleAddNewVersion = (newVersion: Record<string, unknown>) => {
     setPreviousVersions((prev) => {
       const cutPreviousVersions = prev.currentVersion >= 0 ? prev.versionsArray.slice(0, prev.currentVersion + 1) : [];
 
-      return {
+      const newVersionsState = {
         versionsArray: [...cutPreviousVersions, JSON.stringify(newVersion)],
         currentVersion: cutPreviousVersions.length,
       };
+
+      if (storageKey) {
+        localStorage.setItem(storageKey, JSON.stringify(newVersionsState));
+      }
+
+      return newVersionsState;
     });
+  };
+
+  const clearLocalStorage = () => {
+    if (storageKey) {
+      localStorage.removeItem(storageKey);
+    }
   };
 
   const handleUndo = useCallback(() => {
@@ -90,6 +115,7 @@ const usePreviousVersions = <T>(initialData: T, onUpdate: (newVersion: T) => voi
     hasRedo,
     handleUndo,
     handleRedo,
+    clearLocalStorage,
   };
 };
 
