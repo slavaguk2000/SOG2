@@ -208,7 +208,7 @@ const SearchLine = () => {
         filterOptions={(options) => options} //need to show popup on "Gen 2 5" for example
         autoComplete
         autoHighlight
-        getOptionLabel={(option) => (option as Slide).content}
+        getOptionLabel={(option) => (option as Slide).content ?? ''}
         inputValue={searchText}
         options={options}
         onInputChange={(event, newValue) => {
