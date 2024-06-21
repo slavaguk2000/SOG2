@@ -155,6 +155,7 @@ export const psalm = gql`
           id
           initialOrder
           marker
+          styling
           coupletContent {
             id
             text
@@ -212,6 +213,7 @@ const psalmData = `
     id
     initialOrder
     marker
+    styling
     coupletContent {
       id
       text

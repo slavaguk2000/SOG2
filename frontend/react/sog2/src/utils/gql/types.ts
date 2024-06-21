@@ -33,6 +33,7 @@ export type Couplet = {
   id: Scalars['ID']['output'];
   initialOrder: Scalars['Int']['output'];
   marker: Scalars['String']['output'];
+  styling: Scalars['Int']['output'];
 };
 
 export type CoupletContent = {
@@ -70,6 +71,7 @@ export type CoupletInput = {
   id: Scalars['ID']['input'];
   initialOrder: Scalars['Int']['input'];
   marker: Scalars['String']['input'];
+  styling: Scalars['Int']['input'];
 };
 
 export type CoupletWithSlide = {
@@ -112,6 +114,7 @@ export type Mutation = {
   setActiveSlideOffset?: Maybe<Scalars['Boolean']['output']>;
   setFreeSlide?: Maybe<Scalars['Boolean']['output']>;
   syncBibleToElastic?: Maybe<Scalars['Boolean']['output']>;
+  syncPsalmsToElastic?: Maybe<Scalars['Boolean']['output']>;
   syncSermonsToElastic?: Maybe<Scalars['Boolean']['output']>;
   updatePsalm: PsalmData;
   updatePsalmTransposition: PsalmsBookItem;
@@ -326,6 +329,7 @@ export type Slide = {
   __typename?: 'Slide';
   audioMappings?: Maybe<Array<SlideAudioMapping>>;
   content: Scalars['String']['output'];
+  contentPrefix?: Maybe<Scalars['String']['output']>;
   id?: Maybe<Scalars['ID']['output']>;
   location?: Maybe<Array<Scalars['String']['output']>>;
   searchContent?: Maybe<Scalars['String']['output']>;

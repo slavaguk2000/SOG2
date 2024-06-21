@@ -50,12 +50,15 @@ const ChordAndContent = ({
   const {
     isCutting,
     isChordAdding,
+    isChordCopying,
     isChordDeleting,
     isChordEditing,
     openChordEditorDialog,
     isChordLinking,
     linkingChordData,
+    copyingChordData,
     isTextEditing,
+    setCopyingChordData,
   } = useChordsEditInstrumentsContext();
   const { psalmData, handleEditChord } = useEditableChordsData();
   const [editingData, setEditingData] = useState<string>('');
@@ -64,17 +67,25 @@ const ChordAndContent = ({
     return null;
   }
 
-  const isSourceChordChoosing = isChordLinking && !linkingChordData;
-  const isDestinationChordChoosing = isChordLinking && !!linkingChordData;
+  const isLinkSourceChordChoosing = isChordLinking && !linkingChordData;
+  const isLinkDestinationChordChoosing = isChordLinking && !!linkingChordData;
+
+  const isCopySourceChordChoosing = isChordCopying && !copyingChordData;
+  const isCopyDestinationChordChoosing = isChordCopying && !!copyingChordData;
 
   const linkingChordDataChord =
     linkingChordData &&
     psalmData.couplets[linkingChordData.coupletIdx]?.coupletContent[linkingChordData.coupletContentIdx]?.chord;
 
   const existingChordData =
-    isDestinationChordChoosing && linkingChordData && linkingChordDataChord
+    isLinkDestinationChordChoosing && linkingChordData && linkingChordDataChord
       ? {
           chord: linkingChordDataChord,
+          mainKey,
+        }
+      : isCopyDestinationChordChoosing
+      ? {
+          chord: copyingChordData,
           mainKey,
         }
       : undefined;
@@ -88,10 +99,13 @@ const ChordAndContent = ({
           left: e.pageX,
           top: e.pageY,
         });
-      } else if (isSourceChordChoosing) {
+      } else if (isLinkSourceChordChoosing) {
         onStartLinkingChord();
-      } else if (isDestinationChordChoosing && existingChordData) {
+      } else if (isLinkDestinationChordChoosing && existingChordData) {
         onLinkChord(existingChordData.chord, 0);
+      }
+      if (isCopySourceChordChoosing) {
+        setCopyingChordData(chord);
       }
     }
   };
@@ -117,11 +131,10 @@ const ChordAndContent = ({
           chordData={chord}
           nonDeletable={firstInLine}
           onClick={handleChordClick}
-          isChordDeleting={isChordDeleting}
           contentFontSize={fontSize}
-          isChordEditing={isChordEditing}
-          isSourceChordChoosing={isSourceChordChoosing}
-          isDestinationChordChoosing={isDestinationChordChoosing}
+          isLinkSourceChordChoosing={isLinkSourceChordChoosing}
+          isCopySourceChordChoosing={isCopySourceChordChoosing}
+          isLinkDestinationChordChoosing={isLinkDestinationChordChoosing}
           isSameChordLinking={!!(linkingChordId && linkingChordId === chord.id)}
           isCurrentChordLinking={currentChordLinking}
           mainKey={mainKey}
@@ -130,14 +143,14 @@ const ChordAndContent = ({
       )}
       {isCutting ? (
         <CuttableText onCharClick={onCut} text={textContent} />
-      ) : isChordAdding || isDestinationChordChoosing ? (
+      ) : isChordAdding || isLinkDestinationChordChoosing || isCopyDestinationChordChoosing ? (
         <ChordableText
           fontSize={fontSize}
           text={textContent}
           onAddChord={onAddChord}
           onLinkChord={onLinkChord}
           existingChordData={existingChordData}
-          chordColor={isDestinationChordChoosing ? '#37f' : undefined}
+          chordColor={isLinkDestinationChordChoosing ? '#37f' : undefined}
         />
       ) : textContentEditing ? (
         <TextContentEditor
