@@ -11,6 +11,7 @@ import React, {
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import EditNoteIcon from '@mui/icons-material/EditNote';
+import FormatBoldIcon from '@mui/icons-material/FormatBold';
 import RedoIcon from '@mui/icons-material/Redo';
 import SaveIcon from '@mui/icons-material/Save';
 import TextDecreaseIcon from '@mui/icons-material/TextDecrease';
@@ -40,6 +41,7 @@ type ChordsEditInstrumentsContextType = {
   isChordCopying: boolean;
   isChordLinking: boolean;
   isTextEditing: boolean;
+  isCoupletHighlighting: boolean;
   openChordEditorDialog: (
     chordData: CoupletContentChord,
     mainKey: number,
@@ -65,6 +67,7 @@ const defaultValue: ChordsEditInstrumentsContextType = {
   isChordLinking: false,
   isTextEditing: false,
   isChordCopying: false,
+  isCoupletHighlighting: false,
   openChordEditorDialog: () => true,
   setLinkingChordData: () => true,
   setCopyingChordData: () => true,
@@ -87,7 +90,8 @@ export enum ChordsEditInstruments {
   ADD_CHORD = 'addChord',
   LINK_CHORDS = 'linkChords',
   EDIT_TEXT = 'editText',
-  COPY_CHORD = 'copy_chord',
+  COPY_CHORD = 'copyChord',
+  HIGHLIGHT_COUPLET = 'highlightCouplet',
 }
 
 export interface UpperInstrument {
@@ -132,6 +136,11 @@ const upperInstruments: Array<UpperInstrument> = [
     icon: <EditNoteIcon />,
     tooltip: 'Edit text',
   },
+  {
+    key: ChordsEditInstruments.HIGHLIGHT_COUPLET,
+    icon: <FormatBoldIcon />,
+    tooltip: 'Highlight couplet',
+  },
 ];
 
 const lowerInstruments = [
@@ -170,6 +179,8 @@ const ChordsEditInstrumentsProvider = ({ children }: PropsWithChildren) => {
 
   const handleUpperInstrumentClick = (key: string) => {
     setLinkingChordData(null);
+    setEditingTextContentId(null);
+    setCopyingChordData(null);
     setSelectedInstrument((p) => {
       if (key === p) {
         return null;
@@ -242,6 +253,7 @@ const ChordsEditInstrumentsProvider = ({ children }: PropsWithChildren) => {
         isChordLinking: selectedInstrument === ChordsEditInstruments.LINK_CHORDS,
         isTextEditing: selectedInstrument === ChordsEditInstruments.EDIT_TEXT,
         isChordCopying: selectedInstrument === ChordsEditInstruments.COPY_CHORD,
+        isCoupletHighlighting: selectedInstrument === ChordsEditInstruments.HIGHLIGHT_COUPLET,
         openChordEditorDialog: handleOpenChordEditorDialog,
         linkingChordData,
         setLinkingChordData,

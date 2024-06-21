@@ -145,6 +145,7 @@ type_defs = gql("""
         marker: String!
         initialOrder: Int!
         coupletContent: [CoupletContent!]!
+        styling: Int!
     }
     
     input CoupletInput {
@@ -152,6 +153,7 @@ type_defs = gql("""
         marker: String!
         initialOrder: Int!
         coupletContent: [CoupletContentInput!]!
+        styling: Int!
     }
     
     type SlideAudioMapping {

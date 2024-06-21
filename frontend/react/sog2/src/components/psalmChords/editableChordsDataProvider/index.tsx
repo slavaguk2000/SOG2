@@ -1,10 +1,11 @@
-import React, { createContext, PropsWithChildren, useContext, useState } from 'react';
+import React, { createContext, PropsWithChildren, SetStateAction, useContext, useState } from 'react';
 
 import usePreviousVersions from '../../../hooks/usePreviousVersions';
 import { Couplet, CoupletContentChord, MusicalKey, Psalm, PsalmData } from '../../../utils/gql/types';
 import { keyToScaleDegree } from '../utils';
 
 import implementAddChord from './implementAddChord';
+import implementCoupletHighlighting from './implementCoupletHighlighting';
 import implementCutToNextLine from './implementCutToNextLine';
 import implementEditChord from './implementEditChord';
 import implementEditText from './implementEditText';
@@ -37,6 +38,7 @@ type ChordsDataContextType = {
   hasRedo: boolean;
   handleUndo: () => void;
   handleRedo: () => void;
+  toggleCoupletHighlighting: (coupletId: string) => void;
 };
 
 const defaultValue: ChordsDataContextType = {
@@ -52,6 +54,7 @@ const defaultValue: ChordsDataContextType = {
   hasRedo: false,
   handleUndo: () => true,
   handleRedo: () => true,
+  toggleCoupletHighlighting: () => true,
 };
 
 export const ChordsDataContextTypeContext = createContext<ChordsDataContextType>(defaultValue);
@@ -90,9 +93,17 @@ const EditableChordsDataProvider = ({
     setChordsData,
   );
 
-  const setNewChordsData = (newChordsData: PsalmData) => {
-    handleAddNewVersion(newChordsData);
-    setChordsData(newChordsData);
+  const setNewChordsData = (newChordsData: SetStateAction<PsalmData>) => {
+    if (typeof newChordsData === 'function') {
+      setChordsData((p) => {
+        const newValue = newChordsData(p);
+        handleAddNewVersion(newValue);
+        return newValue;
+      });
+    } else {
+      handleAddNewVersion(newChordsData);
+      setChordsData(newChordsData);
+    }
   };
 
   const { handleCutToNextLine } = implementCutToNextLine({
@@ -130,6 +141,10 @@ const EditableChordsDataProvider = ({
     chordsData,
   });
 
+  const { toggleCoupletHighlighting } = implementCoupletHighlighting({
+    setNewChordsData,
+  });
+
   const currentData = forceData ?? chordsData;
   const mainKey = (keyToScaleDegree[currentData.psalm.defaultTonality as string] ?? 0) + rootTransposition;
 
@@ -154,6 +169,7 @@ const EditableChordsDataProvider = ({
         handleEditChord,
         handleEditText,
         handleUnlinkChord,
+        toggleCoupletHighlighting,
         mainKey,
         hasUndo,
         hasRedo,

@@ -15,8 +15,14 @@ interface PsalmChordsViewContent {
 
 const PsalmChordsViewContent = ({ fontSize, mainKey }: PsalmChordsViewContent) => {
   const { setLinkingChordData, linkingChordData, isChordLinking } = useChordsEditInstrumentsContext();
-  const { handleCutToNextLine, handleRemoveChord, handleAddChord, psalmData, handleLinkChords } =
-    useEditableChordsData();
+  const {
+    handleCutToNextLine,
+    handleRemoveChord,
+    handleAddChord,
+    psalmData,
+    handleLinkChords,
+    toggleCoupletHighlighting,
+  } = useEditableChordsData();
 
   const handleNextLinkingChord = useCallback(
     (option?: { nullOnError?: boolean }) => {
@@ -120,7 +126,7 @@ const PsalmChordsViewContent = ({ fontSize, mainKey }: PsalmChordsViewContent) =
 
   return (
     <PsalmChordsViewContentWrapper>
-      {psalmData?.couplets.map(({ coupletContent, id }, coupletIdx) => (
+      {psalmData?.couplets.map(({ coupletContent, id, styling }, coupletIdx) => (
         <PsalmCoupletView
           key={id}
           coupletContent={coupletContent ?? []}
@@ -142,6 +148,8 @@ const PsalmChordsViewContent = ({ fontSize, mainKey }: PsalmChordsViewContent) =
               ? linkingChordData.coupletContentIdx
               : undefined
           }
+          onHighLightCouplet={() => toggleCoupletHighlighting(id)}
+          styling={styling}
         />
       ))}
     </PsalmChordsViewContentWrapper>

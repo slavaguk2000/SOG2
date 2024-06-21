@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 
-import { Typography } from '@mui/material';
+import { ButtonBase, Typography } from '@mui/material';
 
 import { isChordsEquals } from '../../utils/chordUtils';
 import { CoupletContent, CoupletContentChord } from '../../utils/gql/types';
@@ -23,6 +23,8 @@ interface PsalmCoupletViewProps {
   onStartLinkingChord: (coupletContentIdx: number) => void;
   linkingChordId?: string;
   currentLinkingChordIdx?: number;
+  onHighLightCouplet: () => void;
+  styling: number;
 }
 
 interface FilteredCoupletContent extends Omit<CoupletContent, 'chord'> {
@@ -46,6 +48,8 @@ const PsalmCoupletView = ({
   onStartLinkingChord,
   linkingChordId,
   currentLinkingChordIdx,
+  onHighLightCouplet,
+  styling,
 }: PsalmCoupletViewProps) => {
   const [menuAnchorChordData, setMenuAnchorChordData] = useState<null | MenuAnchorChordData>(null);
   const {
@@ -55,6 +59,7 @@ const PsalmCoupletView = ({
     isChordLinking,
     isChordCopying,
     isTextEditing,
+    isCoupletHighlighting,
     setEditingTextContentId,
     editingTextContentId,
   } = useChordsEditInstrumentsContext();
@@ -98,33 +103,41 @@ const PsalmCoupletView = ({
     [filteredCoupletContent, splitByLines],
   );
 
-  return (
-    <PsalmChordsViewCoupletWrapper>
-      {contentByLines.map((coupletContentLine, idx) => (
-        <Typography key={idx} align="left" lineHeight={2} fontSize={fontSize} variant="body1">
-          {coupletContentLine.map(({ content: { text, id: contentId, chord }, idx }, idxInLine) => (
-            <ChordAndContent
-              firstInLine={!idxInLine}
-              key={contentId}
-              chord={chord ?? undefined}
-              fontSize={fontSize}
-              mainKey={mainKey}
-              textContent={text}
-              onCut={(charPosition) => onCut(contentId, charPosition)}
-              onDeleteRequest={() => onRemoveChord(contentId)}
-              onAddChord={(newChordData, charPosition) => onAddChord(contentId, charPosition, newChordData)}
-              onLinkChord={(chordData, charPosition) => onLinkChord(contentId, charPosition, chordData)}
-              onStartLinkingChord={() => onStartLinkingChord(idx)}
-              linkingChordId={linkingChordId}
-              currentChordLinking={currentLinkingChordIdx !== undefined && currentLinkingChordIdx === idx}
-              onContentClick={isTextEditing ? () => setEditingTextContentId(contentId) : undefined}
-              textContentEditing={contentId === editingTextContentId}
-              onTextChange={(newText) => handleEditText(contentId, newText)}
-              onLinkedChordMenu={(anchor) => setMenuAnchorChordData({ anchor, contentId })}
-            />
-          ))}
-        </Typography>
+  const handleCoupletClick = () => {
+    if (isCoupletHighlighting) {
+      onHighLightCouplet();
+    }
+  };
+
+  const contentLinesJSX = contentByLines.map((coupletContentLine, idx) => (
+    <Typography key={idx} align="left" lineHeight={2} fontSize={fontSize} variant="body1" fontWeight="inherit">
+      {coupletContentLine.map(({ content: { text, id: contentId, chord }, idx }, idxInLine) => (
+        <ChordAndContent
+          firstInLine={!idxInLine}
+          key={contentId}
+          chord={chord ?? undefined}
+          fontSize={fontSize}
+          mainKey={mainKey}
+          textContent={text}
+          onCut={(charPosition) => onCut(contentId, charPosition)}
+          onDeleteRequest={() => onRemoveChord(contentId)}
+          onAddChord={(newChordData, charPosition) => onAddChord(contentId, charPosition, newChordData)}
+          onLinkChord={(chordData, charPosition) => onLinkChord(contentId, charPosition, chordData)}
+          onStartLinkingChord={() => onStartLinkingChord(idx)}
+          linkingChordId={linkingChordId}
+          currentChordLinking={currentLinkingChordIdx !== undefined && currentLinkingChordIdx === idx}
+          onContentClick={isTextEditing ? () => setEditingTextContentId(contentId) : undefined}
+          textContentEditing={isTextEditing && contentId === editingTextContentId}
+          onTextChange={(newText) => handleEditText(contentId, newText)}
+          onLinkedChordMenu={(anchor) => setMenuAnchorChordData({ anchor, contentId })}
+        />
       ))}
+    </Typography>
+  ));
+
+  return (
+    <PsalmChordsViewCoupletWrapper styling={styling} hoverable={isCoupletHighlighting} onClick={handleCoupletClick}>
+      {isCoupletHighlighting ? <ButtonBase component="div">{contentLinesJSX}</ButtonBase> : contentLinesJSX}
       <LinkChordMenu menuAnchorChordData={menuAnchorChordData} onClose={() => setMenuAnchorChordData(null)} />
     </PsalmChordsViewCoupletWrapper>
   );

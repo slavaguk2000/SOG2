@@ -126,6 +126,7 @@ def get_psalm_by_id(psalm_id: str):
                     "id": couplet.id,
                     "marker": couplet.marker,
                     "initial_order": couplet.initial_order,
+                    "styling": couplet.styling,
                     "couplet_content": [{
                         "id": content.id,
                         "text": content.text_content,

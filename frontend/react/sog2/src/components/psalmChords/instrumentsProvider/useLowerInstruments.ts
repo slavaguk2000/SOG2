@@ -43,10 +43,11 @@ const useLowerInstruments = (lowerInstruments: Array<LowerInstrument>) => {
                       psalmNumber: psalmData.psalm.psalmNumber,
                     },
                     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                    couplets: psalmData.couplets.map(({ id, marker, initialOrder, coupletContent }) => ({
+                    couplets: psalmData.couplets.map(({ id, marker, initialOrder, coupletContent, styling }) => ({
                       id,
                       marker,
                       initialOrder,
+                      styling,
                       coupletContent: coupletContent.map(
                         // eslint-disable-next-line @typescript-eslint/no-unused-vars
                         ({ __typename, chord: { __typename: _, ...chordRest }, ...contentRest }) => ({

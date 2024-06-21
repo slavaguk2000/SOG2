@@ -28,10 +28,43 @@ export const PsalmChordsViewContentWrapper = styled(Box)`
   gap: 20px;
 `;
 
-export const PsalmChordsViewCoupletWrapper = styled(Box)`
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+export const PsalmChordsViewCoupletWrapper = styled(Box, {
+  shouldForwardProp(propName: PropertyKey) {
+    return !(['hoverable', 'styling'] as PropertyKey[]).includes(propName);
+  },
+})<{ hoverable: boolean; styling: number }>`
+    ${({ styling }) =>
+      styling
+        ? `
+          font-weight: bold;
+          font-style: italic;
+        `
+        : ''}
+
+    ${({ hoverable }) =>
+      hoverable
+        ? `
+          & > div {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+          }
+          
+          &:hover {
+            border-radius: 20px;
+            background-color: #adf3;
+            padding: 0 7px;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.2);
+            font-weight: bold;
+            font-style: italic;
+          }
+        `
+        : `
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+        `}
+  }
 `;
 
 interface ChordWrapperProps {
