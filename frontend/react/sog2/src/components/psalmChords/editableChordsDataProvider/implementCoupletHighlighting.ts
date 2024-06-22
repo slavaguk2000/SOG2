@@ -12,9 +12,7 @@ const implementCoupletHighlighting = ({ setNewChordsData }: ImplementCoupletHigh
       id: prev.id,
       psalm: prev.psalm,
       couplets: prev.couplets.map((couplet) => {
-        console.log(coupletId, couplet);
         if (couplet.id === coupletId) {
-          console.log(couplet.styling, Number(!couplet.styling));
           return {
             ...couplet,
             styling: Number(!couplet.styling),

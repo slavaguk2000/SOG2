@@ -1,6 +1,6 @@
 from typing import List, Optional
 from src.services.elasticsearch.search.SearchQuery import SearchQuery
-from src.services.elasticsearch.search.common_search_queries import get_phrase_queries
+from src.services.elasticsearch.search.common_search_queries import get_phrase_queries, get_span_near_phrase_queries
 from src.services.elasticsearch.search.sermon.search_providers.abstract_seacrh_provider import SearchProvider
 from src.services.elasticsearch.search.sermon.search_providers.common_parts import get_sermon_name_query_strings
 
@@ -37,7 +37,12 @@ class NewDefaultSearchProvider(SearchProvider):
         return True
 
     def __get_phrase_queries(self, search_request: str):
-        return get_phrase_queries(search_request, self.__standard_field, self.__max_slop)
+        external_boost = len(search_request.split())
+        return [
+            *get_phrase_queries(search_request, self.__standard_field, self.__max_slop, external_boost=external_boost),
+            *get_phrase_queries(search_request, self.__russian_field, self.__max_slop),
+            *get_span_near_phrase_queries(search_request, "chapter_content.lowercase_standard", self.__max_slop, external_boost=external_boost)
+        ]
 
     def get_query(self, search_request: str, context: Optional[List[str]]) -> SearchQuery:
         search_query = SearchQuery()
@@ -62,11 +67,20 @@ class NewDefaultSearchProvider(SearchProvider):
                 })
 
             if len(current_sermon_name_patterns) > 1:
+                sermon_name_search_request = " ".join(
+                    [pattern.pattern_string for pattern in current_sermon_name_patterns]
+                )
                 current_name_variants_query_should.append({
                     "dis_max": {
-                        "queries": get_phrase_queries(" ".join(
-                            [pattern.pattern_string for pattern in current_sermon_name_patterns]
-                        ), "sermon_name")
+                        "queries": [
+                            *get_phrase_queries(sermon_name_search_request, "sermon_name"),
+                            *get_span_near_phrase_queries(
+                                sermon_name_search_request,
+                                "sermon_name.lowercase_standard",
+                                self.__max_slop,
+                                external_boost=len(current_sermon_name_patterns) * 80
+                            )
+                        ]
                     }
                 })
 

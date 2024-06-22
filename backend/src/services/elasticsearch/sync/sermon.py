@@ -42,19 +42,22 @@ def sync_sermons() -> bool:
         else:
             el.create_index(sermon_mapping.index, sermon_mapping.body)
 
-        el.bulk_create(sermon_mapping.index, [
-            {
-                "_id": paragraph.id,
-                "sermon_id": paragraph.sermon_id,
-                "paragraph_order": paragraph.paragraph_order,
-                "sermon_name": replace_english_letters_to_russian_equivalent(paragraph.sermon.name),
-                "sermon_name_length": len(paragraph.sermon.name.split()),
-                "sermon_translation": paragraph.sermon.translation,
-                "sermon_date": paragraph.sermon.date,
-                "chapter": paragraph.chapter,
-                "chapter_content": replace_english_letters_to_russian_equivalent(paragraph.content),
-            } for paragraph in paragraphs
-        ])
+        chunk_size = 30000
+        for i in range(0, len(paragraphs), chunk_size):
+            print(i)
+            el.bulk_create(sermon_mapping.index, [
+                {
+                    "_id": paragraph.id,
+                    "sermon_id": paragraph.sermon_id,
+                    "paragraph_order": paragraph.paragraph_order,
+                    "sermon_name": replace_english_letters_to_russian_equivalent(paragraph.sermon.name),
+                    "sermon_name_length": len(paragraph.sermon.name.split()),
+                    "sermon_translation": paragraph.sermon.translation,
+                    "sermon_date": paragraph.sermon.date,
+                    "chapter": paragraph.chapter,
+                    "chapter_content": replace_english_letters_to_russian_equivalent(paragraph.content),
+                } for paragraph in paragraphs[i:i + chunk_size]
+            ])
         return True
 
 
