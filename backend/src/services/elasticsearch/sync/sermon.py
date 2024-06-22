@@ -42,7 +42,7 @@ def sync_sermons() -> bool:
         else:
             el.create_index(sermon_mapping.index, sermon_mapping.body)
 
-        chunk_size = 1000
+        chunk_size = 30000
         for i in range(0, len(paragraphs), chunk_size):
             print(i)
             el.bulk_create(sermon_mapping.index, [

@@ -148,6 +148,18 @@ sermon_mapping = Mapping(
                     "standard": {
                         "type": "text",
                         "analyzer": "standard"
+                    },
+                    "keyword": {
+                        "type": "keyword"
+                    },
+                    "lowercase": {
+                        "type": "text",
+                        "analyzer": "lowercase_analyzer"
+                    },
+                    "edge_ngram": {
+                        "type": "text",
+                        "analyzer": "edge_ngram_analyzer",
+                        "search_analyzer": "standard"
                     }
                 }
             },

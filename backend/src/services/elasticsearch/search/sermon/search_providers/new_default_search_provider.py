@@ -41,7 +41,7 @@ class NewDefaultSearchProvider(SearchProvider):
         return [
             *get_phrase_queries(search_request, self.__standard_field, self.__max_slop, external_boost=external_boost),
             *get_phrase_queries(search_request, self.__russian_field, self.__max_slop),
-            # *get_phrase_queries(search_request, self.__russian_field, self.__max_slop, prefix=True),
+            *get_phrase_queries(search_request, "chapter_content.lowercase", self.__max_slop, prefix=True, external_boost=external_boost),
         ]
 
     def get_query(self, search_request: str, context: Optional[List[str]]) -> SearchQuery:
