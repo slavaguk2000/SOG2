@@ -20,7 +20,7 @@ def get_couplet_content_for_search(hit: dict):
     return insert_highlights_into_original_str(
             hit["_source"]['couplet_content'],
             hit,
-            ['couplet_content']
+            ['couplet_content', 'couplet_content.edge_ngram', 'couplet_content.lowercase_standard']
         )
 
 
@@ -104,10 +104,11 @@ def psalm_search(search_pattern: str, psalm_book_id: str | None):
             "psalm_number": {},
             "psalm_name": {},
             "couplet_content": {},
+            "couplet_content.edge_ngram": {}
         }
     }
 
-    print(str(query).replace("'", '"'))
+    print(str(query).replace("'", '"').replace("True", "true"))
 
     result = el.search(
         index=psalm_mapping.index,
@@ -117,5 +118,4 @@ def psalm_search(search_pattern: str, psalm_book_id: str | None):
         highlight=highlight,
     )
 
-    print(result["hits"]["hits"])
     return [psalm_hit_to_slide(hit) for hit in result["hits"]["hits"]]
