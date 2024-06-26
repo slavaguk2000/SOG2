@@ -116,7 +116,7 @@ def psalm_search(search_pattern: str, psalm_book_id: str | None):
         }
     }
 
-    print(str(query).replace("'", '"').replace("True", "true"))
+    # print(str(query).replace("'", '"').replace("True", "true"))
 
     result = el.search(
         index=psalm_mapping.index,
