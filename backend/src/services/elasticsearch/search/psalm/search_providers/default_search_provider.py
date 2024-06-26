@@ -1,6 +1,6 @@
 from typing import List, Optional
 from src.services.elasticsearch.search.SearchQuery import SearchQuery
-from src.services.elasticsearch.search.common_search_queries import get_phrase_queries
+from src.services.elasticsearch.search.common_search_queries import get_phrase_queries, get_span_near_phrase_queries
 from src.services.elasticsearch.search.psalm.search_providers.abstract_seacrh_provider import SearchProvider
 from src.services.elasticsearch.search.psalm.search_providers.common_parts import get_psalm_name_query_strings, \
     get_psalm_number_query_strings, get_couplet_content_query_strings
@@ -80,11 +80,17 @@ class DefaultSearchProvider(SearchProvider):
                     })
 
                 if len(current_couplet_content_patterns) > 1:
+                    content_search_request = " ".join(
+                        [pattern.pattern_string for pattern in current_couplet_content_patterns]
+                    )
                     current_psalm_name_variants_query_should.append({
                         "dis_max": {
-                            "queries": get_phrase_queries(" ".join(
-                                [pattern.pattern_string for pattern in current_psalm_name_patterns]
-                            ), "couplet_content")
+                            "queries": get_span_near_phrase_queries(
+                                content_search_request,
+                                "couplet_content.lowercase_standard",
+                                self.__max_slop,
+                                external_boost=len(current_couplet_content_patterns)
+                            ),
                         }
                     })
 

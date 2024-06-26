@@ -20,13 +20,19 @@ def get_couplet_content_for_search(hit: dict):
     return insert_highlights_into_original_str(
             hit["_source"]['couplet_content'],
             hit,
-            ['couplet_content']
+            ['couplet_content', 'couplet_content.edge_ngram', 'couplet_content.lowercase_standard']
         )
 
 
 def get_psalm_number_for_search(hit: dict):
+    psalm_number_highlights = ["psalm_non_numeric_number.edge_ngram"]
+    psalm_number_source = hit["_source"]['psalm_number']
+
+    if 'highlight' in hit and any(psalm_number_highlight in hit['highlight'] for psalm_number_highlight in psalm_number_highlights):
+        hit['highlight']['psalm_number'] = [f"{highlight_pre_tag}{psalm_number_source}{highlight_post_tag}"]
+
     return insert_highlights_into_original_str(
-            hit["_source"]['psalm_number'],
+            psalm_number_source,
             hit,
             ['psalm_number']
         )
@@ -101,13 +107,16 @@ def psalm_search(search_pattern: str, psalm_book_id: str | None):
         "pre_tags": [highlight_pre_tag],
         "post_tags": [highlight_post_tag],
         "fields": {
+            "psalm_number.edge_ngram": {},
             "psalm_number": {},
+            "psalm_non_numeric_number.edge_ngram": {},
             "psalm_name": {},
             "couplet_content": {},
+            "couplet_content.edge_ngram": {}
         }
     }
 
-    print(str(query).replace("'", '"'))
+    # print(str(query).replace("'", '"').replace("True", "true"))
 
     result = el.search(
         index=psalm_mapping.index,
@@ -117,5 +126,4 @@ def psalm_search(search_pattern: str, psalm_book_id: str | None):
         highlight=highlight,
     )
 
-    print(result["hits"]["hits"])
     return [psalm_hit_to_slide(hit) for hit in result["hits"]["hits"]]

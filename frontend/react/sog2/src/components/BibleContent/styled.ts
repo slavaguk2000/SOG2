@@ -1,4 +1,4 @@
-import { Box, experimentalStyled as styled } from '@mui/material';
+import { Box, ButtonBase, ButtonBaseProps, experimentalStyled as styled } from '@mui/material';
 
 export const BibleContentWrapper = styled(Box)`
   display: flex;
@@ -27,16 +27,18 @@ export const BibleVersesWrapper = styled(BibleEntitySelectWrapper)`
   width: 100%;
 `;
 
-type BibleEntityItemProps = {
+interface BibleEntityItemProps extends ButtonBaseProps {
   selected: boolean;
   preSelected?: boolean;
-};
+}
 
-export const BibleEntityItemWrapper = styled(Box, {
+export const BibleEntityItemWrapper = styled(ButtonBase, {
   shouldForwardProp: (prop) => !(['selected', 'preSelected'] as PropertyKey[]).includes(prop),
 })<BibleEntityItemProps>`
+  text-align: left;
   display: flex;
   align-items: center;
+  justify-content: flex-start;
   padding: 2px 5px;
   width: 100%;
   border-radius: 2px;

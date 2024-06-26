@@ -16,16 +16,26 @@ const BibleEntityItem = ({ name, onClick, selected, preSelected, tooltip, childr
   const itemRef = useRef(null);
 
   useEffect(() => {
-    if (selected && itemRef.current) {
-      (itemRef.current as HTMLElement).scrollIntoView({
-        behavior: 'smooth',
-        block: 'center',
-      });
-    }
+    const timerId = setTimeout(() => {
+      if (selected && itemRef.current) {
+        (itemRef.current as HTMLElement).scrollIntoView({
+          behavior: 'smooth',
+          block: 'center',
+        });
+      }
+    }, 400 + Math.random() * 200);
+
+    return () => clearTimeout(timerId);
   }, [selected]);
 
   const body = (
-    <BibleEntityItemWrapper selected={selected} onClick={onClick} ref={itemRef} preSelected={preSelected}>
+    <BibleEntityItemWrapper
+      component="div"
+      selected={selected}
+      onClick={onClick}
+      ref={itemRef}
+      preSelected={preSelected}
+    >
       {children}
       {name}
     </BibleEntityItemWrapper>

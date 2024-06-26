@@ -1,5 +1,10 @@
+from src.services.elasticsearch.utils import get_numeric_number, get_non_numeric_number
+
+
 def get_psalm_number_query_strings(current_psalm_number_pattern: str):
-    return [
+    numeric_number = get_numeric_number(current_psalm_number_pattern)
+
+    psalm_numbers_queries = [
         {
             "constant_score": {
                 "filter": {
@@ -8,6 +13,17 @@ def get_psalm_number_query_strings(current_psalm_number_pattern: str):
                     }
                 },
                 "boost": 6.5
+            }
+        },
+        {
+            "constant_score": {
+                "filter": {
+                    "term": {
+                        "psalm_decimal_number_str.edge_ngram":
+                            f"{str(int(numeric_number if len(numeric_number) else '0'))}"
+                    }
+                },
+                "boost": 10
             }
         },
         {
@@ -26,12 +42,38 @@ def get_psalm_number_query_strings(current_psalm_number_pattern: str):
         },
         {
             "term": {
-                "psalm_name.keyword": {
+                "psalm_number.keyword": {
                     "value": f"{current_psalm_number_pattern}",
                     "boost": 10
                 }
             }
         },
+    ]
+
+    return [
+        {
+            "bool": {
+                "must": [
+                    {
+                        "constant_score": {
+                            "filter": {
+                                "term": {
+                                    "psalm_non_numeric_number.edge_ngram":
+                                        f"{get_non_numeric_number(current_psalm_number_pattern)}"
+                                }
+                            },
+                            "boost": 10
+                        }
+                    },
+                    {
+                        "dis_max": {
+                            "queries": psalm_numbers_queries
+                        }
+                    }
+                ]
+            }
+        },
+        *psalm_numbers_queries,
     ]
 
 
