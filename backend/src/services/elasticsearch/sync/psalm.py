@@ -7,6 +7,7 @@ from src.models.psalms_book_psalms import psalms_book_psalms
 from src.services.database import engine
 from src.services.elasticsearch.elastic import Elastic
 from src.services.elasticsearch.mappings import psalm_mapping
+from src.services.elasticsearch.utils import get_numeric_number, get_non_numeric_number
 
 el = Elastic()
 
@@ -44,7 +45,9 @@ def sync_psalms() -> bool:
                 "psalm_name": psalm.name,
                 "psalm_name_length": len(psalm.name.split()),
                 "psalm_number": psalm.psalm_number,
-                "psalm_decimal_number": int(psalm.psalm_number) if psalm.psalm_number.isdigit() else None,
+                "psalm_decimal_number": int(get_numeric_number(psalm.psalm_number)) if len(get_numeric_number(psalm.psalm_number)) else None,
+                "psalm_decimal_number_str": str(int(get_numeric_number(psalm.psalm_number))) if len(get_numeric_number(psalm.psalm_number)) else None,
+                "psalm_non_numeric_number": get_non_numeric_number(psalm.psalm_number),
                 "marker": couplet.marker,
                 "couplet_content": "".join([content.text_content for content in couplet.couplet_content]),
                 "couplet_order": couplet.initial_order

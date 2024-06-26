@@ -234,10 +234,6 @@ psalm_mapping = Mapping(
                     "keyword": {
                         "type": "keyword"
                     },
-                    "lowercase": {
-                        "type": "text",
-                        "analyzer": "lowercase_analyzer"
-                    },
                     "edge_ngram": {
                         "type": "text",
                         "analyzer": "edge_ngram_analyzer",
@@ -247,6 +243,34 @@ psalm_mapping = Mapping(
             },
             "psalm_decimal_number": {
                 "type": "integer",
+            },
+            "psalm_decimal_number_str": {
+                "type": "text",
+                "analyzer": "standard",
+                "fields": {
+                    "keyword": {
+                        "type": "keyword"
+                    },
+                    "edge_ngram": {
+                        "type": "text",
+                        "analyzer": "edge_ngram_analyzer",
+                        "search_analyzer": "standard"
+                    }
+                }
+            },
+            "psalm_non_numeric_number": {
+                "type": "text",
+                "analyzer": "standard",
+                "fields": {
+                    "keyword": {
+                        "type": "keyword"
+                    },
+                    "edge_ngram": {
+                        "type": "text",
+                        "analyzer": "edge_ngram_analyzer",
+                        "search_analyzer": "standard"
+                    }
+                }
             },
             "couplet_order": {
                 "type": "integer",
