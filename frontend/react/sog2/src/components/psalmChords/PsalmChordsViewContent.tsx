@@ -129,6 +129,7 @@ const PsalmChordsViewContent = ({ fontSize, mainKey }: PsalmChordsViewContent) =
       {psalmData?.couplets.map(({ coupletContent, id, styling }, coupletIdx) => (
         <PsalmCoupletView
           key={id}
+          coupletId={id}
           coupletContent={coupletContent ?? []}
           fontSize={fontSize}
           mainKey={mainKey}

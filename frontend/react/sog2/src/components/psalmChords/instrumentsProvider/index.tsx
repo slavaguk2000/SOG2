@@ -23,7 +23,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import EditChordIcon from '../../../icons/EditChordIcon';
 import { CoupletContentChord } from '../../../utils/gql/types';
-import { NewLineIcon, SelectableButton } from '../styled';
+import { GlueWithNextLineIcon, NewLineIcon, SelectableButton } from '../styled';
 
 import ChordEditorDialog, { ChordDialogState } from './ChordEditorDialog';
 import useLowerInstruments, { ChordsEditLowerInstruments } from './useLowerInstruments';
@@ -35,6 +35,7 @@ export interface LinkingChordData {
 
 type ChordsEditInstrumentsContextType = {
   isCutting: boolean;
+  isGluing: boolean;
   isChordEditing: boolean;
   isChordDeleting: boolean;
   isChordAdding: boolean;
@@ -61,6 +62,7 @@ type ChordsEditInstrumentsContextType = {
 
 const defaultValue: ChordsEditInstrumentsContextType = {
   isCutting: false,
+  isGluing: false,
   isChordEditing: false,
   isChordDeleting: false,
   isChordAdding: false,
@@ -85,6 +87,7 @@ export const useChordsEditInstrumentsContext = () => {
 
 export enum ChordsEditInstruments {
   CUT_TO_NEXT_LINE = 'cut',
+  GLUE_WITH_NEXT_LINE = 'glue',
   EDIT_CHORD = 'editChord',
   REMOVE_CHORD = 'removeChord',
   ADD_CHORD = 'addChord',
@@ -105,6 +108,11 @@ const upperInstruments: Array<UpperInstrument> = [
     key: ChordsEditInstruments.CUT_TO_NEXT_LINE,
     icon: <NewLineIcon />,
     tooltip: 'Cut line',
+  },
+  {
+    key: ChordsEditInstruments.GLUE_WITH_NEXT_LINE,
+    icon: <GlueWithNextLineIcon />,
+    tooltip: 'Glue with next line',
   },
   {
     key: ChordsEditInstruments.REMOVE_CHORD,
@@ -247,6 +255,7 @@ const ChordsEditInstrumentsProvider = ({ children }: PropsWithChildren) => {
     <ChordsEditInstrumentsContext.Provider
       value={{
         isCutting: selectedInstrument === ChordsEditInstruments.CUT_TO_NEXT_LINE,
+        isGluing: selectedInstrument === ChordsEditInstruments.GLUE_WITH_NEXT_LINE,
         isChordEditing: selectedInstrument === ChordsEditInstruments.EDIT_CHORD,
         isChordDeleting: selectedInstrument === ChordsEditInstruments.REMOVE_CHORD,
         isChordAdding: selectedInstrument === ChordsEditInstruments.ADD_CHORD,

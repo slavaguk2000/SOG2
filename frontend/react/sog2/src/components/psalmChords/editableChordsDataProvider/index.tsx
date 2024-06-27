@@ -9,6 +9,7 @@ import implementCoupletHighlighting from './implementCoupletHighlighting';
 import implementCutToNextLine from './implementCutToNextLine';
 import implementEditChord from './implementEditChord';
 import implementEditText from './implementEditText';
+import implementGlueWithNextLine from './implementGlueWithNextLine';
 import implementLinkChords from './implementLinkChords';
 import implementRemoveChord from './implementRemoveChord';
 import implementUnlinkChord from './implementUnlinkChord';
@@ -17,6 +18,7 @@ import MustProvideDefaultTonalityDialog from './MustProvideDefaultTonalityDialog
 type ChordsDataContextType = {
   psalmData?: PsalmData;
   handleCutToNextLine: (coupletId: string, coupletContentId: string, charPosition: number) => void;
+  handleGlueWithNextLine: (coupletId: string, lineNumber: number) => void;
   handleRemoveChord: (coupletId: string, coupletContentId: string) => void;
   handleAddChord: (
     coupletId: string,
@@ -44,6 +46,7 @@ type ChordsDataContextType = {
 
 const defaultValue: ChordsDataContextType = {
   handleCutToNextLine: () => true,
+  handleGlueWithNextLine: () => true,
   handleRemoveChord: () => true,
   handleAddChord: () => true,
   handleEditChord: () => true,
@@ -148,6 +151,11 @@ const EditableChordsDataProvider = ({
     setNewChordsData,
   });
 
+  const { handleGlueWithNextLine } = implementGlueWithNextLine({
+    setNewChordsData,
+    chordsData,
+  });
+
   const currentData = forceData ?? chordsData;
   const mainKey =
     ((currentData.psalm && keyToScaleDegree[currentData.psalm.defaultTonality as string]) ?? 0) + rootTransposition;
@@ -167,6 +175,7 @@ const EditableChordsDataProvider = ({
       value={{
         psalmData: currentData,
         handleCutToNextLine,
+        handleGlueWithNextLine,
         handleRemoveChord,
         handleAddChord,
         handleLinkChords,
