@@ -1,4 +1,5 @@
 import ShortcutIcon from '@mui/icons-material/Shortcut';
+import UTurnLeftIcon from '@mui/icons-material/UTurnLeft';
 import { Box, Button, styled } from '@mui/material';
 
 export const PsalmChordsViewWrapper = styled(Box)`
@@ -184,6 +185,10 @@ export const SelectableButton = styled(Button, {
 
 export const NewLineIcon = styled(ShortcutIcon)`
   transform: rotate(180deg);
+`;
+
+export const GlueWithNextLineIcon = styled(UTurnLeftIcon)`
+  transform: rotate(90deg);
 `;
 
 export const TextContentEditingField = styled('input', {

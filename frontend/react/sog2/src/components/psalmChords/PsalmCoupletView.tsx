@@ -12,6 +12,7 @@ import LinkChordMenu, { MenuAnchorChordData } from './LinkChordMenu';
 import { PsalmChordsViewCoupletWrapper } from './styled';
 
 interface PsalmCoupletViewProps {
+  coupletId: string;
   coupletContent: CoupletContent[];
   fontSize: number;
   mainKey: number;
@@ -38,6 +39,7 @@ interface NumberedCoupletContent {
 
 const PsalmCoupletView = ({
   coupletContent,
+  coupletId,
   fontSize,
   mainKey,
   splitByLines,
@@ -53,6 +55,7 @@ const PsalmCoupletView = ({
 }: PsalmCoupletViewProps) => {
   const [menuAnchorChordData, setMenuAnchorChordData] = useState<null | MenuAnchorChordData>(null);
   const {
+    isGluing,
     isChordAdding,
     isChordDeleting,
     isChordEditing,
@@ -63,7 +66,8 @@ const PsalmCoupletView = ({
     setEditingTextContentId,
     editingTextContentId,
   } = useChordsEditInstrumentsContext();
-  const { handleEditText } = useEditableChordsData();
+  const { handleEditText, handleGlueWithNextLine } = useEditableChordsData();
+  const [preGlueLine, setPreGlueLine] = useState<null | number>(null);
 
   const filteredCoupletContent: Array<FilteredCoupletContent> = useMemo(
     () =>
@@ -84,7 +88,10 @@ const PsalmCoupletView = ({
       splitByLines
         ? filteredCoupletContent.reduce(
             (acc: { contentByLines: Array<Array<NumberedCoupletContent>>; prevLine: null | number }, content, idx) => {
-              if (acc.prevLine !== content.line) {
+              if (
+                acc.prevLine !== content.line &&
+                !(isGluing && preGlueLine !== null && preGlueLine + 1 === content.line)
+              ) {
                 acc.contentByLines.push([]);
                 acc.prevLine = content.line;
               }
@@ -100,7 +107,7 @@ const PsalmCoupletView = ({
               filteredCoupletContent.map((content, idx) => ({ content, idx } as NumberedCoupletContent)),
             ],
           },
-    [filteredCoupletContent, splitByLines],
+    [filteredCoupletContent, isGluing, preGlueLine, splitByLines],
   );
 
   const handleCoupletClick = () => {
@@ -109,8 +116,38 @@ const PsalmCoupletView = ({
     }
   };
 
+  const handlePreGluing = (lineNumber: number) => {
+    setPreGlueLine(lineNumber);
+  };
+
+  const handleMouseLeave = () => {
+    setPreGlueLine(null);
+  };
+
+  const getGluingProps = (coupletContentLine: NumberedCoupletContent[]) => {
+    const currentLine = coupletContentLine[0] && coupletContentLine[0].content.line;
+    const isGlueWithValidCurrentLine = isGluing && currentLine !== undefined;
+
+    return {
+      fontWeight: isGlueWithValidCurrentLine && preGlueLine === currentLine ? 'bold' : 'inherit',
+      onMouseEnter: isGlueWithValidCurrentLine ? () => handlePreGluing(currentLine) : undefined,
+      onMouseLeave: handleMouseLeave,
+      sx: {
+        cursor: isGluing ? 'pointer' : undefined,
+      },
+      onClick: isGlueWithValidCurrentLine ? () => handleGlueWithNextLine(coupletId, currentLine) : undefined,
+    };
+  };
+
   const contentLinesJSX = contentByLines.map((coupletContentLine, idx) => (
-    <Typography key={idx} align="left" lineHeight={2} fontSize={fontSize} variant="body1" fontWeight="inherit">
+    <Typography
+      key={idx}
+      align="left"
+      lineHeight={2}
+      fontSize={fontSize}
+      variant="body1"
+      {...getGluingProps(coupletContentLine)}
+    >
       {coupletContentLine.map(({ content: { text, id: contentId, chord }, idx }, idxInLine) => (
         <ChordAndContent
           firstInLine={!idxInLine}
@@ -136,7 +173,12 @@ const PsalmCoupletView = ({
   ));
 
   return (
-    <PsalmChordsViewCoupletWrapper styling={styling} hoverable={isCoupletHighlighting} onClick={handleCoupletClick}>
+    <PsalmChordsViewCoupletWrapper
+      gap={isGluing ? '10px' : undefined}
+      styling={styling}
+      hoverable={isCoupletHighlighting}
+      onClick={handleCoupletClick}
+    >
       {isCoupletHighlighting ? <ButtonBase component="div">{contentLinesJSX}</ButtonBase> : contentLinesJSX}
       <LinkChordMenu menuAnchorChordData={menuAnchorChordData} onClose={() => setMenuAnchorChordData(null)} />
     </PsalmChordsViewCoupletWrapper>
