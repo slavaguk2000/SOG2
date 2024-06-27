@@ -56,7 +56,7 @@ const PsalmSelectItem = ({
 
   const favouriteBookId = useMemo(() => psalmsBooksData?.find(({ isFavourite }) => isFavourite)?.id, [psalmsBooksData]);
   const favouriteBookCacheId = favouriteBookId && `PsalmsBook:${favouriteBookId}`;
-  const psalmCacheId = `Psalm:${psalmId}`;
+  const psalmCacheId = `PsalmsBookItem:${favouriteBookId}${psalmId}`;
 
   const commonOptions = {
     variables: {
