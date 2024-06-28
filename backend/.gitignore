@@ -3,3 +3,4 @@ __pycache__/
 database.db
 /database.sqbpro
 /psalms_images/songs_books/*
+/psalms_images/images_by_ids/*

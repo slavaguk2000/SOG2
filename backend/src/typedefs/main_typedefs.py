@@ -212,11 +212,12 @@ type_defs = gql("""
       syncPsalmsToElastic: Boolean
       parseSermonsFromBranhamRu: Boolean
       addPsalmsFromSog(sogFileSrc: String!, language: String!): Boolean
-      deletePsalmBook(psalmBookId: ID!): Boolean
+      deletePsalmsBook(psalmsBookId: ID!): Boolean
       addPsalmToFavourite(psalmId: ID!, transposition: Int): Boolean
       removePsalmFromFavourite(psalmId: ID!): Boolean
       updatePsalm(psalmData: PsalmDataInput!): PsalmData!
       updatePsalmTransposition(psalmsBookId: ID!, psalmId: ID!, transposition: Int!): PsalmsBookItem!
+      importSongImages(psalmsBookId: ID!): Boolean!
     }
     
     type Subscription {

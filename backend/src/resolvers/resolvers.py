@@ -2,7 +2,7 @@ from ariadne import convert_kwargs_to_snake_case, ObjectType, QueryType, Mutatio
 
 from src.services.bible_helper import update_bible_slide_usage
 from src.services.database_helpers.bible import get_bible_books_by_bible_id, get_chapter_verses, get_bible_slide_by_id
-from src.services.database_helpers.psalm.psalm import get_psalms_books, get_psalms, get_psalm_by_id, PsalmsSortingKeys, \
+from src.services.database_helpers.psalm.psalm import get_psalms_books, get_psalms_dicts, get_psalm_by_id, PsalmsSortingKeys, \
     add_psalm_to_favourites, remove_psalm_from_favourites, delete_psalm_book, update_psalm_transposition, \
     get_psalm_slide_by_id
 from src.services.database_helpers.psalm.update_psalm import update_psalm
@@ -19,6 +19,7 @@ from asyncio import Queue
 from src.services.elasticsearch.search.sermon.sermon import sermon_search
 from src.services.elasticsearch.sync.bible import sync_bible
 from src.services.parsers.psalmsParsers.sog_parser import SimplePsalmParser
+from src.services.parsers.psalmsParsers.utils import import_song_images
 from src.types.commonTypes import SortingDirection
 
 active_slide_queue = Queue()
@@ -66,7 +67,7 @@ def resolve_psalms_books(*_):
 @convert_kwargs_to_snake_case
 def resolve_psalms(*_, psalms_book_id: str, **kwargs):
     psalms_sorting = kwargs.get('psalms_sorting')
-    return get_psalms(
+    return get_psalms_dicts(
         psalms_book_id,
         PsalmsSortingKeys[psalms_sorting["sorting_key"]] if psalms_sorting else PsalmsSortingKeys.NUMBER,
         SortingDirection[psalms_sorting["sort_direction"]] if psalms_sorting else SortingDirection.ASC,
@@ -257,10 +258,16 @@ def sync_psalms_to_elastic(*_):
     return sync_psalms()
 
 
-@mutation.field("deletePsalmBook")
+@mutation.field("deletePsalmsBook")
 @convert_kwargs_to_snake_case
-def resolve_delete_psalm_book(*_, psalm_book_id: str):
-    return delete_psalm_book(psalm_book_id)
+def resolve_delete_psalm_book(*_, psalms_book_id: str):
+    return delete_psalm_book(psalms_book_id)
+
+
+@mutation.field("importSongImages")
+@convert_kwargs_to_snake_case
+def resolve_import_song_images(*_, psalms_book_id: str):
+    return import_song_images(psalms_book_id)
 
 
 @subscription.source("activeSlideSubscription")

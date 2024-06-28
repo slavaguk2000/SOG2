@@ -5,11 +5,10 @@ from starlette.middleware.cors import CORSMiddleware
 from starlette.routing import Mount
 from starlette.staticfiles import StaticFiles
 
+from src.services.parsers.psalmsParsers.utils import IMAGE_DIRECTORY
 from src.typedefs.main_typedefs import type_defs
 from src.resolvers.resolvers import resolvers
 
-
-IMAGE_DIRECTORY = "psalms_images/songs_books"
 
 schema = make_executable_schema(type_defs, resolvers, snake_case_fallback_resolvers)
 graphql_app = GraphQL(schema, debug=True)
