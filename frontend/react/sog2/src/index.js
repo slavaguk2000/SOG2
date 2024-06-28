@@ -10,12 +10,14 @@ import App from './App';
 import BackendStatusChecker from './components/backendStatusChecker';
 import reportWebVitals from './reportWebVitals';
 
+const backend_host = process.env.REACT_APP_BACKEND_HOST || 'localhost';
+
 const httpLink = new HttpLink({
-  uri: 'http://localhost:8000/',
+  uri: `http://${backend_host}:8000/graphql`,
 });
 
 const wsLink = new WebSocketLink({
-  uri: 'ws://localhost:8000/',
+  uri: `ws://${backend_host}:8000/graphql`,
   options: {
     reconnect: true,
   },
