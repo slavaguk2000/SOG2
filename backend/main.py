@@ -15,8 +15,8 @@ graphql_app = GraphQL(schema, debug=True)
 
 
 routes = [
-    Mount("/", graphql_app, name="/"),
-    Mount("/psalm-image", StaticFiles(directory=IMAGE_DIRECTORY), name="static")
+    Mount("/psalm-image", StaticFiles(directory=IMAGE_DIRECTORY), name="static"),
+    Mount("/", graphql_app, name="/")
 ]
 
 app = Starlette(routes=routes)

@@ -9,15 +9,14 @@ import './index.css';
 import App from './App';
 import BackendStatusChecker from './components/backendStatusChecker';
 import reportWebVitals from './reportWebVitals';
-
-const backend_host = process.env.REACT_APP_BACKEND_HOST || 'localhost';
+import { BACKEND_GRAPHQL_HTTP_URL, BACKEND_GRAPHQL_WS_URL } from './utils/hostUtils';
 
 const httpLink = new HttpLink({
-  uri: `http://${backend_host}:8000/graphql`,
+  uri: BACKEND_GRAPHQL_HTTP_URL,
 });
 
 const wsLink = new WebSocketLink({
-  uri: `ws://${backend_host}:8000/graphql`,
+  uri: BACKEND_GRAPHQL_WS_URL,
   options: {
     reconnect: true,
   },
