@@ -9,13 +9,14 @@ import './index.css';
 import App from './App';
 import BackendStatusChecker from './components/backendStatusChecker';
 import reportWebVitals from './reportWebVitals';
+import { BACKEND_GRAPHQL_HTTP_URL, BACKEND_GRAPHQL_WS_URL } from './utils/hostUtils';
 
 const httpLink = new HttpLink({
-  uri: 'http://localhost:8000/',
+  uri: BACKEND_GRAPHQL_HTTP_URL,
 });
 
 const wsLink = new WebSocketLink({
-  uri: 'ws://localhost:8000/',
+  uri: BACKEND_GRAPHQL_WS_URL,
   options: {
     reconnect: true,
   },

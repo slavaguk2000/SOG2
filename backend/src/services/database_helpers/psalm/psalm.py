@@ -1,5 +1,5 @@
 import enum
-from typing import Type
+from typing import Type, List
 
 from sqlalchemy.orm import Session
 from sqlalchemy import select, desc, func, exists, literal_column, update
@@ -62,10 +62,10 @@ def get_psalm_book_item_dict_from_psalm(psalm: Type[Psalm] | Psalm, psalms_book_
 
 
 def get_psalms(
-    psalms_book_id: str,
-    sort_key: PsalmsSortingKeys = PsalmsSortingKeys.NUMBER,
-    sort_direction: SortingDirection = SortingDirection.ASC
-):
+        psalms_book_id: str,
+        sort_key: PsalmsSortingKeys = PsalmsSortingKeys.NUMBER,
+        sort_direction: SortingDirection = SortingDirection.ASC
+) -> List[dict]:
     with Session(engine) as session:
         psalms_query = select(
             Psalm,
@@ -76,16 +76,24 @@ def get_psalms(
             .filter(PsalmBook.id == psalms_book_id) \
             .order_by(get_direction_function_by_direction(sort_direction, f'psalms.{sort_key.value}'))
 
-        psalms = session.execute(psalms_query).all()
+        return session.execute(psalms_query).all()
 
-        return [
-            get_psalm_book_item_dict_from_psalm(psalm, psalms_book_id, transposition_steps) for psalm, transposition_steps in
-            psalms
-        ]
+
+def get_psalms_dicts(
+        psalms_book_id: str,
+        sort_key: PsalmsSortingKeys = PsalmsSortingKeys.NUMBER,
+        sort_direction: SortingDirection = SortingDirection.ASC
+):
+    psalms = get_psalms(psalms_book_id, sort_key, sort_direction)
+
+    return [
+        get_psalm_book_item_dict_from_psalm(psalm, psalms_book_id, transposition_steps)
+        for psalm, transposition_steps in
+        psalms
+    ]
 
 
 def get_linear_contents_from_couplet(couplet: CoupletContent):
-    print(couplet.couplet_content)
     linear_content = ''.join(
         [content.text_content for content in sorted(couplet.couplet_content, key=lambda x: x.order)]
     )
@@ -130,7 +138,7 @@ def get_psalm_by_id(psalm_id: str):
                     "couplet_content": [{
                         "id": content.id,
                         "text": content.text_content,
-                        "line":  content.line,
+                        "line": content.line,
                         "chord": {
                             "id": content.chord.id,
                             "root_note": content.chord.root_note,
@@ -140,7 +148,7 @@ def get_psalm_by_id(psalm_id: str):
                     } for content in sorted(couplet.couplet_content, key=lambda x: x.order)],
                 },
                 "slide": get_slide_from_couplet(couplet)
-            } for couplet in sorted(psalm.couplets, key=lambda x:x.initial_order)]
+            } for couplet in sorted(psalm.couplets, key=lambda x: x.initial_order)]
         }
 
 
@@ -290,5 +298,14 @@ def get_psalm_slide_by_id(couplet_id: str):
                 "content_prefix": f"{couplet.marker} " if couplet.marker else None,
                 "title": f"{couplet.psalm.psalm_number} {couplet.psalm.name}"
             }
+
+    return None
+
+
+def get_psalms_book_by_id(psalm_book_id: str) -> PsalmBook | None:
+    with Session(engine) as session:
+        psalm_book = session.query(PsalmBook).filter(PsalmBook.id == psalm_book_id).first()
+        if psalm_book:
+            return psalm_book
 
     return None
