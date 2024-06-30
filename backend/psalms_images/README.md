@@ -8,6 +8,3 @@ You should add to /songs_books
       /{songNumber}.jpg
 
 and then call `importSongImages(psalmsBookId: ID!)`
-
-
-

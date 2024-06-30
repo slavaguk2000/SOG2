@@ -7,5 +7,6 @@ psalms_book_psalms = Table(
     Base.metadata,
     Column('psalms_book_id', String(36), ForeignKey('psalm_books.id')),
     Column('psalm_id', String(36), ForeignKey('psalms.id')),
-    Column('transposition_steps', Integer, nullable=False, server_default='0')
+    Column('transposition_steps', Integer, nullable=False, server_default='0'),
+    Column('order', Integer, nullable=False, server_default='0')
 )

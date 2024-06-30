@@ -1,10 +1,13 @@
+from typing import List
+
 from ariadne import convert_kwargs_to_snake_case, ObjectType, QueryType, MutationType, SubscriptionType
 
 from src.services.bible_helper import update_bible_slide_usage
 from src.services.database_helpers.bible import get_bible_books_by_bible_id, get_chapter_verses, get_bible_slide_by_id
-from src.services.database_helpers.psalm.psalm import get_psalms_books, get_psalms_dicts, get_psalm_by_id, PsalmsSortingKeys, \
+from src.services.database_helpers.psalm.psalm import get_psalms_books, get_psalms_dicts, get_psalm_by_id, \
+    PsalmsSortingKeys, \
     add_psalm_to_favourites, remove_psalm_from_favourites, delete_psalm_book, update_psalm_transposition, \
-    get_psalm_slide_by_id
+    get_psalm_slide_by_id, reorder_psalms_in_psalms_book
 from src.services.database_helpers.psalm.update_psalm import update_psalm
 from src.services.database_helpers.sermon import get_sermons, get_sermon_by_id, get_sermon_paragraph_by_id, \
     add_slide_audio_mapping
@@ -69,7 +72,7 @@ def resolve_psalms(*_, psalms_book_id: str, **kwargs):
     psalms_sorting = kwargs.get('psalms_sorting')
     return get_psalms_dicts(
         psalms_book_id,
-        PsalmsSortingKeys[psalms_sorting["sorting_key"]] if psalms_sorting else PsalmsSortingKeys.NUMBER,
+        PsalmsSortingKeys[psalms_sorting["sorting_key"]] if psalms_sorting else None,
         SortingDirection[psalms_sorting["sort_direction"]] if psalms_sorting else SortingDirection.ASC,
     )
 
@@ -268,6 +271,12 @@ def resolve_delete_psalm_book(*_, psalms_book_id: str):
 @convert_kwargs_to_snake_case
 def resolve_import_song_images(*_, psalms_book_id: str):
     return import_song_images(psalms_book_id)
+
+
+@mutation.field("reorderPsalmsInPsalmsBook")
+@convert_kwargs_to_snake_case
+def resolve_reorder_psalms_in_psalms_book(*_, psalms_book_id: str, psalms_ids: List[str]):
+    return reorder_psalms_in_psalms_book(psalms_book_id, psalms_ids)
 
 
 @subscription.source("activeSlideSubscription")
