@@ -2,7 +2,7 @@ import './App.css';
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 
-import { ThemeProvider } from '@mui/material';
+import { Box, ThemeProvider } from '@mui/material';
 
 import { theme } from 'src/theme';
 
@@ -31,51 +31,53 @@ function App() {
       <MainScreenRatioProvider>
         <PresentationProvider>
           <FreeSlideDialogProvider>
-            <AppRoot>
-              <Router>
-                <PlayerContextProvider>
-                  <AudioMappingProvider>
-                    <InstrumentsFieldProvider>
-                      <Routes>
-                        <Route path="/" element={<Navigate to="/bible" replace />} />
-                        <Route
-                          path="/bible"
-                          element={
-                            <BibleDataProvider>
-                              <MainView dataProviderContext={BibleContext}>
-                                <BibleContent />
-                              </MainView>
-                            </BibleDataProvider>
-                          }
-                        />
-                        <Route
-                          path="/sermon"
-                          element={
-                            <SermonDataProvider>
-                              <MainView dataProviderContext={SermonDataProviderContext}>
-                                <SermonsContent />
-                              </MainView>
-                            </SermonDataProvider>
-                          }
-                        />
-                        <Route
-                          path="/psalms"
-                          element={
-                            <PsalmsDataProvider>
-                              <MainView dataProviderContext={PsalmsContext}>
-                                <PsalmsContent />
-                              </MainView>
-                            </PsalmsDataProvider>
-                          }
-                        />
-                        <Route path="/psalms/chords-edit" element={<PsalmChordEditPage />} />
-                        <Route path="/active-psalm/chords" element={<ActivePsalmChordsPage />} />
-                      </Routes>
-                    </InstrumentsFieldProvider>
-                  </AudioMappingProvider>
-                </PlayerContextProvider>
-              </Router>
-            </AppRoot>
+            <Box overflow="hidden">
+              <AppRoot>
+                <Router>
+                  <PlayerContextProvider>
+                    <AudioMappingProvider>
+                      <InstrumentsFieldProvider>
+                        <Routes>
+                          <Route path="/" element={<Navigate to="/bible" replace />} />
+                          <Route
+                            path="/bible"
+                            element={
+                              <BibleDataProvider>
+                                <MainView dataProviderContext={BibleContext}>
+                                  <BibleContent />
+                                </MainView>
+                              </BibleDataProvider>
+                            }
+                          />
+                          <Route
+                            path="/sermon"
+                            element={
+                              <SermonDataProvider>
+                                <MainView dataProviderContext={SermonDataProviderContext}>
+                                  <SermonsContent />
+                                </MainView>
+                              </SermonDataProvider>
+                            }
+                          />
+                          <Route
+                            path="/psalms"
+                            element={
+                              <PsalmsDataProvider>
+                                <MainView dataProviderContext={PsalmsContext}>
+                                  <PsalmsContent />
+                                </MainView>
+                              </PsalmsDataProvider>
+                            }
+                          />
+                          <Route path="/psalms/chords-edit" element={<PsalmChordEditPage />} />
+                          <Route path="/active-psalm/chords" element={<ActivePsalmChordsPage />} />
+                        </Routes>
+                      </InstrumentsFieldProvider>
+                    </AudioMappingProvider>
+                  </PlayerContextProvider>
+                </Router>
+              </AppRoot>
+            </Box>
           </FreeSlideDialogProvider>
         </PresentationProvider>
       </MainScreenRatioProvider>
