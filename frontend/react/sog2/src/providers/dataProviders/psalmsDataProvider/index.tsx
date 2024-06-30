@@ -149,30 +149,6 @@ const PsalmsDataProvider = ({ children }: PropsWithChildren) => {
     [favouritePsalmsQueryDataMap, psalmsQueryData?.psalms],
   );
 
-  const handlePsalmSelect = useCallback(
-    (id: string, transposition?: number) => {
-      setSearchParams((prev) => {
-        prev.set('psalmId', id);
-
-        return prev;
-      });
-      setActivePsalmMutation({
-        variables: {
-          psalmId: id,
-          psalmsBookId: softPsalmsBookIdSelected,
-          transposition,
-        },
-      }).catch((e) => console.error(e));
-    },
-    [setSearchParams, setActivePsalmMutation, softPsalmsBookIdSelected],
-  );
-
-  const { softSelected: softPsalmIdSelected, setSoftSelected: setSoftPsalmIdSelected } = useSelectIntent({
-    hardSelected: psalmId,
-    setHardSelected: handlePsalmSelect,
-    timeout: 100,
-  });
-
   const currentPsalmBook = useMemo(
     () => psalmsBooksData?.psalmsBooks.find(({ id }) => softPsalmsBookIdSelected === id),
     [softPsalmsBookIdSelected, psalmsBooksData?.psalmsBooks],
@@ -189,6 +165,34 @@ const PsalmsDataProvider = ({ children }: PropsWithChildren) => {
       setSoftPsalmsBookIdSelected(potentialValidPsalmsBooks[0].id);
     }
   }, [currentPsalmBook, setSoftPsalmsBookIdSelected, softPsalmsBookIdSelected, psalmsBooksData?.psalmsBooks]);
+
+  const { handleUpdateSlide: instrumentsHandleUpdateSlide, currentSlide, silentMode } = useInstrumentsField();
+
+  const handlePsalmSelect = useCallback(
+    (id: string, transposition?: number) => {
+      setSearchParams((prev) => {
+        prev.set('psalmId', id);
+
+        return prev;
+      });
+      if (!silentMode) {
+        setActivePsalmMutation({
+          variables: {
+            psalmId: id,
+            psalmsBookId: softPsalmsBookIdSelected,
+            transposition,
+          },
+        }).catch((e) => console.error(e));
+      }
+    },
+    [setSearchParams, silentMode, setActivePsalmMutation, softPsalmsBookIdSelected],
+  );
+
+  const { softSelected: softPsalmIdSelected, setSoftSelected: setSoftPsalmIdSelected } = useSelectIntent({
+    hardSelected: psalmId,
+    setHardSelected: handlePsalmSelect,
+    timeout: 100,
+  });
 
   const { data: currentPsalmData, loading: currentPsalmDataLoading } = useQuery<Pick<Query, 'psalm'>, QueryPsalmArgs>(
     psalm,
@@ -221,8 +225,6 @@ const PsalmsDataProvider = ({ children }: PropsWithChildren) => {
       });
     }
   }, [currentPsalm, softPsalmIdSelected, psalmsData, setSearchParams]);
-
-  const { handleUpdateSlide: instrumentsHandleUpdateSlide, currentSlide } = useInstrumentsField();
 
   const getPsalmName = (currentSlide: Slide) =>
     psalmsData?.find(({ id }) => currentSlide?.location?.[1] === id)?.name ?? '';
