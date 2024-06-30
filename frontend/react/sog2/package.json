@@ -15,6 +15,7 @@
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
+    "framer-motion": "^11.2.12",
     "graphql": "^16.6.0",
     "lodash": "^4.17.21",
     "lodash.debounce": "^4.0.8",
@@ -23,6 +24,7 @@
     "react-player": "^2.14.1",
     "react-router-dom": "^6.21.0",
     "react-scripts": "5.0.1",
+    "use-debounce": "^10.0.1",
     "uuid": "^9.0.1",
     "web-vitals": "^2.1.4"
   },
@@ -56,6 +58,7 @@
     "@types/chrome": "^0.0.246",
     "@types/lodash": "^4.14.198",
     "@types/uuid": "^9.0.3",
+    "apollo-link-logger": "^2.0.1",
     "eslint": "^7.20.0",
     "eslint-config-prettier": "^7.2.0",
     "eslint-import-resolver-typescript": "^2.4.0",
@@ -66,8 +69,7 @@
     "eslint-plugin-promise": "^4.3.1",
     "eslint-plugin-react": "^7.22.0",
     "eslint-plugin-react-hooks": "^4.2.0",
-    "prettier": "^2.2.1",
-    "apollo-link-logger": "^2.0.1"
+    "prettier": "^2.2.1"
   },
   "lint-staged": {
     "src/**/*.{js,jsx,ts,tsx,json,css,md}": [

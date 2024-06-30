@@ -61,7 +61,11 @@ const useLowerInstruments = (lowerInstruments: Array<LowerInstrument>) => {
               });
               clearLocalStorage();
             }
-            navigate(-1);
+            if (window.history.length > 1) {
+              navigate(-1);
+            } else {
+              window.close();
+            }
           };
         case ChordsEditLowerInstruments.REDO:
           return handleRedo;

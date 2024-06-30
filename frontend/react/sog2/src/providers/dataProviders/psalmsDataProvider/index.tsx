@@ -5,10 +5,11 @@ import { useMutation, useQuery } from '@apollo/client';
 
 import { keyToScaleDegree, scaleDegreeToKey } from '../../../components/psalmChords/utils';
 import useSelectIntent from '../../../hooks/useSelectIntent';
-import { psalm, psalms, psalmsBooks, setActivePsalm } from '../../../utils/gql/queries';
+import { psalm, psalms, psalmsBooks, reorderPsalmsInPsalmsBook, setActivePsalm } from '../../../utils/gql/queries';
 import {
   MusicalKey,
   Mutation,
+  MutationReorderPsalmsInPsalmsBookArgs,
   MutationSetActivePsalmArgs,
   PsalmsSortingKeys,
   Query,
@@ -29,6 +30,7 @@ const defaultValue: PsalmsContextType = {
   handleNextSlide: () => true,
   handlePsalmSelect: () => true,
   handlePsalmBookSelect: () => true,
+  handlePsalmsReorder: () => true,
   psalmsQueryDataLoading: false,
 };
 
@@ -79,6 +81,11 @@ const PsalmsDataProvider = ({ children }: PropsWithChildren) => {
   const [setActivePsalmMutation] = useMutation<Pick<Mutation, 'setActivePsalm'>, MutationSetActivePsalmArgs>(
     setActivePsalm,
   );
+
+  const [reorderPsalmsInPsalmsBookMutation] = useMutation<
+    Pick<Mutation, 'reorderPsalmsInPsalmsBook'>,
+    MutationReorderPsalmsInPsalmsBookArgs
+  >(reorderPsalmsInPsalmsBook);
 
   const { data: psalmsBooksData } = useQuery<Pick<Query, 'psalmsBooks'>>(psalmsBooks, {
     fetchPolicy: 'cache-first',
@@ -142,30 +149,6 @@ const PsalmsDataProvider = ({ children }: PropsWithChildren) => {
     [favouritePsalmsQueryDataMap, psalmsQueryData?.psalms],
   );
 
-  const handlePsalmSelect = useCallback(
-    (id: string, transposition?: number) => {
-      setSearchParams((prev) => {
-        prev.set('psalmId', id);
-
-        return prev;
-      });
-      setActivePsalmMutation({
-        variables: {
-          psalmId: id,
-          psalmsBookId: softPsalmsBookIdSelected,
-          transposition,
-        },
-      }).catch((e) => console.error(e));
-    },
-    [setSearchParams, setActivePsalmMutation, softPsalmsBookIdSelected],
-  );
-
-  const { softSelected: softPsalmIdSelected, setSoftSelected: setSoftPsalmIdSelected } = useSelectIntent({
-    hardSelected: psalmId,
-    setHardSelected: handlePsalmSelect,
-    timeout: 100,
-  });
-
   const currentPsalmBook = useMemo(
     () => psalmsBooksData?.psalmsBooks.find(({ id }) => softPsalmsBookIdSelected === id),
     [softPsalmsBookIdSelected, psalmsBooksData?.psalmsBooks],
@@ -182,6 +165,34 @@ const PsalmsDataProvider = ({ children }: PropsWithChildren) => {
       setSoftPsalmsBookIdSelected(potentialValidPsalmsBooks[0].id);
     }
   }, [currentPsalmBook, setSoftPsalmsBookIdSelected, softPsalmsBookIdSelected, psalmsBooksData?.psalmsBooks]);
+
+  const { handleUpdateSlide: instrumentsHandleUpdateSlide, currentSlide, silentMode } = useInstrumentsField();
+
+  const handlePsalmSelect = useCallback(
+    (id: string, transposition?: number) => {
+      setSearchParams((prev) => {
+        prev.set('psalmId', id);
+
+        return prev;
+      });
+      if (!silentMode) {
+        setActivePsalmMutation({
+          variables: {
+            psalmId: id,
+            psalmsBookId: softPsalmsBookIdSelected,
+            transposition,
+          },
+        }).catch((e) => console.error(e));
+      }
+    },
+    [setSearchParams, silentMode, setActivePsalmMutation, softPsalmsBookIdSelected],
+  );
+
+  const { softSelected: softPsalmIdSelected, setSoftSelected: setSoftPsalmIdSelected } = useSelectIntent({
+    hardSelected: psalmId,
+    setHardSelected: handlePsalmSelect,
+    timeout: 100,
+  });
 
   const { data: currentPsalmData, loading: currentPsalmDataLoading } = useQuery<Pick<Query, 'psalm'>, QueryPsalmArgs>(
     psalm,
@@ -214,8 +225,6 @@ const PsalmsDataProvider = ({ children }: PropsWithChildren) => {
       });
     }
   }, [currentPsalm, softPsalmIdSelected, psalmsData, setSearchParams]);
-
-  const { handleUpdateSlide: instrumentsHandleUpdateSlide, currentSlide } = useInstrumentsField();
 
   const getPsalmName = (currentSlide: Slide) =>
     psalmsData?.find(({ id }) => currentSlide?.location?.[1] === id)?.name ?? '';
@@ -275,6 +284,21 @@ const PsalmsDataProvider = ({ children }: PropsWithChildren) => {
     }
   };
 
+  const handlePsalmsReorder = async (ids: string[]) => {
+    if (softPsalmsBookIdSelected) {
+      try {
+        await reorderPsalmsInPsalmsBookMutation({
+          variables: {
+            psalmsBookId: softPsalmsBookIdSelected,
+            psalmsIds: ids,
+          },
+        });
+      } catch (e) {
+        console.error(e);
+      }
+    }
+  };
+
   return (
     <PsalmsContext.Provider
       value={{
@@ -284,6 +308,7 @@ const PsalmsDataProvider = ({ children }: PropsWithChildren) => {
         handlePrevSlide,
         handleNextSlide,
         handleUpdateSlide,
+        handlePsalmsReorder,
         psalmsBooksData: psalmsBooksData?.psalmsBooks,
         psalmsData,
         psalmData: currentPsalmData?.psalm,

@@ -106,9 +106,11 @@ export type Mutation = {
   addBibleFromSog?: Maybe<Scalars['Boolean']['output']>;
   addPsalmToFavourite?: Maybe<Scalars['Boolean']['output']>;
   addPsalmsFromSog?: Maybe<Scalars['Boolean']['output']>;
-  deletePsalmBook?: Maybe<Scalars['Boolean']['output']>;
+  deletePsalmsBook?: Maybe<Scalars['Boolean']['output']>;
+  importSongImages: Scalars['Boolean']['output'];
   parseSermonsFromBranhamRu?: Maybe<Scalars['Boolean']['output']>;
   removePsalmFromFavourite?: Maybe<Scalars['Boolean']['output']>;
+  reorderPsalmsInPsalmsBook: Scalars['Boolean']['output'];
   setActivePsalm?: Maybe<Scalars['Boolean']['output']>;
   setActiveSlide?: Maybe<Scalars['Boolean']['output']>;
   setActiveSlideOffset?: Maybe<Scalars['Boolean']['output']>;
@@ -140,13 +142,24 @@ export type MutationAddPsalmsFromSogArgs = {
 };
 
 
-export type MutationDeletePsalmBookArgs = {
-  psalmBookId: Scalars['ID']['input'];
+export type MutationDeletePsalmsBookArgs = {
+  psalmsBookId: Scalars['ID']['input'];
+};
+
+
+export type MutationImportSongImagesArgs = {
+  psalmsBookId: Scalars['ID']['input'];
 };
 
 
 export type MutationRemovePsalmFromFavouriteArgs = {
   psalmId: Scalars['ID']['input'];
+};
+
+
+export type MutationReorderPsalmsInPsalmsBookArgs = {
+  psalmsBookId: Scalars['ID']['input'];
+  psalmsIds: Array<Scalars['ID']['input']>;
 };
 
 

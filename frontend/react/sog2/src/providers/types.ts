@@ -71,6 +71,7 @@ export interface PsalmsContextType extends DataProvider {
   psalmData?: Query['psalm'];
   handlePsalmSelect: (selectedId: string, transposition?: number) => void;
   handlePsalmBookSelect: (selectedId: string) => void;
+  handlePsalmsReorder: (ids: string[]) => void;
   currentPsalm?: Psalm;
   currentPsalmBook?: PsalmsBook;
   psalmsQueryDataLoading: boolean;

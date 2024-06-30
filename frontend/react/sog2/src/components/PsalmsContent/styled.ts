@@ -23,6 +23,15 @@ export const PsalmBookSelectWrapper = styled(PsalmsEntitySelectWrapper)`
 
 export const PsalmSelectWrapper = styled(PsalmsEntitySelectWrapper)`
   max-width: 400px;
+
+  & > ul {
+    padding: 0;
+    margin: 0;
+
+    & > li {
+      position: relative;
+    }
+  }
 `;
 
 export const CoupletSelectWrapper = styled(PsalmsEntitySelectWrapper)`
