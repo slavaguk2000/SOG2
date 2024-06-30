@@ -132,8 +132,8 @@ const psalmBookItem = `
 `;
 
 export const psalms = gql`
-  query psalms($psalmsBookId: ID!) {
-    psalms(psalmsBookId: $psalmsBookId) {
+  query psalms($psalmsBookId: ID!, $psalmsSorting: PsalmsSorting) {
+    psalms(psalmsBookId: $psalmsBookId, psalmsSorting: $psalmsSorting) {
       ${psalmBookItem}
     }
   }
