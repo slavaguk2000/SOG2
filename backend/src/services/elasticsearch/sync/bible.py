@@ -17,11 +17,7 @@ def sync_bible(bible_id: str) -> bool:
         verses = session.query(Verse).filter(Verse.bible_id == bible_id).all()
 
         if el.index_exist(bible_mapping.index):
-            el.delete_by_query(bible_mapping.index, {
-                "term": {
-                    "bible_id": bible_id,
-                }
-            })
+            el.delete_index(bible_mapping.index)
         else:
             el.create_index(bible_mapping.index, bible_mapping.body)
 
