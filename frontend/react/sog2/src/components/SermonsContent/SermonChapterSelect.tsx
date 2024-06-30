@@ -102,6 +102,7 @@ const SermonChapterSelect = () => {
             onClick: () => handleUpdateSlide(slide),
             selected: currentSlide?.id === id,
             tooltip,
+            scrollingOrder: 0,
           }}
         />
       ))}

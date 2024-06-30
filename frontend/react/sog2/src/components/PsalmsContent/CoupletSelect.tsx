@@ -83,6 +83,7 @@ const CoupletSelect = () => {
           name={content}
           onClick={() => handleUpdateSlide(slide)}
           selected={id === currentSlide?.id}
+          scrollingOrder={0}
         />
       ))}
     </CoupletSelectWrapper>

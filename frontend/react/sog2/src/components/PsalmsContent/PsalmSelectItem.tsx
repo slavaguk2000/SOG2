@@ -116,7 +116,7 @@ const PsalmSelectItem = ({
   };
 
   return (
-    <BibleEntityItem name={psalmName} onClick={onClick} selected={selected}>
+    <BibleEntityItem name={psalmName} onClick={onClick} selected={selected} scrollingOrder={1}>
       <StyledIconButton size="small" onClick={handleFavouriteIconClick}>
         {internalFavouriteState ? <TurnedInIcon /> : <TurnedInNotIcon />}
       </StyledIconButton>

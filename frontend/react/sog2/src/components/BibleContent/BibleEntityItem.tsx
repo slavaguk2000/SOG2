@@ -10,9 +10,18 @@ export interface BibleEntityItemProps extends PropsWithChildren {
   selected: boolean;
   preSelected?: boolean;
   tooltip?: string;
+  scrollingOrder?: number;
 }
 
-const BibleEntityItem = ({ name, onClick, selected, preSelected, tooltip, children }: BibleEntityItemProps) => {
+const BibleEntityItem = ({
+  name,
+  onClick,
+  selected,
+  preSelected,
+  tooltip,
+  children,
+  scrollingOrder,
+}: BibleEntityItemProps) => {
   const itemRef = useRef(null);
 
   useEffect(() => {
@@ -23,10 +32,10 @@ const BibleEntityItem = ({ name, onClick, selected, preSelected, tooltip, childr
           block: 'center',
         });
       }
-    }, 400 + Math.random() * 200);
+    }, 200 + (Math.random() + (scrollingOrder ?? Math.random() * 5)) * 200);
 
     return () => clearTimeout(timerId);
-  }, [selected]);
+  }, [scrollingOrder, selected]);
 
   const body = (
     <BibleEntityItemWrapper

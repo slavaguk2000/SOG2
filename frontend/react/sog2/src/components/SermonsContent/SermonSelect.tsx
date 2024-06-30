@@ -30,6 +30,7 @@ const SermonsSelect = () => {
           name={name}
           onClick={() => handleSermonSelect(id)}
           selected={id === currentSermon?.id}
+          scrollingOrder={1}
         />
       ))}
     </SermonSelectWrapper>

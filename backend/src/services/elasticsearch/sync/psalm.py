@@ -30,9 +30,7 @@ def sync_psalms() -> bool:
             all()
 
         if el.index_exist(psalm_mapping.index):
-            el.delete_by_query(psalm_mapping.index, {
-                "match_all": {}
-            })
+            el.delete_index(psalm_mapping.index)
         else:
             el.create_index(psalm_mapping.index, psalm_mapping.body)
 
