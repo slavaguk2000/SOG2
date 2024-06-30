@@ -63,7 +63,7 @@ def get_psalm_book_item_dict_from_psalm(psalm: Type[Psalm] | Psalm, psalms_book_
 
 def get_psalms(
         psalms_book_id: str,
-        sort_key: PsalmsSortingKeys | None,
+        sort_key: PsalmsSortingKeys | None = None,
         sort_direction: SortingDirection = SortingDirection.ASC
 ) -> List[dict]:
     current_sort_key = f'psalms.{sort_key.value}' if sort_key else '"order"'
@@ -83,7 +83,7 @@ def get_psalms(
 
 def get_psalms_dicts(
         psalms_book_id: str,
-        sort_key: PsalmsSortingKeys | None,
+        sort_key: PsalmsSortingKeys | None = None,
         sort_direction: SortingDirection = SortingDirection.ASC
 ):
     psalms = get_psalms(psalms_book_id, sort_key, sort_direction)
