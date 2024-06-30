@@ -36,9 +36,7 @@ def sync_sermons() -> bool:
         paragraphs = session.query(Paragraph).all()
 
         if el.index_exist(sermon_mapping.index):
-            el.delete_by_query(sermon_mapping.index, {
-                "match_all": {}
-            })
+            el.delete_index(sermon_mapping.index)
         else:
             el.create_index(sermon_mapping.index, sermon_mapping.body)
 
