@@ -2,7 +2,9 @@ import React, { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { Box, Menu, MenuItem } from '@mui/material';
+import { Reorder } from 'framer-motion';
 
+import useReorder from '../../hooks/useReorder';
 import useSelectIntent from '../../hooks/useSelectIntent';
 import { usePsalmsData } from '../../providers/dataProviders/psalmsDataProvider';
 import { Maybe, MusicalKey } from '../../utils/gql/types';
@@ -12,19 +14,29 @@ import SongTransposer from './SongTransposer';
 import { PsalmSelectWrapper } from './styled';
 import useTransposeSong from './useTransposeSong';
 
+interface PsalmSelectItemType {
+  transposition: number;
+  defaultTonality: MusicalKey | null | undefined;
+  inFavourite: boolean;
+  name: string;
+  id: string;
+}
+
 const PsalmSelect = () => {
   const [menuAnchorData, setMenuAnchorData] = useState<null | {
     anchor: HTMLElement;
     psalmId: string;
     defaultTonality?: Maybe<MusicalKey>;
   }>(null);
-  const { psalmsData, handlePsalmSelect, currentPsalm, currentPsalmBook } = usePsalmsData();
+  const { psalmsData, handlePsalmSelect, currentPsalm, currentPsalmBook, handlePsalmsReorder } = usePsalmsData();
   const navigate = useNavigate();
   const { softSelected, setSoftSelected } = useSelectIntent({
     hardSelected: currentPsalm?.id,
     setHardSelected: handlePsalmSelect,
     timeout: 100,
   });
+
+  const canBeReordered = !!currentPsalmBook?.isFavourite;
 
   const preparedData = useMemo(
     () =>
@@ -67,20 +79,37 @@ const PsalmSelect = () => {
     handleMenuClose,
   );
 
-  return (
+  const { orderableData, onReorder } = useReorder<PsalmSelectItemType>({
+    backendData: preparedData ?? [],
+    updateBackend: (items) => handlePsalmsReorder(items.map(({ id }) => id)),
+  });
+
+  const itemMapper = ({ id, name, inFavourite, transposition, defaultTonality }: PsalmSelectItemType) => (
+    <Box key={id} onContextMenu={(e) => handleContextMenu(e, id, defaultTonality)}>
+      <PsalmSelectItem
+        psalmName={name}
+        selected={id === softSelected}
+        onClick={() => setSoftSelected(id, transposition)}
+        psalmId={id}
+        inFavourite={inFavourite ?? undefined}
+        transposition={transposition}
+      />
+    </Box>
+  );
+
+  return orderableData ? (
     <PsalmSelectWrapper>
-      {preparedData?.map(({ name, id, inFavourite, defaultTonality, transposition }) => (
-        <Box key={id} onContextMenu={(e) => handleContextMenu(e, id, defaultTonality)}>
-          <PsalmSelectItem
-            psalmName={name}
-            selected={id === softSelected}
-            onClick={() => setSoftSelected(id, transposition)}
-            psalmId={id}
-            inFavourite={inFavourite ?? undefined}
-            transposition={transposition}
-          />
-        </Box>
-      ))}
+      {canBeReordered ? (
+        <Reorder.Group axis="y" values={orderableData} onReorder={onReorder}>
+          {orderableData.map((item) => (
+            <Reorder.Item key={item.id} value={item}>
+              {itemMapper(item)}
+            </Reorder.Item>
+          ))}
+        </Reorder.Group>
+      ) : (
+        orderableData.map(itemMapper)
+      )}
       <Menu
         anchorEl={menuAnchorData?.anchor}
         open={Boolean(menuAnchorData)}
@@ -109,7 +138,7 @@ const PsalmSelect = () => {
         )}
       </Menu>
     </PsalmSelectWrapper>
-  );
+  ) : null;
 };
 
 export default PsalmSelect;

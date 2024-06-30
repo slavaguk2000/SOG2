@@ -5,10 +5,11 @@ import { useMutation, useQuery } from '@apollo/client';
 
 import { keyToScaleDegree, scaleDegreeToKey } from '../../../components/psalmChords/utils';
 import useSelectIntent from '../../../hooks/useSelectIntent';
-import { psalm, psalms, psalmsBooks, setActivePsalm } from '../../../utils/gql/queries';
+import { psalm, psalms, psalmsBooks, reorderPsalmsInPsalmsBook, setActivePsalm } from '../../../utils/gql/queries';
 import {
   MusicalKey,
   Mutation,
+  MutationReorderPsalmsInPsalmsBookArgs,
   MutationSetActivePsalmArgs,
   PsalmsSortingKeys,
   Query,
@@ -29,6 +30,7 @@ const defaultValue: PsalmsContextType = {
   handleNextSlide: () => true,
   handlePsalmSelect: () => true,
   handlePsalmBookSelect: () => true,
+  handlePsalmsReorder: () => true,
   psalmsQueryDataLoading: false,
 };
 
@@ -79,6 +81,11 @@ const PsalmsDataProvider = ({ children }: PropsWithChildren) => {
   const [setActivePsalmMutation] = useMutation<Pick<Mutation, 'setActivePsalm'>, MutationSetActivePsalmArgs>(
     setActivePsalm,
   );
+
+  const [reorderPsalmsInPsalmsBookMutation] = useMutation<
+    Pick<Mutation, 'reorderPsalmsInPsalmsBook'>,
+    MutationReorderPsalmsInPsalmsBookArgs
+  >(reorderPsalmsInPsalmsBook);
 
   const { data: psalmsBooksData } = useQuery<Pick<Query, 'psalmsBooks'>>(psalmsBooks, {
     fetchPolicy: 'cache-first',
@@ -275,6 +282,21 @@ const PsalmsDataProvider = ({ children }: PropsWithChildren) => {
     }
   };
 
+  const handlePsalmsReorder = async (ids: string[]) => {
+    if (softPsalmsBookIdSelected) {
+      try {
+        await reorderPsalmsInPsalmsBookMutation({
+          variables: {
+            psalmsBookId: softPsalmsBookIdSelected,
+            psalmsIds: ids,
+          },
+        });
+      } catch (e) {
+        console.error(e);
+      }
+    }
+  };
+
   return (
     <PsalmsContext.Provider
       value={{
@@ -284,6 +306,7 @@ const PsalmsDataProvider = ({ children }: PropsWithChildren) => {
         handlePrevSlide,
         handleNextSlide,
         handleUpdateSlide,
+        handlePsalmsReorder,
         psalmsBooksData: psalmsBooksData?.psalmsBooks,
         psalmsData,
         psalmData: currentPsalmData?.psalm,

@@ -250,6 +250,12 @@ export const updatePsalmTransposition = gql`
   }
 `;
 
+export const reorderPsalmsInPsalmsBook = gql`
+  mutation reorderPsalmsInPsalmsBook($psalmsBookId: ID!, $psalmsIds: [ID!]!) {
+    reorderPsalmsInPsalmsBook(psalmsBookId: $psalmsBookId, psalmsIds: $psalmsIds)
+  }
+`;
+
 export const activePsalmChordsSubscription = gql`
   subscription activePsalmChordsSubscription {
     activePsalmChordsSubscription {
