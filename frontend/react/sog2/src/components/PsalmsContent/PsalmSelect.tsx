@@ -1,5 +1,4 @@
 import React, { useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import { Box, Menu, MenuItem } from '@mui/material';
 import { Reorder } from 'framer-motion';
@@ -29,7 +28,6 @@ const PsalmSelect = () => {
     defaultTonality?: Maybe<MusicalKey>;
   }>(null);
   const { psalmsData, handlePsalmSelect, currentPsalm, currentPsalmBook, handlePsalmsReorder } = usePsalmsData();
-  const navigate = useNavigate();
   const { softSelected, setSoftSelected } = useSelectIntent({
     hardSelected: currentPsalm?.id,
     setHardSelected: handlePsalmSelect,
@@ -67,7 +65,8 @@ const PsalmSelect = () => {
 
   const handleEditChords = () => {
     if (menuAnchorData) {
-      navigate(`/psalms/chords-edit?psalmId=${menuAnchorData.psalmId}`);
+      const url = `/psalms/chords-edit?psalmId=${menuAnchorData.psalmId}`;
+      window.open(url, '_blank');
     }
     handleMenuClose();
   };
