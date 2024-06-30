@@ -97,6 +97,18 @@ class SimplePsalmParser:
                     ) for i, psalm_data in enumerate(psalms)]
                 session.add_all(psalms_objects)
                 session.commit()
+
+                # TODO : check and uncomment if it works
+                # for index, psalm in enumerate(psalms_objects):
+                #     psalms_book_psalms_insert = psalms_book_psalms.insert().values(
+                #         psalm_id=psalm.id,
+                #         psalms_book_id=new_psalms_book.id,
+                #         transposition_steps=0,
+                #         order=index + 1
+                #     )
+                #     session.execute(psalms_book_psalms_insert)
+                #
+                # session.commit()
                 print(f"Added new psalms book with ID: {new_psalms_book.id}")
 
             return True

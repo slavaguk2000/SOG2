@@ -63,9 +63,11 @@ def get_psalm_book_item_dict_from_psalm(psalm: Type[Psalm] | Psalm, psalms_book_
 
 def get_psalms(
         psalms_book_id: str,
-        sort_key: PsalmsSortingKeys = PsalmsSortingKeys.NUMBER,
+        sort_key: PsalmsSortingKeys | None,
         sort_direction: SortingDirection = SortingDirection.ASC
 ) -> List[dict]:
+    current_sort_key = f'psalms.{sort_key.value}' if sort_key else '"order"'
+
     with Session(engine) as session:
         psalms_query = select(
             Psalm,
@@ -74,14 +76,14 @@ def get_psalms(
             .join(psalms_book_psalms, Psalm.id == psalms_book_psalms.c.psalm_id) \
             .join(PsalmBook, PsalmBook.id == psalms_book_psalms.c.psalms_book_id) \
             .filter(PsalmBook.id == psalms_book_id) \
-            .order_by(get_direction_function_by_direction(sort_direction, f'psalms.{sort_key.value}'))
+            .order_by(get_direction_function_by_direction(sort_direction, current_sort_key))
 
         return session.execute(psalms_query).all()
 
 
 def get_psalms_dicts(
         psalms_book_id: str,
-        sort_key: PsalmsSortingKeys = PsalmsSortingKeys.NUMBER,
+        sort_key: PsalmsSortingKeys | None,
         sort_direction: SortingDirection = SortingDirection.ASC
 ):
     psalms = get_psalms(psalms_book_id, sort_key, sort_direction)
@@ -162,7 +164,6 @@ def add_psalm_to_favourites(psalm_id: str, transposition: int) -> bool:
         if not favourite_psalm_book:
             raise ValueError("No favourite psalm book found")
 
-        # Check if the psalm is already in favourites
         already_favourite = session.query(
             exists().where(
                 psalms_book_psalms.c.psalm_id == psalm_id,
@@ -173,12 +174,20 @@ def add_psalm_to_favourites(psalm_id: str, transposition: int) -> bool:
         if already_favourite:
             return False
 
+        max_order = session.query(
+            func.max(psalms_book_psalms.c.order)
+        ).filter_by(psalms_book_id=favourite_psalm_book.id).scalar()
+
+        if max_order is None:
+            max_order = 0
+
         # Add psalm to favourite psalm book
         session.execute(
             psalms_book_psalms.insert().values(
                 psalm_id=psalm_id,
                 psalms_book_id=favourite_psalm_book.id,
-                transposition_steps=transposition
+                transposition_steps=transposition,
+                order=max_order + 1,
             )
         )
         session.commit()
@@ -309,3 +318,21 @@ def get_psalms_book_by_id(psalm_book_id: str) -> PsalmBook | None:
             return psalm_book
 
     return None
+
+
+def reorder_psalms_in_psalms_book(psalms_book_id: str, psalms_ids: List[str]):
+    if not psalms_book_id or not psalms_ids:
+        return False
+
+    with Session(engine) as session:
+        for index, psalm_id in enumerate(psalms_ids):
+            session.execute(
+                update(psalms_book_psalms)
+                .where(psalms_book_psalms.c.psalms_book_id == psalms_book_id)
+                .where(psalms_book_psalms.c.psalm_id == psalm_id)
+                .values(order=index + 1)
+            )
+
+        session.commit()
+
+    return True

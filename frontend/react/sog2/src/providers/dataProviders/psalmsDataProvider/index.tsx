@@ -10,10 +10,12 @@ import {
   MusicalKey,
   Mutation,
   MutationSetActivePsalmArgs,
+  PsalmsSortingKeys,
   Query,
   QueryPsalmArgs,
   QueryPsalmsArgs,
   Slide,
+  SortingDirection,
 } from '../../../utils/gql/types';
 import { useInstrumentsField } from '../../instrumentsFieldProvider';
 import { PsalmsContextType } from '../../types';
@@ -54,7 +56,7 @@ export const getPsalmSlideContentFromSlide = (slide?: Slide): string => {
 
 const PsalmsDataProvider = ({ children }: PropsWithChildren) => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [psalmsBookId] = searchParams.get('psalmsBookId') ?? '';
+  const psalmsBookId = searchParams.get('psalmsBookId') ?? '';
   const psalmId = searchParams.get('psalmId') ?? '';
 
   const handlePsalmBookSelect = useCallback(
@@ -100,6 +102,13 @@ const PsalmsDataProvider = ({ children }: PropsWithChildren) => {
     {
       variables: {
         psalmsBookId: softPsalmsBookIdSelected ?? '',
+        psalmsSorting:
+          softPsalmsBookIdSelected === favouritePsalmsBook?.id
+            ? undefined
+            : {
+                sortingKey: PsalmsSortingKeys.Number,
+                sortDirection: SortingDirection.Asc,
+              },
       },
       fetchPolicy: 'cache-first',
       skip: !softPsalmsBookIdSelected,
@@ -165,15 +174,14 @@ const PsalmsDataProvider = ({ children }: PropsWithChildren) => {
   useEffect(() => {
     const potentialValidPsalmsBooks = psalmsBooksData?.psalmsBooks?.filter(({ psalmsCount }) => psalmsCount);
 
-    if (!(softPsalmsBookIdSelected && currentPsalmBook?.psalmsCount) && potentialValidPsalmsBooks?.[0]?.id) {
+    if (
+      currentPsalmBook &&
+      !(softPsalmsBookIdSelected && currentPsalmBook.psalmsCount) &&
+      potentialValidPsalmsBooks?.[0]?.id
+    ) {
       setSoftPsalmsBookIdSelected(potentialValidPsalmsBooks[0].id);
     }
-  }, [
-    currentPsalmBook?.psalmsCount,
-    setSoftPsalmsBookIdSelected,
-    softPsalmsBookIdSelected,
-    psalmsBooksData?.psalmsBooks,
-  ]);
+  }, [currentPsalmBook, setSoftPsalmsBookIdSelected, softPsalmsBookIdSelected, psalmsBooksData?.psalmsBooks]);
 
   const { data: currentPsalmData, loading: currentPsalmDataLoading } = useQuery<Pick<Query, 'psalm'>, QueryPsalmArgs>(
     psalm,
