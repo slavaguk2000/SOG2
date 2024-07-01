@@ -1,29 +1,12 @@
-import React, { MouseEventHandler, useMemo, useState } from 'react';
-
 import { ApolloCache, useMutation } from '@apollo/client';
-import TurnedInIcon from '@mui/icons-material/TurnedIn';
-import TurnedInNotIcon from '@mui/icons-material/TurnedInNot';
 
-import { usePsalmsData } from '../../providers/dataProviders/psalmsDataProvider';
-import { addPsalmToFavourite, PSALMS_BOOK_FRAGMENT, removePsalmFromFavourite } from '../../utils/gql/queries';
+import { addPsalmToFavourite, PSALMS_BOOK_FRAGMENT, removePsalmFromFavourite } from '../utils/gql/queries';
 import {
   Mutation,
   MutationAddPsalmToFavouriteArgs,
   MutationRemovePsalmFromFavouriteArgs,
   PsalmsBook,
-} from '../../utils/gql/types';
-import BibleEntityItem from '../BibleContent/BibleEntityItem';
-
-import { StyledIconButton } from './styled';
-
-interface PsalmSelectItemProps {
-  psalmName: string;
-  selected: boolean;
-  onClick: () => void;
-  psalmId: string;
-  inFavourite?: boolean;
-  transposition: number;
-}
+} from '../utils/gql/types';
 
 const addSongsCountToPsalmBookInCache = (cache: ApolloCache<unknown>, psalmsBookId: string, songsToAdd: number) => {
   const psalmsBookData: PsalmsBook | null = cache.readFragment({
@@ -43,18 +26,15 @@ const addSongsCountToPsalmBookInCache = (cache: ApolloCache<unknown>, psalmsBook
   }
 };
 
-const PsalmSelectItem = ({
-  psalmName,
-  selected,
-  onClick,
-  inFavourite,
+const useAddRemoveFavourite = ({
+  favouriteBookId,
   psalmId,
   transposition,
-}: PsalmSelectItemProps) => {
-  const [internalFavouriteState, setInternalFavouriteState] = useState(inFavourite);
-  const { psalmsBooksData } = usePsalmsData();
-
-  const favouriteBookId = useMemo(() => psalmsBooksData?.find(({ isFavourite }) => isFavourite)?.id, [psalmsBooksData]);
+}: {
+  favouriteBookId?: string;
+  psalmId: string;
+  transposition: number;
+}) => {
   const favouriteBookCacheId = favouriteBookId && `PsalmsBook:${favouriteBookId}`;
   const psalmCacheId = `PsalmsBookItem:${favouriteBookId}${psalmId}`;
 
@@ -102,26 +82,10 @@ const PsalmSelectItem = ({
     },
   });
 
-  const handleFavouriteIconClick: MouseEventHandler = (e) => {
-    e.stopPropagation();
-    setInternalFavouriteState((prevState) => {
-      if (prevState) {
-        removePsalmFromFavouriteMutation().catch(() => setInternalFavouriteState(inFavourite));
-        return false;
-      } else {
-        addPsalmToFavouriteMutation().catch(() => setInternalFavouriteState(inFavourite));
-        return true;
-      }
-    });
+  return {
+    addPsalmToFavouriteMutation,
+    removePsalmFromFavouriteMutation,
   };
-
-  return (
-    <BibleEntityItem name={psalmName} onClick={onClick} selected={selected} scrollingOrder={1}>
-      <StyledIconButton size="small" onClick={handleFavouriteIconClick}>
-        {internalFavouriteState ? <TurnedInIcon /> : <TurnedInNotIcon />}
-      </StyledIconButton>
-    </BibleEntityItem>
-  );
 };
 
-export default PsalmSelectItem;
+export default useAddRemoveFavourite;

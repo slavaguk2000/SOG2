@@ -3,10 +3,10 @@ import React, { useMemo, useState } from 'react';
 import { Box, Menu, MenuItem } from '@mui/material';
 import { Reorder } from 'framer-motion';
 
-import useReorder from '../../hooks/useReorder';
-import useSelectIntent from '../../hooks/useSelectIntent';
-import { usePsalmsData } from '../../providers/dataProviders/psalmsDataProvider';
-import { Maybe, MusicalKey } from '../../utils/gql/types';
+import useReorder from '../../../hooks/useReorder';
+import useSelectIntent from '../../../hooks/useSelectIntent';
+import { usePsalmsData } from '../../../providers/dataProviders/psalmsDataProvider';
+import { Maybe, MusicalKey } from '../../../utils/gql/types';
 
 import PsalmSelectItem from './PsalmSelectItem';
 import SongTransposer from './SongTransposer';
