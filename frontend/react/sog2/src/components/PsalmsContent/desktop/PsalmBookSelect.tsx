@@ -1,7 +1,7 @@
 import React from 'react';
 
-import useSelectIntent from '../../hooks/useSelectIntent';
-import { usePsalmsData } from '../../providers/dataProviders/psalmsDataProvider';
+import useSelectIntent from '../../../hooks/useSelectIntent';
+import { usePsalmsData } from '../../../providers/dataProviders/psalmsDataProvider';
 
 import PsalmBookItem from './PsalmBookItem';
 import { PsalmBookSelectWrapper } from './styled';

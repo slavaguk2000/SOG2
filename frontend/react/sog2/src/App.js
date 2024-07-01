@@ -7,14 +7,13 @@ import { Box, ThemeProvider } from '@mui/material';
 import { theme } from 'src/theme';
 
 import BibleContent from './components/BibleContent';
-import PsalmsContent from './components/PsalmsContent';
 import SermonsContent from './components/SermonsContent';
 import ActivePsalmChordsPage from './pages/ActivePsalmChordsPage';
 import PsalmChordEditPage from './pages/psalmChordEditPage';
+import PsalmsPage from './pages/psalmsPage';
 import AudioMappingProvider from './providers/AudioMapping/provider';
 import BibleContext from './providers/dataProviders/bibleDataProvider/context';
 import BibleDataProvider from './providers/dataProviders/bibleDataProvider/provider';
-import PsalmsDataProvider, { PsalmsContext } from './providers/dataProviders/psalmsDataProvider';
 import SermonDataProviderContext from './providers/dataProviders/sermanDataProvider/context';
 import SermonDataProvider from './providers/dataProviders/sermanDataProvider/provider';
 import FreeSlideDialogProvider from './providers/FreeSlideDialogProvider/provider';
@@ -59,16 +58,7 @@ function App() {
                               </SermonDataProvider>
                             }
                           />
-                          <Route
-                            path="/psalms"
-                            element={
-                              <PsalmsDataProvider>
-                                <MainView dataProviderContext={PsalmsContext}>
-                                  <PsalmsContent />
-                                </MainView>
-                              </PsalmsDataProvider>
-                            }
-                          />
+                          <Route path="/psalms" element={<PsalmsPage />} />
                           <Route path="/psalms/chords-edit" element={<PsalmChordEditPage />} />
                           <Route path="/active-psalm/chords" element={<ActivePsalmChordsPage />} />
                         </Routes>
