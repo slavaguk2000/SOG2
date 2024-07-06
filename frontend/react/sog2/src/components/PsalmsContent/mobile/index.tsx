@@ -12,6 +12,8 @@ import PsalmsList from './PsalmsList';
 import { PsalmsContentMobileWrapper } from './styled';
 
 const PsalmsContentMobile = () => {
+  // const { dataLength } = usePsalmsData();
+
   const [searchParams] = useSearchParams();
   const psalmsBookId = searchParams.get('psalmsBookId') ?? '';
   const { data: psalmsQueryData } = useQuery<Pick<Query, 'psalms'>, QueryPsalmsArgs>(psalms, {

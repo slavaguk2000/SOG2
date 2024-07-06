@@ -5,7 +5,7 @@ import TurnedInNotIcon from '@mui/icons-material/TurnedInNot';
 import { useDebouncedCallback } from 'use-debounce';
 
 import useAddRemoveFavourite from '../../../hooks/useAddRemoveFavourite';
-import { usePsalmsData } from '../../../providers/dataProviders/psalmsDataProvider';
+import { useFavouriteData } from '../../../providers/dataProviders/psalmsDataProvider/FavouriteProvider';
 import { StyledIconButton } from '../desktop/styled';
 
 export interface InFavouriteIconButtonProps {
@@ -17,7 +17,7 @@ export interface InFavouriteIconButtonProps {
 }
 
 const InFavouriteIconButton = ({ psalmId, transposition, value, onChange }: InFavouriteIconButtonProps) => {
-  const { favouriteBookId, favouritePsalmsDataMap } = usePsalmsData();
+  const { favouritePsalmsDataMap, favouritePsalmsBookId: favouriteBookId } = useFavouriteData();
 
   const inFavourite = !!favouritePsalmsDataMap[psalmId];
 
@@ -45,7 +45,7 @@ const InFavouriteIconButton = ({ psalmId, transposition, value, onChange }: InFa
 
   useEffect(() => {
     debounced(internalFavouriteState);
-  }, [internalFavouriteState]);
+  }, [internalFavouriteState, debounced]);
 
   const justInternal = value === undefined;
 

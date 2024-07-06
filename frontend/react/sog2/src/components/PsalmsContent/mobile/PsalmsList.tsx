@@ -27,7 +27,7 @@ const PsalmsList = ({ listSize }: PsalmsListProps) => {
         setHeight(clientHeight);
       }
     }
-  }, [debouncedSetHeight, ref]);
+  }, [debouncedSetHeight, ref, height]);
 
   return (
     <PsalmsListWrapper ref={ref}>

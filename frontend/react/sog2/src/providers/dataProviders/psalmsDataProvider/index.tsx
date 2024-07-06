@@ -21,6 +21,8 @@ import {
 import { useInstrumentsField } from '../../instrumentsFieldProvider';
 import { PsalmsContextType } from '../../types';
 
+import FavouritePsalmsProvider from './FavouriteProvider';
+
 const defaultValue: PsalmsContextType = {
   psalmsBookId: '0',
   psalmId: '0',
@@ -32,7 +34,6 @@ const defaultValue: PsalmsContextType = {
   handlePsalmBookSelect: () => true,
   handlePsalmsReorder: () => true,
   psalmsQueryDataLoading: false,
-  favouritePsalmsDataMap: {},
   dataLength: 0,
 };
 
@@ -93,18 +94,10 @@ const PsalmsDataProvider = ({ children }: PropsWithChildren) => {
     fetchPolicy: 'cache-first',
   });
 
-  const favouritePsalmsBook = useMemo(
-    () => psalmsBooksData?.psalmsBooks.find(({ isFavourite }) => isFavourite),
+  const favouritePsalmsBookId = useMemo(
+    () => psalmsBooksData?.psalmsBooks.find(({ isFavourite }) => isFavourite)?.id,
     [psalmsBooksData],
   );
-
-  const { data: favouritePsalmsQueryData } = useQuery<Pick<Query, 'psalms'>, QueryPsalmsArgs>(psalms, {
-    variables: {
-      psalmsBookId: favouritePsalmsBook?.id || '',
-    },
-    fetchPolicy: 'cache-first',
-    skip: !favouritePsalmsBook,
-  });
 
   const { data: psalmsQueryData, loading: psalmsQueryDataLoading } = useQuery<Pick<Query, 'psalms'>, QueryPsalmsArgs>(
     psalms,
@@ -112,7 +105,7 @@ const PsalmsDataProvider = ({ children }: PropsWithChildren) => {
       variables: {
         psalmsBookId: softPsalmsBookIdSelected ?? '',
         psalmsSorting:
-          softPsalmsBookIdSelected === favouritePsalmsBook?.id
+          softPsalmsBookIdSelected === favouritePsalmsBookId
             ? undefined
             : {
                 sortingKey: PsalmsSortingKeys.Number,
@@ -122,16 +115,6 @@ const PsalmsDataProvider = ({ children }: PropsWithChildren) => {
       fetchPolicy: 'cache-first',
       skip: !softPsalmsBookIdSelected,
     },
-  );
-
-  const favouritePsalmsDataMap = useMemo(
-    () =>
-      favouritePsalmsQueryData?.psalms.reduce((acc: Record<string, boolean>, { psalm: { id } }) => {
-        acc[id] = true;
-
-        return acc;
-      }, {}) ?? {},
-    [favouritePsalmsQueryData?.psalms],
   );
 
   const psalmsData = useMemo(
@@ -304,11 +287,6 @@ const PsalmsDataProvider = ({ children }: PropsWithChildren) => {
     }
   };
 
-  const favouriteBookId = useMemo(
-    () => psalmsBooksData?.psalmsBooks?.find(({ isFavourite }) => isFavourite)?.id,
-    [psalmsBooksData],
-  );
-
   return (
     <PsalmsContext.Provider
       value={{
@@ -327,12 +305,10 @@ const PsalmsDataProvider = ({ children }: PropsWithChildren) => {
         handlePsalmSelect: setSoftPsalmIdSelected,
         handlePsalmBookSelect: setSoftPsalmsBookIdSelected,
         psalmsQueryDataLoading,
-        favouriteBookId,
-        favouritePsalmsDataMap,
         dataLength,
       }}
     >
-      {children}
+      <FavouritePsalmsProvider favouritePsalmsBookId={favouritePsalmsBookId}>{children}</FavouritePsalmsProvider>
     </PsalmsContext.Provider>
   );
 };

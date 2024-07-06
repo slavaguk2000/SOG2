@@ -3,6 +3,7 @@ import React, { CSSProperties, useState } from 'react';
 import { ListItem, ListItemButton, ListItemText } from '@mui/material';
 
 import { usePsalmsData } from '../../../providers/dataProviders/psalmsDataProvider';
+import { useFavouriteData } from '../../../providers/dataProviders/psalmsDataProvider/FavouriteProvider';
 import InFavouriteIconButton from '../common/InFavouriteIconButton';
 
 interface PsalmsListItemProps {
@@ -11,7 +12,8 @@ interface PsalmsListItemProps {
 }
 
 const PsalmsListItem = ({ index, style }: PsalmsListItemProps) => {
-  const { psalmsData, favouritePsalmsDataMap } = usePsalmsData();
+  const { psalmsData } = usePsalmsData();
+  const { favouritePsalmsDataMap } = useFavouriteData();
 
   const currentPsalm = psalmsData?.[index];
 
