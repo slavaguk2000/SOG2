@@ -7,7 +7,10 @@ interface useSelectIntentProps<T, U> {
 }
 
 const useSelectIntent = <T, U>({ hardSelected, setHardSelected, timeout = 0 }: useSelectIntentProps<T, U>) => {
-  const [intendedSelection, setIntendedSelection] = useState<{ value: T; params: Array<U> } | null>(null);
+  const [intendedSelection, setIntendedSelection] = useState<{
+    value: T;
+    params: Array<U>;
+  } | null>(null);
 
   useEffect(() => {
     if (hardSelected && hardSelected === intendedSelection?.value) {

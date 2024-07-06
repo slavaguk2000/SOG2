@@ -26,5 +26,4 @@ const implementCoupletHighlighting = ({ setNewChordsData }: ImplementCoupletHigh
 
   return { toggleCoupletHighlighting };
 };
-
 export default implementCoupletHighlighting;

@@ -34,17 +34,17 @@ export const PsalmChordsViewCoupletWrapper = styled(Box, {
     return !(['hoverable', 'styling'] as PropertyKey[]).includes(propName);
   },
 })<{ hoverable: boolean; styling: number }>`
-    ${({ styling }) =>
-      styling
-        ? `
+  ${({ styling }) =>
+    styling
+      ? `
           font-weight: bold;
           font-style: italic;
         `
-        : ''}
+      : ''}
 
-    ${({ hoverable }) =>
-      hoverable
-        ? `
+  ${({ hoverable }) =>
+    hoverable
+      ? `
           & > div {
             display: flex;
             flex-direction: column;
@@ -60,12 +60,12 @@ export const PsalmChordsViewCoupletWrapper = styled(Box, {
             font-style: italic;
           }
         `
-        : `
+      : `
           display: flex;
           flex-direction: column;
           align-items: flex-start;
         `}
-  }
+}
 `;
 
 interface ChordWrapperProps {
@@ -133,7 +133,7 @@ export const ChordWrapper = styled('span', {
   ${({ contentFontSize }) => contentFontSize && `top: -${contentFontSize * 0.75}px;`}
 
   ${({ nonDeletable, isChordDeleting }) => (nonDeletable && isChordDeleting ? `opacity: 0.3;` : '')}
-  
+
   ${({ isSameChordLinking, isCurrentChordLinking }) =>
     isSameChordLinking
       ? `

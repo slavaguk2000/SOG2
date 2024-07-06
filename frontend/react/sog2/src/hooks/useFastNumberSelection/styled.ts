@@ -20,7 +20,7 @@ export const PreselectBoxContent = styled(Box, {
   box-shadow: inset 0 -3em 3em rgba(0, 0, 0, 0.1), 0 0 0 2px rgb(255, 255, 255), 0.3em 0.3em 1em rgba(0, 0, 0, 0.3);
   z-index: 1100;
 
-   animation: ${({ debounceSeconds }) => `fadeInOut ${debounceSeconds}s forwards`};
+  animation: ${({ debounceSeconds }) => `fadeInOut ${debounceSeconds}s forwards`};
 
   @keyframes fadeInOut {
     0% {
@@ -36,5 +36,5 @@ export const PreselectBoxContent = styled(Box, {
       opacity: 0;
     }
   }
-\` ;
+\`  ;
 `;

@@ -19,10 +19,16 @@ const implementCutToNextLine = ({ setNewChordsData, chordsData }: ImplementCutTo
             ...couplet,
             coupletContent: couplet.coupletContent.reduce((acc: CoupletContent[], coupletContentItem) => {
               if (addLine) {
-                acc.push({ ...coupletContentItem, line: coupletContentItem.line + 1 });
+                acc.push({
+                  ...coupletContentItem,
+                  line: coupletContentItem.line + 1,
+                });
               } else if (coupletContentItem.id === coupletContentId) {
                 if (charPosition) {
-                  acc.push({ ...coupletContentItem, text: coupletContentItem.text.slice(0, charPosition) });
+                  acc.push({
+                    ...coupletContentItem,
+                    text: coupletContentItem.text.slice(0, charPosition),
+                  });
                 }
                 acc.push({
                   ...coupletContentItem,

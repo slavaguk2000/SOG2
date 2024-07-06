@@ -255,7 +255,6 @@ export const reorderPsalmsInPsalmsBook = gql`
     reorderPsalmsInPsalmsBook(psalmsBookId: $psalmsBookId, psalmsIds: $psalmsIds)
   }
 `;
-
 export const activePsalmChordsSubscription = gql`
   subscription activePsalmChordsSubscription {
     activePsalmChordsSubscription {
