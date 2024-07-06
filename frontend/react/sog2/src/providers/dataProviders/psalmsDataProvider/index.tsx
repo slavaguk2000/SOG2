@@ -33,6 +33,7 @@ const defaultValue: PsalmsContextType = {
   handlePsalmsReorder: () => true,
   psalmsQueryDataLoading: false,
   favouritePsalmsDataMap: {},
+  dataLength: 0,
 };
 
 export const PsalmsContext = createContext<PsalmsContextType>(defaultValue);
@@ -153,6 +154,10 @@ const PsalmsDataProvider = ({ children }: PropsWithChildren) => {
     () => psalmsBooksData?.psalmsBooks.find(({ id }) => softPsalmsBookIdSelected === id),
     [softPsalmsBookIdSelected, psalmsBooksData?.psalmsBooks],
   );
+
+  const psalmsDataLength = psalmsData?.length ?? 0;
+
+  const dataLength = useMemo(() => psalmsDataLength, [psalmsDataLength]);
 
   useEffect(() => {
     const potentialValidPsalmsBooks = psalmsBooksData?.psalmsBooks?.filter(({ psalmsCount }) => psalmsCount);
@@ -324,6 +329,7 @@ const PsalmsDataProvider = ({ children }: PropsWithChildren) => {
         psalmsQueryDataLoading,
         favouriteBookId,
         favouritePsalmsDataMap,
+        dataLength,
       }}
     >
       {children}

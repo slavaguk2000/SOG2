@@ -1,4 +1,4 @@
-import React, { MouseEventHandler, useEffect, useState } from 'react';
+import React, { Dispatch, MouseEventHandler, SetStateAction, useEffect, useState } from 'react';
 
 import TurnedInIcon from '@mui/icons-material/TurnedIn';
 import TurnedInNotIcon from '@mui/icons-material/TurnedInNot';
@@ -10,12 +10,15 @@ import { StyledIconButton } from '../desktop/styled';
 
 export interface InFavouriteIconButtonProps {
   psalmId: string;
-  inFavourite: boolean;
+  inFavourite?: boolean;
   transposition: number;
+  value?: boolean;
+  onChange?: Dispatch<SetStateAction<boolean>>;
 }
 
-const InFavouriteIconButton = ({ psalmId, transposition }: InFavouriteIconButtonProps) => {
+const InFavouriteIconButton = ({ psalmId, transposition, value, onChange }: InFavouriteIconButtonProps) => {
   const { favouriteBookId, favouritePsalmsDataMap } = usePsalmsData();
+
   const inFavourite = !!favouritePsalmsDataMap[psalmId];
 
   const [internalFavouriteState, setInternalFavouriteState] = useState(inFavourite);
@@ -44,14 +47,32 @@ const InFavouriteIconButton = ({ psalmId, transposition }: InFavouriteIconButton
     debounced(internalFavouriteState);
   }, [internalFavouriteState]);
 
+  const justInternal = value === undefined;
+
   const handleFavouriteIconClick: MouseEventHandler = (e) => {
     e.stopPropagation();
-    setInternalFavouriteState((prevState) => !prevState);
+    if (justInternal) {
+      setInternalFavouriteState((prevState) => {
+        const newValue = !prevState;
+        onChange?.(newValue);
+        return newValue;
+      });
+    } else if (onChange) {
+      onChange((prevState) => {
+        const newValue = !prevState;
+        setInternalFavouriteState(newValue);
+        return newValue;
+      });
+    } else {
+      setInternalFavouriteState(!value);
+    }
   };
+
+  const currentState = justInternal ? internalFavouriteState : value;
 
   return (
     <StyledIconButton size="small" onClick={handleFavouriteIconClick}>
-      {internalFavouriteState ? <TurnedInIcon /> : <TurnedInNotIcon />}
+      {currentState ? <TurnedInIcon /> : <TurnedInNotIcon />}
     </StyledIconButton>
   );
 };
