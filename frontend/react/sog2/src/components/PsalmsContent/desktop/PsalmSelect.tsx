@@ -16,7 +16,6 @@ import useTransposeSong from './useTransposeSong';
 interface PsalmSelectItemType {
   transposition: number;
   defaultTonality: MusicalKey | null | undefined;
-  inFavourite: boolean;
   name: string;
   id: string;
 }
@@ -27,7 +26,8 @@ const PsalmSelect = () => {
     psalmId: string;
     defaultTonality?: Maybe<MusicalKey>;
   }>(null);
-  const { psalmsData, handlePsalmSelect, currentPsalm, currentPsalmBook, handlePsalmsReorder } = usePsalmsData();
+  const { psalmsData, handlePsalmSelect, currentPsalm, currentPsalmBook, handlePsalmsReorder, favouritePsalmsDataMap } =
+    usePsalmsData();
   const { softSelected, setSoftSelected } = useSelectIntent({
     hardSelected: currentPsalm?.id,
     setHardSelected: handlePsalmSelect,
@@ -38,11 +38,10 @@ const PsalmSelect = () => {
 
   const preparedData = useMemo(
     () =>
-      psalmsData?.map(({ id, name, psalmNumber, defaultTonality, tonality, inFavourite, transposition }) => {
+      psalmsData?.map(({ id, name, psalmNumber, defaultTonality, tonality, transposition }) => {
         return {
           id,
           name: `${psalmNumber ? `${psalmNumber} ` : ''}${name}${defaultTonality ? ` (${tonality})` : ''}`,
-          inFavourite,
           defaultTonality,
           transposition,
         };
@@ -83,14 +82,14 @@ const PsalmSelect = () => {
     updateBackend: (items) => handlePsalmsReorder(items.map(({ id }) => id)),
   });
 
-  const itemMapper = ({ id, name, inFavourite, transposition, defaultTonality }: PsalmSelectItemType) => (
+  const itemMapper = ({ id, name, transposition, defaultTonality }: PsalmSelectItemType) => (
     <Box key={id} onContextMenu={(e) => handleContextMenu(e, id, defaultTonality)}>
       <PsalmSelectItem
         psalmName={name}
         selected={id === softSelected}
         onClick={() => setSoftSelected(id, transposition)}
         psalmId={id}
-        inFavourite={inFavourite ?? undefined}
+        inFavourite={!!favouritePsalmsDataMap[id]}
         transposition={transposition}
       />
     </Box>

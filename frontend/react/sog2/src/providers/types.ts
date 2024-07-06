@@ -59,7 +59,6 @@ export interface BibleContextType extends DataProvider {
 
 interface PsalmData extends Psalm {
   tonality?: Maybe<MusicalKey>;
-  inFavourite: boolean;
   transposition: number;
 }
 
@@ -76,6 +75,7 @@ export interface PsalmsContextType extends DataProvider {
   currentPsalmBook?: PsalmsBook;
   psalmsQueryDataLoading: boolean;
   favouriteBookId?: string;
+  favouritePsalmsDataMap: Record<string, boolean | undefined>;
 }
 
 export interface PresentationContextType {

@@ -32,6 +32,7 @@ const defaultValue: PsalmsContextType = {
   handlePsalmBookSelect: () => true,
   handlePsalmsReorder: () => true,
   psalmsQueryDataLoading: false,
+  favouritePsalmsDataMap: {},
 };
 
 export const PsalmsContext = createContext<PsalmsContextType>(defaultValue);
@@ -122,13 +123,13 @@ const PsalmsDataProvider = ({ children }: PropsWithChildren) => {
     },
   );
 
-  const favouritePsalmsQueryDataMap = useMemo(
+  const favouritePsalmsDataMap = useMemo(
     () =>
       favouritePsalmsQueryData?.psalms.reduce((acc: Record<string, boolean>, { psalm: { id } }) => {
         acc[id] = true;
 
         return acc;
-      }, {}),
+      }, {}) ?? {},
     [favouritePsalmsQueryData?.psalms],
   );
 
@@ -143,10 +144,9 @@ const PsalmsDataProvider = ({ children }: PropsWithChildren) => {
                 keyToScaleDegree[psalm.defaultTonality.replace('Sharp', '#')] + (transpositionSteps % 12)
               ] as MusicalKey)
             : psalm.defaultTonality,
-        inFavourite: !!favouritePsalmsQueryDataMap?.[psalm.id],
         transposition: transpositionSteps,
       })),
-    [favouritePsalmsQueryDataMap, psalmsQueryData?.psalms],
+    [psalmsQueryData?.psalms],
   );
 
   const currentPsalmBook = useMemo(
@@ -323,6 +323,7 @@ const PsalmsDataProvider = ({ children }: PropsWithChildren) => {
         handlePsalmBookSelect: setSoftPsalmsBookIdSelected,
         psalmsQueryDataLoading,
         favouriteBookId,
+        favouritePsalmsDataMap,
       }}
     >
       {children}

@@ -1,7 +1,8 @@
-import React, { MouseEventHandler, useState } from 'react';
+import React, { MouseEventHandler, useEffect, useState } from 'react';
 
 import TurnedInIcon from '@mui/icons-material/TurnedIn';
 import TurnedInNotIcon from '@mui/icons-material/TurnedInNot';
+import { useDebouncedCallback } from 'use-debounce';
 
 import useAddRemoveFavourite from '../../../hooks/useAddRemoveFavourite';
 import { usePsalmsData } from '../../../providers/dataProviders/psalmsDataProvider';
@@ -9,14 +10,15 @@ import { StyledIconButton } from '../desktop/styled';
 
 export interface InFavouriteIconButtonProps {
   psalmId: string;
-  inFavourite?: boolean;
+  inFavourite: boolean;
   transposition: number;
 }
 
-const InFavouriteIconButton = ({ inFavourite, psalmId, transposition }: InFavouriteIconButtonProps) => {
-  const [internalFavouriteState, setInternalFavouriteState] = useState(inFavourite);
+const InFavouriteIconButton = ({ psalmId, transposition }: InFavouriteIconButtonProps) => {
+  const { favouriteBookId, favouritePsalmsDataMap } = usePsalmsData();
+  const inFavourite = !!favouritePsalmsDataMap[psalmId];
 
-  const { favouriteBookId } = usePsalmsData();
+  const [internalFavouriteState, setInternalFavouriteState] = useState(inFavourite);
 
   const { addPsalmToFavouriteMutation, removePsalmFromFavouriteMutation } = useAddRemoveFavourite({
     favouriteBookId,
@@ -24,17 +26,27 @@ const InFavouriteIconButton = ({ inFavourite, psalmId, transposition }: InFavour
     transposition,
   });
 
+  const debounced = useDebouncedCallback(async (mustBe: boolean) => {
+    if (mustBe !== inFavourite) {
+      try {
+        if (mustBe) {
+          await addPsalmToFavouriteMutation();
+        } else {
+          await removePsalmFromFavouriteMutation();
+        }
+      } catch (e) {
+        setInternalFavouriteState(inFavourite);
+      }
+    }
+  }, 1000);
+
+  useEffect(() => {
+    debounced(internalFavouriteState);
+  }, [internalFavouriteState]);
+
   const handleFavouriteIconClick: MouseEventHandler = (e) => {
     e.stopPropagation();
-    setInternalFavouriteState((prevState) => {
-      if (prevState) {
-        removePsalmFromFavouriteMutation().catch(() => setInternalFavouriteState(inFavourite));
-        return false;
-      } else {
-        addPsalmToFavouriteMutation().catch(() => setInternalFavouriteState(inFavourite));
-        return true;
-      }
-    });
+    setInternalFavouriteState((prevState) => !prevState);
   };
 
   return (

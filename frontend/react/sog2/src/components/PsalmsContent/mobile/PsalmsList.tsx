@@ -10,7 +10,7 @@ import InFavouriteIconButton from '../common/InFavouriteIconButton';
 import { PsalmsListWrapper } from './styled';
 
 const PsalmsList = () => {
-  const { psalmsData } = usePsalmsData();
+  const { psalmsData, favouritePsalmsDataMap } = usePsalmsData();
   const [height, setHeight] = useState<number | null>(null);
   const ref = useRef<HTMLDivElement | null>(null);
 
@@ -35,17 +35,18 @@ const PsalmsList = () => {
         <FixedSizeList height={height} width={700} itemSize={46} itemCount={psalmsData.length} overscanCount={5}>
           {({ index, style }) => {
             const currentPsalm = psalmsData[index];
+            const inFavourite = !!favouritePsalmsDataMap?.[currentPsalm.id];
 
             return (
               <ListItem
-                sx={{ background: currentPsalm.inFavourite ? '#0253' : undefined, height: '100%', width: '100%' }}
+                sx={{ background: inFavourite ? '#0253' : undefined, height: '100%', width: '100%' }}
                 disablePadding
                 key={currentPsalm.id}
                 style={style}
                 secondaryAction={
                   <InFavouriteIconButton
                     psalmId={currentPsalm.id}
-                    inFavourite={currentPsalm.inFavourite}
+                    inFavourite={inFavourite}
                     transposition={currentPsalm.transposition}
                   />
                 }
