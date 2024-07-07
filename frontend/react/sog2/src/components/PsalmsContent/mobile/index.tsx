@@ -5,6 +5,7 @@ import { usePsalms } from '../../../providers/dataProviders/psalmsDataProvider/P
 import PsalmsContentMobileFooter from './Footer';
 import PsalmsContentMobileHeader from './Header';
 import PsalmsList from './PsalmsList';
+import PsalmViewDrawer from './PsalmViewDrawer';
 import { PsalmsContentMobileWrapper } from './styled';
 
 const PsalmsContentMobile = () => {
@@ -14,6 +15,7 @@ const PsalmsContentMobile = () => {
     <PsalmsContentMobileWrapper>
       <PsalmsContentMobileHeader />
       <PsalmsList listSize={dataLength} />
+      <PsalmViewDrawer />
       <PsalmsContentMobileFooter />
     </PsalmsContentMobileWrapper>
   );

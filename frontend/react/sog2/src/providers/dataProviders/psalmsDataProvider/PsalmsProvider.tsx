@@ -1,4 +1,5 @@
 import React, { createContext, PropsWithChildren, useContext, useEffect, useMemo } from 'react';
+import { isMobile } from 'react-device-detect';
 
 import { useMutation, useQuery } from '@apollo/client';
 
@@ -111,7 +112,7 @@ const PsalmsProvider = ({ children }: PropsWithChildren) => {
   );
 
   useEffect(() => {
-    if (!psalmId && psalmsData?.[0]?.id) {
+    if (!psalmId && psalmsData?.[0]?.id && !isMobile) {
       handlePsalmSelect(psalmsData[0].id);
     }
   }, [psalmId, handlePsalmSelect, psalmsData]);
