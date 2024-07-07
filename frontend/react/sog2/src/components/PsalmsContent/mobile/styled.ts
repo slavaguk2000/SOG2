@@ -1,4 +1,4 @@
-import { BottomNavigationAction, Box, ListItem, styled } from '@mui/material';
+import { BottomNavigationAction, BottomNavigationActionProps, Box, ListItem, styled } from '@mui/material';
 
 export const PsalmsContentMobileWrapper = styled(Box)`
   display: flex;
@@ -25,7 +25,9 @@ export const PsalmsContentMobileFooterWrapper = styled(Box)`
   }
 `;
 
-export const StyledBottomNavigationAction = styled(BottomNavigationAction)`
+export const StyledBottomNavigationAction = styled(BottomNavigationAction)<BottomNavigationActionProps>`
+  transition: all 0.3s ease-in-out;
+
   &.Mui-selected {
     background: #fff3;
 

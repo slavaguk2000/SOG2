@@ -25,12 +25,13 @@ const PsalmsContentMobileFooter = () => {
             setSoftSelected(newValue);
           }}
         >
-          {psalmsBooksData
-            .filter(({ psalmsCount }) => !!psalmsCount)
-            .map(({ id, name, iconSrc, isFavourite }) => (
+          {[...psalmsBooksData]
+            .sort((a, b) => Number(!!b.isFavourite) - Number(!!a.isFavourite))
+            .map(({ id, name, iconSrc, isFavourite, psalmsCount }) => (
               <StyledBottomNavigationAction
                 key={id}
                 value={id}
+                sx={psalmsCount ? undefined : { minWidth: 0, maxWidth: 0, padding: 0, opacity: 0 }}
                 icon={<BottomNavigationItem name={name} isFavourite={!!isFavourite} iconSrc={iconSrc ?? undefined} />}
               />
             ))}
