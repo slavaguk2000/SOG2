@@ -10,6 +10,7 @@ import { usePsalmsSelectionData } from './index';
 
 const defaultValue: FavouriteContextType = {
   favouritePsalmsDataMap: {},
+  favouriteReady: false,
 };
 
 export const FavouriteContext = createContext<FavouriteContextType>(defaultValue);
@@ -23,7 +24,7 @@ export const useFavouriteData = () => {
 const FavouritePsalmsProvider = ({ children }: PropsWithChildren) => {
   const { favouritePsalmsBookId } = usePsalmsSelectionData();
 
-  const { data: favouritePsalmsQueryData } = useQuery<Pick<Query, 'psalms'>, QueryPsalmsArgs>(psalms, {
+  const { data: favouritePsalmsQueryData, loading } = useQuery<Pick<Query, 'psalms'>, QueryPsalmsArgs>(psalms, {
     variables: {
       psalmsBookId: favouritePsalmsBookId ?? '',
     },
@@ -46,6 +47,7 @@ const FavouritePsalmsProvider = ({ children }: PropsWithChildren) => {
       value={{
         favouritePsalmsBookId,
         favouritePsalmsDataMap,
+        favouriteReady: !(!favouritePsalmsBookId || loading),
       }}
     >
       {children}

@@ -1,19 +1,28 @@
-import React, { CSSProperties, useEffect, useState } from 'react';
+import React, { CSSProperties, useState } from 'react';
 
-import { ListItem, ListItemButton, ListItemText } from '@mui/material';
+import { ListItem, ListItemButton, ListItemText, Theme, SxProps } from '@mui/material';
 
 import { useFavouriteData } from '../../../providers/dataProviders/psalmsDataProvider/FavouriteProvider';
 import { usePsalms } from '../../../providers/dataProviders/psalmsDataProvider/PsalmsProvider';
-import InFavouriteIconButton from '../common/InFavouriteIconButton';
+import FavouriteIconButton, { FavouriteIconButtonBody } from '../common/InFavouriteIconButton';
+
+import { StyledListItem } from './styled';
 
 interface PsalmsListItemProps {
   index: number;
   style: CSSProperties;
 }
 
+const favouriteIconButtonSx: SxProps<Theme> = {
+  height: '100%',
+  width: '60px',
+  padding: '0 10px',
+  borderRadius: 0,
+};
+
 const PsalmsListItem = ({ index, style }: PsalmsListItemProps) => {
   const { psalmsData } = usePsalms();
-  const { favouritePsalmsDataMap } = useFavouriteData();
+  const { favouritePsalmsDataMap, favouriteReady } = useFavouriteData();
 
   const currentPsalm = psalmsData?.[index];
 
@@ -26,23 +35,21 @@ const PsalmsListItem = ({ index, style }: PsalmsListItemProps) => {
   }
 
   return (
-    <ListItem
-      sx={{ background: internalFavouriteState ? '#0253' : undefined, height: '100%', width: '100%' }}
-      disablePadding
-      style={style}
-      secondaryAction={
-        <InFavouriteIconButton
-          psalmId={currentPsalm.id}
-          transposition={currentPsalm.transposition}
-          value={internalFavouriteState}
-          onChange={setInternalFavouriteState}
-        />
-      }
-    >
-      <ListItemButton sx={{ height: '100%', width: '100%' }}>
-        <ListItemText primary={`${currentPsalm.psalmNumber} ${currentPsalm.name}`} />
+    <StyledListItem sx={{ background: internalFavouriteState ? '#0253' : undefined }} disablePadding style={style}>
+      <ListItemButton sx={{ height: '100%', width: '100%', padding: 0 }}>
+        <ListItemText sx={{ padding: '0 16px' }} primary={`${currentPsalm.psalmNumber} ${currentPsalm.name}`} />
+        {favouriteReady ? (
+          <FavouriteIconButton
+            psalmId={currentPsalm.id}
+            transposition={currentPsalm.transposition}
+            onChange={setInternalFavouriteState}
+            sx={favouriteIconButtonSx}
+          />
+        ) : (
+          <FavouriteIconButtonBody sx={favouriteIconButtonSx} />
+        )}
       </ListItemButton>
-    </ListItem>
+    </StyledListItem>
   );
 };
 

@@ -89,6 +89,7 @@ export interface PsalmsContextType extends DataProvider {
 export interface FavouriteContextType {
   favouritePsalmsBookId?: string;
   favouritePsalmsDataMap: Record<string, boolean | undefined>;
+  favouriteReady: boolean;
 }
 
 export interface PresentationContextType {

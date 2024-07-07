@@ -2,21 +2,35 @@ import React, { Dispatch, MouseEventHandler, SetStateAction, useEffect, useState
 
 import TurnedInIcon from '@mui/icons-material/TurnedIn';
 import TurnedInNotIcon from '@mui/icons-material/TurnedInNot';
+import { SxProps, Theme } from '@mui/material';
 import { useDebouncedCallback } from 'use-debounce';
 
 import useAddRemoveFavourite from '../../../hooks/useAddRemoveFavourite';
 import { useFavouriteData } from '../../../providers/dataProviders/psalmsDataProvider/FavouriteProvider';
 import { StyledIconButton } from '../desktop/styled';
 
-export interface InFavouriteIconButtonProps {
+export interface FavouriteIconButtonBodyProps {
+  currentState?: boolean;
+  onClick?: MouseEventHandler;
+  sx?: SxProps<Theme>;
+}
+
+export const FavouriteIconButtonBody = ({ currentState, onClick, sx }: FavouriteIconButtonBodyProps) => (
+  <StyledIconButton sx={sx} size="small" onClick={onClick}>
+    {currentState ? <TurnedInIcon /> : <TurnedInNotIcon />}
+  </StyledIconButton>
+);
+
+export interface FavouriteIconButtonProps {
   psalmId: string;
   inFavourite?: boolean;
   transposition: number;
   value?: boolean;
   onChange?: Dispatch<SetStateAction<boolean>>;
+  sx?: SxProps<Theme>;
 }
 
-const InFavouriteIconButton = ({ psalmId, transposition, value, onChange }: InFavouriteIconButtonProps) => {
+const FavouriteIconButton = ({ psalmId, transposition, value, onChange, sx }: FavouriteIconButtonProps) => {
   const { favouritePsalmsDataMap, favouritePsalmsBookId: favouriteBookId } = useFavouriteData();
 
   const inFavourite = !!favouritePsalmsDataMap[psalmId];
@@ -70,11 +84,7 @@ const InFavouriteIconButton = ({ psalmId, transposition, value, onChange }: InFa
 
   const currentState = justInternal ? internalFavouriteState : value;
 
-  return (
-    <StyledIconButton size="small" onClick={handleFavouriteIconClick}>
-      {currentState ? <TurnedInIcon /> : <TurnedInNotIcon />}
-    </StyledIconButton>
-  );
+  return <FavouriteIconButtonBody sx={sx} currentState={currentState} onClick={handleFavouriteIconClick} />;
 };
 
-export default InFavouriteIconButton;
+export default FavouriteIconButton;

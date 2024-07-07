@@ -1,4 +1,4 @@
-import { BottomNavigationAction, Box, styled } from '@mui/material';
+import { BottomNavigationAction, Box, ListItem, styled } from '@mui/material';
 
 export const PsalmsContentMobileWrapper = styled(Box)`
   display: flex;
@@ -67,4 +67,9 @@ export const PsalmsListWrapper = styled(Box)`
   display: flex;
   flex-grow: 1;
   overflow: hidden;
+`;
+
+export const StyledListItem = styled(ListItem)`
+  height: 100%;
+  width: 100%;
 `;
