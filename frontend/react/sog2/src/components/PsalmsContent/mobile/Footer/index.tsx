@@ -3,15 +3,13 @@ import React from 'react';
 import { BottomNavigation } from '@mui/material';
 
 import useSelectIntent from '../../../../hooks/useSelectIntent';
-import { usePsalmsSelectionData } from '../../../../providers/dataProviders/psalmsDataProvider';
 import { usePsalmsBooksData } from '../../../../providers/dataProviders/psalmsDataProvider/PsalmsBooksProvider';
 import { PsalmsContentMobileFooterWrapper, StyledBottomNavigationAction } from '../styled';
 
 import BottomNavigationItem from './BottomNavigationItem';
 
 const PsalmsContentMobileFooter = () => {
-  const { handlePsalmsBookSelect } = usePsalmsSelectionData();
-  const { psalmsBooksData, currentPsalmBook } = usePsalmsBooksData();
+  const { psalmsBooksData, currentPsalmBook, handlePsalmsBookSelect } = usePsalmsBooksData();
   const { softSelected, setSoftSelected } = useSelectIntent({
     hardSelected: currentPsalmBook?.id,
     setHardSelected: handlePsalmsBookSelect,

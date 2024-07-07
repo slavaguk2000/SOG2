@@ -10,7 +10,7 @@ import { search } from 'src/utils/gql/queries';
 import { Query, QuerySearchArgs, Slide, TabType } from 'src/utils/gql/types';
 
 import BibleContext from '../../providers/dataProviders/bibleDataProvider/context';
-import { PsalmsContext } from '../../providers/dataProviders/psalmsDataProvider/PsalmsProvider';
+import { CurrentPsalmContext } from '../../providers/dataProviders/psalmsDataProvider/CurrentPsalmProvider';
 import SermonDataProviderContext from '../../providers/dataProviders/sermanDataProvider/context';
 import { DataProvider } from '../../providers/types';
 
@@ -46,7 +46,7 @@ const getSearchParamKey = (tabType: TabType) => {
 const getDataProviderContext = (tabType: TabType) => {
   switch (tabType) {
     case TabType.Psalm:
-      return PsalmsContext;
+      return CurrentPsalmContext;
     case TabType.Bible:
       return BibleContext;
     case TabType.Sermon:

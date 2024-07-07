@@ -2,14 +2,12 @@ import React from 'react';
 
 import { Drawer } from '@mui/material';
 
-import { usePsalmsSelectionData } from '../../../../providers/dataProviders/psalmsDataProvider';
-import { usePsalms } from '../../../../providers/dataProviders/psalmsDataProvider/PsalmsProvider';
+import { useCurrentPsalms } from '../../../../providers/dataProviders/psalmsDataProvider/CurrentPsalmProvider';
 
 import PsalmViewDrawerBody from './PsalmViewDrawerBody';
 
 const PsalmViewDrawer = () => {
-  const { currentPsalm } = usePsalms();
-  const { clearPsalmSelect } = usePsalmsSelectionData();
+  const { currentPsalm, clearPsalmSelect } = useCurrentPsalms();
 
   return (
     <Drawer open={!!currentPsalm} onClose={clearPsalmSelect} anchor="right">

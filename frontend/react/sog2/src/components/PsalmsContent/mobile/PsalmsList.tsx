@@ -3,16 +3,15 @@ import { FixedSizeList } from 'react-window';
 
 import { useDebouncedCallback } from 'use-debounce';
 
+import { usePsalms } from '../../../providers/dataProviders/psalmsDataProvider/PsalmsProvider';
+
 import PsalmsListItem from './PsalmsListItem';
 import { PsalmsListWrapper } from './styled';
 
-interface PsalmsListProps {
-  listSize: number;
-}
-
-const PsalmsList = ({ listSize }: PsalmsListProps) => {
+const PsalmsList = () => {
   const [height, setHeight] = useState<number | null>(null);
   const ref = useRef<HTMLDivElement | null>(null);
+  const { dataLength } = usePsalms();
 
   const debouncedSetHeight = useDebouncedCallback((newHeight: number) => {
     setHeight(newHeight);
@@ -31,8 +30,8 @@ const PsalmsList = ({ listSize }: PsalmsListProps) => {
 
   return (
     <PsalmsListWrapper ref={ref}>
-      {!!(listSize && height) && (
-        <FixedSizeList height={height} width={700} itemSize={46} itemCount={listSize} overscanCount={5}>
+      {!!(dataLength && height) && (
+        <FixedSizeList height={height} width={700} itemSize={46} itemCount={dataLength} overscanCount={5}>
           {({ index, style }) => <PsalmsListItem key={index} style={style} index={index} />}
         </FixedSizeList>
       )}

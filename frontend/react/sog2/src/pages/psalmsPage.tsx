@@ -4,7 +4,7 @@ import { isMobile } from 'react-device-detect';
 import PsalmsContent from '../components/PsalmsContent/desktop';
 import PsalmsContentMobile from '../components/PsalmsContent/mobile';
 import PsalmsDataProvider from '../providers/dataProviders/psalmsDataProvider';
-import { PsalmsContext } from '../providers/dataProviders/psalmsDataProvider/PsalmsProvider';
+import { CurrentPsalmContext } from '../providers/dataProviders/psalmsDataProvider/CurrentPsalmProvider';
 import { DataProvider } from '../providers/types';
 import MainView from '../views/MainView/MainView';
 
@@ -14,7 +14,7 @@ const PsalmsPage = () => {
       {isMobile ? (
         <PsalmsContentMobile />
       ) : (
-        <MainView dataProviderContext={PsalmsContext as unknown as Context<DataProvider>}>
+        <MainView dataProviderContext={CurrentPsalmContext as unknown as Context<DataProvider>}>
           <PsalmsContent />
         </MainView>
       )}
