@@ -6,6 +6,8 @@ import { psalms } from '../../../utils/gql/queries';
 import { Query, QueryPsalmsArgs } from '../../../utils/gql/types';
 import { FavouriteContextType } from '../../types';
 
+import { usePsalmsSelectionData } from './index';
+
 const defaultValue: FavouriteContextType = {
   favouritePsalmsDataMap: {},
 };
@@ -18,11 +20,9 @@ export const useFavouriteData = () => {
   return useContext(FavouriteContext);
 };
 
-interface FavouritePsalmsProviderProps extends PropsWithChildren {
-  favouritePsalmsBookId?: string;
-}
+const FavouritePsalmsProvider = ({ children }: PropsWithChildren) => {
+  const { favouritePsalmsBookId } = usePsalmsSelectionData();
 
-const FavouritePsalmsProvider = ({ children, favouritePsalmsBookId }: FavouritePsalmsProviderProps) => {
   const { data: favouritePsalmsQueryData } = useQuery<Pick<Query, 'psalms'>, QueryPsalmsArgs>(psalms, {
     variables: {
       psalmsBookId: favouritePsalmsBookId ?? '',

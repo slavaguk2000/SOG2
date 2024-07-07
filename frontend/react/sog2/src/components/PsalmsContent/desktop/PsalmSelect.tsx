@@ -5,8 +5,9 @@ import { Reorder } from 'framer-motion';
 
 import useReorder from '../../../hooks/useReorder';
 import useSelectIntent from '../../../hooks/useSelectIntent';
-import { usePsalmsData } from '../../../providers/dataProviders/psalmsDataProvider';
+import { usePsalmsSelectionData } from '../../../providers/dataProviders/psalmsDataProvider';
 import { useFavouriteData } from '../../../providers/dataProviders/psalmsDataProvider/FavouriteProvider';
+import { usePsalmsBooksData } from '../../../providers/dataProviders/psalmsDataProvider/PsalmsBooksProvider';
 import { usePsalms } from '../../../providers/dataProviders/psalmsDataProvider/PsalmsProvider';
 import { Maybe, MusicalKey } from '../../../utils/gql/types';
 
@@ -28,13 +29,14 @@ const PsalmSelect = () => {
     psalmId: string;
     defaultTonality?: Maybe<MusicalKey>;
   }>(null);
-  const { currentPsalmBook } = usePsalmsData();
-  const { handlePsalmSelect, currentPsalm, psalmsData, handlePsalmsReorder } = usePsalms();
+  const { currentPsalmBook } = usePsalmsBooksData();
+  const { handlePsalmsBookSelect } = usePsalmsSelectionData();
+  const { currentPsalm, psalmsData, handlePsalmsReorder } = usePsalms();
   const { favouritePsalmsDataMap } = useFavouriteData();
 
-  const { softSelected, setSoftSelected } = useSelectIntent({
+  const { softSelected, setSoftSelected } = useSelectIntent<string, number>({
     hardSelected: currentPsalm?.id,
-    setHardSelected: handlePsalmSelect,
+    setHardSelected: handlePsalmsBookSelect,
     timeout: 100,
   });
 

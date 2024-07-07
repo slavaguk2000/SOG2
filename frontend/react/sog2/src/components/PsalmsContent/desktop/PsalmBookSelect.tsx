@@ -1,16 +1,18 @@
 import React from 'react';
 
 import useSelectIntent from '../../../hooks/useSelectIntent';
-import { usePsalmsData } from '../../../providers/dataProviders/psalmsDataProvider';
+import { usePsalmsSelectionData } from '../../../providers/dataProviders/psalmsDataProvider';
+import { usePsalmsBooksData } from '../../../providers/dataProviders/psalmsDataProvider/PsalmsBooksProvider';
 
 import PsalmBookItem from './PsalmBookItem';
 import { PsalmBookSelectWrapper } from './styled';
 
 const PsalmBookSelect = () => {
-  const { psalmsBooksData, currentPsalmBook, handlePsalmBookSelect } = usePsalmsData();
+  const { psalmsBooksData, currentPsalmBook } = usePsalmsBooksData();
+  const { handlePsalmsBookSelect } = usePsalmsSelectionData();
   const { softSelected, setSoftSelected } = useSelectIntent({
     hardSelected: currentPsalmBook?.id,
-    setHardSelected: handlePsalmBookSelect,
+    setHardSelected: handlePsalmsBookSelect,
     timeout: 100,
   });
 

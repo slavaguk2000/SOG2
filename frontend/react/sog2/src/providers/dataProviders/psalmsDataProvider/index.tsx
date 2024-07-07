@@ -1,31 +1,41 @@
-import React, { createContext, PropsWithChildren, useCallback, useContext, useEffect, useMemo } from 'react';
+import React, { createContext, PropsWithChildren, useCallback, useContext, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
-import { useQuery } from '@apollo/client';
+import { useMutation } from '@apollo/client';
 
 import useSelectIntent from '../../../hooks/useSelectIntent';
-import { psalmsBooks } from '../../../utils/gql/queries';
-import { Query } from '../../../utils/gql/types';
-import { PsalmsDataContextType } from '../../types';
+import { setActivePsalm } from '../../../utils/gql/queries';
+import { Mutation, MutationSetActivePsalmArgs } from '../../../utils/gql/types';
+import { useInstrumentsField } from '../../instrumentsFieldProvider';
+import { PsalmsDataSelectContextType } from '../../types';
 
 import FavouritePsalmsProvider from './FavouriteProvider';
+import PsalmsBooksProvider from './PsalmsBooksProvider';
+import PsalmsProvider from './PsalmsProvider';
 
-const defaultValue: PsalmsDataContextType = {
-  psalmsBookId: '0',
-  handlePsalmBookSelect: () => true,
+const defaultValue: PsalmsDataSelectContextType = {
+  psalmId: '',
+  psalmsBookId: '',
+  handlePsalmSelect: () => true,
+  clearPsalmSelect: () => true,
+  handlePsalmsBookSelect: () => true,
+  setFavouritePsalmsBookId: () => true,
 };
 
-export const PsalmsDataContext = createContext<PsalmsDataContextType>(defaultValue);
+export const PsalmsDataSelectContext = createContext<PsalmsDataSelectContextType>(defaultValue);
 
-PsalmsDataContext.displayName = 'PsalmsDataContext';
+PsalmsDataSelectContext.displayName = 'PsalmsDataSelectContext';
 
-export const usePsalmsData = () => {
-  return useContext(PsalmsDataContext);
+export const usePsalmsSelectionData = () => {
+  return useContext(PsalmsDataSelectContext);
 };
 
 const PsalmsDataProvider = ({ children }: PropsWithChildren) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const psalmsBookId = searchParams.get('psalmsBookId') ?? '';
+  const psalmId = searchParams.get('psalmId') ?? '';
+
+  const [favouritePsalmsBookId, setFavouritePsalmsBookId] = useState<string | undefined>();
 
   const handlePsalmBookSelect = useCallback(
     (id: string) => {
@@ -41,46 +51,66 @@ const PsalmsDataProvider = ({ children }: PropsWithChildren) => {
   const { softSelected: softPsalmsBookIdSelected, setSoftSelected: setSoftPsalmsBookIdSelected } = useSelectIntent({
     hardSelected: psalmsBookId,
     setHardSelected: handlePsalmBookSelect,
+  });
+
+  const [setActivePsalmMutation] = useMutation<Pick<Mutation, 'setActivePsalm'>, MutationSetActivePsalmArgs>(
+    setActivePsalm,
+  );
+
+  const { silentMode } = useInstrumentsField();
+
+  const handlePsalmSelect = useCallback(
+    (id: string, transposition?: number) => {
+      setSearchParams((prev) => {
+        prev.set('psalmId', id);
+
+        return prev;
+      });
+      if (!silentMode) {
+        setActivePsalmMutation({
+          variables: {
+            psalmId: id,
+            psalmsBookId,
+            transposition,
+          },
+        }).catch((e) => console.error(e));
+      }
+    },
+    [setSearchParams, silentMode, setActivePsalmMutation, psalmsBookId],
+  );
+
+  const { softSelected: softPsalmIdSelected, setSoftSelected: setSoftPsalmIdSelected } = useSelectIntent({
+    hardSelected: psalmId,
+    setHardSelected: handlePsalmSelect,
     timeout: 100,
   });
 
-  const { data: psalmsBooksData } = useQuery<Pick<Query, 'psalmsBooks'>>(psalmsBooks, {
-    fetchPolicy: 'cache-first',
-  });
+  const clearPsalmSelect = () => {
+    setSearchParams((prev) => {
+      prev.delete('psalmId');
 
-  const favouritePsalmsBookId = useMemo(
-    () => psalmsBooksData?.psalmsBooks.find(({ isFavourite }) => isFavourite)?.id,
-    [psalmsBooksData],
-  );
-
-  const currentPsalmBook = useMemo(
-    () => psalmsBooksData?.psalmsBooks.find(({ id }) => softPsalmsBookIdSelected === id),
-    [softPsalmsBookIdSelected, psalmsBooksData?.psalmsBooks],
-  );
-
-  useEffect(() => {
-    const potentialValidPsalmsBooks = psalmsBooksData?.psalmsBooks?.filter(({ psalmsCount }) => psalmsCount);
-
-    if (
-      currentPsalmBook &&
-      !(softPsalmsBookIdSelected && currentPsalmBook.psalmsCount) &&
-      potentialValidPsalmsBooks?.[0]?.id
-    ) {
-      setSoftPsalmsBookIdSelected(potentialValidPsalmsBooks[0].id);
-    }
-  }, [currentPsalmBook, setSoftPsalmsBookIdSelected, softPsalmsBookIdSelected, psalmsBooksData?.psalmsBooks]);
+      return prev;
+    });
+  };
 
   return (
-    <PsalmsDataContext.Provider
+    <PsalmsDataSelectContext.Provider
       value={{
         psalmsBookId: softPsalmsBookIdSelected ?? '',
-        psalmsBooksData: psalmsBooksData?.psalmsBooks,
-        currentPsalmBook,
-        handlePsalmBookSelect: setSoftPsalmsBookIdSelected,
+        psalmId: softPsalmIdSelected ?? '',
+        favouritePsalmsBookId,
+        handlePsalmsBookSelect: setSoftPsalmsBookIdSelected,
+        handlePsalmSelect: setSoftPsalmIdSelected,
+        setFavouritePsalmsBookId,
+        clearPsalmSelect,
       }}
     >
-      <FavouritePsalmsProvider favouritePsalmsBookId={favouritePsalmsBookId}>{children}</FavouritePsalmsProvider>
-    </PsalmsDataContext.Provider>
+      <PsalmsBooksProvider>
+        <FavouritePsalmsProvider>
+          <PsalmsProvider>{children}</PsalmsProvider>
+        </FavouritePsalmsProvider>
+      </PsalmsBooksProvider>
+    </PsalmsDataSelectContext.Provider>
   );
 };
 
