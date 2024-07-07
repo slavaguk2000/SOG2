@@ -10,7 +10,7 @@ import { search } from 'src/utils/gql/queries';
 import { Query, QuerySearchArgs, Slide, TabType } from 'src/utils/gql/types';
 
 import BibleContext from '../../providers/dataProviders/bibleDataProvider/context';
-import { PsalmsContext } from '../../providers/dataProviders/psalmsDataProvider';
+import { PsalmsContext } from '../../providers/dataProviders/psalmsDataProvider/PsalmsProvider';
 import SermonDataProviderContext from '../../providers/dataProviders/sermanDataProvider/context';
 import { DataProvider } from '../../providers/types';
 

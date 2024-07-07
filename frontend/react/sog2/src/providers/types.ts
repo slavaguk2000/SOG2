@@ -62,19 +62,23 @@ interface PsalmData extends Psalm {
   transposition: number;
 }
 
-export interface PsalmsContextType extends DataProvider {
+export interface PsalmsDataContextType {
   psalmsBookId: string;
-  psalmId: string;
   psalmsBooksData?: Query['psalmsBooks'];
+  handlePsalmBookSelect: (selectedId: string) => void;
+  currentPsalmBook?: PsalmsBook;
+}
+
+export interface PsalmsContextType extends DataProvider {
+  psalmId: string;
+  handlePsalmSelect: (selectedId: string, transposition?: number) => void;
   psalmsData?: Array<PsalmData>;
   psalmData?: Query['psalm'];
-  handlePsalmSelect: (selectedId: string, transposition?: number) => void;
-  handlePsalmBookSelect: (selectedId: string) => void;
-  handlePsalmsReorder: (ids: string[]) => void;
   currentPsalm?: Psalm;
-  currentPsalmBook?: PsalmsBook;
-  psalmsQueryDataLoading: boolean;
+  psalmsBookId: string;
   dataLength: number;
+  handlePsalmsReorder: (ids: string[]) => void;
+  psalmsQueryDataLoading: boolean;
 }
 
 export interface FavouriteContextType {

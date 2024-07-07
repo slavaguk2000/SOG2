@@ -7,6 +7,7 @@ import useReorder from '../../../hooks/useReorder';
 import useSelectIntent from '../../../hooks/useSelectIntent';
 import { usePsalmsData } from '../../../providers/dataProviders/psalmsDataProvider';
 import { useFavouriteData } from '../../../providers/dataProviders/psalmsDataProvider/FavouriteProvider';
+import { usePsalms } from '../../../providers/dataProviders/psalmsDataProvider/PsalmsProvider';
 import { Maybe, MusicalKey } from '../../../utils/gql/types';
 
 import PsalmSelectItem from './PsalmSelectItem';
@@ -27,7 +28,8 @@ const PsalmSelect = () => {
     psalmId: string;
     defaultTonality?: Maybe<MusicalKey>;
   }>(null);
-  const { psalmsData, handlePsalmSelect, currentPsalm, currentPsalmBook, handlePsalmsReorder } = usePsalmsData();
+  const { currentPsalmBook } = usePsalmsData();
+  const { handlePsalmSelect, currentPsalm, psalmsData, handlePsalmsReorder } = usePsalms();
   const { favouritePsalmsDataMap } = useFavouriteData();
 
   const { softSelected, setSoftSelected } = useSelectIntent({

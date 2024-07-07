@@ -5,8 +5,8 @@ import useFastNumberSelection from '../../../hooks/useFastNumberSelection/useFas
 import {
   extractCoupletPrefixFromLocation,
   getPsalmSlideContentFromSlide,
-  usePsalmsData,
-} from '../../../providers/dataProviders/psalmsDataProvider';
+  usePsalms,
+} from '../../../providers/dataProviders/psalmsDataProvider/PsalmsProvider';
 import { useInstrumentsField } from '../../../providers/instrumentsFieldProvider';
 import { Slide } from '../../../utils/gql/types';
 import BibleEntityItem from '../../BibleContent/BibleEntityItem';
@@ -18,7 +18,7 @@ const debounceSeconds = 0.7;
 const CoupletSelect = () => {
   const coupletsRef = useRef<HTMLElement>(null);
 
-  const { psalmData, handleUpdateSlide } = usePsalmsData();
+  const { psalmData, handleUpdateSlide } = usePsalms();
   const { currentSlide } = useInstrumentsField();
 
   const preparedData = useMemo(
