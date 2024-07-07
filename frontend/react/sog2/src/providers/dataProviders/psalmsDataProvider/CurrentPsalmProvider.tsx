@@ -50,13 +50,13 @@ const CurrentPsalmProvider = ({ children }: PropsWithChildren) => {
   const { psalmsData } = usePsalms();
   const psalmId = searchParams.get('psalmId') ?? '';
 
-  const clearPsalmSelect = () => {
+  const clearPsalmSelect = useCallback(() => {
     setSearchParams((prev) => {
       prev.delete('psalmId');
 
       return prev;
     });
-  };
+  }, [setSearchParams]);
 
   const [setActivePsalmMutation] = useMutation<Pick<Mutation, 'setActivePsalm'>, MutationSetActivePsalmArgs>(
     setActivePsalm,
@@ -91,16 +91,17 @@ const CurrentPsalmProvider = ({ children }: PropsWithChildren) => {
 
   const { handleUpdateSlide: instrumentsHandleUpdateSlide, currentSlide } = useInstrumentsField();
 
-  const { data: currentPsalmData, loading: currentPsalmDataLoading } = useQuery<Pick<Query, 'psalm'>, QueryPsalmArgs>(
-    psalm,
-    {
-      variables: {
-        psalmId: softPsalmIdSelected ?? '',
-      },
-      fetchPolicy: 'cache-first',
-      skip: !softPsalmIdSelected,
+  const {
+    data: currentPsalmData,
+    loading: currentPsalmDataLoading,
+    error: currentPsalmDataError,
+  } = useQuery<Pick<Query, 'psalm'>, QueryPsalmArgs>(psalm, {
+    variables: {
+      psalmId: softPsalmIdSelected ?? '',
     },
-  );
+    fetchPolicy: 'cache-first',
+    skip: !softPsalmIdSelected,
+  });
 
   useEffect(() => {
     if (!softPsalmIdSelected && psalmsData?.[0]?.id && !isMobile) {
@@ -111,10 +112,10 @@ const CurrentPsalmProvider = ({ children }: PropsWithChildren) => {
   const currentPsalm = useMemo(() => psalmsData?.find(({ id }) => psalmId === id), [psalmId, psalmsData]);
 
   useEffect(() => {
-    if (softPsalmIdSelected && psalmsData && !currentPsalm) {
+    if (softPsalmIdSelected && psalmsData && currentPsalmDataError) {
       clearPsalmSelect();
     }
-  }, [currentPsalm, softPsalmIdSelected, psalmsData, clearPsalmSelect]);
+  }, [clearPsalmSelect, psalmsData, softPsalmIdSelected, currentPsalmDataError]);
 
   const getPsalmName = (currentSlide: Slide) =>
     psalmsData?.find(({ id }) => currentSlide?.location?.[1] === id)?.name ?? '';
