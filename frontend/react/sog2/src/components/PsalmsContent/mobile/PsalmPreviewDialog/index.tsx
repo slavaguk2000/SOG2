@@ -1,12 +1,12 @@
 import React, { forwardRef, ReactElement, Ref, MouseEvent } from 'react';
 
-import { Dialog, Zoom, Fade } from '@mui/material';
+import { Zoom, Fade } from '@mui/material';
 import { TransitionProps } from '@mui/material/transitions';
 
 import { usePsalmsContentMobileContext } from '../PsalmsContentMobileContextProvider';
 
 import PsalmPreviewDialogBody from './PsalmPreviewDialogBody';
-import { PsalmPreviewDialogWrapper } from './styled';
+import { PsalmPreviewDialogWrapper, StyledDialog } from './styled';
 
 const Transition = forwardRef(function Transition(
   props: TransitionProps & {
@@ -52,7 +52,7 @@ const PsalmPreviewDialog = () => {
   };
 
   return (
-    <Dialog
+    <StyledDialog
       keepMounted
       TransitionComponent={Transition}
       transitionDuration={openDialog ? 600 : 300}
@@ -67,7 +67,7 @@ const PsalmPreviewDialog = () => {
           />
         ) : null}
       </PsalmPreviewDialogWrapper>
-    </Dialog>
+    </StyledDialog>
   );
 };
 
