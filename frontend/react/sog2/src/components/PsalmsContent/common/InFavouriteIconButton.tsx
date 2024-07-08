@@ -28,14 +28,28 @@ export interface FavouriteIconButtonProps {
   value?: boolean;
   onChange?: Dispatch<SetStateAction<boolean>>;
   sx?: SxProps<Theme>;
+  stopPropagation?: boolean;
 }
 
-const FavouriteIconButton = ({ psalmId, transposition, value, onChange, sx }: FavouriteIconButtonProps) => {
-  const { favouritePsalmsDataMap, favouritePsalmsBookId: favouriteBookId } = useFavouriteData();
+const FavouriteIconButton = ({
+  psalmId,
+  transposition,
+  value,
+  onChange,
+  sx,
+  stopPropagation = true,
+}: FavouriteIconButtonProps) => {
+  const { favouritePsalmsDataMap, favouritePsalmsBookId: favouriteBookId, favouriteReady } = useFavouriteData();
 
   const inFavourite = !!favouritePsalmsDataMap[psalmId];
 
   const [internalFavouriteState, setInternalFavouriteState] = useState(inFavourite);
+
+  useEffect(() => {
+    if (favouriteReady) {
+      setInternalFavouriteState(inFavourite);
+    }
+  }, [favouriteReady, inFavourite]);
 
   const { addPsalmToFavouriteMutation, removePsalmFromFavouriteMutation } = useAddRemoveFavourite({
     favouriteBookId,
@@ -64,7 +78,10 @@ const FavouriteIconButton = ({ psalmId, transposition, value, onChange, sx }: Fa
   const justInternal = value === undefined;
 
   const handleFavouriteIconClick: MouseEventHandler = (e) => {
-    e.stopPropagation();
+    if (stopPropagation) {
+      e.stopPropagation();
+    }
+
     if (justInternal) {
       setInternalFavouriteState((prevState) => {
         const newValue = !prevState;

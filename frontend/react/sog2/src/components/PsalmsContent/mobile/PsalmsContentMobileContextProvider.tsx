@@ -1,7 +1,10 @@
 import React, { createContext, Dispatch, PropsWithChildren, SetStateAction, useContext, useState } from 'react';
 
 interface PreviewChordsPsalmData {
-  id?: string;
+  psalmData?: {
+    id: string;
+    transposition: number;
+  };
   position?: {
     x: number;
     y: number;

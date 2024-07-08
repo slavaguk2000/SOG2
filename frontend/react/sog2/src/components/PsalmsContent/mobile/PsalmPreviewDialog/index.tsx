@@ -39,11 +39,11 @@ const Transition = forwardRef(function Transition(
 const PsalmPreviewDialog = () => {
   const { previewChordsPsalmData, setPreviewChordsPsalmData } = usePsalmsContentMobileContext();
 
-  const openDialog = !!previewChordsPsalmData?.id;
+  const openDialog = !!previewChordsPsalmData?.psalmData;
 
   const handleClose = (e: MouseEvent) => {
     setPreviewChordsPsalmData({
-      id: undefined,
+      psalmData: undefined,
       position: {
         x: e.clientX,
         y: e.clientY,
@@ -60,7 +60,12 @@ const PsalmPreviewDialog = () => {
       onClose={handleClose}
     >
       <PsalmPreviewDialogWrapper onClick={handleClose}>
-        {previewChordsPsalmData?.id ? <PsalmPreviewDialogBody psalmId={previewChordsPsalmData.id} /> : null}
+        {previewChordsPsalmData?.psalmData ? (
+          <PsalmPreviewDialogBody
+            psalmId={previewChordsPsalmData.psalmData.id}
+            transposition={previewChordsPsalmData.psalmData.transposition}
+          />
+        ) : null}
       </PsalmPreviewDialogWrapper>
     </Dialog>
   );

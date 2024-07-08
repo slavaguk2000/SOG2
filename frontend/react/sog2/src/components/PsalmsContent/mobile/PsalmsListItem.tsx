@@ -46,7 +46,10 @@ const PsalmsListItem = ({ index, style }: PsalmsListItemProps) => {
       const touch = (e as unknown as TouchEvent).touches?.[0];
       if (currentPsalm) {
         setPreviewChordsPsalmData({
-          id: currentPsalm.id,
+          psalmData: {
+            id: currentPsalm.id,
+            transposition: currentPsalm.transposition,
+          },
           position: touch
             ? {
                 x: touch.clientX,
