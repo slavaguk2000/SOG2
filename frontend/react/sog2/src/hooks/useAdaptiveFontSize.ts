@@ -14,10 +14,12 @@ const useAdaptiveFontSize = ({ maxFontSize, deps }: AdaptiveFontSizeProp) => {
     if (viewRef.current && viewRef.current.clientHeight < viewRef.current.scrollHeight) {
       setFontSize(fontSize - 1);
     }
+    // eslint-disable-next-line
   }, [fontSize, ...deps]);
 
   useEffect(() => {
     setFontSize(maxFontSize);
+    // eslint-disable-next-line
   }, [maxFontSize, ...deps]);
 
   return {
