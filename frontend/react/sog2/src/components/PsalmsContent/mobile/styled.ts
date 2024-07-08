@@ -5,6 +5,7 @@ export const PsalmsContentMobileWrapper = styled(Box)`
   flex-direction: column;
   justify-content: space-between;
   width: 100vw;
+  height: 100%;
 `;
 
 export const PsalmsContentMobileHeaderWrapper = styled(Box)`
