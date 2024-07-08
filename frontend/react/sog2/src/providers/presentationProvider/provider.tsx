@@ -149,7 +149,7 @@ export const PresentationProvider = ({ children }: PropsWithChildren<Presentatio
             console.log('Received echo:', message);
           });
         })
-        .catch((err: unknown) => console.log(err));
+        .catch((err: unknown) => console.error(err));
     }
   };
 
@@ -201,7 +201,7 @@ export const PresentationProvider = ({ children }: PropsWithChildren<Presentatio
             }
           });
         })
-        .catch((err: unknown) => console.log(err));
+        .catch((err: unknown) => console.error(err));
     }
   };
 

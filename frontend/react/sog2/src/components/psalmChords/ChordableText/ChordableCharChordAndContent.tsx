@@ -10,15 +10,15 @@ import { useChordsEditInstrumentsContext } from '../instrumentsProvider';
 import { ChordableCharChordAndContentWrapper, ChordableCharChordWrapper } from './styled';
 
 export interface ChordWithMainKeyData {
-  chord: CoupletContentChord;
-  mainKey: number;
+  chord?: CoupletContentChord;
+  mainKey?: number;
 }
 
 interface ChordableCharChordAndContentProps {
-  fontSize: number;
+  fontSize?: number;
   char: string;
-  onAddChord: (newChordData: CoupletContentChord) => void;
-  onLinkChord: (chordData: CoupletContentChord) => void;
+  onAddChord?: (newChordData: CoupletContentChord) => void;
+  onLinkChord?: (chordData: CoupletContentChord) => void;
   existingChordData?: ChordWithMainKeyData;
   chordColor?: string;
 }
@@ -36,17 +36,17 @@ const ChordableCharChordAndContent = ({
   const { mainKey } = useEditableChordsData();
 
   const handleChordClick = (e: React.MouseEvent<HTMLSpanElement>) => {
-    if (existingChordData) {
-      if (isChordLinking) {
+    if (existingChordData?.chord) {
+      if (isChordLinking && onLinkChord) {
         onLinkChord(existingChordData.chord);
-      } else if (isChordCopying) {
+      } else if (isChordCopying && onAddChord) {
         onAddChord({
           ...existingChordData.chord,
           id: uuidv4(),
         });
         setCopyingChordData(null);
       }
-    } else {
+    } else if (onAddChord) {
       openChordEditorDialog(
         {
           id: uuidv4(),
@@ -66,7 +66,9 @@ const ChordableCharChordAndContent = ({
   return (
     <ChordableCharChordAndContentWrapper onClick={handleChordClick}>
       <ChordableCharChordWrapper contentFontSize={fontSize} color={chordColor}>
-        {existingChordData ? getChordText(existingChordData.chord, existingChordData.mainKey) : 'A'}
+        {existingChordData?.chord && existingChordData?.mainKey !== undefined
+          ? getChordText(existingChordData.chord, existingChordData.mainKey)
+          : 'A'}
       </ChordableCharChordWrapper>
       {char}
     </ChordableCharChordAndContentWrapper>

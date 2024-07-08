@@ -4,7 +4,7 @@ import { CuttableTextChar } from './styled';
 
 interface CuttableTextProps {
   text: string;
-  onCharClick: (charPosition: number) => void;
+  onCharClick?: (charPosition: number) => void;
 }
 
 const CuttableText = ({ text, onCharClick }: CuttableTextProps) => {
@@ -17,7 +17,7 @@ const CuttableText = ({ text, onCharClick }: CuttableTextProps) => {
   return (
     <span>
       {chars.map((char, idx) => (
-        <CuttableTextChar onClick={() => onCharClick(idx)} key={idx}>
+        <CuttableTextChar onClick={() => onCharClick?.(idx)} key={idx}>
           <span>{char}</span>
         </CuttableTextChar>
       ))}

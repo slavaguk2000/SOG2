@@ -15,7 +15,7 @@ interface ChordProps {
   isLinkDestinationChordChoosing?: boolean;
   isSameChordLinking?: boolean;
   isCurrentChordLinking?: boolean;
-  contentFontSize: number;
+  contentFontSize?: number;
   onClick: React.MouseEventHandler<HTMLSpanElement>;
   onLinkedChordMenu: (anchor: HTMLElement) => void;
 }

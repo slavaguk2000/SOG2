@@ -57,7 +57,6 @@ const MainScreenRatioProvider: FC<PropsWithChildren> = ({ children }) => {
           const currentScreen =
             screensCount > 1 ? (prev.currentScreen + 1 < screensCount ? prev.currentScreen + 1 : screensCount - 1) : 0;
 
-          console.log(2, Math.min(currentScreen / prev.screensCount, 1));
           resolve(Math.min(currentScreen / prev.screensCount, 1));
 
           return {

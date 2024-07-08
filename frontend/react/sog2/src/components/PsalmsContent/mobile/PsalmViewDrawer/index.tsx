@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Drawer } from '@mui/material';
+import { SwipeableDrawer } from '@mui/material';
 
 import { useCurrentPsalms } from '../../../../providers/dataProviders/psalmsDataProvider/CurrentPsalmProvider';
 
@@ -10,9 +10,15 @@ const PsalmViewDrawer = () => {
   const { currentPsalm, clearPsalmSelect } = useCurrentPsalms();
 
   return (
-    <Drawer open={!!currentPsalm} onClose={clearPsalmSelect} anchor="right">
-      <PsalmViewDrawerBody />
-    </Drawer>
+    <SwipeableDrawer
+      disableSwipeToOpen
+      open={!!currentPsalm}
+      onClose={clearPsalmSelect}
+      onOpen={() => true}
+      anchor="right"
+    >
+      {currentPsalm && <PsalmViewDrawerBody />}
+    </SwipeableDrawer>
   );
 };
 
