@@ -76,3 +76,26 @@ export const StyledListItem = styled(ListItem)`
   height: 100%;
   width: 100%;
 `;
+
+export const SortablePsalmsListWrapper = styled(Box)`
+  height: 100%;
+
+  & > ul {
+    padding: 0;
+    margin: 0;
+
+    & > li {
+      position: relative;
+    }
+  }
+`;
+
+export const StyledSortableListItem = styled(ListItem)`
+  height: 46px;
+`;
+
+export const ListItemContentBackground = styled(Box)`
+  height: 100%;
+  width: 100%;
+  background: ${({ theme }) => theme.palette.background.default};
+`;
