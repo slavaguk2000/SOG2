@@ -1,4 +1,12 @@
-import { BottomNavigationAction, BottomNavigationActionProps, Box, ListItem, styled } from '@mui/material';
+import {
+  BottomNavigationAction,
+  BottomNavigationActionProps,
+  Box,
+  ListItem,
+  ListItemText,
+  ListItemTextProps,
+  styled,
+} from '@mui/material';
 
 export const PsalmsContentMobileWrapper = styled(Box)`
   display: flex;
@@ -97,4 +105,22 @@ export const ListItemContentBackground = styled(Box)`
   height: 100%;
   width: 100%;
   background: ${({ theme }) => theme.palette.background.default};
+`;
+
+interface StyledListItemText extends ListItemTextProps {
+  isDrawerOpen: boolean;
+  isSortable: boolean;
+}
+
+export const StyledListItemText = styled(ListItemText, {
+  shouldForwardProp(propName: PropertyKey) {
+    return !(['isDrawerOpen', 'isSortable'] as PropertyKey[]).includes(propName);
+  },
+})<StyledListItemText>`
+  transition: all 0.2s ease-out;
+  position: absolute;
+  margin: 6px;
+
+  width: calc(100% - ${({ isSortable }) => (isSortable ? '105px' : '60px')});
+  left: ${({ isDrawerOpen, isSortable }) => (isDrawerOpen ? 0 : isSortable ? '45px' : '11px')};
 `;

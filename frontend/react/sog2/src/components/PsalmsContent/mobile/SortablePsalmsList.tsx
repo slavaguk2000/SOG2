@@ -34,10 +34,9 @@ const ReorderItem = ({ item }: ReorderItemProps) => {
               height="100%"
               display="flex"
               alignItems="center"
-              overflow="hidden"
-              width={currentPsalm ? 0 : undefined}
-              sx={{ touchAction: 'none', transition: 'all 0.1s ease-out' }}
-              pl={currentPsalm ? 0 : '15px'}
+              position="absolute"
+              sx={{ touchAction: 'none', transition: 'all 0.2s ease-out', left: currentPsalm ? '-40px' : 0 }}
+              pl="15px"
               className="reorder-handle"
               onPointerDown={(e) => dragControls.start(e)}
             >

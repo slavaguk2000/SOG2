@@ -1,6 +1,6 @@
 import React, { Dispatch, ReactElement, SetStateAction, TouchEvent } from 'react';
 
-import { Box, ListItemButton, ListItemText, SxProps, Theme } from '@mui/material';
+import { Box, ListItemButton, SxProps, Theme } from '@mui/material';
 import { useLongPress } from '@uidotdev/usehooks';
 
 import { useCurrentPsalms } from '../../../providers/dataProviders/psalmsDataProvider/CurrentPsalmProvider';
@@ -9,7 +9,7 @@ import { Maybe } from '../../../utils/gql/types';
 import FavouriteIconButton, { FavouriteIconButtonBody } from '../common/InFavouriteIconButton';
 
 import { usePsalmsContentMobileContext } from './PsalmsContentMobileContextProvider';
-import { ListItemContentBackground } from './styled';
+import { ListItemContentBackground, StyledListItemText } from './styled';
 
 interface PsalmItemProps {
   inFavourite: boolean;
@@ -72,21 +72,24 @@ const PsalmItem = ({
       <Box sx={{ background: inFavourite ? '#0253' : undefined, height: '100%', width: '100%' }}>
         <ListItemButton sx={{ height: '100%', width: '100%', padding: 0 }} onClick={handleSelectItem}>
           {reorderIcon}
-          <ListItemText
-            sx={{ margin: selectedPsalm ? '0 16px 0 5px' : '0 16px', transition: 'all 0.2s ease-out' }}
+          <StyledListItemText
+            isDrawerOpen={!!selectedPsalm}
+            isSortable={!!reorderIcon}
             primary={`${psalmNumber} ${name}`}
             {...longPressAttrs}
           />
-          {favouriteReady ? (
-            <FavouriteIconButton
-              psalmId={psalmId}
-              transposition={transposition}
-              onChange={onFavouriteChange}
-              sx={favouriteIconButtonSx}
-            />
-          ) : (
-            <FavouriteIconButtonBody sx={favouriteIconButtonSx} />
-          )}
+          <Box position="absolute" right={0} height="100%">
+            {favouriteReady ? (
+              <FavouriteIconButton
+                psalmId={psalmId}
+                transposition={transposition}
+                onChange={onFavouriteChange}
+                sx={favouriteIconButtonSx}
+              />
+            ) : (
+              <FavouriteIconButtonBody sx={favouriteIconButtonSx} />
+            )}
+          </Box>
         </ListItemButton>
       </Box>
     </ListItemContentBackground>

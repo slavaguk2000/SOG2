@@ -97,6 +97,7 @@ const PsalmSelect = () => {
         psalmId={id}
         inFavourite={!!favouritePsalmsDataMap[id]}
         transposition={transposition}
+        sx={{ margin: '-5px 0' }}
       />
     </Box>
   );
