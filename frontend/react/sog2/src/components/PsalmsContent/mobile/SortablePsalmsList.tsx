@@ -9,7 +9,7 @@ import { usePsalms } from '../../../providers/dataProviders/psalmsDataProvider/P
 import { PsalmData } from '../../../providers/types';
 
 import PsalmItem from './PsalmItem';
-import { SortablePsalmsListWrapper, StyledSortableListItem } from './styled';
+import { SortablePsalmsListWrapper } from './styled';
 
 interface ReorderItemProps {
   item: PsalmData;
@@ -20,7 +20,7 @@ const ReorderItem = ({ item }: ReorderItemProps) => {
 
   return (
     <Reorder.Item value={item} dragListener={false} dragControls={dragControls}>
-      <StyledSortableListItem disablePadding>
+      <Box height="46px">
         <PsalmItem
           psalmNumber={item.psalmNumber}
           inFavourite
@@ -38,7 +38,7 @@ const ReorderItem = ({ item }: ReorderItemProps) => {
             </Box>
           }
         />
-      </StyledSortableListItem>
+      </Box>
     </Reorder.Item>
   );
 };

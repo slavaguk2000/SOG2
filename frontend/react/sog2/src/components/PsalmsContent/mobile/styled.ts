@@ -93,10 +93,6 @@ export const SortablePsalmsListWrapper = styled(Box)`
   }
 `;
 
-export const StyledSortableListItem = styled(ListItem)`
-  height: 46px;
-`;
-
 export const ListItemContentBackground = styled(Box)`
   height: 100%;
   width: 100%;
