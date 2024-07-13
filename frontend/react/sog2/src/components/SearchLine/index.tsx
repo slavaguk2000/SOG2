@@ -1,63 +1,15 @@
-import React, { Context, KeyboardEvent, useContext, useEffect, useRef, useState } from 'react';
-import { useLocation, useSearchParams } from 'react-router-dom';
+import React, { KeyboardEvent, useEffect, useRef, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 
-import { useQuery } from '@apollo/client';
 import TextField from '@mui/material/TextField';
-import { debounce } from 'lodash';
 
-import { debounceInputDelay, minimumSearchLength } from 'src/constants/behaviorConstants';
-import { search } from 'src/utils/gql/queries';
-import { Query, QuerySearchArgs, Slide, TabType } from 'src/utils/gql/types';
-
-import BibleContext from '../../providers/dataProviders/bibleDataProvider/context';
-import { CurrentPsalmContext } from '../../providers/dataProviders/psalmsDataProvider/CurrentPsalmProvider';
-import SermonDataProviderContext from '../../providers/dataProviders/sermanDataProvider/context';
-import { DataProvider } from '../../providers/types';
+import { Slide, TabType } from 'src/utils/gql/types';
 
 import SearchLineAutocompleteItem from './SearchLineAutocompleteItem';
 import { SearchLineAutocomplete, SearchLineWrapper } from './styled';
-
-const handleSearch = debounce(
-  (searchText: string, handleUpdateSearchText: (newSearchText: string) => void) => handleUpdateSearchText(searchText),
-  debounceInputDelay,
-  { leading: true, trailing: true },
-);
-
-const getShouldSkip = (tabType: TabType, searchString: string) => {
-  switch (tabType) {
-    case TabType.Psalm:
-      return !searchString.length;
-    default:
-      return searchString.length < minimumSearchLength;
-  }
-};
-
-const getSearchParamKey = (tabType: TabType) => {
-  switch (tabType) {
-    case TabType.Psalm:
-      return 'psalmsBookId';
-    case TabType.Bible:
-      return 'bibleId';
-    default:
-      return 'id';
-  }
-};
-
-const getDataProviderContext = (tabType: TabType) => {
-  switch (tabType) {
-    case TabType.Psalm:
-      return CurrentPsalmContext;
-    case TabType.Bible:
-      return BibleContext;
-    case TabType.Sermon:
-      return SermonDataProviderContext;
-  }
-};
+import useSearch from './useSearch';
 
 const SearchLine = () => {
-  const [searchParams] = useSearchParams();
-  const [debouncedSearchText, setDebouncedSearchText] = useState<string>('');
-  const [searchText, setSearchText] = useState<string>('');
   const [autocompleteActive, setAutocompleteActive] = useState<boolean>(false);
   const [selectedProposeIdx, setSelectedProposeIdx] = useState<number>(0);
   const searchLineRef = useRef<HTMLInputElement>(null);
@@ -67,27 +19,23 @@ const SearchLine = () => {
 
   const tabType = pathname === '/bible' ? TabType.Bible : pathname === '/sermon' ? TabType.Sermon : TabType.Psalm;
 
-  const { data } = useQuery<Pick<Query, 'search'>, QuerySearchArgs>(search, {
-    variables: {
-      searchPattern: debouncedSearchText,
-      tabType,
-      id: searchParams.get(getSearchParamKey(tabType)),
-    },
-    fetchPolicy: 'cache-first',
-    skip: getShouldSkip(tabType, debouncedSearchText),
-  });
-
-  const options: Slide[] = data?.search ?? [];
-
-  const clearSearchLine = () => {
-    setDebouncedSearchText('');
-    setSearchText('');
+  const afterSearchTextChanged = () => {
     setSelectedProposeIdx(0);
   };
 
-  const { handleUpdateSlide, handleUpdateLocation } = useContext<DataProvider>(
-    getDataProviderContext(tabType) as unknown as Context<DataProvider>,
-  );
+  const {
+    handleSearchTextChange,
+    handleSelectSlide,
+    handleSelectPlace,
+    clearSearchLine,
+    options,
+    hasResults,
+    searchText,
+    handleUpdateLocation,
+    handleUpdateSlide,
+  } = useSearch({
+    afterSearchTextChanged,
+  });
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Escape') {
@@ -151,26 +99,6 @@ const SearchLine = () => {
     }
   };
 
-  const handleSearchTextChange = (newValue: string) => {
-    setSearchText(newValue);
-    handleSearch(newValue, setDebouncedSearchText);
-    setSelectedProposeIdx(0);
-  };
-
-  const autocompleteOpen = Boolean(autocompleteActive && debouncedSearchText && options.length);
-
-  const handleClickOption = (newSlide: Slide) => {
-    clearSearchLine();
-
-    handleUpdateSlide(newSlide);
-  };
-
-  const handlePlaceClick = (slide: Slide) => {
-    clearSearchLine();
-
-    handleUpdateLocation(slide);
-  };
-
   useEffect(() => {
     const handleGlobalKeyDown = (event: WindowEventMap['keydown']) => {
       const isLetter = event.key.length === 1 && /[1-4a-zA-Zа-яА-ЯёЁ]/.test(event.key);
@@ -196,6 +124,8 @@ const SearchLine = () => {
       setPlaceSelected(false);
     }
   };
+
+  const autocompleteOpen = autocompleteActive && hasResults;
 
   return (
     <SearchLineWrapper>
@@ -238,8 +168,8 @@ const SearchLine = () => {
           return (
             <SearchLineAutocompleteItem
               key={key}
-              onClick={() => handleClickOption(option as Slide)}
-              onPlaceClick={() => handlePlaceClick(option as Slide)}
+              onClick={() => handleSelectSlide(option as Slide)}
+              onPlaceClick={() => handleSelectPlace(option as Slide)}
               slide={option as Slide}
               selected={selected}
               placeSelected={placeSelected}

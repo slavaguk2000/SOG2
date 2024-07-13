@@ -7,13 +7,13 @@ import { SearchLineAutocompleteItemWrapper } from './styled';
 
 interface SearchLineAutocompleteItemProps {
   slide: Slide;
-  onPlaceClick: () => void;
-  onClick: () => void;
-  selected: boolean;
-  setSelected: () => void;
-  onPlaceHover: () => void;
-  onPlaceBlur: () => void;
-  placeSelected: boolean;
+  onPlaceClick?: () => void;
+  onClick?: () => void;
+  selected?: boolean;
+  setSelected?: () => void;
+  onPlaceHover?: () => void;
+  onPlaceBlur?: () => void;
+  placeSelected?: boolean;
 }
 
 const SearchLineAutocompleteItem = ({
@@ -40,7 +40,7 @@ const SearchLineAutocompleteItem = ({
   return (
     <SearchLineAutocompleteItemWrapper
       onClick={onClick}
-      selected={selected && !placeSelected}
+      selected={!(!selected || placeSelected)}
       onMouseEnter={setSelected}
       ref={itemRef}
     >
