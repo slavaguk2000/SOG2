@@ -57,7 +57,7 @@ export interface BibleContextType extends DataProvider {
   getReadableBiblePlace: (slide: Slide, withVerse?: boolean) => string;
 }
 
-interface PsalmData extends Psalm {
+export interface PsalmData extends Psalm {
   tonality?: Maybe<MusicalKey>;
   transposition: number;
 }

@@ -6,9 +6,42 @@ import { Reorder, useDragControls } from 'framer-motion';
 
 import useReorder from '../../../hooks/useReorder';
 import { usePsalms } from '../../../providers/dataProviders/psalmsDataProvider/PsalmsProvider';
+import { PsalmData } from '../../../providers/types';
 
 import PsalmItem from './PsalmItem';
 import { SortablePsalmsListWrapper, StyledSortableListItem } from './styled';
+
+interface ReorderItemProps {
+  item: PsalmData;
+}
+
+const ReorderItem = ({ item }: ReorderItemProps) => {
+  const dragControls = useDragControls();
+
+  return (
+    <Reorder.Item value={item} dragListener={false} dragControls={dragControls}>
+      <StyledSortableListItem disablePadding>
+        <PsalmItem
+          psalmNumber={item.psalmNumber}
+          inFavourite
+          psalmId={item.id}
+          transposition={item.transposition}
+          name={item.name}
+          reorderIcon={
+            <Box
+              sx={{ touchAction: 'none' }}
+              pl="15px"
+              className="reorder-handle"
+              onPointerDown={(e) => dragControls.start(e)}
+            >
+              <ReorderIcon />
+            </Box>
+          }
+        />
+      </StyledSortableListItem>
+    </Reorder.Item>
+  );
+};
 
 const SortablePsalmsList = () => {
   const { psalmsData, handlePsalmsReorder } = usePsalms();
@@ -18,28 +51,11 @@ const SortablePsalmsList = () => {
     updateBackend: (items) => handlePsalmsReorder(items.map(({ id }) => id)),
   });
 
-  const controls = useDragControls();
-
   return (
     <SortablePsalmsListWrapper>
       <Reorder.Group axis="y" values={orderableData} onReorder={onReorder} layoutScroll style={{ overflowY: 'scroll' }}>
         {orderableData.map((item) => (
-          <Reorder.Item key={item.id} value={item} dragListener={false} dragControls={controls}>
-            <StyledSortableListItem disablePadding>
-              <PsalmItem
-                psalmNumber={item.psalmNumber}
-                inFavourite
-                psalmId={item.id}
-                transposition={item.transposition}
-                name={item.name}
-                reorderIcon={
-                  <Box pl="15px" className="reorder-handle" onPointerDown={(e) => controls.start(e)}>
-                    <ReorderIcon />
-                  </Box>
-                }
-              />
-            </StyledSortableListItem>
-          </Reorder.Item>
+          <ReorderItem key={item.id} item={item} />
         ))}
       </Reorder.Group>
     </SortablePsalmsListWrapper>
