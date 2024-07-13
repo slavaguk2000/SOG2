@@ -3,11 +3,13 @@ import React, { createContext, PropsWithChildren, useContext, useMemo } from 're
 import { useMutation, useQuery } from '@apollo/client';
 
 import { keyToScaleDegree, scaleDegreeToKey } from '../../../components/psalmChords/utils';
+import { arrayToMap } from '../../../utils';
 import { psalms, reorderPsalmsInPsalmsBook } from '../../../utils/gql/queries';
 import {
   MusicalKey,
   Mutation,
   MutationReorderPsalmsInPsalmsBookArgs,
+  PsalmsBookItem,
   PsalmsSortingKeys,
   Query,
   QueryPsalmsArgs,
@@ -97,6 +99,33 @@ const PsalmsProvider = ({ children }: PropsWithChildren) => {
           variables: {
             psalmsBookId,
             psalmsIds: ids,
+          },
+          update: (cache) => {
+            const data = cache.readQuery<Pick<Query, 'psalms'>, QueryPsalmsArgs>({
+              query: psalms,
+              variables: { psalmsBookId },
+            });
+
+            if (data) {
+              const psalmMap = arrayToMap(data.psalms, { keyMapper: ({ psalm }) => psalm.id });
+
+              const reorderedPsalms = ids.reduce((acc: Array<PsalmsBookItem>, id) => {
+                const psalm = psalmMap[id];
+                if (psalm) {
+                  acc.push(psalm);
+                }
+
+                return acc;
+              }, []);
+
+              cache.writeQuery({
+                query: psalms,
+                variables: { psalmsBookId },
+                data: {
+                  psalms: reorderedPsalms,
+                },
+              });
+            }
           },
         });
       } catch (e) {

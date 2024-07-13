@@ -1,4 +1,5 @@
 type MapFunction<T, P> = (item: T, idx: number) => P;
+type KeyMapperFunction<T> = (item: T) => string;
 
 export function arrayToMap<T extends Record<string, unknown>, P>(
   array: T[],
@@ -10,14 +11,19 @@ export function arrayToMap<T extends Record<string, unknown>>(
   options?: { key?: string },
 ): Record<string, T>;
 
+export function arrayToMap<T extends Record<string, unknown>>(
+  array: T[],
+  options: { keyMapper: KeyMapperFunction<T> },
+): Record<string, T>;
+
 export function arrayToMap<T extends Record<string, unknown>, P>(
   array: T[],
-  options?: { key?: string; mapper?: MapFunction<T, P> },
+  options?: { key?: string; mapper?: MapFunction<T, P>; keyMapper?: KeyMapperFunction<T> },
 ): Record<string, P | T> {
-  const key = options?.key || 'id';
+  const keyMapper = options?.keyMapper ?? ((item: T) => item[options?.key || 'id'] as string);
 
   return array.reduce((acc: Record<string, P | T>, item, idx) => {
-    acc[item[key] as string] = options?.mapper ? options.mapper(item, idx) : item;
+    acc[keyMapper(item)] = options?.mapper ? options.mapper(item, idx) : item;
     return acc;
   }, {});
 }
