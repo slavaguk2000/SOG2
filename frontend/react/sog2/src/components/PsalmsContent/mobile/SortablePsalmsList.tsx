@@ -5,6 +5,7 @@ import { Box } from '@mui/material';
 import { Reorder, useDragControls } from 'framer-motion';
 
 import useReorder from '../../../hooks/useReorder';
+import { useCurrentPsalms } from '../../../providers/dataProviders/psalmsDataProvider/CurrentPsalmProvider';
 import { usePsalms } from '../../../providers/dataProviders/psalmsDataProvider/PsalmsProvider';
 import { PsalmData } from '../../../providers/types';
 
@@ -17,6 +18,7 @@ interface ReorderItemProps {
 
 const ReorderItem = ({ item }: ReorderItemProps) => {
   const dragControls = useDragControls();
+  const { currentPsalm } = useCurrentPsalms();
 
   return (
     <Reorder.Item value={item} dragListener={false} dragControls={dragControls}>
@@ -29,8 +31,13 @@ const ReorderItem = ({ item }: ReorderItemProps) => {
           name={item.name}
           reorderIcon={
             <Box
-              sx={{ touchAction: 'none' }}
-              pl="15px"
+              height="100%"
+              display="flex"
+              alignItems="center"
+              overflow="hidden"
+              width={currentPsalm ? 0 : undefined}
+              sx={{ touchAction: 'none', transition: 'all 0.1s ease-out' }}
+              pl={currentPsalm ? 0 : '15px'}
               className="reorder-handle"
               onPointerDown={(e) => dragControls.start(e)}
             >
