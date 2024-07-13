@@ -1,15 +1,11 @@
 import React, { createContext, PropsWithChildren, useContext, useMemo } from 'react';
 
-import { useMutation, useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 
 import { keyToScaleDegree, scaleDegreeToKey } from '../../../components/psalmChords/utils';
-import { arrayToMap } from '../../../utils';
-import { psalms, reorderPsalmsInPsalmsBook } from '../../../utils/gql/queries';
+import { psalms } from '../../../utils/gql/queries';
 import {
   MusicalKey,
-  Mutation,
-  MutationReorderPsalmsInPsalmsBookArgs,
-  PsalmsBookItem,
   PsalmsSortingKeys,
   Query,
   QueryPsalmsArgs,
@@ -17,6 +13,8 @@ import {
   SortingDirection,
 } from '../../../utils/gql/types';
 import { PsalmsContextType } from '../../types';
+
+import useReorderPsalmsMutation from './hooks/useReorderPsalmsMutation';
 
 import { usePsalmsSelectionData } from './index';
 
@@ -50,11 +48,6 @@ export const getPsalmSlideContentFromSlide = (slide?: Slide): string => {
 
 const PsalmsProvider = ({ children }: PropsWithChildren) => {
   const { psalmsBookId, favouritePsalmsBookId } = usePsalmsSelectionData();
-
-  const [reorderPsalmsInPsalmsBookMutation] = useMutation<
-    Pick<Mutation, 'reorderPsalmsInPsalmsBook'>,
-    MutationReorderPsalmsInPsalmsBookArgs
-  >(reorderPsalmsInPsalmsBook);
 
   const { data: psalmsQueryData, loading: psalmsQueryDataLoading } = useQuery<Pick<Query, 'psalms'>, QueryPsalmsArgs>(
     psalms,
@@ -92,47 +85,7 @@ const PsalmsProvider = ({ children }: PropsWithChildren) => {
 
   const dataLength = psalmsData?.length ?? 0;
 
-  const handlePsalmsReorder = async (ids: string[]) => {
-    if (psalmsBookId) {
-      try {
-        await reorderPsalmsInPsalmsBookMutation({
-          variables: {
-            psalmsBookId,
-            psalmsIds: ids,
-          },
-          update: (cache) => {
-            const data = cache.readQuery<Pick<Query, 'psalms'>, QueryPsalmsArgs>({
-              query: psalms,
-              variables: { psalmsBookId },
-            });
-
-            if (data) {
-              const psalmMap = arrayToMap(data.psalms, { keyMapper: ({ psalm }) => psalm.id });
-
-              const reorderedPsalms = ids.reduce((acc: Array<PsalmsBookItem>, id) => {
-                const psalm = psalmMap[id];
-                if (psalm) {
-                  acc.push(psalm);
-                }
-
-                return acc;
-              }, []);
-
-              cache.writeQuery({
-                query: psalms,
-                variables: { psalmsBookId },
-                data: {
-                  psalms: reorderedPsalms,
-                },
-              });
-            }
-          },
-        });
-      } catch (e) {
-        console.error(e);
-      }
-    }
-  };
+  const { handlePsalmsReorder } = useReorderPsalmsMutation({ psalmsBookId });
 
   return (
     <PsalmsContext.Provider
