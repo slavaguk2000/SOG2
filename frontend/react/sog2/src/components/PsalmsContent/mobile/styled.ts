@@ -23,6 +23,7 @@ export const PsalmsContentMobileFooterWrapper = styled(Box)`
   & > div {
     width: 100%;
     height: 100%;
+    z-index: 1;
   }
 `;
 
@@ -78,11 +79,13 @@ export const StyledListItem = styled(ListItem)`
 `;
 
 export const SortablePsalmsListWrapper = styled(Box)`
-  height: 100%;
+  height: 0;
+  flex: 1;
 
   & > ul {
     padding: 0;
     margin: 0;
+    height: 100%;
 
     & > li {
       position: relative;

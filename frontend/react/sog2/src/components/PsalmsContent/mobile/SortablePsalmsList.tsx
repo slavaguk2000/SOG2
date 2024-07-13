@@ -24,12 +24,7 @@ const SortablePsalmsList = () => {
     <SortablePsalmsListWrapper>
       <Reorder.Group axis="y" values={orderableData} onReorder={onReorder} layoutScroll style={{ overflowY: 'scroll' }}>
         {orderableData.map((item) => (
-          <Reorder.Item
-            key={item.id}
-            value={item}
-            // dragListener={false}
-            // dragControls={controls}
-          >
+          <Reorder.Item key={item.id} value={item} dragListener={false} dragControls={controls}>
             <StyledSortableListItem disablePadding>
               <PsalmItem
                 psalmNumber={item.psalmNumber}
