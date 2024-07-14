@@ -2,9 +2,9 @@ import { useState } from 'react';
 
 import { useMutation } from '@apollo/client';
 
-import { updatePsalmTransposition } from '../../utils/gql/queries';
-import { Maybe, MusicalKey, Mutation, MutationUpdatePsalmTranspositionArgs } from '../../utils/gql/types';
-import { keyToScaleDegree } from '../psalmChords/utils';
+import { updatePsalmTransposition } from '../../../utils/gql/queries';
+import { Maybe, MusicalKey, Mutation, MutationUpdatePsalmTranspositionArgs } from '../../../utils/gql/types';
+import { keyToScaleDegree } from '../../psalmChords/utils';
 
 const useTransposeSong = (
   psalmsBookId?: string,
@@ -36,7 +36,10 @@ const useTransposeSong = (
     const defaultTonalityScaleDegree = defaultTonality && keyToScaleDegree[defaultTonality];
     const newTonalityScaleDegree = keyToScaleDegree[newTonality];
 
-    if (typeof newTonalityScaleDegree === 'number' && typeof defaultTonalityScaleDegree === 'number') {
+    if (
+      typeof (newTonalityScaleDegree as number | undefined) === 'number' &&
+      typeof defaultTonalityScaleDegree === 'number'
+    ) {
       setCurrentTransposition(newTonalityScaleDegree - defaultTonalityScaleDegree);
     }
   };

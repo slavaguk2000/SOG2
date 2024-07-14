@@ -6,9 +6,9 @@ import ChordableCharChordAndContent, { ChordWithMainKeyData } from './ChordableC
 
 interface ChordableTextProps {
   text: string;
-  fontSize: number;
-  onAddChord: (newChordData: CoupletContentChord, charPosition: number) => void;
-  onLinkChord: (chordData: CoupletContentChord, charPosition: number) => void;
+  fontSize?: number;
+  onAddChord?: (newChordData: CoupletContentChord, charPosition: number) => void;
+  onLinkChord?: (chordData: CoupletContentChord, charPosition: number) => void;
   existingChordData?: ChordWithMainKeyData;
   chordColor?: string;
 }
@@ -38,8 +38,8 @@ const ChordableText = ({
           fontSize={fontSize}
           char={char}
           existingChordData={existingChordData}
-          onAddChord={(chordValue) => onAddChord(chordValue, idx + 1)}
-          onLinkChord={(chordValue) => onLinkChord(chordValue, idx + 1)}
+          onAddChord={onAddChord && ((chordValue) => onAddChord(chordValue, idx + 1))}
+          onLinkChord={onLinkChord && ((chordValue) => onLinkChord(chordValue, idx + 1))}
           chordColor={chordColor}
         />
       ))}

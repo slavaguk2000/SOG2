@@ -7,11 +7,11 @@ import {
 } from './styled';
 
 interface SearchLineAutocompleteItemContentProps {
-  onPlaceClick: () => void;
+  onPlaceClick?: () => void;
   searchContent: string;
-  onPlaceHover: () => void;
-  onPlaceBlur: () => void;
-  placeSelected: boolean;
+  onPlaceHover?: () => void;
+  onPlaceBlur?: () => void;
+  placeSelected?: boolean;
 }
 
 // 1 <span class="highlighted">Паралипоменон</span> <span class="highlighted">1</span>:<span class="highlighted">39</span> Сыновья Лотана: Хори и <span class="highlighted">Гемам</span>; а сестра у Лотана: Фимна.
@@ -38,7 +38,7 @@ const SearchLineAutocompleteItemContent = ({
 
   const handlePlaceClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    onPlaceClick();
+    onPlaceClick?.();
   };
 
   return (
@@ -46,7 +46,7 @@ const SearchLineAutocompleteItemContent = ({
       <SearchLineAutocompleteItemContentPlaceWrapper
         onClick={handlePlaceClick}
         dangerouslySetInnerHTML={{ __html: place }}
-        selected={placeSelected}
+        selected={!!placeSelected}
         onMouseEnter={onPlaceHover}
         onMouseLeave={onPlaceBlur}
       />

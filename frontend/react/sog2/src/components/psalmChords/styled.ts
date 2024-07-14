@@ -17,7 +17,6 @@ export const PsalmChordsViewTitleWrapper = styled(Box)`
   display: flex;
   width: 100%;
   justify-content: center;
-  text-decoration: underline;
   padding: 0 0 20px;
 `;
 
@@ -33,18 +32,18 @@ export const PsalmChordsViewCoupletWrapper = styled(Box, {
   shouldForwardProp(propName: PropertyKey) {
     return !(['hoverable', 'styling'] as PropertyKey[]).includes(propName);
   },
-})<{ hoverable: boolean; styling: number }>`
-    ${({ styling }) =>
-      styling
-        ? `
+})<{ hoverable: boolean; styling?: number }>`
+  ${({ styling }) =>
+    styling
+      ? `
           font-weight: bold;
           font-style: italic;
         `
-        : ''}
+      : ''}
 
-    ${({ hoverable }) =>
-      hoverable
-        ? `
+  ${({ hoverable }) =>
+    hoverable
+      ? `
           & > div {
             display: flex;
             flex-direction: column;
@@ -60,16 +59,16 @@ export const PsalmChordsViewCoupletWrapper = styled(Box, {
             font-style: italic;
           }
         `
-        : `
+      : `
           display: flex;
           flex-direction: column;
           align-items: flex-start;
         `}
-  }
+}
 `;
 
 interface ChordWrapperProps {
-  contentFontSize: number;
+  contentFontSize?: number;
   isChordDeleting?: boolean;
   nonDeletable?: boolean;
   isChordEditing?: boolean;
@@ -130,10 +129,10 @@ export const ChordWrapper = styled('span', {
   `
       : ''}
 
-  ${({ contentFontSize }) => contentFontSize && `top: -${contentFontSize * 0.75}px;`}
+  ${({ contentFontSize }) => (contentFontSize === undefined ? '' : `top: -${contentFontSize * 0.75}px;`)}
 
   ${({ nonDeletable, isChordDeleting }) => (nonDeletable && isChordDeleting ? `opacity: 0.3;` : '')}
-  
+
   ${({ isSameChordLinking, isCurrentChordLinking }) =>
     isSameChordLinking
       ? `
@@ -195,9 +194,9 @@ export const TextContentEditingField = styled('input', {
   shouldForwardProp(propName: PropertyKey) {
     return propName !== 'fontSize';
   },
-})<{ fontSize: number }>`
+})<{ fontSize?: number }>`
   font-family: 'Times New Roman', sans-serif;
-  font-size: ${({ fontSize }) => fontSize}px;
+  ${({ fontSize }) => (fontSize ? `font-size: ${fontSize}px` : '')};
   padding: 8.5px 5px;
   border-radius: 10px;
 `;

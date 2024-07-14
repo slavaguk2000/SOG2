@@ -70,6 +70,5 @@ export const PsalmBookItemWrapper = styled(Box, {
 `;
 
 export const StyledIconButton = styled(IconButton)`
-  margin: -5px 0;
   width: 34px;
 `;

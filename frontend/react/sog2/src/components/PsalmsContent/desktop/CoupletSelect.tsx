@@ -1,15 +1,15 @@
 import React, { useEffect, useMemo, useRef } from 'react';
 
-import PreselectBox from '../../hooks/useFastNumberSelection/PreselectBox';
-import useFastNumberSelection from '../../hooks/useFastNumberSelection/useFastNumberSelection';
+import PreselectBox from '../../../hooks/useFastNumberSelection/PreselectBox';
+import useFastNumberSelection from '../../../hooks/useFastNumberSelection/useFastNumberSelection';
+import { useCurrentPsalms } from '../../../providers/dataProviders/psalmsDataProvider/CurrentPsalmProvider';
 import {
   extractCoupletPrefixFromLocation,
   getPsalmSlideContentFromSlide,
-  usePsalmsData,
-} from '../../providers/dataProviders/psalmsDataProvider';
-import { useInstrumentsField } from '../../providers/instrumentsFieldProvider';
-import { Slide } from '../../utils/gql/types';
-import BibleEntityItem from '../BibleContent/BibleEntityItem';
+} from '../../../providers/dataProviders/psalmsDataProvider/PsalmsProvider';
+import { useInstrumentsField } from '../../../providers/instrumentsFieldProvider';
+import { Slide } from '../../../utils/gql/types';
+import BibleEntityItem from '../../BibleContent/BibleEntityItem';
 
 import { CoupletSelectWrapper } from './styled';
 
@@ -18,7 +18,7 @@ const debounceSeconds = 0.7;
 const CoupletSelect = () => {
   const coupletsRef = useRef<HTMLElement>(null);
 
-  const { psalmData, handleUpdateSlide } = usePsalmsData();
+  const { psalmData, handleUpdateSlide } = useCurrentPsalms();
   const { currentSlide } = useInstrumentsField();
 
   const preparedData = useMemo(

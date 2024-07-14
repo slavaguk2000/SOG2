@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { ApolloClient, InMemoryCache, ApolloProvider, HttpLink, split } from '@apollo/client';
+import { ApolloClient, ApolloProvider, HttpLink, split } from '@apollo/client';
 import { getMainDefinition } from '@apollo/client/utilities';
 import { WebSocketLink } from '@apollo/link-ws';
 import ReactDOM from 'react-dom/client';
@@ -9,6 +9,7 @@ import './index.css';
 import App from './App';
 import BackendStatusChecker from './components/backendStatusChecker';
 import reportWebVitals from './reportWebVitals';
+import cache from './utils/gql/cache';
 import { BACKEND_GRAPHQL_HTTP_URL, BACKEND_GRAPHQL_WS_URL } from './utils/hostUtils';
 
 const httpLink = new HttpLink({
@@ -39,7 +40,7 @@ const link = split(
 
 const client = new ApolloClient({
   link,
-  cache: new InMemoryCache(),
+  cache,
 });
 
 const root = ReactDOM.createRoot(document.getElementById('root'));

@@ -57,24 +57,43 @@ export interface BibleContextType extends DataProvider {
   getReadableBiblePlace: (slide: Slide, withVerse?: boolean) => string;
 }
 
-interface PsalmData extends Psalm {
+export interface PsalmData extends Psalm {
   tonality?: Maybe<MusicalKey>;
-  inFavourite: boolean;
   transposition: number;
 }
 
-export interface PsalmsContextType extends DataProvider {
+export interface PsalmsDataSelectContextType {
   psalmsBookId: string;
-  psalmId: string;
+  favouritePsalmsBookId?: string;
+  setFavouritePsalmsBookId: (newId?: string) => void;
+}
+
+export interface PsalmsBooksContextType {
+  psalmsBookId: string;
   psalmsBooksData?: Query['psalmsBooks'];
-  psalmsData?: Array<PsalmData>;
-  psalmData?: Query['psalm'];
-  handlePsalmSelect: (selectedId: string, transposition?: number) => void;
-  handlePsalmBookSelect: (selectedId: string) => void;
-  handlePsalmsReorder: (ids: string[]) => void;
-  currentPsalm?: Psalm;
+  handlePsalmsBookSelect: (selectedId: string) => void;
   currentPsalmBook?: PsalmsBook;
+}
+
+export interface PsalmsContextType {
+  psalmsData?: Array<PsalmData>;
+  dataLength: number;
+  handlePsalmsReorder: (ids: string[]) => void;
   psalmsQueryDataLoading: boolean;
+}
+
+export interface CurrentPsalmContextType extends DataProvider {
+  psalmId?: string;
+  currentPsalm?: Psalm;
+  handlePsalmSelect: (selectedId: string) => void;
+  clearPsalmSelect: () => void;
+  psalmData?: Query['psalm'];
+}
+
+export interface FavouriteContextType {
+  favouritePsalmsBookId?: string;
+  favouritePsalmsDataMap: Record<string, boolean | undefined>;
+  favouriteReady: boolean;
 }
 
 export interface PresentationContextType {

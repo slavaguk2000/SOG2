@@ -1,8 +1,8 @@
-import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React from 'react';
 
-import { Typography } from '@mui/material';
-
+import useAdaptiveFontSize from '../../hooks/useAdaptiveFontSize';
 import { PsalmData } from '../../utils/gql/types';
+import PsalmTitle from '../PsalmsContent/common/PsalmTitle';
 
 import { useEditableChordsData } from './editableChordsDataProvider';
 import PsalmChordsViewContent from './PsalmChordsViewContent';
@@ -15,22 +15,14 @@ export interface PsalmChordsViewProps {
 const maxFontSize = 35;
 
 const PsalmChordsView = ({ data }: PsalmChordsViewProps) => {
-  const viewRef = useRef<null | HTMLDivElement>(null);
   const { mainKey, psalmData } = useEditableChordsData();
 
   const currentData = data ?? psalmData;
 
-  const [fontSize, setFontSize] = useState(maxFontSize);
-
-  useLayoutEffect(() => {
-    if (viewRef.current && viewRef.current.clientHeight < viewRef.current.scrollHeight) {
-      setFontSize(fontSize - 1);
-    }
-  }, [fontSize, currentData]);
-
-  useEffect(() => {
-    setFontSize(maxFontSize);
-  }, [currentData]);
+  const { viewRef, fontSize } = useAdaptiveFontSize({
+    maxFontSize,
+    deps: [currentData],
+  });
 
   if (!currentData) {
     return null;
@@ -39,11 +31,13 @@ const PsalmChordsView = ({ data }: PsalmChordsViewProps) => {
   return (
     <PsalmChordsViewWrapper ref={viewRef}>
       <PsalmChordsViewTitleWrapper>
-        <Typography
-          fontWeight="bold"
+        <PsalmTitle
           fontSize={fontSize * 0.9}
-          variant="h4"
-        >{`${currentData.psalm.psalmNumber} ${currentData.psalm.name}`}</Typography>
+          psalm={currentData.psalm}
+          typographyProps={{
+            variant: 'h4',
+          }}
+        />
       </PsalmChordsViewTitleWrapper>
 
       <PsalmChordsViewContent fontSize={fontSize} mainKey={mainKey} />

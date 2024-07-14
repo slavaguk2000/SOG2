@@ -3,10 +3,13 @@ import React, { useMemo, useState } from 'react';
 import { Box, Menu, MenuItem } from '@mui/material';
 import { Reorder } from 'framer-motion';
 
-import useReorder from '../../hooks/useReorder';
-import useSelectIntent from '../../hooks/useSelectIntent';
-import { usePsalmsData } from '../../providers/dataProviders/psalmsDataProvider';
-import { Maybe, MusicalKey } from '../../utils/gql/types';
+import useReorder from '../../../hooks/useReorder';
+import useSelectIntent from '../../../hooks/useSelectIntent';
+import { useCurrentPsalms } from '../../../providers/dataProviders/psalmsDataProvider/CurrentPsalmProvider';
+import { useFavouriteData } from '../../../providers/dataProviders/psalmsDataProvider/FavouriteProvider';
+import { usePsalmsBooksData } from '../../../providers/dataProviders/psalmsDataProvider/PsalmsBooksProvider';
+import { usePsalms } from '../../../providers/dataProviders/psalmsDataProvider/PsalmsProvider';
+import { Maybe, MusicalKey } from '../../../utils/gql/types';
 
 import PsalmSelectItem from './PsalmSelectItem';
 import SongTransposer from './SongTransposer';
@@ -16,7 +19,6 @@ import useTransposeSong from './useTransposeSong';
 interface PsalmSelectItemType {
   transposition: number;
   defaultTonality: MusicalKey | null | undefined;
-  inFavourite: boolean;
   name: string;
   id: string;
 }
@@ -27,10 +29,14 @@ const PsalmSelect = () => {
     psalmId: string;
     defaultTonality?: Maybe<MusicalKey>;
   }>(null);
-  const { psalmsData, handlePsalmSelect, currentPsalm, currentPsalmBook, handlePsalmsReorder } = usePsalmsData();
-  const { softSelected, setSoftSelected } = useSelectIntent({
+  const { currentPsalmBook, handlePsalmsBookSelect } = usePsalmsBooksData();
+  const { psalmsData, handlePsalmsReorder } = usePsalms();
+  const { currentPsalm } = useCurrentPsalms();
+  const { favouritePsalmsDataMap } = useFavouriteData();
+
+  const { softSelected, setSoftSelected } = useSelectIntent<string, number>({
     hardSelected: currentPsalm?.id,
-    setHardSelected: handlePsalmSelect,
+    setHardSelected: handlePsalmsBookSelect,
     timeout: 100,
   });
 
@@ -38,11 +44,10 @@ const PsalmSelect = () => {
 
   const preparedData = useMemo(
     () =>
-      psalmsData?.map(({ id, name, psalmNumber, defaultTonality, tonality, inFavourite, transposition }) => {
+      psalmsData?.map(({ id, name, psalmNumber, defaultTonality, tonality, transposition }) => {
         return {
           id,
           name: `${psalmNumber ? `${psalmNumber} ` : ''}${name}${defaultTonality ? ` (${tonality})` : ''}`,
-          inFavourite,
           defaultTonality,
           transposition,
         };
@@ -83,15 +88,16 @@ const PsalmSelect = () => {
     updateBackend: (items) => handlePsalmsReorder(items.map(({ id }) => id)),
   });
 
-  const itemMapper = ({ id, name, inFavourite, transposition, defaultTonality }: PsalmSelectItemType) => (
+  const itemMapper = ({ id, name, transposition, defaultTonality }: PsalmSelectItemType) => (
     <Box key={id} onContextMenu={(e) => handleContextMenu(e, id, defaultTonality)}>
       <PsalmSelectItem
         psalmName={name}
         selected={id === softSelected}
         onClick={() => setSoftSelected(id, transposition)}
         psalmId={id}
-        inFavourite={inFavourite ?? undefined}
+        inFavourite={!!favouritePsalmsDataMap[id]}
         transposition={transposition}
+        sx={{ margin: '-5px 0' }}
       />
     </Box>
   );

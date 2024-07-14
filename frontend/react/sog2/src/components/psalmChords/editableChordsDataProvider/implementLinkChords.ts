@@ -24,7 +24,10 @@ const implementLinkChords = ({ setNewChordsData, chordsData }: ImplementLinkChor
             coupletContent: couplet.coupletContent.reduce((acc: CoupletContent[], coupletContentItem) => {
               if (coupletContentItem.id === coupletContentId && charPosition < coupletContentItem.text.length - 1) {
                 if (charPosition > 0) {
-                  acc.push({ ...coupletContentItem, text: coupletContentItem.text.slice(0, charPosition) });
+                  acc.push({
+                    ...coupletContentItem,
+                    text: coupletContentItem.text.slice(0, charPosition),
+                  });
                   acc.push({
                     ...coupletContentItem,
                     text: coupletContentItem.text.slice(charPosition),

@@ -12,20 +12,21 @@ import LinkChordMenu, { MenuAnchorChordData } from './LinkChordMenu';
 import { PsalmChordsViewCoupletWrapper } from './styled';
 
 interface PsalmCoupletViewProps {
-  coupletId: string;
+  coupletId?: string;
   coupletContent: CoupletContent[];
-  fontSize: number;
-  mainKey: number;
+  fontSize?: number;
+  mainKey?: number;
   splitByLines?: boolean;
-  onCut: (coupletContentId: string, charPosition: number) => void;
-  onRemoveChord: (coupletContentId: string) => void;
-  onAddChord: (coupletContentId: string, charPosition: number, chord: CoupletContentChord) => void;
-  onLinkChord: (coupletContentId: string, charPosition: number, chord: CoupletContentChord) => void;
-  onStartLinkingChord: (coupletContentIdx: number) => void;
+  onCut?: (coupletContentId: string, charPosition: number) => void;
+  onRemoveChord?: (coupletContentId: string) => void;
+  onAddChord?: (coupletContentId: string, charPosition: number, chord: CoupletContentChord) => void;
+  onLinkChord?: (coupletContentId: string, charPosition: number, chord: CoupletContentChord) => void;
+  onStartLinkingChord?: (coupletContentIdx: number) => void;
   linkingChordId?: string;
   currentLinkingChordIdx?: number;
-  onHighLightCouplet: () => void;
-  styling: number;
+  onHighLightCouplet?: () => void;
+  styling?: number;
+  coupletMarker?: string;
 }
 
 interface FilteredCoupletContent extends Omit<CoupletContent, 'chord'> {
@@ -52,6 +53,7 @@ const PsalmCoupletView = ({
   currentLinkingChordIdx,
   onHighLightCouplet,
   styling,
+  coupletMarker,
 }: PsalmCoupletViewProps) => {
   const [menuAnchorChordData, setMenuAnchorChordData] = useState<null | MenuAnchorChordData>(null);
   const {
@@ -73,6 +75,7 @@ const PsalmCoupletView = ({
     () =>
       coupletContent.map((content, idx) => ({
         ...content,
+        text: coupletMarker && !idx ? `${coupletMarker}${content.text}` : content.text,
         chord:
           !(isChordAdding || isChordDeleting || isChordEditing || isChordLinking || isTextEditing || isChordCopying) &&
           idx &&
@@ -80,7 +83,16 @@ const PsalmCoupletView = ({
             ? null
             : content.chord,
       })),
-    [coupletContent, isChordAdding, isChordCopying, isChordDeleting, isChordEditing, isChordLinking, isTextEditing],
+    [
+      coupletMarker,
+      coupletContent,
+      isChordAdding,
+      isChordCopying,
+      isChordDeleting,
+      isChordEditing,
+      isChordLinking,
+      isTextEditing,
+    ],
   );
 
   const { contentByLines } = useMemo(
@@ -111,7 +123,7 @@ const PsalmCoupletView = ({
   );
 
   const handleCoupletClick = () => {
-    if (isCoupletHighlighting) {
+    if (isCoupletHighlighting && onHighLightCouplet) {
       onHighLightCouplet();
     }
   };
@@ -135,7 +147,8 @@ const PsalmCoupletView = ({
       sx: {
         cursor: isGluing ? 'pointer' : undefined,
       },
-      onClick: isGlueWithValidCurrentLine ? () => handleGlueWithNextLine(coupletId, currentLine) : undefined,
+      onClick:
+        isGlueWithValidCurrentLine && coupletId ? () => handleGlueWithNextLine(coupletId, currentLine) : undefined,
     };
   };
 
@@ -156,11 +169,11 @@ const PsalmCoupletView = ({
           fontSize={fontSize}
           mainKey={mainKey}
           textContent={text}
-          onCut={(charPosition) => onCut(contentId, charPosition)}
-          onDeleteRequest={() => onRemoveChord(contentId)}
-          onAddChord={(newChordData, charPosition) => onAddChord(contentId, charPosition, newChordData)}
-          onLinkChord={(chordData, charPosition) => onLinkChord(contentId, charPosition, chordData)}
-          onStartLinkingChord={() => onStartLinkingChord(idx)}
+          onCut={onCut && ((charPosition) => onCut(contentId, charPosition))}
+          onDeleteRequest={onRemoveChord && (() => onRemoveChord(contentId))}
+          onAddChord={onAddChord && ((newChordData, charPosition) => onAddChord(contentId, charPosition, newChordData))}
+          onLinkChord={onLinkChord && ((chordData, charPosition) => onLinkChord(contentId, charPosition, chordData))}
+          onStartLinkingChord={onStartLinkingChord && (() => onStartLinkingChord(idx))}
           linkingChordId={linkingChordId}
           currentChordLinking={currentLinkingChordIdx !== undefined && currentLinkingChordIdx === idx}
           onContentClick={isTextEditing ? () => setEditingTextContentId(contentId) : undefined}

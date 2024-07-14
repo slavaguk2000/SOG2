@@ -27,7 +27,10 @@ const implementAddChord = ({ setNewChordsData, chordsData }: ImplementAddChordPr
                 charPosition > 0 &&
                 charPosition < coupletContentItem.text.length - 1
               ) {
-                acc.push({ ...coupletContentItem, text: coupletContentItem.text.slice(0, charPosition) });
+                acc.push({
+                  ...coupletContentItem,
+                  text: coupletContentItem.text.slice(0, charPosition),
+                });
                 acc.push({
                   ...coupletContentItem,
                   text: coupletContentItem.text.slice(charPosition),

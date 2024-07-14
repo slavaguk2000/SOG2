@@ -7,7 +7,7 @@ interface TextContentEditorProps {
   value: string;
   onChange: (newValue: string) => void;
   onSubmit: () => void;
-  fontSize: number;
+  fontSize?: number;
 }
 
 const TextContentEditor = ({ value, onChange, fontSize, onSubmit }: TextContentEditorProps) => {

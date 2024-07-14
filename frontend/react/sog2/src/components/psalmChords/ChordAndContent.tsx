@@ -12,15 +12,15 @@ import TextContentEditor from './TextContentEditor';
 
 interface ChordAndContentProps {
   chord?: CoupletContentChord;
-  fontSize: number;
-  mainKey: number;
+  fontSize?: number;
+  mainKey?: number;
   textContent: string;
-  onCut: (charPosition: number) => void;
-  onDeleteRequest: () => void;
+  onCut?: (charPosition: number) => void;
+  onDeleteRequest?: () => void;
   firstInLine?: boolean;
-  onAddChord: (newChordData: CoupletContentChord, charPosition: number) => void;
-  onLinkChord: (chordData: CoupletContentChord, charPosition: number) => void;
-  onStartLinkingChord: () => void;
+  onAddChord?: (newChordData: CoupletContentChord, charPosition: number) => void;
+  onLinkChord?: (chordData: CoupletContentChord, charPosition: number) => void;
+  onStartLinkingChord?: () => void;
   onContentClick?: () => void;
   linkingChordId?: string;
   currentChordLinking?: boolean;
@@ -63,10 +63,6 @@ const ChordAndContent = ({
   const { psalmData, handleEditChord } = useEditableChordsData();
   const [editingData, setEditingData] = useState<string>('');
 
-  if (!psalmData) {
-    return null;
-  }
-
   const isLinkSourceChordChoosing = isChordLinking && !linkingChordData;
   const isLinkDestinationChordChoosing = isChordLinking && !!linkingChordData;
 
@@ -75,7 +71,7 @@ const ChordAndContent = ({
 
   const linkingChordDataChord =
     linkingChordData &&
-    psalmData.couplets[linkingChordData.coupletIdx]?.coupletContent[linkingChordData.coupletContentIdx]?.chord;
+    psalmData?.couplets[linkingChordData.coupletIdx]?.coupletContent[linkingChordData.coupletContentIdx]?.chord;
 
   const existingChordData =
     isLinkDestinationChordChoosing && linkingChordData && linkingChordDataChord
@@ -92,17 +88,17 @@ const ChordAndContent = ({
 
   const handleChordClick = (e: React.MouseEvent<HTMLSpanElement>) => {
     if (isChordDeleting) {
-      onDeleteRequest();
+      onDeleteRequest?.();
     } else if (chord) {
-      if (isChordEditing) {
+      if (isChordEditing && mainKey) {
         openChordEditorDialog(chord, mainKey, handleEditChord, {
           left: e.pageX,
           top: e.pageY,
         });
       } else if (isLinkSourceChordChoosing) {
-        onStartLinkingChord();
+        onStartLinkingChord?.();
       } else if (isLinkDestinationChordChoosing && existingChordData) {
-        onLinkChord(existingChordData.chord, 0);
+        onLinkChord?.(existingChordData.chord, 0);
       }
       if (isCopySourceChordChoosing) {
         setCopyingChordData(chord);
@@ -126,7 +122,7 @@ const ChordAndContent = ({
       hoverable={isTextEditing && !textContentEditing}
       onClick={handleClick}
     >
-      {chord && (
+      {chord && mainKey !== undefined && (
         <Chord
           chordData={chord}
           nonDeletable={firstInLine}
