@@ -299,11 +299,6 @@ const PsalmsDataProvider = ({ children }: PropsWithChildren) => {
     }
   };
 
-  const favouriteBookId = useMemo(
-    () => psalmsBooksData?.psalmsBooks?.find(({ isFavourite }) => isFavourite)?.id,
-    [psalmsBooksData],
-  );
-
   return (
     <PsalmsContext.Provider
       value={{
@@ -322,7 +317,6 @@ const PsalmsDataProvider = ({ children }: PropsWithChildren) => {
         handlePsalmSelect: setSoftPsalmIdSelected,
         handlePsalmBookSelect: setSoftPsalmsBookIdSelected,
         psalmsQueryDataLoading,
-        favouriteBookId,
       }}
     >
       {children}

@@ -2,9 +2,9 @@ import React, { useMemo } from 'react';
 
 import { Box } from '@mui/material';
 
-import { allPossibleTonalities } from '../../../utils/chordUtils';
-import { MusicalKey } from '../../../utils/gql/types';
-import ChordWheelSelector from '../../psalmChords/ChordEditor/ChordWheelSelector';
+import { allPossibleTonalities } from '../../utils/chordUtils';
+import { MusicalKey } from '../../utils/gql/types';
+import ChordWheelSelector from '../psalmChords/ChordEditor/ChordWheelSelector';
 
 interface SongTransposerProps {
   defaultTonality: MusicalKey;
