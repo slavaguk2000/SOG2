@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import MenuIcon from '@mui/icons-material/Menu';
 import MoreIcon from '@mui/icons-material/MoreVert';
@@ -7,14 +7,25 @@ import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import Toolbar from '@mui/material/Toolbar';
 
+import { useInstrumentsField } from '../../../providers/instrumentsFieldProvider';
+
 import MobileMenu from './MobileMenu';
-import Search, { SearchProps } from './search';
+import Search from './search';
 import { PsalmsContentMobileHeaderWrapper } from './styled';
 
-type PsalmsContentMobileHeaderProps = SearchProps;
+interface PsalmsContentMobileHeaderProps {
+  setSearchEmpty: (empty: boolean) => void;
+}
 
-const PsalmsContentMobileHeader = ({ ...searchProps }: PsalmsContentMobileHeaderProps) => {
+const PsalmsContentMobileHeader = ({ setSearchEmpty }: PsalmsContentMobileHeaderProps) => {
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState<null | HTMLElement>(null);
+  const { searchText, setSearchText } = useInstrumentsField();
+
+  const searchEmpty = !searchText;
+
+  useEffect(() => {
+    setSearchEmpty(searchEmpty);
+  }, [setSearchEmpty, searchEmpty]);
 
   const handleMobileMenuClose = () => {
     setMobileMoreAnchorEl(null);
@@ -33,7 +44,7 @@ const PsalmsContentMobileHeader = ({ ...searchProps }: PsalmsContentMobileHeader
           <IconButton disabled size="large" edge="start" color="inherit" aria-label="open drawer" sx={{ mr: 2 }}>
             <MenuIcon />
           </IconButton>
-          <Search {...searchProps} />
+          <Search searchText={searchText} handleSearchTextChange={setSearchText} />
           <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
             <IconButton
               disabled

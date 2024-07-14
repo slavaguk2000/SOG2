@@ -1,7 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import { usePsalmsSelectionData } from '../../../providers/dataProviders/psalmsDataProvider';
-import useSearch from '../../SearchLine/useSearch';
 
 import PsalmsContentMobileFooter from './Footer';
 import PsalmsContentMobileHeader from './Header';
@@ -14,19 +13,21 @@ import SortablePsalmsList from './SortablePsalmsList';
 import { PsalmsContentMobileWrapper } from './styled';
 
 const PsalmsContentMobile = () => {
+  const [searchEmpty, setSearchEmpty] = useState(false);
   const { psalmsBookId, favouritePsalmsBookId } = usePsalmsSelectionData();
-  const { searchText, handleSearchTextChange, hasResults: hasSearchResult, options, handleSelectSlide } = useSearch();
 
   return (
     <PsalmsContentMobileContextProvider>
       <PsalmsContentMobileWrapper>
-        <PsalmsContentMobileHeader searchText={searchText} handleSearchTextChange={handleSearchTextChange} />
-        {hasSearchResult ? (
-          <SearchResultList options={options} onResultItemClick={handleSelectSlide} />
-        ) : psalmsBookId && psalmsBookId === favouritePsalmsBookId ? (
-          <SortablePsalmsList />
+        <PsalmsContentMobileHeader setSearchEmpty={setSearchEmpty} />
+        {searchEmpty ? (
+          psalmsBookId && psalmsBookId === favouritePsalmsBookId ? (
+            <SortablePsalmsList />
+          ) : (
+            <PsalmsList />
+          )
         ) : (
-          <PsalmsList />
+          <SearchResultList />
         )}
         <PsalmViewDrawer />
         <PsalmPreviewDialog />

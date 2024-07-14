@@ -117,6 +117,8 @@ export interface InstrumentsFieldProviderContextType {
   handleUpdateSlide: (newSlide?: SlideData, options?: { currentLastUp?: boolean }) => void;
   handleUpdateCurrentSlideOffset: (screenOffset: number, timePoint: number) => void;
   currentSlide?: Slide;
+  searchText: string;
+  setSearchText: Dispatch<SetStateAction<string>>;
 }
 
 export interface SermonDataProviderContextType extends DataProvider {
