@@ -15,14 +15,14 @@ import { PsalmsContentMobileWrapper } from './styled';
 
 const PsalmsContentMobile = () => {
   const { psalmsBookId, favouritePsalmsBookId } = usePsalmsSelectionData();
-  const { searchText, handleSearchTextChange, hasResults: hasSearchResult, options } = useSearch();
+  const { searchText, handleSearchTextChange, hasResults: hasSearchResult, options, handleSelectSlide } = useSearch();
 
   return (
     <PsalmsContentMobileContextProvider>
       <PsalmsContentMobileWrapper>
         <PsalmsContentMobileHeader searchText={searchText} handleSearchTextChange={handleSearchTextChange} />
         {hasSearchResult ? (
-          <SearchResultList options={options} />
+          <SearchResultList options={options} onResultItemClick={handleSelectSlide} />
         ) : psalmsBookId && psalmsBookId === favouritePsalmsBookId ? (
           <SortablePsalmsList />
         ) : (

@@ -101,7 +101,6 @@ def get_linear_contents_from_couplet(couplet: CoupletContent):
     )
 
     return {
-        "search_content": linear_content,
         "content": linear_content,
     }
 

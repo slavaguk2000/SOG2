@@ -186,6 +186,7 @@ const CurrentPsalmProvider = ({ children }: PropsWithChildren) => {
         clearPsalmSelect,
         psalmData: currentPsalmData?.psalm,
         currentPsalm,
+        psalmId,
       }}
     >
       {children}

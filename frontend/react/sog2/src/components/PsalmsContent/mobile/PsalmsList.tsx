@@ -6,7 +6,10 @@ import { useDebouncedCallback } from 'use-debounce';
 import { usePsalms } from '../../../providers/dataProviders/psalmsDataProvider/PsalmsProvider';
 
 import PsalmsListItem from './PsalmsListItem';
+import ScrollerToSelectedPsalm from './ScrollerToSelectedPsalm';
 import { PsalmsListWrapper } from './styled';
+
+const itemSize = 46;
 
 const PsalmsList = () => {
   const [height, setHeight] = useState<number | null>(null);
@@ -31,9 +34,12 @@ const PsalmsList = () => {
   return (
     <PsalmsListWrapper ref={ref}>
       {!!(dataLength && height) && (
-        <FixedSizeList height={height} width={700} itemSize={46} itemCount={dataLength} overscanCount={5}>
-          {({ index, style }) => <PsalmsListItem key={index} style={style} index={index} />}
-        </FixedSizeList>
+        <>
+          {ref?.current && <ScrollerToSelectedPsalm containerParentRef={ref.current} itemSize={itemSize} />}
+          <FixedSizeList height={height} width={700} itemSize={itemSize} itemCount={dataLength} overscanCount={5}>
+            {({ index, style }) => <PsalmsListItem key={index} style={style} index={index} />}
+          </FixedSizeList>
+        </>
       )}
     </PsalmsListWrapper>
   );

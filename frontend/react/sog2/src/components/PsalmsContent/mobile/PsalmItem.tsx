@@ -1,14 +1,13 @@
-import React, { Dispatch, ReactElement, SetStateAction, TouchEvent } from 'react';
+import React, { Dispatch, ReactElement, SetStateAction } from 'react';
 
 import { Box, ListItemButton, SxProps, Theme } from '@mui/material';
-import { useLongPress } from '@uidotdev/usehooks';
 
 import { useCurrentPsalms } from '../../../providers/dataProviders/psalmsDataProvider/CurrentPsalmProvider';
 import { useFavouriteData } from '../../../providers/dataProviders/psalmsDataProvider/FavouriteProvider';
 import { Maybe } from '../../../utils/gql/types';
 import FavouriteIconButton, { FavouriteIconButtonBody } from '../common/InFavouriteIconButton';
 
-import { usePsalmsContentMobileContext } from './PsalmsContentMobileContextProvider';
+import useLongPressPreviewChords from './PsalmPreviewDialog/useLongPressPreviewChords';
 import { ListItemContentBackground, StyledListItemText } from './styled';
 
 interface PsalmItemProps {
@@ -39,29 +38,8 @@ const PsalmItem = ({
 }: PsalmItemProps) => {
   const { handlePsalmSelect, currentPsalm: selectedPsalm } = useCurrentPsalms();
   const { favouriteReady } = useFavouriteData();
-  const { setPreviewChordsPsalmData } = usePsalmsContentMobileContext();
 
-  const longPressAttrs = useLongPress(
-    (e: Event) => {
-      const touch = (e as unknown as TouchEvent).touches?.[0];
-
-      setPreviewChordsPsalmData({
-        psalmData: {
-          id: psalmId,
-          transposition,
-        },
-        position: touch
-          ? {
-              x: touch.clientX,
-              y: touch.clientY,
-            }
-          : undefined,
-      });
-    },
-    {
-      threshold: 500,
-    },
-  );
+  const longPressAttrs = useLongPressPreviewChords({ psalmId, transposition });
 
   const handleSelectItem = () => {
     handlePsalmSelect(psalmId);
