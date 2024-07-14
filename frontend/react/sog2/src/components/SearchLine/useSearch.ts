@@ -1,4 +1,4 @@
-import { Context, useContext, useEffect, useState } from 'react';
+import { Context, useCallback, useContext, useEffect, useState } from 'react';
 import { useLocation, useSearchParams } from 'react-router-dom';
 
 import { useQuery } from '@apollo/client';
@@ -85,10 +85,13 @@ const useSearch = ({ afterSearchTextChanged }: UseSearchProps = {}) => {
     afterSearchTextChanged?.();
   };
 
-  const handleSearchTextChange = (newValue: string) => {
-    handleSearch(newValue, setDebouncedSearchText);
-    afterSearchTextChanged?.();
-  };
+  const handleSearchTextChange = useCallback(
+    (newValue: string) => {
+      handleSearch(newValue, setDebouncedSearchText);
+      afterSearchTextChanged?.();
+    },
+    [afterSearchTextChanged],
+  );
 
   useEffect(() => {
     handleSearchTextChange(searchText);

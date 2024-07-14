@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { FixedSizeList } from 'react-window';
 
+import ResizeObserver from 'resize-observer-polyfill';
 import { useDebouncedCallback } from 'use-debounce';
 
 import { usePsalms } from '../../../providers/dataProviders/psalmsDataProvider/PsalmsProvider';
@@ -18,18 +19,33 @@ const PsalmsList = () => {
 
   const debouncedSetHeight = useDebouncedCallback((newHeight: number) => {
     setHeight(newHeight);
-  }, 5000);
+  }, 1000);
 
   useEffect(() => {
-    const clientHeight = ref?.current?.clientHeight;
-    if (clientHeight) {
-      if (height) {
-        debouncedSetHeight(clientHeight);
-      } else {
-        setHeight(clientHeight);
+    const observer = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        const clientHeight = entry.target.clientHeight;
+        if (clientHeight) {
+          if (height) {
+            debouncedSetHeight(clientHeight);
+          } else {
+            setHeight(clientHeight);
+          }
+        }
       }
+    });
+
+    const element = ref.current;
+    if (element) {
+      observer.observe(element);
     }
-  }, [debouncedSetHeight, ref, height]);
+
+    return () => {
+      if (element) {
+        observer.unobserve(element);
+      }
+    };
+  }, [debouncedSetHeight, height]);
 
   return (
     <PsalmsListWrapper ref={ref}>
