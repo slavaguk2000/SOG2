@@ -171,6 +171,7 @@ export const psalm = gql`
         slide {
           id
           content
+          contentPrefix
           searchContent
           location
         }

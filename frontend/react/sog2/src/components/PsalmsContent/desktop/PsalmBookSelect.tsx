@@ -11,7 +11,6 @@ const PsalmBookSelect = () => {
   const { softSelected, setSoftSelected } = useSelectIntent({
     hardSelected: currentPsalmBook?.id,
     setHardSelected: handlePsalmsBookSelect,
-    timeout: 100,
   });
 
   return (

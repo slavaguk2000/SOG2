@@ -2,11 +2,10 @@ import React, { useEffect, useMemo, useRef } from 'react';
 
 import PreselectBox from '../../../hooks/useFastNumberSelection/PreselectBox';
 import useFastNumberSelection from '../../../hooks/useFastNumberSelection/useFastNumberSelection';
-import { useCurrentPsalms } from '../../../providers/dataProviders/psalmsDataProvider/CurrentPsalmProvider';
 import {
-  extractCoupletPrefixFromLocation,
   getPsalmSlideContentFromSlide,
-} from '../../../providers/dataProviders/psalmsDataProvider/PsalmsProvider';
+  useCurrentPsalms,
+} from '../../../providers/dataProviders/psalmsDataProvider/CurrentPsalmProvider';
 import { useInstrumentsField } from '../../../providers/instrumentsFieldProvider';
 import { Slide } from '../../../utils/gql/types';
 import BibleEntityItem from '../../BibleContent/BibleEntityItem';
@@ -35,8 +34,8 @@ const CoupletSelect = () => {
     () =>
       (psalmData?.couplets ?? []).reduce(
         (acc, { slide }) => {
-          if (slide?.location) {
-            const coupletPrefix = extractCoupletPrefixFromLocation(slide?.location);
+          if (slide?.contentPrefix) {
+            const coupletPrefix = slide.contentPrefix;
 
             const numberString = /^\d+/.exec(coupletPrefix.trim())?.[0];
 
@@ -57,10 +56,21 @@ const CoupletSelect = () => {
     [psalmData],
   );
 
+  const onUpdateSlide = (slide?: Slide) => {
+    handleUpdateSlide(
+      slide && {
+        id: slide.id,
+        content: slide.content,
+        contentPrefix: slide.contentPrefix,
+        title: slide.title,
+      },
+    );
+  };
+
   const changeCoupletByNumber = (requestedNumber: number) => {
     const requestedSlide = numberToSlideMap?.[requestedNumber];
     if (requestedSlide) {
-      handleUpdateSlide(requestedSlide);
+      onUpdateSlide(requestedSlide);
     }
   };
 
@@ -81,7 +91,7 @@ const CoupletSelect = () => {
         <BibleEntityItem
           key={id}
           name={content}
-          onClick={() => handleUpdateSlide(slide)}
+          onClick={() => onUpdateSlide(slide)}
           selected={id === currentSlide?.id}
           scrollingOrder={0}
         />

@@ -109,6 +109,7 @@ def get_slide_from_couplet(couplet: Couplet):
     return {
         "id": couplet.id,
         **get_linear_contents_from_couplet(couplet),
+        "content_prefix": f"{couplet.marker} ",
         "location": [
             couplet.psalm.psalm_books[0].id,
             couplet.psalm_id,

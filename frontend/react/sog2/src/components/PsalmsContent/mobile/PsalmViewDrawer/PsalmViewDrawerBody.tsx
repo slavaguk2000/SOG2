@@ -4,6 +4,7 @@ import { ToggleButton, ToggleButtonGroup } from '@mui/material';
 
 import useAdaptiveFontSize from '../../../../hooks/useAdaptiveFontSize';
 import { useCurrentPsalms } from '../../../../providers/dataProviders/psalmsDataProvider/CurrentPsalmProvider';
+import { Slide } from '../../../../utils/gql/types';
 import PsalmCoupletView from '../../../psalmChords/PsalmCoupletView';
 import PsalmTitle from '../../common/PsalmTitle';
 
@@ -12,12 +13,25 @@ import { PsalmViewDrawerBodyWrapper } from './styled';
 const maxFontSize = 20;
 
 const PsalmViewDrawerBody = () => {
-  const { psalmData, currentPsalm } = useCurrentPsalms();
+  const { psalmData, currentPsalm, handleUpdateSlide } = useCurrentPsalms();
   const [selectedCouplet, setSelectedCouplet] = useState<string | undefined>();
 
-  const handleChange = (e: MouseEvent<HTMLElement>, value: string) => {
+  const handleChange = (e: MouseEvent<HTMLElement>, value?: string) => {
     e.preventDefault();
     setSelectedCouplet(value);
+
+    const currentSlide: Slide | undefined = value
+      ? psalmData?.couplets?.find(({ id }) => id === value)?.slide
+      : undefined;
+
+    handleUpdateSlide(
+      currentSlide && {
+        id: currentSlide.id,
+        content: currentSlide.content,
+        contentPrefix: currentSlide.contentPrefix,
+        title: currentSlide.title,
+      },
+    );
   };
 
   const { viewRef, fontSize } = useAdaptiveFontSize({
