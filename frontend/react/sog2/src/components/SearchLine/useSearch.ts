@@ -112,13 +112,11 @@ const useSearch = ({ afterSearchTextChanged }: UseSearchProps = {}) => {
   const hasResults = Boolean(debouncedSearchText && options.length);
 
   return {
-    handleSearchTextChange,
     handleSelectSlide,
     handleSelectPlace,
     clearSearchLine,
     options,
     hasResults,
-    searchText,
     // refactor search context, and remove methods from here
     handleUpdateSlide,
     handleUpdateLocation,
