@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 
 import { useCurrentPsalms } from '../../../providers/dataProviders/psalmsDataProvider/CurrentPsalmProvider';
 import { usePsalms } from '../../../providers/dataProviders/psalmsDataProvider/PsalmsProvider';

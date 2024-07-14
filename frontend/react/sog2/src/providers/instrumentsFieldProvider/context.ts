@@ -7,6 +7,8 @@ const defaultValue: InstrumentsFieldProviderContextType = {
   handleUpdateCurrentSlideOffset: () => true,
   silentMode: false,
   setSilentMode: () => true,
+  setSearchText: () => true,
+  searchText: '',
 };
 
 const InstrumentsFieldProviderContext = createContext<InstrumentsFieldProviderContextType>(defaultValue);

@@ -1,4 +1,4 @@
-import { Context, useContext, useState } from 'react';
+import { Context, useCallback, useContext, useEffect, useState } from 'react';
 import { useLocation, useSearchParams } from 'react-router-dom';
 
 import { useQuery } from '@apollo/client';
@@ -8,6 +8,7 @@ import { debounceInputDelay, minimumSearchLength } from '../../constants/behavio
 import BibleContext from '../../providers/dataProviders/bibleDataProvider/context';
 import { CurrentPsalmContext } from '../../providers/dataProviders/psalmsDataProvider/CurrentPsalmProvider';
 import SermonDataProviderContext from '../../providers/dataProviders/sermanDataProvider/context';
+import { useInstrumentsField } from '../../providers/instrumentsFieldProvider';
 import { DataProvider } from '../../providers/types';
 import { search } from '../../utils/gql/queries';
 import { Query, QuerySearchArgs, Slide, TabType } from '../../utils/gql/types';
@@ -56,7 +57,7 @@ const getDataProviderContext = (tabType: TabType) => {
 const useSearch = ({ afterSearchTextChanged }: UseSearchProps = {}) => {
   const [searchParams] = useSearchParams();
   const [debouncedSearchText, setDebouncedSearchText] = useState<string>('');
-  const [searchText, setSearchText] = useState<string>('');
+  const { searchText, setSearchText } = useInstrumentsField();
 
   const { pathname } = useLocation();
 
@@ -84,11 +85,17 @@ const useSearch = ({ afterSearchTextChanged }: UseSearchProps = {}) => {
     afterSearchTextChanged?.();
   };
 
-  const handleSearchTextChange = (newValue: string) => {
-    setSearchText(newValue);
-    handleSearch(newValue, setDebouncedSearchText);
-    afterSearchTextChanged?.();
-  };
+  const handleSearchTextChange = useCallback(
+    (newValue: string) => {
+      handleSearch(newValue, setDebouncedSearchText);
+      afterSearchTextChanged?.();
+    },
+    [afterSearchTextChanged],
+  );
+
+  useEffect(() => {
+    handleSearchTextChange(searchText);
+  }, [handleSearchTextChange, searchText]);
 
   const handleSelectSlide = (newSlide: Slide) => {
     clearSearchLine();

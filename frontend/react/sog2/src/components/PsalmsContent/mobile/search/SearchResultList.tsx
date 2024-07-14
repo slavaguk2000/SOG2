@@ -4,6 +4,7 @@ import { ListItemButton } from '@mui/material';
 
 import { Slide } from '../../../../utils/gql/types';
 import SearchLineAutocompleteItem from '../../../SearchLine/SearchLineAutocompleteItem';
+import useSearch from '../../../SearchLine/useSearch';
 import useLongPressPreviewChords from '../PsalmPreviewDialog/useLongPressPreviewChords';
 
 import { StyledSearchResultList } from './styled';
@@ -24,15 +25,13 @@ const SearchResultListItem = ({ slide, onResultItemClick }: SearchResultListItem
   );
 };
 
-interface SearchResultListProps extends Omit<SearchResultListItemProps, 'slide'> {
-  options: Slide[];
-}
+const SearchResultList = () => {
+  const { options, handleSelectSlide } = useSearch();
 
-const SearchResultList = ({ options, onResultItemClick }: SearchResultListProps) => {
   return (
     <StyledSearchResultList>
       {options.map((slide) => (
-        <SearchResultListItem key={slide.id} slide={slide} onResultItemClick={onResultItemClick} />
+        <SearchResultListItem key={slide.id} slide={slide} onResultItemClick={handleSelectSlide} />
       ))}
     </StyledSearchResultList>
   );
