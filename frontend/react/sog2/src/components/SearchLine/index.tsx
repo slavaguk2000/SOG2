@@ -5,6 +5,8 @@ import TextField from '@mui/material/TextField';
 
 import { Slide, TabType } from 'src/utils/gql/types';
 
+import { useInstrumentsField } from '../../providers/instrumentsFieldProvider';
+
 import SearchLineAutocompleteItem from './SearchLineAutocompleteItem';
 import { SearchLineAutocomplete, SearchLineWrapper } from './styled';
 import useSearch from './useSearch';
@@ -23,14 +25,14 @@ const SearchLine = () => {
     setSelectedProposeIdx(0);
   };
 
+  const { searchText, setSearchText } = useInstrumentsField();
+
   const {
-    handleSearchTextChange,
     handleSelectSlide,
     handleSelectPlace,
     clearSearchLine,
     options,
     hasResults,
-    searchText,
     handleUpdateLocation,
     handleUpdateSlide,
   } = useSearch({
@@ -142,7 +144,7 @@ const SearchLine = () => {
         inputValue={searchText}
         options={options}
         onInputChange={(event, newValue) => {
-          handleSearchTextChange(newValue);
+          setSearchText(newValue);
         }}
         onFocus={() => setAutocompleteActive(true)}
         onBlur={() => setAutocompleteActive(false)}
