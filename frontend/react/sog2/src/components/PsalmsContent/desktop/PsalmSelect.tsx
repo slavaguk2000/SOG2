@@ -29,14 +29,14 @@ const PsalmSelect = () => {
     psalmId: string;
     defaultTonality?: Maybe<MusicalKey>;
   }>(null);
-  const { currentPsalmBook, handlePsalmsBookSelect } = usePsalmsBooksData();
+  const { currentPsalmBook } = usePsalmsBooksData();
   const { psalmsData, handlePsalmsReorder } = usePsalms();
-  const { currentPsalm } = useCurrentPsalms();
+  const { currentPsalm, handlePsalmSelect } = useCurrentPsalms();
   const { favouritePsalmsDataMap } = useFavouriteData();
 
   const { softSelected, setSoftSelected } = useSelectIntent<string, number>({
     hardSelected: currentPsalm?.id,
-    setHardSelected: handlePsalmsBookSelect,
+    setHardSelected: handlePsalmSelect,
     timeout: 100,
   });
 
