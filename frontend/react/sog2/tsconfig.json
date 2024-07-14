@@ -27,7 +27,6 @@
     "noFallthroughCasesInSwitch": true
   },
   "include": [
-    "src/**/*",
-    "node_modules/eslint-plugin-react/lib/types.d.ts"
+    "src/**/*"
   ]
 }

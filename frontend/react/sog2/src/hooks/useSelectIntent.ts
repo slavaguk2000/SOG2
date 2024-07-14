@@ -3,10 +3,10 @@ import { useEffect, useLayoutEffect, useState } from 'react';
 interface useSelectIntentProps<T, U> {
   hardSelected?: T;
   setHardSelected: (newSelected: T, ...params: Array<U>) => void;
-  timeout?: number;
+  timeout: number;
 }
 
-const useSelectIntent = <T, U>({ hardSelected, setHardSelected, timeout = 0 }: useSelectIntentProps<T, U>) => {
+const useSelectIntent = <T, U>({ hardSelected, setHardSelected, timeout }: useSelectIntentProps<T, U>) => {
   const [intendedSelection, setIntendedSelection] = useState<{ value: T; params: Array<U> } | null>(null);
 
   useEffect(() => {

@@ -75,7 +75,6 @@ export interface PsalmsContextType extends DataProvider {
   currentPsalm?: Psalm;
   currentPsalmBook?: PsalmsBook;
   psalmsQueryDataLoading: boolean;
-  favouriteBookId?: string;
 }
 
 export interface PresentationContextType {

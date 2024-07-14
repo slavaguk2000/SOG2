@@ -1,15 +1,15 @@
 import React, { useEffect, useMemo, useRef } from 'react';
 
-import PreselectBox from '../../../hooks/useFastNumberSelection/PreselectBox';
-import useFastNumberSelection from '../../../hooks/useFastNumberSelection/useFastNumberSelection';
+import PreselectBox from '../../hooks/useFastNumberSelection/PreselectBox';
+import useFastNumberSelection from '../../hooks/useFastNumberSelection/useFastNumberSelection';
 import {
   extractCoupletPrefixFromLocation,
   getPsalmSlideContentFromSlide,
   usePsalmsData,
-} from '../../../providers/dataProviders/psalmsDataProvider';
-import { useInstrumentsField } from '../../../providers/instrumentsFieldProvider';
-import { Slide } from '../../../utils/gql/types';
-import BibleEntityItem from '../../BibleContent/BibleEntityItem';
+} from '../../providers/dataProviders/psalmsDataProvider';
+import { useInstrumentsField } from '../../providers/instrumentsFieldProvider';
+import { Slide } from '../../utils/gql/types';
+import BibleEntityItem from '../BibleContent/BibleEntityItem';
 
 import { CoupletSelectWrapper } from './styled';
 
