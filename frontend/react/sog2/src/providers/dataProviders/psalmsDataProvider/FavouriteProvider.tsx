@@ -1,16 +1,21 @@
 import React, { createContext, PropsWithChildren, useContext, useMemo } from 'react';
 
-import { useQuery } from '@apollo/client';
+import { useSubscription } from '@apollo/client';
 
-import { psalms } from '../../../utils/gql/queries';
-import { Query, QueryPsalmsArgs } from '../../../utils/gql/types';
+import { favouritePsalmsSubscription } from '../../../utils/gql/queries';
+import { Subscription } from '../../../utils/gql/types';
 import { FavouriteContextType } from '../../types';
+
+import useReorderPsalmsMutation from './hooks/useReorderPsalmsMutation';
+import { psalmDataMapper } from './PsalmsProvider';
 
 import { usePsalmsSelectionData } from './index';
 
 const defaultValue: FavouriteContextType = {
   favouritePsalmsDataMap: {},
   favouriteReady: false,
+  handlePsalmsReorder: () => true,
+  favouritePsalmsData: [],
 };
 
 export const FavouriteContext = createContext<FavouriteContextType>(defaultValue);
@@ -24,30 +29,31 @@ export const useFavouriteData = () => {
 const FavouritePsalmsProvider = ({ children }: PropsWithChildren) => {
   const { favouritePsalmsBookId } = usePsalmsSelectionData();
 
-  const { data: favouritePsalmsQueryData, loading } = useQuery<Pick<Query, 'psalms'>, QueryPsalmsArgs>(psalms, {
-    variables: {
-      psalmsBookId: favouritePsalmsBookId ?? '',
-    },
-    fetchPolicy: 'cache-first',
-    skip: !favouritePsalmsBookId,
+  const { data, loading } = useSubscription<Pick<Subscription, 'favouritePsalms'>>(favouritePsalmsSubscription, {
+    fetchPolicy: 'no-cache',
   });
 
   const favouritePsalmsDataMap = useMemo(
     () =>
-      favouritePsalmsQueryData?.psalms.reduce((acc: Record<string, boolean>, { psalm: { id } }) => {
+      data?.favouritePsalms.reduce((acc: Record<string, boolean>, { psalm: { id } }) => {
         acc[id] = true;
 
         return acc;
       }, {}) ?? {},
-    [favouritePsalmsQueryData?.psalms],
+    [data?.favouritePsalms],
   );
+
+  const { handlePsalmsReorder } = useReorderPsalmsMutation({ psalmsBookId: favouritePsalmsBookId });
+
+  const favouritePsalmsData = useMemo(() => data?.favouritePsalms.map(psalmDataMapper) ?? [], [data?.favouritePsalms]);
 
   return (
     <FavouriteContext.Provider
       value={{
-        favouritePsalmsBookId,
         favouritePsalmsDataMap,
-        favouriteReady: !(!favouritePsalmsBookId || loading),
+        favouriteReady: !loading,
+        handlePsalmsReorder,
+        favouritePsalmsData,
       }}
     >
       {children}

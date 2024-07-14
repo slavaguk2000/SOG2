@@ -11,7 +11,7 @@ import {
 } from '../../../../utils/gql/types';
 
 interface ReorderPsalmsMutationProps {
-  psalmsBookId: string;
+  psalmsBookId?: string;
 }
 
 const useReorderPsalmsMutation = ({ psalmsBookId }: ReorderPsalmsMutationProps) => {

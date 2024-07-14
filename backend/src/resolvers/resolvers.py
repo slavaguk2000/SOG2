@@ -7,7 +7,7 @@ from src.services.database_helpers.bible import get_bible_books_by_bible_id, get
 from src.services.database_helpers.psalm.psalm import get_psalms_books, get_psalms_dicts, get_psalm_by_id, \
     PsalmsSortingKeys, \
     add_psalm_to_favourites, remove_psalm_from_favourites, delete_psalm_book, update_psalm_transposition, \
-    get_psalm_slide_by_id, reorder_psalms_in_psalms_book
+    get_psalm_slide_by_id, reorder_psalms_in_psalms_book, get_favourite_psalms_dicts
 from src.services.database_helpers.psalm.update_psalm import update_psalm
 from src.services.database_helpers.sermon import get_sermons, get_sermon_by_id, get_sermon_paragraph_by_id, \
     add_slide_audio_mapping
@@ -31,8 +31,10 @@ mutation = MutationType()
 subscription = SubscriptionType()
 current_active_slide = None
 current_active_psalm_chords = None
+current_favourite_psalms = []
 slide_subscribers_queues = []
 psalm_chords_subscribers_queues = []
+favourite_psalms_subscribers_queues = []
 
 
 @query.field("search")
@@ -202,10 +204,21 @@ def resolve_add_psalms_from_sog(*_, sog_file_src: str, language: str):
     return SimplePsalmParser.parse(sog_file_src, language)
 
 
+def notify_favourite_changed():
+    global current_favourite_psalms
+    current_favourite_psalms = get_favourite_psalms_dicts()
+
+    for subscriber_queue in favourite_psalms_subscribers_queues:
+        subscriber_queue.put_nowait(current_favourite_psalms)
+
+
 @mutation.field("addPsalmToFavourite")
 @convert_kwargs_to_snake_case
 def resolve_add_psalm_to_favourite(*_, psalm_id: str, transposition: int = 0):
-    return add_psalm_to_favourites(psalm_id, transposition)
+    res = add_psalm_to_favourites(psalm_id, transposition)
+    if res:
+        notify_favourite_changed()
+    return res
 
 
 @mutation.field("updatePsalm")
@@ -234,7 +247,10 @@ def resolve_update_psalm_transposition(*_, psalms_book_id: str, psalm_id: str, t
 @mutation.field("removePsalmFromFavourite")
 @convert_kwargs_to_snake_case
 def resolve_remove_psalm_from_favourite(*_, psalm_id: str):
-    return remove_psalm_from_favourites(psalm_id)
+    res = remove_psalm_from_favourites(psalm_id)
+    if res:
+        notify_favourite_changed()
+    return res
 
 
 @mutation.field("parseSermonsFromBranhamRu")
@@ -317,7 +333,27 @@ def resolve_active_psalm_chords_subscription_psalm_chords(psalm_data, *_):
     return psalm_data
 
 
+@subscription.source("favouritePsalms")
+async def resolve_favourite_psalms_subscription(*_):
+    queue = Queue()
+    favourite_psalms_subscribers_queues.append(queue)
+    yield current_favourite_psalms
+
+    try:
+        while True:
+            psalms_data = await queue.get()
+            yield psalms_data
+    finally:
+        favourite_psalms_subscribers_queues.remove(queue)
+
+
+@subscription.field("favouritePsalms")
+def resolve_favourite_psalms_subscription_psalms_data(psalms_data, *_):
+    return psalms_data
+
+
 slide = ObjectType("Slide")
+
 
 #
 # @slide.field("content")
@@ -326,3 +362,5 @@ slide = ObjectType("Slide")
 
 
 resolvers = [query, mutation, subscription, slide]
+
+notify_favourite_changed()

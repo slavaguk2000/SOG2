@@ -224,5 +224,6 @@ type_defs = gql("""
     type Subscription {
       activeSlideSubscription: Slide
       activePsalmChordsSubscription: SubscriptingPsalmData
+      favouritePsalms: [PsalmsBookItem!]!
     }
 """)

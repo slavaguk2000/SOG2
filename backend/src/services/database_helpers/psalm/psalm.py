@@ -64,11 +64,12 @@ def get_psalm_book_item_dict_from_psalm(psalm: Type[Psalm] | Psalm, psalms_book_
 def get_psalms(
         psalms_book_id: str,
         sort_key: PsalmsSortingKeys | None = None,
-        sort_direction: SortingDirection = SortingDirection.ASC
+        sort_direction: SortingDirection = SortingDirection.ASC,
+        current_session: Session | None = None
 ) -> List[dict]:
     current_sort_key = f'psalms.{sort_key.value}' if sort_key else '"order"'
 
-    with Session(engine) as session:
+    with (current_session if current_session else Session(engine)) as session:
         psalms_query = select(
             Psalm,
             psalms_book_psalms.c.transposition_steps
@@ -84,15 +85,23 @@ def get_psalms(
 def get_psalms_dicts(
         psalms_book_id: str,
         sort_key: PsalmsSortingKeys | None = None,
-        sort_direction: SortingDirection = SortingDirection.ASC
+        sort_direction: SortingDirection = SortingDirection.ASC,
+        current_session: Session | None = None
 ):
-    psalms = get_psalms(psalms_book_id, sort_key, sort_direction)
+    psalms = get_psalms(psalms_book_id, sort_key, sort_direction, current_session)
 
     return [
         get_psalm_book_item_dict_from_psalm(psalm, psalms_book_id, transposition_steps)
         for psalm, transposition_steps in
         psalms
     ]
+
+
+def get_favourite_psalms_dicts():
+    with Session(engine) as session:
+        favourite_psalms_book_id = get_favourite_psalm_book(session).id
+
+        return get_psalms_dicts(favourite_psalms_book_id, current_session=session)
 
 
 def get_linear_contents_from_couplet(couplet: CoupletContent):

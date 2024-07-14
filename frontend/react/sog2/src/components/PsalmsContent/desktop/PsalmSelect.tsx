@@ -30,9 +30,9 @@ const PsalmSelect = () => {
     defaultTonality?: Maybe<MusicalKey>;
   }>(null);
   const { currentPsalmBook } = usePsalmsBooksData();
-  const { psalmsData, handlePsalmsReorder } = usePsalms();
+  const { psalmsData } = usePsalms();
   const { currentPsalm, handlePsalmSelect } = useCurrentPsalms();
-  const { favouritePsalmsDataMap } = useFavouriteData();
+  const { favouritePsalmsDataMap, handlePsalmsReorder } = useFavouriteData();
 
   const { softSelected, setSoftSelected } = useSelectIntent<string, number>({
     hardSelected: currentPsalm?.id,
@@ -95,7 +95,6 @@ const PsalmSelect = () => {
         onClick={() => setSoftSelected(id, transposition)}
         psalmId={id}
         inFavourite={!!favouritePsalmsDataMap[id]}
-        transposition={transposition}
         sx={{ margin: '-5px 0' }}
       />
     </Box>

@@ -256,6 +256,7 @@ export const reorderPsalmsInPsalmsBook = gql`
     reorderPsalmsInPsalmsBook(psalmsBookId: $psalmsBookId, psalmsIds: $psalmsIds)
   }
 `;
+
 export const activePsalmChordsSubscription = gql`
   subscription activePsalmChordsSubscription {
     activePsalmChordsSubscription {
@@ -263,6 +264,14 @@ export const activePsalmChordsSubscription = gql`
         ${psalmData}
       }
       rootTransposition
+    }
+  }
+`;
+
+export const favouritePsalmsSubscription = gql`
+  subscription favouritePsalms {
+    favouritePsalms {
+      ${psalmBookItem}
     }
   }
 `;

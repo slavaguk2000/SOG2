@@ -42,7 +42,7 @@ const PsalmPreviewDialogBody = ({ psalmId, transposition }: PsalmPreviewDialogBo
         />
       )}
       <Box position="absolute" right={0}>
-        <FavouriteIconButton psalmId={psalmId} transposition={transposition} />
+        <FavouriteIconButton psalmId={psalmId} />
       </Box>
     </PsalmPreviewDialogBodyWrapper>
   );

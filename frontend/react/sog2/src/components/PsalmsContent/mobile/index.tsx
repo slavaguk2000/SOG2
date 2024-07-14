@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 
 import { usePsalmsSelectionData } from '../../../providers/dataProviders/psalmsDataProvider';
 
+import FavouritePsalmsList from './FavouritePsalmsList';
 import PsalmsContentMobileFooter from './Footer';
 import PsalmsContentMobileHeader from './Header';
 import PsalmPreviewDialog from './PsalmPreviewDialog';
@@ -9,7 +10,6 @@ import PsalmsContentMobileContextProvider from './PsalmsContentMobileContextProv
 import PsalmsList from './PsalmsList';
 import PsalmViewDrawer from './PsalmViewDrawer';
 import SearchResultList from './search/SearchResultList';
-import SortablePsalmsList from './SortablePsalmsList';
 import { PsalmsContentMobileWrapper } from './styled';
 
 const PsalmsContentMobile = () => {
@@ -22,7 +22,7 @@ const PsalmsContentMobile = () => {
         <PsalmsContentMobileHeader setSearchEmpty={setSearchEmpty} />
         {searchEmpty ? (
           psalmsBookId && psalmsBookId === favouritePsalmsBookId ? (
-            <SortablePsalmsList />
+            <FavouritePsalmsList />
           ) : (
             <PsalmsList />
           )

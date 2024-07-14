@@ -58,12 +58,7 @@ const PsalmItem = ({
           />
           <Box position="absolute" right={0} height="100%">
             {favouriteReady ? (
-              <FavouriteIconButton
-                psalmId={psalmId}
-                transposition={transposition}
-                onChange={onFavouriteChange}
-                sx={favouriteIconButtonSx}
-              />
+              <FavouriteIconButton psalmId={psalmId} onChange={onFavouriteChange} sx={favouriteIconButtonSx} />
             ) : (
               <FavouriteIconButtonBody sx={favouriteIconButtonSx} />
             )}
