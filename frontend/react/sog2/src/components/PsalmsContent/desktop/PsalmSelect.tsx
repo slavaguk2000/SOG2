@@ -37,7 +37,6 @@ const PsalmSelect = () => {
   const { softSelected, setSoftSelected } = useSelectIntent<string, number>({
     hardSelected: currentPsalm?.id,
     setHardSelected: handlePsalmSelect,
-    timeout: 100,
   });
 
   const canBeReordered = !!currentPsalmBook?.isFavourite;

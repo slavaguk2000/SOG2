@@ -4,14 +4,7 @@ import { useQuery } from '@apollo/client';
 
 import { keyToScaleDegree, scaleDegreeToKey } from '../../../components/psalmChords/utils';
 import { psalms } from '../../../utils/gql/queries';
-import {
-  MusicalKey,
-  PsalmsSortingKeys,
-  Query,
-  QueryPsalmsArgs,
-  Slide,
-  SortingDirection,
-} from '../../../utils/gql/types';
+import { MusicalKey, PsalmsSortingKeys, Query, QueryPsalmsArgs, SortingDirection } from '../../../utils/gql/types';
 import { PsalmsContextType } from '../../types';
 
 import useReorderPsalmsMutation from './hooks/useReorderPsalmsMutation';
@@ -30,20 +23,6 @@ PsalmsContext.displayName = 'PsalmsContext';
 
 export const usePsalms = () => {
   return useContext(PsalmsContext);
-};
-
-export const extractCoupletPrefixFromLocation = (location: string[]) => {
-  return location[location.length - 1].trim();
-};
-
-export const getPsalmSlideContentFromSlide = (slide?: Slide): string => {
-  if (slide) {
-    const coupletPrefix = extractCoupletPrefixFromLocation(slide.location ?? []);
-
-    return `${coupletPrefix && `${coupletPrefix} `}${slide.content}`;
-  }
-
-  return '';
 };
 
 const PsalmsProvider = ({ children }: PropsWithChildren) => {

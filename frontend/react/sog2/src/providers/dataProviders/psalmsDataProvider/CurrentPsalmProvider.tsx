@@ -30,15 +30,11 @@ export const useCurrentPsalms = () => {
   return useContext(CurrentPsalmContext);
 };
 
-export const extractCoupletPrefixFromLocation = (location: string[]) => {
-  return location[location.length - 1].trim();
-};
-
 export const getPsalmSlideContentFromSlide = (slide?: Slide): string => {
   if (slide) {
-    const coupletPrefix = extractCoupletPrefixFromLocation(slide.location ?? []);
+    const coupletPrefix = slide.contentPrefix;
 
-    return `${coupletPrefix && `${coupletPrefix} `}${slide.content}`;
+    return `${coupletPrefix ? `${coupletPrefix} ` : ''}${slide.content}`;
   }
 
   return '';
