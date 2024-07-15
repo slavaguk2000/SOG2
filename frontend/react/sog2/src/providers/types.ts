@@ -45,6 +45,19 @@ export interface DataProvider {
   handleUpdateLocation: (newSlide: Slide) => void;
 }
 
+export interface SearchContextType {
+  handleSelectSlide: (slide: Slide) => void;
+  handleSelectPlace: (slide: Slide) => void;
+  clearSearchLine: () => void;
+  options: Slide[];
+  hasResults: boolean;
+  searchText: string;
+  setSearchText: (newValue: string) => void;
+  // TODO : remove from here to another provider
+  handleUpdateSlide: (slide: Slide) => void;
+  handleUpdateLocation: (slide: Slide) => void;
+}
+
 export interface BibleContextType extends DataProvider {
   bibleId: string;
   currentChapter: ChapterSelector;
@@ -117,8 +130,6 @@ export interface InstrumentsFieldProviderContextType {
   handleUpdateSlide: (newSlide?: SlideData, options?: { currentLastUp?: boolean }) => void;
   handleUpdateCurrentSlideOffset: (screenOffset: number, timePoint: number) => void;
   currentSlide?: Slide;
-  searchText: string;
-  setSearchText: Dispatch<SetStateAction<string>>;
 }
 
 export interface SermonDataProviderContextType extends DataProvider {

@@ -16,7 +16,6 @@ const InstrumentsFieldProvider: FC<PropsWithChildren> = ({ children }) => {
   const { pathname } = useLocation();
   const [silentMode, setSilentMode] = useState<boolean>(false);
   const [currentSlide, setCurrentSlide] = useState<SlideData | undefined>(undefined);
-  const [searchText, setSearchText] = useState<string>('');
 
   const { setText } = usePresentation();
   const { recording: mappingRecording } = useAudioMapping();
@@ -111,8 +110,6 @@ const InstrumentsFieldProvider: FC<PropsWithChildren> = ({ children }) => {
         handleUpdateSlide,
         currentSlide: currentSlide?.slide,
         handleUpdateCurrentSlideOffset,
-        searchText,
-        setSearchText,
       }}
     >
       {children}

@@ -1,15 +1,19 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import SearchIcon from '@mui/icons-material/Search';
 
+import { useSearchContext } from '../../../../providers/searchProvider';
+import { PsalmsContentMobileHeaderProps } from '../Header';
+
 import { SearchIconWrapper, SearchWrapper, StyledInputBase } from './styled';
 
-export interface SearchProps {
-  searchText: string;
-  handleSearchTextChange: (newValue: string) => void;
-}
+const Search = ({ setSearchEmpty }: PsalmsContentMobileHeaderProps) => {
+  const { searchText, setSearchText, hasResults } = useSearchContext();
 
-const Search = ({ searchText, handleSearchTextChange }: SearchProps) => {
+  useEffect(() => {
+    setSearchEmpty(!hasResults);
+  }, [setSearchEmpty, hasResults]);
+
   return (
     <SearchWrapper>
       <SearchIconWrapper>
@@ -20,7 +24,7 @@ const Search = ({ searchText, handleSearchTextChange }: SearchProps) => {
         inputProps={{ 'aria-label': 'search' }}
         value={searchText}
         onChange={(event) => {
-          handleSearchTextChange(event.target.value);
+          setSearchText(event.target.value);
         }}
       />
     </SearchWrapper>

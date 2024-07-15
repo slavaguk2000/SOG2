@@ -2,9 +2,9 @@ import React from 'react';
 
 import { ListItemButton } from '@mui/material';
 
+import { useSearchContext } from '../../../../providers/searchProvider';
 import { Slide } from '../../../../utils/gql/types';
 import SearchLineAutocompleteItem from '../../../SearchLine/SearchLineAutocompleteItem';
-import useSearch from '../../../SearchLine/useSearch';
 import useLongPressPreviewChords from '../PsalmPreviewDialog/useLongPressPreviewChords';
 
 import { StyledSearchResultList } from './styled';
@@ -26,7 +26,7 @@ const SearchResultListItem = ({ slide, onResultItemClick }: SearchResultListItem
 };
 
 const SearchResultList = () => {
-  const { options, handleSelectSlide } = useSearch();
+  const { options, handleSelectSlide } = useSearchContext();
 
   return (
     <StyledSearchResultList>
