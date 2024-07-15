@@ -1,3 +1,4 @@
+import 'animate.css';
 import React, { useMemo, useState } from 'react';
 
 import { Box, Menu, MenuItem } from '@mui/material';
@@ -91,7 +92,11 @@ const PsalmSelect = () => {
   });
 
   const itemMapper = ({ id, name, transposition, defaultTonality }: PsalmSelectItemType) => (
-    <Box key={id} onContextMenu={(e) => handleContextMenu(e, id, defaultTonality)}>
+    <Box
+      className={isCurrentBookFavourite ? 'animate__animated animate__backInUp' : ''}
+      key={id}
+      onContextMenu={(e) => handleContextMenu(e, id, defaultTonality)}
+    >
       <PsalmSelectItem
         psalmName={name}
         selected={id === softSelected}
