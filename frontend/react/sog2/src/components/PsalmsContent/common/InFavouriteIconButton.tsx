@@ -39,7 +39,7 @@ const FavouriteIconButton = ({
   sx,
   stopPropagation = true,
 }: FavouriteIconButtonProps) => {
-  const { favouritePsalmsDataMap, favouritePsalmsBookId: favouriteBookId, favouriteReady } = useFavouriteData();
+  const { favouritePsalmsDataMap, favouriteReady } = useFavouriteData();
 
   const inFavourite = !!favouritePsalmsDataMap[psalmId];
 
@@ -52,7 +52,6 @@ const FavouriteIconButton = ({
   }, [favouriteReady, inFavourite]);
 
   const { addPsalmToFavouriteMutation, removePsalmFromFavouriteMutation } = useAddRemoveFavourite({
-    favouriteBookId,
     psalmId,
     transposition,
   });

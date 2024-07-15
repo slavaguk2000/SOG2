@@ -60,9 +60,9 @@ const PsalmItem = ({
             {favouriteReady ? (
               <FavouriteIconButton
                 psalmId={psalmId}
-                transposition={transposition}
                 onChange={onFavouriteChange}
                 sx={favouriteIconButtonSx}
+                transposition={transposition}
               />
             ) : (
               <FavouriteIconButtonBody sx={favouriteIconButtonSx} />

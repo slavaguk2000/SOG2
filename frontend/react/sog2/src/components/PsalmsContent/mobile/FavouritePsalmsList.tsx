@@ -6,7 +6,7 @@ import { Reorder, useDragControls } from 'framer-motion';
 
 import useReorder from '../../../hooks/useReorder';
 import { useCurrentPsalms } from '../../../providers/dataProviders/psalmsDataProvider/CurrentPsalmProvider';
-import { usePsalms } from '../../../providers/dataProviders/psalmsDataProvider/PsalmsProvider';
+import { useFavouriteData } from '../../../providers/dataProviders/psalmsDataProvider/FavouriteProvider';
 import { PsalmData } from '../../../providers/types';
 
 import PsalmItem from './PsalmItem';
@@ -49,11 +49,11 @@ const ReorderItem = ({ item }: ReorderItemProps) => {
   );
 };
 
-const SortablePsalmsList = () => {
-  const { psalmsData, handlePsalmsReorder } = usePsalms();
+const FavouritePsalmsList = () => {
+  const { favouritePsalmsData, handlePsalmsReorder } = useFavouriteData();
 
   const { orderableData, onReorder } = useReorder({
-    backendData: psalmsData ?? [],
+    backendData: favouritePsalmsData,
     updateBackend: (items) => handlePsalmsReorder(items.map(({ id }) => id)),
   });
 
@@ -68,4 +68,4 @@ const SortablePsalmsList = () => {
   );
 };
 
-export default SortablePsalmsList;
+export default FavouritePsalmsList;

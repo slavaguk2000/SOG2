@@ -91,7 +91,6 @@ export interface PsalmsBooksContextType {
 export interface PsalmsContextType {
   psalmsData?: Array<PsalmData>;
   dataLength: number;
-  handlePsalmsReorder: (ids: string[]) => void;
   psalmsQueryDataLoading: boolean;
 }
 
@@ -104,9 +103,10 @@ export interface CurrentPsalmContextType extends DataProvider {
 }
 
 export interface FavouriteContextType {
-  favouritePsalmsBookId?: string;
   favouritePsalmsDataMap: Record<string, boolean | undefined>;
   favouriteReady: boolean;
+  handlePsalmsReorder: (ids: string[]) => void;
+  favouritePsalmsData: Array<PsalmData>;
 }
 
 export interface PresentationContextType {
