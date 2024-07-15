@@ -21,7 +21,9 @@ import InstrumentsFieldProvider from './providers/instrumentsFieldProvider/provi
 import MainScreenRatioProvider from './providers/MainScreenSegmentationDataProvider/provider';
 import PlayerContextProvider from './providers/playerProvider';
 import { PresentationProvider } from './providers/presentationProvider/provider';
+import SearchContextProvider from './providers/searchProvider';
 import { AppRoot } from './styled';
+import { TabType } from './utils/gql/types';
 import MainView from './views/MainView/MainView';
 
 function App() {
@@ -42,9 +44,11 @@ function App() {
                             path="/bible"
                             element={
                               <BibleDataProvider>
-                                <MainView dataProviderContext={BibleContext}>
-                                  <BibleContent />
-                                </MainView>
+                                <SearchContextProvider tabType={TabType.Bible}>
+                                  <MainView dataProviderContext={BibleContext}>
+                                    <BibleContent />
+                                  </MainView>
+                                </SearchContextProvider>
                               </BibleDataProvider>
                             }
                           />
@@ -52,9 +56,11 @@ function App() {
                             path="/sermon"
                             element={
                               <SermonDataProvider>
-                                <MainView dataProviderContext={SermonDataProviderContext}>
-                                  <SermonsContent />
-                                </MainView>
+                                <SearchContextProvider tabType={TabType.Sermon}>
+                                  <MainView dataProviderContext={SermonDataProviderContext}>
+                                    <SermonsContent />
+                                  </MainView>
+                                </SearchContextProvider>
                               </SermonDataProvider>
                             }
                           />

@@ -5,11 +5,10 @@ import TextField from '@mui/material/TextField';
 
 import { Slide, TabType } from 'src/utils/gql/types';
 
-import { useInstrumentsField } from '../../providers/instrumentsFieldProvider';
+import { useSearchContext } from '../../providers/searchProvider';
 
 import SearchLineAutocompleteItem from './SearchLineAutocompleteItem';
 import { SearchLineAutocomplete, SearchLineWrapper } from './styled';
-import useSearch from './useSearch';
 
 const SearchLine = () => {
   const [autocompleteActive, setAutocompleteActive] = useState<boolean>(false);
@@ -25,19 +24,9 @@ const SearchLine = () => {
     setSelectedProposeIdx(0);
   };
 
-  const { searchText, setSearchText } = useInstrumentsField();
+  const { searchText, setSearchText, handleUpdateLocation, handleUpdateSlide } = useSearchContext();
 
-  const {
-    handleSelectSlide,
-    handleSelectPlace,
-    clearSearchLine,
-    options,
-    hasResults,
-    handleUpdateLocation,
-    handleUpdateSlide,
-  } = useSearch({
-    afterSearchTextChanged,
-  });
+  const { handleSelectSlide, handleSelectPlace, clearSearchLine, options, hasResults } = useSearchContext();
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Escape') {
@@ -97,6 +86,9 @@ const SearchLine = () => {
           setPlaceSelected(false);
 
           break;
+
+        default:
+          afterSearchTextChanged();
       }
     }
   };
