@@ -10,7 +10,8 @@ import {
   PsalmsSortingKeys,
   Query,
   QueryPsalmsArgs,
-   SortingDirection } from '../../../utils/gql/types';
+  SortingDirection,
+} from '../../../utils/gql/types';
 import { PsalmsContextType } from '../../types';
 
 import { usePsalmsSelectionData } from './index';
@@ -34,7 +35,7 @@ export const psalmDataMapper = ({ psalm, transpositionSteps }: PsalmsBookItem) =
   tonality:
     psalm.defaultTonality && transpositionSteps
       ? (scaleDegreeToKey[
-      keyToScaleDegree[psalm.defaultTonality.replace('Sharp', '#')] + (transpositionSteps % 12)
+          keyToScaleDegree[psalm.defaultTonality.replace('Sharp', '#')] + (transpositionSteps % 12)
         ] as MusicalKey)
       : psalm.defaultTonality,
   transposition: transpositionSteps,
@@ -43,21 +44,20 @@ export const psalmDataMapper = ({ psalm, transpositionSteps }: PsalmsBookItem) =
 const PsalmsProvider = ({ children }: PropsWithChildren) => {
   const { psalmsBookId, favouritePsalmsBookId } = usePsalmsSelectionData();
 
+  const skip = !psalmsBookId || psalmsBookId === favouritePsalmsBookId;
+
   const { data: psalmsQueryData, loading: psalmsQueryDataLoading } = useQuery<Pick<Query, 'psalms'>, QueryPsalmsArgs>(
     psalms,
     {
       variables: {
         psalmsBookId: psalmsBookId ?? '',
-        psalmsSorting:
-          psalmsBookId === favouritePsalmsBookId
-            ? undefined
-            : {
-                sortingKey: PsalmsSortingKeys.Number,
-                sortDirection: SortingDirection.Asc,
-              },
+        psalmsSorting: {
+          sortingKey: PsalmsSortingKeys.Number,
+          sortDirection: SortingDirection.Asc,
+        },
       },
       fetchPolicy: 'cache-first',
-      skip: !psalmsBookId,
+      skip,
     },
   );
 

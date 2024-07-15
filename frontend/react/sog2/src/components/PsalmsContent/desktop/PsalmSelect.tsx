@@ -32,26 +32,29 @@ const PsalmSelect = () => {
   const { currentPsalmBook } = usePsalmsBooksData();
   const { psalmsData } = usePsalms();
   const { currentPsalm, handlePsalmSelect } = useCurrentPsalms();
-  const { favouritePsalmsDataMap, handlePsalmsReorder } = useFavouriteData();
+  const { favouritePsalmsDataMap, handlePsalmsReorder, favouritePsalmsData } = useFavouriteData();
 
   const { softSelected, setSoftSelected } = useSelectIntent<string, number>({
     hardSelected: currentPsalm?.id,
     setHardSelected: handlePsalmSelect,
   });
 
-  const canBeReordered = !!currentPsalmBook?.isFavourite;
+  const isCurrentBookFavourite = !!currentPsalmBook?.isFavourite;
+  const canBeReordered = isCurrentBookFavourite;
 
   const preparedData = useMemo(
     () =>
-      psalmsData?.map(({ id, name, psalmNumber, defaultTonality, tonality, transposition }) => {
-        return {
-          id,
-          name: `${psalmNumber ? `${psalmNumber} ` : ''}${name}${defaultTonality ? ` (${tonality})` : ''}`,
-          defaultTonality,
-          transposition,
-        };
-      }),
-    [psalmsData],
+      (isCurrentBookFavourite ? favouritePsalmsData : psalmsData)?.map(
+        ({ id, name, psalmNumber, defaultTonality, tonality, transposition }) => {
+          return {
+            id,
+            name: `${psalmNumber ? `${psalmNumber} ` : ''}${name}${defaultTonality ? ` (${tonality})` : ''}`,
+            defaultTonality,
+            transposition,
+          };
+        },
+      ),
+    [psalmsData, favouritePsalmsData, isCurrentBookFavourite],
   );
 
   const handleContextMenu = (
@@ -94,6 +97,7 @@ const PsalmSelect = () => {
         selected={id === softSelected}
         onClick={() => setSoftSelected(id, transposition)}
         psalmId={id}
+        transposition={transposition}
         inFavourite={!!favouritePsalmsDataMap[id]}
         sx={{ margin: '-5px 0' }}
       />

@@ -24,13 +24,21 @@ export const FavouriteIconButtonBody = ({ currentState, onClick, sx }: Favourite
 export interface FavouriteIconButtonProps {
   psalmId: string;
   inFavourite?: boolean;
+  transposition: number;
   value?: boolean;
   onChange?: Dispatch<SetStateAction<boolean>>;
   sx?: SxProps<Theme>;
   stopPropagation?: boolean;
 }
 
-const FavouriteIconButton = ({ psalmId, value, onChange, sx, stopPropagation = true }: FavouriteIconButtonProps) => {
+const FavouriteIconButton = ({
+  psalmId,
+  transposition,
+  value,
+  onChange,
+  sx,
+  stopPropagation = true,
+}: FavouriteIconButtonProps) => {
   const { favouritePsalmsDataMap, favouriteReady } = useFavouriteData();
 
   const inFavourite = !!favouritePsalmsDataMap[psalmId];
@@ -43,7 +51,10 @@ const FavouriteIconButton = ({ psalmId, value, onChange, sx, stopPropagation = t
     }
   }, [favouriteReady, inFavourite]);
 
-  const { addPsalmToFavouriteMutation, removePsalmFromFavouriteMutation } = useAddRemoveFavourite();
+  const { addPsalmToFavouriteMutation, removePsalmFromFavouriteMutation } = useAddRemoveFavourite({
+    psalmId,
+    transposition,
+  });
 
   const debounced = useDebouncedCallback(async (mustBe: boolean) => {
     if (mustBe !== inFavourite) {
