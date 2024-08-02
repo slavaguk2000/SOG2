@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef } from 'react';
 
 import PreselectBox from '../../hooks/useFastNumberSelection/PreselectBox';
 import useFastNumberSelection from '../../hooks/useFastNumberSelection/useFastNumberSelection';
+import { useAudioMapping } from '../../providers/AudioMapping/provider';
 import { useSermonData } from '../../providers/dataProviders/sermanDataProvider';
 import { useInstrumentsField } from '../../providers/instrumentsFieldProvider';
 import { usePlayerContext } from '../../providers/playerProvider';
@@ -16,7 +17,8 @@ const debounceSeconds = 0.7;
 const SermonChapterSelect = () => {
   const { currentSermonSlides, handleUpdateSlide, audioMapping } = useSermonData();
   const { currentSlide } = useInstrumentsField();
-  const { openInterface } = usePlayerContext();
+  const { openInterface, seek } = usePlayerContext();
+  const { follow } = useAudioMapping();
   const chaptersRef = useRef<HTMLElement>(null);
 
   const preparedData = useMemo(
@@ -31,6 +33,7 @@ const SermonChapterSelect = () => {
           content: `${slide.location?.[2] ? `${slide.location?.[2]}. ` : ''}${slide.content}`,
           slide,
           tooltip: openInterface && slideAudioMapping?.timePoint ? formatTime(slideAudioMapping.timePoint) : undefined,
+          timePoint: slideAudioMapping?.timePoint,
         };
       }),
     [audioMapping?.id, currentSermonSlides, openInterface],
@@ -74,10 +77,18 @@ const SermonChapterSelect = () => {
     };
   }, [preparedData]);
 
+  const onUpdateSlide = (newSlide?: Slide, timePoint?: number) => {
+    handleUpdateSlide(newSlide);
+
+    if (follow && timePoint !== undefined) {
+      seek(timePoint);
+    }
+  };
+
   const changeChapterByNumber = (requestedNumber: number) => {
     const requestedSlide = numberToSlideMap?.[requestedNumber];
     if (requestedSlide) {
-      handleUpdateSlide(requestedSlide);
+      onUpdateSlide(requestedSlide);
     }
   };
 
@@ -94,12 +105,12 @@ const SermonChapterSelect = () => {
   return (
     <SermonChapterSelectWrapper tabIndex={0} onKeyDown={handleKeyDown} ref={chaptersRef}>
       <PreselectBox preselectNumber={preselectNumber} debounceSeconds={debounceSeconds} />
-      {preparedData?.map(({ content, id, slide, tooltip }) => (
+      {preparedData?.map(({ content, id, slide, tooltip, timePoint }) => (
         <SlideWithPreview
           key={id}
           bibleEntityItemProps={{
             name: content,
-            onClick: () => handleUpdateSlide(slide),
+            onClick: () => onUpdateSlide(slide, timePoint ?? undefined),
             selected: currentSlide?.id === id,
             tooltip,
             scrollingOrder: 0,
