@@ -16,7 +16,7 @@ const debounceSeconds = 0.7;
 const SermonChapterSelect = () => {
   const { currentSermonSlides, handleUpdateSlide, audioMapping } = useSermonData();
   const { currentSlide } = useInstrumentsField();
-  const { isPlaying } = usePlayerContext();
+  const { openInterface } = usePlayerContext();
   const chaptersRef = useRef<HTMLElement>(null);
 
   const preparedData = useMemo(
@@ -30,10 +30,10 @@ const SermonChapterSelect = () => {
           id: slide.id,
           content: `${slide.location?.[2] ? `${slide.location?.[2]}. ` : ''}${slide.content}`,
           slide,
-          tooltip: isPlaying && slideAudioMapping?.timePoint ? formatTime(slideAudioMapping.timePoint) : undefined,
+          tooltip: openInterface && slideAudioMapping?.timePoint ? formatTime(slideAudioMapping.timePoint) : undefined,
         };
       }),
-    [audioMapping?.id, currentSermonSlides, isPlaying],
+    [audioMapping?.id, currentSermonSlides, openInterface],
   );
 
   const { numberToSlideMap, maxSlideNumber } = useMemo(() => {
