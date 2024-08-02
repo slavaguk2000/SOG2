@@ -30,15 +30,12 @@ const PlayerContextProvider = ({ children }: PropsWithChildren) => {
   const [title, setTitle] = useState<string>('');
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [played, setPlayed] = useState<number>(0);
+  const [mustPlayed, setMustPlayed] = useState<number | null>(null);
   const [duration, setDuration] = useState<number>(0);
   const playerRef = React.createRef<ReactPlayer>();
 
   const handlePlayPause = () => {
     setIsPlaying(!isPlaying);
-  };
-
-  const handleProgress = (state: { playedSeconds: number }) => {
-    setPlayed(state.playedSeconds);
   };
 
   const handleDuration = (duration: number) => {
@@ -47,8 +44,17 @@ const PlayerContextProvider = ({ children }: PropsWithChildren) => {
 
   const handleSeek = (value: number | number[]) => {
     if (typeof value === 'number') {
-      setPlayed(value);
+      setMustPlayed(value);
       playerRef?.current?.seekTo?.(value);
+    }
+  };
+
+  const handleProgress = ({ playedSeconds }: { playedSeconds: number }) => {
+    if (mustPlayed !== null && (playedSeconds - mustPlayed > 2 || playedSeconds < mustPlayed)) {
+      handleSeek(mustPlayed);
+    } else {
+      setMustPlayed(null);
+      setPlayed(playedSeconds);
     }
   };
 

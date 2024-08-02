@@ -13,48 +13,63 @@ import { usePlayerContext } from './index';
 
 const AudioPlayer = () => {
   const { duration, played, title, isPlaying, handlePlayPause, seek } = usePlayerContext();
-  const [internalValue, setInternalValue] = useState<number | number[] | null>(null);
+  const [internalValue, setInternalValue] = useState<number | null>(null);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleChange = useCallback(
     debounce(
-      (value: number | number[]) => {
+      (value: number) => {
         seek(value);
       },
-      200,
+      1000,
       {
         trailing: true,
-        maxWait: 500,
+        maxWait: 5000,
       },
     ),
-    [seek],
+    [seek, setInternalValue],
   );
 
   useEffect(() => {
     if (internalValue !== null) {
       handleChange(internalValue);
+
+      if (Math.ceil(internalValue) === Math.floor(played)) {
+        setInternalValue(null);
+      }
     }
-  }, [handleChange, internalValue]);
+  }, [handleChange, internalValue, played]);
+
+  const internalPlayed = internalValue ?? played;
 
   const handleSliderChangeCommitted = (event: React.SyntheticEvent | Event, newValue: number | number[]) => {
-    setInternalValue(null);
-    handleChange(newValue);
+    if (typeof newValue === 'number') {
+      handleChange(newValue);
+    }
+  };
+
+  const handleSliderWheel = (e: React.WheelEvent<HTMLSpanElement>) => {
+    if (duration) {
+      const newValue = Math.max(Math.min(internalPlayed + e.deltaY / 10 - e.deltaX / 10, duration), 0);
+      setInternalValue(newValue);
+    }
   };
 
   const playerBody = (
     <AudioPlayerWrapper>
       <Button onClick={handlePlayPause}>{isPlaying ? <PauseIcon /> : <PlayArrowIcon />}</Button>
       <Slider
+        onWheel={handleSliderWheel}
         min={0}
         max={duration}
-        value={internalValue ?? played}
-        onChange={(e, value) => setInternalValue(value)}
+        value={internalPlayed}
+        onChange={(e, value) => setInternalValue(typeof value === 'number' ? value : value[0])}
         onChangeCommitted={handleSliderChangeCommitted}
         valueLabelDisplay="off"
         valueLabelFormat={formatTime}
       />
       <Typography>
-        {formatTime(played)} / {formatTime(duration)}
+        {formatTime(internalPlayed)} / {formatTime(duration)}
       </Typography>
       <AudioMappingController />
     </AudioPlayerWrapper>
