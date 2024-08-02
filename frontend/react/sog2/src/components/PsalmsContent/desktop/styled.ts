@@ -1,4 +1,4 @@
-import { Box, IconButton, styled } from '@mui/material';
+import { Box, IconButton, ListItem, styled } from '@mui/material';
 
 export const PsalmsContentWrapper = styled(Box)`
   display: flex;
@@ -22,7 +22,9 @@ export const PsalmBookSelectWrapper = styled(PsalmsEntitySelectWrapper)`
 `;
 
 export const PsalmSelectWrapper = styled(PsalmsEntitySelectWrapper)`
-  max-width: 400px;
+  max-width: 25vw;
+  width: 25vw;
+  min-width: 25vw;
 
   & > ul {
     padding: 0;
@@ -71,4 +73,10 @@ export const PsalmBookItemWrapper = styled(Box, {
 
 export const StyledIconButton = styled(IconButton)`
   width: 34px;
+`;
+
+export const StyledListItem = styled(ListItem)`
+  & > div {
+    height: 100%;
+  }
 `;

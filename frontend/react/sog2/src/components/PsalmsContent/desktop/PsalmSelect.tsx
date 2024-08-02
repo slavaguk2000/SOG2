@@ -16,6 +16,7 @@ import PsalmSelectItem from './PsalmSelectItem';
 import SongTransposer from './SongTransposer';
 import { PsalmSelectWrapper } from './styled';
 import useTransposeSong from './useTransposeSong';
+import VirtualizedPsalmList from './VirtualizedPsalmList';
 
 interface PsalmSelectItemType {
   transposition: number;
@@ -120,7 +121,7 @@ const PsalmSelect = () => {
           ))}
         </Reorder.Group>
       ) : (
-        orderableData.map(itemMapper)
+        <VirtualizedPsalmList />
       )}
       <Menu
         anchorEl={menuAnchorData?.anchor}
