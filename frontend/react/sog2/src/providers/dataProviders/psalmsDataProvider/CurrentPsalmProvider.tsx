@@ -10,6 +10,7 @@ import { Mutation, MutationSetActivePsalmArgs, Query, QueryPsalmArgs, Slide } fr
 import { useInstrumentsField } from '../../instrumentsFieldProvider';
 import { CurrentPsalmContextType } from '../../types';
 
+import { useFavouriteData } from './FavouriteProvider';
 import { usePsalmsBooksData } from './PsalmsBooksProvider';
 import { usePsalms } from './PsalmsProvider';
 
@@ -42,9 +43,12 @@ export const getPsalmSlideContentFromSlide = (slide?: Slide): string => {
 
 const CurrentPsalmProvider = ({ children }: PropsWithChildren) => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const { psalmsBookId, handlePsalmsBookSelect } = usePsalmsBooksData();
+  const { psalmsBookId, handlePsalmsBookSelect, currentPsalmBook } = usePsalmsBooksData();
   const { psalmsData } = usePsalms();
+  const { favouritePsalmsData } = useFavouriteData();
   const psalmId = searchParams.get('psalmId') ?? '';
+
+  const actualPsalmsData = currentPsalmBook?.isFavourite ? favouritePsalmsData : psalmsData;
 
   const clearPsalmSelect = useCallback(() => {
     setSearchParams((prev) => {
@@ -100,21 +104,21 @@ const CurrentPsalmProvider = ({ children }: PropsWithChildren) => {
   });
 
   useEffect(() => {
-    if (!softPsalmIdSelected && psalmsData?.[0]?.id && !isMobile) {
-      setSoftPsalmIdSelected(psalmsData[0].id);
+    if (!softPsalmIdSelected && actualPsalmsData?.[0]?.id && !isMobile) {
+      setSoftPsalmIdSelected(actualPsalmsData[0].id);
     }
-  }, [softPsalmIdSelected, setSoftPsalmIdSelected, psalmsData]);
+  }, [softPsalmIdSelected, setSoftPsalmIdSelected, actualPsalmsData]);
 
-  const currentPsalm = useMemo(() => psalmsData?.find(({ id }) => psalmId === id), [psalmId, psalmsData]);
+  const currentPsalm = useMemo(() => actualPsalmsData?.find(({ id }) => psalmId === id), [psalmId, psalmsData]);
 
   useEffect(() => {
-    if (softPsalmIdSelected && psalmsData && currentPsalmDataError) {
+    if (softPsalmIdSelected && actualPsalmsData && currentPsalmDataError) {
       clearPsalmSelect();
     }
-  }, [clearPsalmSelect, psalmsData, softPsalmIdSelected, currentPsalmDataError]);
+  }, [clearPsalmSelect, actualPsalmsData, softPsalmIdSelected, currentPsalmDataError]);
 
   const getPsalmName = (currentSlide: Slide) =>
-    psalmsData?.find(({ id }) => currentSlide?.location?.[1] === id)?.name ?? '';
+    actualPsalmsData?.find(({ id }) => currentSlide?.location?.[1] === id)?.name ?? '';
 
   const handleUpdateLocation = (newSlide: Slide) => {
     if (!newSlide.location) {

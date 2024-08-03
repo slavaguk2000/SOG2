@@ -2,7 +2,6 @@ import React from 'react';
 
 import { Box } from '@mui/material';
 
-import useSelectIntent from '../../../../hooks/useSelectIntent';
 import { useCurrentPsalms } from '../../../../providers/dataProviders/psalmsDataProvider/CurrentPsalmProvider';
 import { useFavouriteData } from '../../../../providers/dataProviders/psalmsDataProvider/FavouriteProvider';
 import { MusicalKey } from '../../../../utils/gql/types';
@@ -20,10 +19,6 @@ const ListItem = ({ id, name, transposition, defaultTonality }: PsalmSelectItemT
   const { favouritePsalmsDataMap } = useFavouriteData();
   const { currentPsalm, handlePsalmSelect } = useCurrentPsalms();
   const { handleContextMenu } = usePsalmsContextMenu();
-  const { softSelected, setSoftSelected } = useSelectIntent<string, number>({
-    hardSelected: currentPsalm?.id,
-    setHardSelected: handlePsalmSelect,
-  });
 
   return (
     <Box
@@ -33,8 +28,8 @@ const ListItem = ({ id, name, transposition, defaultTonality }: PsalmSelectItemT
     >
       <PsalmSelectItem
         psalmName={name}
-        selected={id === softSelected}
-        onClick={() => setSoftSelected(id, transposition)}
+        selected={id === currentPsalm?.id}
+        onClick={() => handlePsalmSelect(id)}
         psalmId={id}
         transposition={transposition}
         inFavourite={!!favouritePsalmsDataMap[id]}
