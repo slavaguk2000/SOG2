@@ -2,6 +2,7 @@ import React from 'react';
 
 import { Collapse, Tooltip } from '@mui/material';
 
+import { useFavouriteData } from '../../../providers/dataProviders/psalmsDataProvider/FavouriteProvider';
 import { PsalmsBook } from '../../../utils/gql/types';
 import PsalmsBookAvatar from '../common/PsalmsBookAvatar';
 
@@ -12,17 +13,21 @@ interface PsalmBookItemProps {
   selected?: boolean;
   onClick?: () => void;
 }
+
 const PsalmBookItem = ({ psalmsBookData, selected, onClick }: PsalmBookItemProps) => {
-  const favourite = psalmsBookData?.isFavourite;
+  const { favouritePsalmsData } = useFavouriteData();
+  const isFavourite = !!psalmsBookData?.isFavourite;
+
+  const psalmsCount = isFavourite ? favouritePsalmsData.length : psalmsBookData?.psalmsCount;
 
   return (
-    <Collapse timeout={1000} in={!!psalmsBookData?.psalmsCount}>
+    <Collapse timeout={1000} in={!!psalmsCount}>
       {psalmsBookData && (
-        <Tooltip placement="right" title={favourite ? 'Favourite' : psalmsBookData.name ?? 'Unknown'}>
+        <Tooltip placement="right" title={isFavourite ? 'Favourite' : psalmsBookData.name ?? 'Unknown'}>
           <PsalmBookItemWrapper selected={selected} onClick={onClick}>
             <PsalmsBookAvatar
               name={psalmsBookData.name}
-              isFavourite={!!favourite}
+              isFavourite={isFavourite}
               iconSrc={psalmsBookData?.iconSrc ?? undefined}
             />
           </PsalmBookItemWrapper>

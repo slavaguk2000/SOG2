@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 
 import { Reorder } from 'framer-motion';
 
@@ -11,10 +11,16 @@ import ListItem, { PsalmSelectItemType } from './ListItem';
 
 const ReorderablePsalmList = () => {
   const { psalmsData } = usePsalms();
-  const { handlePsalmsReorder, favouritePsalmsData } = useFavouriteData();
-  const { currentPsalmBook } = usePsalmsBooksData();
+  const { handlePsalmsReorder, favouritePsalmsData, favouriteReady } = useFavouriteData();
+  const { currentPsalmBook, selectPsalmBookWithPsalms } = usePsalmsBooksData();
 
   const isCurrentBookFavourite = !!currentPsalmBook?.isFavourite;
+
+  useEffect(() => {
+    if (isCurrentBookFavourite && favouriteReady && !favouritePsalmsData.length) {
+      selectPsalmBookWithPsalms();
+    }
+  });
 
   const preparedData = useMemo(
     () =>

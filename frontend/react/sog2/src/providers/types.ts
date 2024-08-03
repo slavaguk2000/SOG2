@@ -86,6 +86,7 @@ export interface PsalmsBooksContextType {
   psalmsBooksData?: Query['psalmsBooks'];
   handlePsalmsBookSelect: (selectedId: string) => void;
   currentPsalmBook?: PsalmsBook;
+  selectPsalmBookWithPsalms: () => void;
 }
 
 export interface PsalmsContextType {

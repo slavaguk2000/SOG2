@@ -13,6 +13,7 @@ import { usePsalmsSelectionData } from './index';
 export const PsalmsBooksContext = createContext<PsalmsBooksContextType>({
   psalmsBookId: '',
   handlePsalmsBookSelect: () => true,
+  selectPsalmBookWithPsalms: () => true,
 });
 
 PsalmsBooksContext.displayName = 'PsalmsBooksContext';
@@ -74,15 +75,22 @@ const PsalmsBooksProvider = ({ children, storedPsalmsBookId, onPsalmsBookIdUpdat
     [softPsalmsBookIdSelected, psalmsBooksData?.psalmsBooks],
   );
 
-  useEffect(() => {
-    const potentialValidPsalmsBooks = psalmsBooksData?.psalmsBooks?.filter(({ psalmsCount }) => psalmsCount);
+  const potentialValidPsalmsBooks =
+    psalmsBooksData?.psalmsBooks?.filter(({ psalmsCount, isFavourite }) => !isFavourite && psalmsCount) ?? [];
 
+  const selectPsalmBookWithPsalms = () => {
+    if (potentialValidPsalmsBooks[0]?.id) {
+      setSoftPsalmsBookIdSelected(potentialValidPsalmsBooks[0].id);
+    }
+  };
+
+  useEffect(() => {
     if (
       currentPsalmBook &&
-      !(softPsalmsBookIdSelected && currentPsalmBook.psalmsCount) &&
-      potentialValidPsalmsBooks?.[0]?.id
+      !currentPsalmBook.isFavourite &&
+      !(softPsalmsBookIdSelected && currentPsalmBook.psalmsCount)
     ) {
-      setSoftPsalmsBookIdSelected(potentialValidPsalmsBooks[0].id);
+      selectPsalmBookWithPsalms();
     }
   }, [currentPsalmBook, setSoftPsalmsBookIdSelected, softPsalmsBookIdSelected, psalmsBooksData?.psalmsBooks]);
 
@@ -93,6 +101,7 @@ const PsalmsBooksProvider = ({ children, storedPsalmsBookId, onPsalmsBookIdUpdat
         psalmsBooksData: psalmsBooksData?.psalmsBooks,
         handlePsalmsBookSelect: setSoftPsalmsBookIdSelected,
         currentPsalmBook,
+        selectPsalmBookWithPsalms,
       }}
     >
       {children}
