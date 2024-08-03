@@ -109,7 +109,7 @@ const CurrentPsalmProvider = ({ children }: PropsWithChildren) => {
     }
   }, [softPsalmIdSelected, setSoftPsalmIdSelected, actualPsalmsData]);
 
-  const currentPsalm = useMemo(() => actualPsalmsData?.find(({ id }) => psalmId === id), [psalmId, psalmsData]);
+  const currentPsalm = useMemo(() => actualPsalmsData?.find(({ id }) => psalmId === id), [actualPsalmsData, psalmId]);
 
   useEffect(() => {
     if (softPsalmIdSelected && actualPsalmsData && currentPsalmDataError) {
@@ -155,12 +155,17 @@ const CurrentPsalmProvider = ({ children }: PropsWithChildren) => {
       ? validPsalmData.psalm.couplets.findIndex(({ id }) => id && currentSlide?.id === id)
       : -1;
 
+  const clearLocation = (slide: Slide) => ({
+    ...slide,
+    location: undefined,
+  });
+
   const handleNextSlide = () => {
     if (validPsalmData && currentSlide) {
       const nextVerseIdx = getCurrentSlideIndex() + 1;
 
       if (nextVerseIdx > 0 && nextVerseIdx < validPsalmData.psalm.couplets.length) {
-        handleUpdateSlide(validPsalmData.psalm.couplets[nextVerseIdx].slide);
+        handleUpdateSlide(clearLocation(validPsalmData.psalm.couplets[nextVerseIdx].slide));
       }
     }
   };
@@ -170,7 +175,7 @@ const CurrentPsalmProvider = ({ children }: PropsWithChildren) => {
       const prevVerseIdx = getCurrentSlideIndex() - 1;
 
       if (prevVerseIdx >= 0) {
-        handleUpdateSlide(validPsalmData.psalm.couplets[prevVerseIdx].slide);
+        handleUpdateSlide(clearLocation(validPsalmData.psalm.couplets[prevVerseIdx].slide));
       }
     }
   };

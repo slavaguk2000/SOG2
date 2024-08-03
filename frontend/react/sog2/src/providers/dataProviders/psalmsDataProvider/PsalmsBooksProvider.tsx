@@ -75,14 +75,16 @@ const PsalmsBooksProvider = ({ children, storedPsalmsBookId, onPsalmsBookIdUpdat
     [softPsalmsBookIdSelected, psalmsBooksData?.psalmsBooks],
   );
 
-  const potentialValidPsalmsBooks =
-    psalmsBooksData?.psalmsBooks?.filter(({ psalmsCount, isFavourite }) => !isFavourite && psalmsCount) ?? [];
+  const potentialValidPsalmsBooks = useMemo(
+    () => psalmsBooksData?.psalmsBooks?.filter(({ psalmsCount, isFavourite }) => !isFavourite && psalmsCount) ?? [],
+    [psalmsBooksData?.psalmsBooks],
+  );
 
-  const selectPsalmBookWithPsalms = () => {
+  const selectPsalmBookWithPsalms = useCallback(() => {
     if (potentialValidPsalmsBooks[0]?.id) {
       setSoftPsalmsBookIdSelected(potentialValidPsalmsBooks[0].id);
     }
-  };
+  }, [potentialValidPsalmsBooks, setSoftPsalmsBookIdSelected]);
 
   useEffect(() => {
     if (
@@ -92,7 +94,7 @@ const PsalmsBooksProvider = ({ children, storedPsalmsBookId, onPsalmsBookIdUpdat
     ) {
       selectPsalmBookWithPsalms();
     }
-  }, [currentPsalmBook, setSoftPsalmsBookIdSelected, softPsalmsBookIdSelected, psalmsBooksData?.psalmsBooks]);
+  }, [currentPsalmBook, selectPsalmBookWithPsalms, softPsalmsBookIdSelected]);
 
   return (
     <PsalmsBooksContext.Provider
