@@ -52,7 +52,7 @@ const VirtualizedPsalmList = () => {
       {!!(dataLength && height) && (
         <>
           {ref?.current && <ScrollerToSelectedPsalm containerParentRef={ref.current} itemSize={itemSize} />}
-          <FixedSizeList height={height} width={'25vw'} itemSize={itemSize} itemCount={dataLength} overscanCount={5}>
+          <FixedSizeList height={height} width={'20vw'} itemSize={itemSize} itemCount={dataLength} overscanCount={5}>
             {({ index, style }) => <PsalmsListItem key={index} style={style} index={index} />}
           </FixedSizeList>
         </>

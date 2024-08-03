@@ -30,11 +30,26 @@ export const BibleVersesWrapper = styled(BibleEntitySelectWrapper)`
 interface BibleEntityItemProps extends ButtonBaseProps {
   selected: boolean;
   preSelected?: boolean;
+  fixTwoLines: boolean;
 }
 
 export const BibleEntityItemWrapper = styled(ButtonBase, {
-  shouldForwardProp: (prop) => !(['selected', 'preSelected'] as PropertyKey[]).includes(prop),
+  shouldForwardProp: (prop) => !(['selected', 'preSelected', 'fixTwoLines'] as PropertyKey[]).includes(prop),
 })<BibleEntityItemProps>`
+  ${({ fixTwoLines }) =>
+    fixTwoLines
+      ? `
+        & > span {
+          display: -webkit-box;
+          -webkit-box-orient: vertical;
+          -webkit-line-clamp: 2;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          line-clamp: 2;
+        }
+      `
+      : ''}
+
   text-align: left;
   display: flex;
   align-items: center;

@@ -22,9 +22,9 @@ export const PsalmBookSelectWrapper = styled(PsalmsEntitySelectWrapper)`
 `;
 
 export const PsalmSelectWrapper = styled(PsalmsEntitySelectWrapper)`
-  max-width: 25vw;
-  width: 25vw;
-  min-width: 25vw;
+  max-width: 20vw;
+  width: 20vw;
+  min-width: 20vw;
 
   & > ul {
     padding: 0;

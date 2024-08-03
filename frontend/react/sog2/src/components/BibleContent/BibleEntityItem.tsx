@@ -11,6 +11,7 @@ export interface BibleEntityItemProps extends PropsWithChildren {
   preSelected?: boolean;
   tooltip?: string;
   scrollingOrder?: number;
+  fixedTwoLines?: boolean;
 }
 
 const BibleEntityItem = ({
@@ -21,6 +22,7 @@ const BibleEntityItem = ({
   tooltip,
   children,
   scrollingOrder,
+  fixedTwoLines,
 }: BibleEntityItemProps) => {
   const itemRef = useRef(null);
 
@@ -44,13 +46,22 @@ const BibleEntityItem = ({
       onClick={onClick}
       ref={itemRef}
       preSelected={preSelected}
+      fixTwoLines={!!fixedTwoLines}
     >
       {children}
-      {name}
+      <span>{name}</span>
     </BibleEntityItemWrapper>
   );
 
-  return tooltip ? <Tooltip title={tooltip}>{body}</Tooltip> : body;
+  const currentTooltip = tooltip || (fixedTwoLines ? name : null);
+
+  return currentTooltip ? (
+    <Tooltip PopperProps={{ sx: { pointerEvents: 'none' } }} title={currentTooltip}>
+      {body}
+    </Tooltip>
+  ) : (
+    body
+  );
 };
 
 export default BibleEntityItem;

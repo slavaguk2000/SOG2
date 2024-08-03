@@ -14,7 +14,7 @@ const PsalmSelectItem = ({ psalmName, selected, onClick, ...favouriteIconButtonP
   const { favouriteReady } = useFavouriteData();
 
   return (
-    <BibleEntityItem name={psalmName} onClick={onClick} selected={selected} scrollingOrder={1}>
+    <BibleEntityItem fixedTwoLines name={psalmName} onClick={onClick} selected={selected} scrollingOrder={1}>
       {favouriteReady && <FavouriteIconButton {...favouriteIconButtonProps} />}
     </BibleEntityItem>
   );
