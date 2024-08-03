@@ -5,8 +5,8 @@ import { useQuery } from '@apollo/client';
 
 import { compareSermonLocation } from '../../../services/slidesService';
 import { arrayToMap } from '../../../utils';
-import { sermon, sermons } from '../../../utils/gql/queries';
-import { Query, QuerySermonArgs, QuerySermonsArgs, Slide } from '../../../utils/gql/types';
+import { sermon } from '../../../utils/gql/queries';
+import { Query, QuerySermonArgs, Slide } from '../../../utils/gql/types';
 import AudioMappingFollower from '../../AudioMapping/AudioMappingFollower';
 import { useInstrumentsField } from '../../instrumentsFieldProvider';
 import { useMainScreenSegmentationData } from '../../MainScreenSegmentationDataProvider';
@@ -14,12 +14,9 @@ import { usePlayerContext } from '../../playerProvider';
 
 import ChangePlayingSrcProposalDialog from './ChangePlayingSrcProposalDialog';
 import SermonDataProviderContext from './context';
+import { useSermons } from './SermonsProvider';
 
-interface SermonDataProviderProps extends PropsWithChildren {
-  sermonsCollectionId?: string;
-}
-
-const SermonDataProvider: FC<SermonDataProviderProps> = ({ sermonsCollectionId = '0', children }) => {
+const SermonDataProvider: FC<PropsWithChildren> = ({ children }) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const currentSermonId = searchParams.get('id') ?? undefined;
   const { isLastScreen, isFirstScreen, requestNextScreen, requestPrevScreen, resetScreens, setLastDown, setLastUp } =
@@ -36,13 +33,6 @@ const SermonDataProvider: FC<SermonDataProviderProps> = ({ sermonsCollectionId =
     [setSearchParams],
   );
 
-  const { data: sermonsData } = useQuery<Pick<Query, 'sermons'>, QuerySermonsArgs>(sermons, {
-    variables: {
-      sermonsCollectionId,
-    },
-    fetchPolicy: 'cache-first',
-  });
-
   const { data: currentSermonData } = useQuery<Pick<Query, 'sermon'>, QuerySermonArgs>(sermon, {
     variables: {
       sermonId: currentSermonId ?? '',
@@ -51,11 +41,13 @@ const SermonDataProvider: FC<SermonDataProviderProps> = ({ sermonsCollectionId =
     skip: !currentSermonId,
   });
 
+  const { sermons } = useSermons();
+
   useEffect(() => {
-    if (!currentSermonId && sermonsData) {
-      handleSermonSelect(sermonsData.sermons[0].id);
+    if (!currentSermonId && sermons) {
+      handleSermonSelect(sermons[0].id);
     }
-  }, [currentSermonId, handleSermonSelect, sermonsData]);
+  }, [currentSermonId, handleSermonSelect, sermons]);
 
   const {
     handleUpdateSlide: instrumentsHandleUpdateSlide,
@@ -63,7 +55,7 @@ const SermonDataProvider: FC<SermonDataProviderProps> = ({ sermonsCollectionId =
     handleUpdateCurrentSlideOffset,
   } = useInstrumentsField();
 
-  const sermonsMap = useMemo(() => sermonsData && arrayToMap(sermonsData.sermons), [sermonsData]);
+  const sermonsMap = useMemo(() => sermons && arrayToMap(sermons), [sermons]);
   const sermonParagraphsMap = useMemo(
     () => currentSermonData && arrayToMap(currentSermonData.sermon, { mapper: (slide, idx) => ({ ...slide, idx }) }),
     [currentSermonData],
@@ -208,7 +200,6 @@ const SermonDataProvider: FC<SermonDataProviderProps> = ({ sermonsCollectionId =
         handleUpdateLocation,
         handleSermonSelect,
         currentSermon,
-        sermonsData: sermonsData?.sermons,
         currentSermonSlides: currentSermonData?.sermon,
         audioMapping,
       }}

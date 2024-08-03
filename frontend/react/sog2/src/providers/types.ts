@@ -135,7 +135,6 @@ export interface InstrumentsFieldProviderContextType {
 
 export interface SermonDataProviderContextType extends DataProvider {
   currentSermonSlides?: Slide[];
-  sermonsData?: Sermon[];
   handleSermonSelect: (id: string) => void;
   currentSermon?: Sermon;
   audioMapping?: AudioMapping;
@@ -192,4 +191,13 @@ export interface AudioMappingProviderContextType {
   setFollow: Dispatch<SetStateAction<boolean>>;
   recording: boolean;
   setRecording: Dispatch<SetStateAction<boolean>>;
+}
+
+export interface SermonsContextType {
+  sermons?: Sermon[];
+  dataLength: number;
+  preparedSermons?: {
+    id: string;
+    name: string;
+  }[];
 }

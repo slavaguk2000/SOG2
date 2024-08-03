@@ -16,6 +16,7 @@ import BibleContext from './providers/dataProviders/bibleDataProvider/context';
 import BibleDataProvider from './providers/dataProviders/bibleDataProvider/provider';
 import SermonDataProviderContext from './providers/dataProviders/sermanDataProvider/context';
 import SermonDataProvider from './providers/dataProviders/sermanDataProvider/provider';
+import SermonsProvider from './providers/dataProviders/sermanDataProvider/SermonsProvider';
 import FreeSlideDialogProvider from './providers/FreeSlideDialogProvider/provider';
 import InstrumentsFieldProvider from './providers/instrumentsFieldProvider/provider';
 import MainScreenRatioProvider from './providers/MainScreenSegmentationDataProvider/provider';
@@ -55,13 +56,15 @@ function App() {
                           <Route
                             path="/sermon"
                             element={
-                              <SermonDataProvider>
-                                <SearchContextProvider tabType={TabType.Sermon}>
-                                  <MainView dataProviderContext={SermonDataProviderContext}>
-                                    <SermonsContent />
-                                  </MainView>
-                                </SearchContextProvider>
-                              </SermonDataProvider>
+                              <SermonsProvider>
+                                <SermonDataProvider>
+                                  <SearchContextProvider tabType={TabType.Sermon}>
+                                    <MainView dataProviderContext={SermonDataProviderContext}>
+                                      <SermonsContent />
+                                    </MainView>
+                                  </SearchContextProvider>
+                                </SermonDataProvider>
+                              </SermonsProvider>
                             }
                           />
                           <Route path="/psalms" element={<PsalmsPage />} />
