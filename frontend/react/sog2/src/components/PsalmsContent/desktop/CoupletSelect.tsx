@@ -30,10 +30,10 @@ const CoupletSelect = () => {
     [psalmData],
   );
 
-  const { numberToSlideMap, maxNumber } = useMemo(
+  const { numberToSlideMap, maxNumber, nonNumericCouplets } = useMemo(
     () =>
       (psalmData?.couplets ?? []).reduce(
-        (acc, { slide }) => {
+        (acc, { slide, couplet }) => {
           if (slide?.contentPrefix) {
             const coupletPrefix = slide.contentPrefix;
 
@@ -43,6 +43,8 @@ const CoupletSelect = () => {
               const number = parseInt(numberString);
               acc.numberToSlideMap[number] = slide;
               acc.maxNumber = Math.max(acc.maxNumber, number);
+            } else {
+              acc.nonNumericCouplets[couplet.initialOrder ?? 0] = slide;
             }
           }
 
@@ -51,6 +53,7 @@ const CoupletSelect = () => {
         {
           numberToSlideMap: {} as Record<number, Slide>,
           maxNumber: 0,
+          nonNumericCouplets: {} as Record<number, Slide>,
         },
       ),
     [psalmData],
@@ -74,9 +77,57 @@ const CoupletSelect = () => {
     }
   };
 
-  const { preselectNumber, handleKeyDown } = useFastNumberSelection(changeCoupletByNumber, maxNumber, {
-    debounceSeconds,
-  });
+  const { preselectNumber, handleKeyDown: fastNumberSelectionKeyDown } = useFastNumberSelection(
+    changeCoupletByNumber,
+    maxNumber,
+    {
+      debounceSeconds,
+    },
+  );
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (!psalmData) {
+      return;
+    }
+
+    const nonNumericCoupletsOrders = Object.keys(nonNumericCouplets).map(Number);
+
+    if (e.key === '*' && nonNumericCoupletsOrders.length) {
+      if (nonNumericCoupletsOrders.length === 1) {
+        onUpdateSlide(nonNumericCouplets[nonNumericCoupletsOrders[0]]);
+      } else {
+        const currentCoupletOrder = psalmData.couplets.find(({ slide }) => slide?.id === currentSlide?.id)?.couplet
+          .initialOrder;
+
+        if (currentCoupletOrder !== undefined) {
+          const currentNonNumericIndex = nonNumericCoupletsOrders.indexOf(currentCoupletOrder);
+
+          if (currentNonNumericIndex === -1) {
+            const nextCoupletOrder = currentCoupletOrder + 1;
+            if (nonNumericCoupletsOrders.includes(nextCoupletOrder)) {
+              onUpdateSlide(nonNumericCouplets[nextCoupletOrder]);
+            } else {
+              const previousOrders = nonNumericCoupletsOrders.filter((i) => i < currentCoupletOrder);
+
+              if (previousOrders.length) {
+                onUpdateSlide(nonNumericCouplets[previousOrders[previousOrders.length - 1]]);
+              } else {
+                onUpdateSlide(nonNumericCouplets[nonNumericCoupletsOrders[0]]);
+              }
+            }
+          } else {
+            const nextOrderIndex =
+              currentNonNumericIndex + 1 < nonNumericCoupletsOrders.length ? currentNonNumericIndex + 1 : 0;
+            onUpdateSlide(nonNumericCouplets[nonNumericCoupletsOrders[nextOrderIndex]]);
+          }
+        } else {
+          onUpdateSlide(nonNumericCouplets[nonNumericCoupletsOrders[0]]);
+        }
+      }
+    } else {
+      fastNumberSelectionKeyDown(e);
+    }
+  };
 
   useEffect(() => {
     if (currentSlide) {
