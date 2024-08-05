@@ -9,6 +9,7 @@ import { theme } from 'src/theme';
 import BibleContent from './components/BibleContent';
 import SermonsContent from './components/SermonsContent';
 import ActivePsalmChordsPage from './pages/ActivePsalmChordsPage';
+import ActiveSlidePage from './pages/ActiveSlidePage';
 import PsalmChordEditPage from './pages/psalmChordEditPage';
 import PsalmsPage from './pages/psalmsPage';
 import AudioMappingProvider from './providers/AudioMapping/provider';
@@ -73,6 +74,7 @@ function App() {
                           <Route path="/psalms" element={<PsalmsPage />} />
                           <Route path="/psalms/chords-edit" element={<PsalmChordEditPage />} />
                           <Route path="/active-psalm/chords" element={<ActivePsalmChordsPage />} />
+                          <Route path="/active-slide" element={<ActiveSlidePage />} />
                         </Routes>
                       </InstrumentsFieldProvider>
                     </AudioMappingProvider>
