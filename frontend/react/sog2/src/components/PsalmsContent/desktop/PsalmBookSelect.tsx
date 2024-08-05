@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import useSelectIntent from '../../../hooks/useSelectIntent';
 import { usePsalmsBooksData } from '../../../providers/dataProviders/psalmsDataProvider/PsalmsBooksProvider';
@@ -6,12 +6,25 @@ import { usePsalmsBooksData } from '../../../providers/dataProviders/psalmsDataP
 import PsalmBookItem from './PsalmBookItem';
 import { PsalmBookSelectWrapper } from './styled';
 
-const PsalmBookSelect = () => {
+interface PsalmBookSelectProps {
+  isCurrentBookFavouriteState: boolean;
+  setIsCurrentBookFavourite: (isFavourite: boolean) => void;
+}
+
+const PsalmBookSelect = ({ setIsCurrentBookFavourite, isCurrentBookFavouriteState }: PsalmBookSelectProps) => {
   const { psalmsBooksData, currentPsalmBook, handlePsalmsBookSelect } = usePsalmsBooksData();
   const { softSelected, setSoftSelected } = useSelectIntent({
     hardSelected: currentPsalmBook?.id,
     setHardSelected: handlePsalmsBookSelect,
   });
+
+  useEffect(() => {
+    const realIsFavouriteState = !!currentPsalmBook?.isFavourite;
+
+    if (realIsFavouriteState !== isCurrentBookFavouriteState) {
+      setIsCurrentBookFavourite(realIsFavouriteState);
+    }
+  }, [currentPsalmBook?.isFavourite, isCurrentBookFavouriteState, setIsCurrentBookFavourite]);
 
   return (
     <PsalmBookSelectWrapper>

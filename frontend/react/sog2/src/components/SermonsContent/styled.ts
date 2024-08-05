@@ -1,4 +1,4 @@
-import { Box, experimentalStyled as styled } from '@mui/material';
+import { Box, experimentalStyled as styled, ListItem } from '@mui/material';
 
 export const SermonsContentWrapper = styled(Box)`
   display: flex;
@@ -16,7 +16,9 @@ export const SermonsEntitySelectWrapper = styled(Box)`
 `;
 
 export const SermonSelectWrapper = styled(SermonsEntitySelectWrapper)`
-  width: 250px;
+  min-width: 20vw;
+  width: 20vw;
+  overflow: hidden;
 `;
 
 export const SermonChapterSelectWrapper = styled(SermonsEntitySelectWrapper)`
@@ -86,5 +88,10 @@ export const VersePreselectBox = styled(Box, {
       opacity: 0;
     }
   }
-\` ;
+`;
+
+export const StyledListItem = styled(ListItem)`
+  & > div {
+    height: 100%;
+  }
 `;

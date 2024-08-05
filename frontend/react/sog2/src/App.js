@@ -14,8 +14,10 @@ import PsalmsPage from './pages/psalmsPage';
 import AudioMappingProvider from './providers/AudioMapping/provider';
 import BibleContext from './providers/dataProviders/bibleDataProvider/context';
 import BibleDataProvider from './providers/dataProviders/bibleDataProvider/provider';
+import ChaptersProvider from './providers/dataProviders/sermanDataProvider/ChaptersProvider';
 import SermonDataProviderContext from './providers/dataProviders/sermanDataProvider/context';
 import SermonDataProvider from './providers/dataProviders/sermanDataProvider/provider';
+import SermonsProvider from './providers/dataProviders/sermanDataProvider/SermonsProvider';
 import FreeSlideDialogProvider from './providers/FreeSlideDialogProvider/provider';
 import InstrumentsFieldProvider from './providers/instrumentsFieldProvider/provider';
 import MainScreenRatioProvider from './providers/MainScreenSegmentationDataProvider/provider';
@@ -55,13 +57,17 @@ function App() {
                           <Route
                             path="/sermon"
                             element={
-                              <SermonDataProvider>
-                                <SearchContextProvider tabType={TabType.Sermon}>
-                                  <MainView dataProviderContext={SermonDataProviderContext}>
-                                    <SermonsContent />
-                                  </MainView>
-                                </SearchContextProvider>
-                              </SermonDataProvider>
+                              <SermonsProvider>
+                                <ChaptersProvider>
+                                  <SermonDataProvider>
+                                    <SearchContextProvider tabType={TabType.Sermon}>
+                                      <MainView dataProviderContext={SermonDataProviderContext}>
+                                        <SermonsContent />
+                                      </MainView>
+                                    </SearchContextProvider>
+                                  </SermonDataProvider>
+                                </ChaptersProvider>
+                              </SermonsProvider>
                             }
                           />
                           <Route path="/psalms" element={<PsalmsPage />} />

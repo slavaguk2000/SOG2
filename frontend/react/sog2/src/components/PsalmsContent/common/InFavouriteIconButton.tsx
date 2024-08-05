@@ -2,7 +2,7 @@ import React, { Dispatch, MouseEventHandler, SetStateAction, useEffect, useState
 
 import TurnedInIcon from '@mui/icons-material/TurnedIn';
 import TurnedInNotIcon from '@mui/icons-material/TurnedInNot';
-import { SxProps, Theme } from '@mui/material';
+import { Box, SxProps, Theme } from '@mui/material';
 import { useDebouncedCallback } from 'use-debounce';
 
 import useAddRemoveFavourite from '../../../hooks/useAddRemoveFavourite';
@@ -14,6 +14,8 @@ export interface FavouriteIconButtonBodyProps {
   onClick?: MouseEventHandler;
   sx?: SxProps<Theme>;
 }
+
+export const FavouriteIconSkeleton = () => <Box width="34px" />;
 
 export const FavouriteIconButtonBody = ({ currentState, onClick, sx }: FavouriteIconButtonBodyProps) => (
   <StyledIconButton sx={sx} size="small" onClick={onClick}>

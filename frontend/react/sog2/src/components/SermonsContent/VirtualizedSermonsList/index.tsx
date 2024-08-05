@@ -5,17 +5,17 @@ import { Box } from '@mui/material';
 import ResizeObserver from 'resize-observer-polyfill';
 import { useDebouncedCallback } from 'use-debounce';
 
-import { usePsalms } from '../../../../providers/dataProviders/psalmsDataProvider/PsalmsProvider';
-import ScrollerToSelectedPsalm from '../../mobile/ScrollerToSelectedPsalm';
+import { useSermons } from '../../../providers/dataProviders/sermanDataProvider/SermonsProvider';
 
-import PsalmsListItem from './ListItem';
+import ListItem from './ListItem';
+import ScrollerToSelectedSermon from './ScrollerToSelectedSermon';
 
 const itemSize = 46;
 
-const VirtualizedPsalmList = () => {
+const VirtualizedSermonsList = () => {
   const [height, setHeight] = useState<number | null>(null);
   const ref = useRef<HTMLDivElement | null>(null);
-  const { dataLength } = usePsalms();
+  const { dataLength } = useSermons();
 
   const debouncedSetHeight = useDebouncedCallback((newHeight: number) => {
     setHeight(newHeight);
@@ -51,9 +51,9 @@ const VirtualizedPsalmList = () => {
     <Box overflow="hidden" height={'100%'} ref={ref}>
       {!!(dataLength && height) && (
         <>
-          {ref?.current && <ScrollerToSelectedPsalm containerParentRef={ref.current} itemSize={itemSize} />}
-          <FixedSizeList height={height} width={'25vw'} itemSize={itemSize} itemCount={dataLength} overscanCount={5}>
-            {({ index, style }) => <PsalmsListItem key={index} style={style} index={index} />}
+          {ref?.current && <ScrollerToSelectedSermon containerParentRef={ref.current} itemSize={itemSize} />}
+          <FixedSizeList height={height} width={'20vw'} itemSize={itemSize} itemCount={dataLength} overscanCount={5}>
+            {({ index, style }) => <ListItem key={index} style={style} index={index} />}
           </FixedSizeList>
         </>
       )}
@@ -61,4 +61,4 @@ const VirtualizedPsalmList = () => {
   );
 };
 
-export default VirtualizedPsalmList;
+export default VirtualizedSermonsList;
