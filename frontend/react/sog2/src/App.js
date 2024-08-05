@@ -14,6 +14,7 @@ import PsalmsPage from './pages/psalmsPage';
 import AudioMappingProvider from './providers/AudioMapping/provider';
 import BibleContext from './providers/dataProviders/bibleDataProvider/context';
 import BibleDataProvider from './providers/dataProviders/bibleDataProvider/provider';
+import ChaptersProvider from './providers/dataProviders/sermanDataProvider/ChaptersProvider';
 import SermonDataProviderContext from './providers/dataProviders/sermanDataProvider/context';
 import SermonDataProvider from './providers/dataProviders/sermanDataProvider/provider';
 import SermonsProvider from './providers/dataProviders/sermanDataProvider/SermonsProvider';
@@ -57,13 +58,15 @@ function App() {
                             path="/sermon"
                             element={
                               <SermonsProvider>
-                                <SermonDataProvider>
-                                  <SearchContextProvider tabType={TabType.Sermon}>
-                                    <MainView dataProviderContext={SermonDataProviderContext}>
-                                      <SermonsContent />
-                                    </MainView>
-                                  </SearchContextProvider>
-                                </SermonDataProvider>
+                                <ChaptersProvider>
+                                  <SermonDataProvider>
+                                    <SearchContextProvider tabType={TabType.Sermon}>
+                                      <MainView dataProviderContext={SermonDataProviderContext}>
+                                        <SermonsContent />
+                                      </MainView>
+                                    </SearchContextProvider>
+                                  </SermonDataProvider>
+                                </ChaptersProvider>
                               </SermonsProvider>
                             }
                           />

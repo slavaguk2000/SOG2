@@ -134,7 +134,6 @@ export interface InstrumentsFieldProviderContextType {
 }
 
 export interface SermonDataProviderContextType extends DataProvider {
-  currentSermonSlides?: Slide[];
   handleSermonSelect: (id: string) => void;
   currentSermon?: Sermon;
   audioMapping?: AudioMapping;

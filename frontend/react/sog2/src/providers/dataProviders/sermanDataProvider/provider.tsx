@@ -1,18 +1,16 @@
 import React, { FC, PropsWithChildren, useCallback, useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
-import { useQuery } from '@apollo/client';
-
 import { compareSermonLocation } from '../../../services/slidesService';
 import { arrayToMap } from '../../../utils';
-import { sermon } from '../../../utils/gql/queries';
-import { Query, QuerySermonArgs, Slide } from '../../../utils/gql/types';
+import { Slide } from '../../../utils/gql/types';
 import AudioMappingFollower from '../../AudioMapping/AudioMappingFollower';
 import { useInstrumentsField } from '../../instrumentsFieldProvider';
 import { useMainScreenSegmentationData } from '../../MainScreenSegmentationDataProvider';
 import { usePlayerContext } from '../../playerProvider';
 
 import ChangePlayingSrcProposalDialog from './ChangePlayingSrcProposalDialog';
+import { useChapters } from './ChaptersProvider';
 import SermonDataProviderContext from './context';
 import { useSermons } from './SermonsProvider';
 
@@ -33,15 +31,15 @@ const SermonDataProvider: FC<PropsWithChildren> = ({ children }) => {
     [setSearchParams],
   );
 
-  const { data: currentSermonData } = useQuery<Pick<Query, 'sermon'>, QuerySermonArgs>(sermon, {
-    variables: {
-      sermonId: currentSermonId ?? '',
-    },
-    fetchPolicy: 'cache-first',
-    skip: !currentSermonId,
-  });
-
   const { sermons } = useSermons();
+
+  const { chapters, dataLength: chaptersLength, setSermonId, sermonId } = useChapters();
+
+  useEffect(() => {
+    if (sermonId !== currentSermonId) {
+      setSermonId?.(currentSermonId);
+    }
+  }, [sermonId, currentSermonId, setSermonId]);
 
   useEffect(() => {
     if (!currentSermonId && sermons) {
@@ -57,8 +55,8 @@ const SermonDataProvider: FC<PropsWithChildren> = ({ children }) => {
 
   const sermonsMap = useMemo(() => sermons && arrayToMap(sermons), [sermons]);
   const sermonParagraphsMap = useMemo(
-    () => currentSermonData && arrayToMap(currentSermonData.sermon, { mapper: (slide, idx) => ({ ...slide, idx }) }),
-    [currentSermonData],
+    () => chapters && arrayToMap(chapters, { mapper: (slide, idx) => ({ ...slide, idx }) }),
+    [chapters],
   );
 
   const currentSermon = currentSermonId ? sermonsMap?.[currentSermonId] : undefined;
@@ -102,7 +100,7 @@ const SermonDataProvider: FC<PropsWithChildren> = ({ children }) => {
   };
 
   const handleNextSlide = async () => {
-    if (!(currentSermonData && sermonParagraphsMap && currentSlide?.id)) {
+    if (!(chapters && sermonParagraphsMap && currentSlide?.id)) {
       return;
     }
 
@@ -118,13 +116,13 @@ const SermonDataProvider: FC<PropsWithChildren> = ({ children }) => {
 
     const nextIdx = currentIdx + 1;
 
-    if (currentIdx >= 0 && currentSermonData.sermon.length > nextIdx) {
-      handleUpdateSlide(currentSermonData.sermon[nextIdx]);
+    if (currentIdx >= 0 && chaptersLength > nextIdx) {
+      handleUpdateSlide(chapters[nextIdx]);
     }
   };
 
   const handlePrevSlide = () => {
-    if (!(currentSermonData && sermonParagraphsMap && currentSlide?.id)) {
+    if (!(chapters && sermonParagraphsMap && currentSlide?.id)) {
       return;
     }
 
@@ -138,7 +136,7 @@ const SermonDataProvider: FC<PropsWithChildren> = ({ children }) => {
     const prevIdx = currentIdx - 1;
 
     if (prevIdx >= 0) {
-      handleUpdateSlide(currentSermonData.sermon[prevIdx]);
+      handleUpdateSlide(chapters[prevIdx]);
       setLastUp();
     }
   };
@@ -200,13 +198,10 @@ const SermonDataProvider: FC<PropsWithChildren> = ({ children }) => {
         handleUpdateLocation,
         handleSermonSelect,
         currentSermon,
-        currentSermonSlides: currentSermonData?.sermon,
         audioMapping,
       }}
     >
-      {currentSermonData?.sermon && !playedAndShowDifferent && (
-        <AudioMappingFollower sermonData={currentSermonData.sermon} />
-      )}
+      {chapters && !playedAndShowDifferent && <AudioMappingFollower sermonData={chapters} />}
       {children}
       <ChangePlayingSrcProposalDialog
         open={!!(changePlayingSrcProposalDialogData.sermonName && changePlayingSrcProposalDialogData.audioLink)}
