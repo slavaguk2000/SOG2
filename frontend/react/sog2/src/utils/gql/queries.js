@@ -101,6 +101,8 @@ export const ActiveSlideSubscription = gql`
     activeSlideSubscription {
       id
       content
+      contentPrefix
+      title
       location
       searchContent
     }
