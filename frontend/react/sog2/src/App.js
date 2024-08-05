@@ -42,7 +42,7 @@ function App() {
                     <AudioMappingProvider>
                       <InstrumentsFieldProvider>
                         <Routes>
-                          <Route path="/" element={<Navigate to="/bible" replace />} />
+                          <Route path="/" element={<Navigate to="/psalms" replace />} />
                           <Route
                             path="/bible"
                             element={

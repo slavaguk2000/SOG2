@@ -30,7 +30,7 @@ export const StyledDialog = styled(Dialog, {
           margin: 5px;
           position: absolute;
           top: ${Math.max(0, position.top - 100)}px;
-          left: ${Math.max(0, position.left - 100)}px;
+          left: min(${Math.max(0, position.left - 100)}px, calc(100vw - 450px));
         }
       `
       : ''}

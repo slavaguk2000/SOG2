@@ -5,3 +5,6 @@ frontend/react/.DS_Store
 backend/venv
 .DS_Store
 */.DS_Store
+backend/*.db
+backend/*.sog
+

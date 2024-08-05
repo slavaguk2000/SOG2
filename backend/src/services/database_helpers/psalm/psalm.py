@@ -1,4 +1,5 @@
 import enum
+import re
 from typing import Type, List
 
 from sqlalchemy.orm import Session
@@ -105,9 +106,9 @@ def get_favourite_psalms_dicts():
 
 
 def get_linear_contents_from_couplet(couplet: CoupletContent):
-    linear_content = ''.join(
+    linear_content = re.sub(r'\s+', ' ', ''.join(
         [content.text_content for content in sorted(couplet.couplet_content, key=lambda x: x.order)]
-    )
+    ))
 
     return {
         "content": linear_content,
