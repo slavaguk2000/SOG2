@@ -212,6 +212,7 @@ type_defs = gql("""
       syncPsalmsToElastic: Boolean
       parseSermonsFromBranhamRu: Boolean
       addPsalmsFromSog(sogFileSrc: String!, language: String!): Boolean
+      addPsalmsFromNavaPiesnJSONPL(fileSrc: String!, language: String!): Boolean
       deletePsalmsBook(psalmsBookId: ID!): Boolean
       addPsalmToFavourite(psalmId: ID!, transposition: Int): Boolean
       removePsalmFromFavourite(psalmId: ID!): Boolean

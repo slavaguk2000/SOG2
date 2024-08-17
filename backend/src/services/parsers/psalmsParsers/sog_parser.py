@@ -9,6 +9,7 @@ from src.models.musical_key import get_musical_key_by_str
 from src.models.psalm import Psalm
 from src.models.psalms_book import PsalmBook
 from src.services.database import engine
+from src.services.parsers.psalmsParsers.constants import tonality_pattern
 
 
 class CoupletData:
@@ -27,7 +28,6 @@ class CoupletData:
 
 class PsalmData:
     def __init__(self, identifier: str, name: str, couplets: [CoupletData]):
-        tonality_pattern = "(?:\(([А-Яа-яA-Za-z#]+).*\))?"
         name_regex_result = regex.match(fr"^{tonality_pattern}\s*([^\(]+)\s*{tonality_pattern}", name)
         identifier_regex_result = regex.match(fr"^([^\(]+)\s*{tonality_pattern}$", identifier)
         self.identifier = identifier_regex_result.group(1).strip()
