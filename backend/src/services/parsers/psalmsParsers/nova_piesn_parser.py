@@ -41,13 +41,23 @@ class ChordData:
 
 
 class ContentData:
-    def __init__(self, content_raw_data: str):
-        res = regex.match(r"^(<span>(.*?)<sup>(.+?)</sup>(.*?)</span>)?(.*)$", content_raw_data)
-        raw_chord = res.group(3)
-        text_under_chord = f"{res.group(2) or ''}{res.group(4) or ''}"
-        self.text = f"{text_under_chord}{res.group(5)}"
-        self.chord_offset = int(len(text_under_chord) / 2)
-        self.chord = raw_chord and ChordData(raw_chord)
+    def __init__(
+            self,
+            content_raw_data: str = None,
+            text: str = None, chord:
+            ChordData = None,
+            chord_offset: int = None):
+        if content_raw_data:
+            res = regex.match(r"^(<span>(.*?)<sup>(.+?)</sup>(.*?)</span>)?(.*)$", content_raw_data)
+            raw_chord = res.group(3)
+            text_under_chord = f"{res.group(2) or ''}{res.group(4) or ''}"
+            self.text = f"{text_under_chord}{res.group(5)}"
+            self.chord_offset = int(len(text_under_chord) / 2)
+            self.chord = raw_chord and ChordData(raw_chord)
+        else:
+            self.text = text
+            self.chord_offset = chord_offset
+            self.chord = chord
 
     def __str__(self):
         return f"ContentData(t:{self.text} co:{self.chord_offset} c:{self.chord})"
@@ -64,13 +74,43 @@ class CoupletData:
         raw_contents = parsed_couplet_data.group(3).strip() if parsed_couplet_data else ""
         self.order = order
         self.content = [ContentData(res[0]) for res in re.findall(r'((<span>)?.+?)(?=<span>|$)', raw_contents)]
+        self.__add_chords_from_text()
         self.__normalize_content()
+
+    def __add_chords_from_text(self):
+        res_content = []
+        for content in self.content:
+            text = content.text
+            additional_contents = []
+            while True:
+                chord_res = re.search(r'^(.+)<sup>(.+?)</sup>(.*?)$', text)
+                if not chord_res:
+                    break
+                new_content = chord_res.group(3)
+                chord = chord_res.group(2)
+
+                additional_contents.append(ContentData(
+                    text=new_content or ' ',
+                    chord=ChordData(chord),
+                    chord_offset=0,
+                ))
+                text = chord_res.group(1)
+            res_content.append(ContentData(
+                text=text,
+                chord=content.chord,
+                chord_offset=content.chord_offset,
+            ))
+
+            for additional_content in reversed(additional_contents):
+                res_content.append(additional_content)
+        self.content = res_content
 
     def __normalize_content(self):
         for i, content in enumerate(self.content):
             if i > 0 and content.chord_offset > 0:
-                self.content[i - 1].text = f"{self.content[i - 1].text}{content.text[:content.chord_offset]}"
-                content.text = content.text[content.chord_offset:]
+                offset = min(content.chord_offset, len(content.text) - 1)
+                self.content[i - 1].text = f"{self.content[i - 1].text}{content.text[:offset]}"
+                content.text = content.text[offset:]
                 content.chord_offset = 0
 
     def __str__(self):
@@ -129,12 +169,12 @@ class NovaPiesnPsalmParser:
             if type(bare_psalms_data) != list or not len(bare_psalms_data):
                 return False
 
+            psalms = [
+                NovaPiesnPsalmParser.__parse_data_from_single_json_object(single_psalm_data)
+                for single_psalm_data
+                in bare_psalms_data
+            ]
             with Session(engine) as session:
-                psalms = [
-                    NovaPiesnPsalmParser.__parse_data_from_single_json_object(single_psalm_data)
-                    for single_psalm_data
-                    in bare_psalms_data
-                ]
                 new_psalms_book = PsalmBook(language=language, name=song_book_name)
                 session.add(new_psalms_book)
                 psalms_objects = [
