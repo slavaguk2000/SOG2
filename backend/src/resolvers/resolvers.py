@@ -21,6 +21,7 @@ from asyncio import Queue
 
 from src.services.elasticsearch.search.sermon.sermon import sermon_search
 from src.services.elasticsearch.sync.bible import sync_bible
+from src.services.parsers.psalmsParsers.nova_piesn_parser import NovaPiesnPsalmParser
 from src.services.parsers.psalmsParsers.sog_parser import SimplePsalmParser
 from src.services.parsers.psalmsParsers.utils import import_song_images
 from src.types.commonTypes import SortingDirection
@@ -202,6 +203,12 @@ def resolve_set_active_slide(*_, sog_file_src: str, language: str, translation: 
 @convert_kwargs_to_snake_case
 def resolve_add_psalms_from_sog(*_, sog_file_src: str, language: str):
     return SimplePsalmParser.parse(sog_file_src, language)
+
+
+@mutation.field("addPsalmsFromNavaPiesnJSONPL")
+@convert_kwargs_to_snake_case
+def resolve_add_psalms_from_sog(*_, file_src: str, language: str):
+    return NovaPiesnPsalmParser.parse(file_src, language)
 
 
 def notify_favourite_changed():
