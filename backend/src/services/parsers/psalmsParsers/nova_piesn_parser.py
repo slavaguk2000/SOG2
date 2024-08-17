@@ -19,7 +19,7 @@ class ChordData:
     def __init__(self, raw_chord: str):
         lower_chord = raw_chord.lower()
         is_minor = lower_chord == raw_chord
-        res = regex.match(r"^(.*?)(\w)([ei]s)?(.*)$", raw_chord)
+        res = regex.match(r"^(.*?)(\w)([ei]s)?(.*)$", lower_chord)
 
         chord_prefix = res.group(1)
         raw_base_note = res.group(2)
@@ -58,8 +58,9 @@ class ContentData:
 
 class CoupletData:
     def __init__(self, couplet_data: str, order: int):
-        parsed_couplet_data = regex.match(r"^((\d+\.|Ref\..*\:)\s+)(.+)", couplet_data)
-        self.marker = parsed_couplet_data.group(1) if parsed_couplet_data else ""
+        parsed_couplet_data = regex.match(r"^((\d+\.|Ref\..*\:)\s+)?(.+)", couplet_data)
+        self.marker = (parsed_couplet_data and parsed_couplet_data.group(1)) or ""
+        self.styling = 1 if self.marker and re.search(r"Ref", self.marker) else 0
         raw_contents = parsed_couplet_data.group(3).strip() if parsed_couplet_data else ""
         self.order = order
         self.content = [ContentData(res[0]) for res in re.findall(r'((<span>)?.+?)(?=<span>|$)', raw_contents)]
@@ -80,6 +81,15 @@ class CoupletData:
 
 
 class PsalmData:
+    def __init__(self, name: str, couplets: [CoupletData]):
+        title_regex_result = regex.match(fr"^((\d+)\.)?\s*([^\(]+)\s*{tonality_pattern}", name)
+        self.identifier = f"00{title_regex_result.group(2).strip()}"[-3:]
+        self.name = title_regex_result.group(3).strip()
+        tonality = title_regex_result.group(4).strip()
+        self.couplets = couplets
+        self.tonality = \
+            get_musical_key_by_str(tonality, jazz_style=True) if tonality else self.__get_tonality_from_couplets()
+
     def __get_tonality_from_couplets(self):
         if self.couplets:
             for content in reversed(self.couplets[-1]):
@@ -87,15 +97,6 @@ class PsalmData:
                     return content.chord
 
         return MusicalKey.A
-
-    def __init__(self, name: str, couplets: [CoupletData]):
-        title_regex_result = regex.match(fr"^((\d+)\.)?\s*([^\(]+)\s*{tonality_pattern}", name)
-        self.identifier = title_regex_result.group(2).strip()
-        self.name = title_regex_result.group(3).strip()
-        tonality = title_regex_result.group(4).strip()
-        self.couplets = couplets
-        self.tonality = \
-            get_musical_key_by_str(tonality, jazz_style=True) if tonality else self.__get_tonality_from_couplets()
 
     def __str__(self):
         return f"PsalmData({self.identifier} {self.tonality} {self.name} couplets: {len(self.couplets)})"
@@ -108,7 +109,15 @@ class NovaPiesnPsalmParser:
     @staticmethod
     def __parse_data_from_single_json_object(psalm: dict):
         title = psalm["title"]
-        couplets = [CoupletData(couplet, i) for i, couplet in enumerate(re.findall(r"<p>(.+)</p>", psalm["chorus"]))]
+        couplets = [
+            CoupletData(couplet, i)
+            for i, couplet
+            in enumerate(
+                re.findall(r"<p>(.+)</p>", psalm["chorus"])
+                if psalm["chorus"]
+                else psalm["text"].strip().split('\n\n')
+            )
+        ]
         return PsalmData(title, couplets)
 
     @staticmethod
@@ -134,6 +143,7 @@ class NovaPiesnPsalmParser:
                         name=psalm_data.name,
                         default_tonality=psalm_data.tonality,
                         couplets=[Couplet(
+                            styling=couplet_data.styling,
                             marker=couplet_data.marker,
                             couplet_content=[
                                 CoupletContent(
