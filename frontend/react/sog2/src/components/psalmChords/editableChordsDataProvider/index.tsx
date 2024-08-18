@@ -11,6 +11,7 @@ import implementEditChord from './implementEditChord';
 import implementEditText from './implementEditText';
 import implementGlueWithNextLine from './implementGlueWithNextLine';
 import implementLinkChords from './implementLinkChords';
+import implementMoveChord from './implementMoveChord';
 import implementRemoveChord from './implementRemoveChord';
 import implementUnlinkChord from './implementUnlinkChord';
 import MustProvideDefaultTonalityDialog from './MustProvideDefaultTonalityDialog';
@@ -35,6 +36,7 @@ type ChordsDataContextType = {
   handleEditChord: (chord: CoupletContentChord) => void;
   handleEditText: (coupletContentId: string, newText: string) => void;
   handleUnlinkChord: (coupletContentId: string) => void;
+  handleMoveChord: (coupletIdx: number, coupletContentIdx: number, isLeft: boolean) => void;
   mainKey: number;
   hasUndo: boolean;
   hasRedo: boolean;
@@ -53,6 +55,7 @@ const defaultValue: ChordsDataContextType = {
   handleLinkChords: () => true,
   handleEditText: () => true,
   handleUnlinkChord: () => true,
+  handleMoveChord: () => true,
   mainKey: 0,
   hasUndo: false,
   hasRedo: false,
@@ -156,6 +159,11 @@ const EditableChordsDataProvider = ({
     chordsData,
   });
 
+  const { handleMoveChord } = implementMoveChord({
+    setNewChordsData,
+    chordsData,
+  });
+
   const currentData = forceData ?? chordsData;
   const mainKey =
     ((currentData.psalm && keyToScaleDegree[currentData.psalm.defaultTonality as string]) ?? 0) + rootTransposition;
@@ -174,6 +182,7 @@ const EditableChordsDataProvider = ({
     <ChordsDataContextTypeContext.Provider
       value={{
         psalmData: currentData,
+        handleMoveChord,
         handleCutToNextLine,
         handleGlueWithNextLine,
         handleRemoveChord,

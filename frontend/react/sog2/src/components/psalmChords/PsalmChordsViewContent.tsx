@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
 
-import { getChordByLinkingChordData } from '../../utils/chordUtils';
+import { getChordByMovingLinkingChordData } from '../../utils/chordUtils';
 import { CoupletContentChord } from '../../utils/gql/types';
 
 import { useEditableChordsData } from './editableChordsDataProvider';
@@ -14,7 +14,8 @@ interface PsalmChordsViewContent {
 }
 
 const PsalmChordsViewContent = ({ fontSize, mainKey }: PsalmChordsViewContent) => {
-  const { setLinkingChordData, linkingChordData, isChordLinking } = useChordsEditInstrumentsContext();
+  const { setLinkingChordData, linkingChordData, setMovingChordData, movingChordData, isChordLinking, isChordMoving } =
+    useChordsEditInstrumentsContext();
   const {
     handleCutToNextLine,
     handleRemoveChord,
@@ -22,6 +23,7 @@ const PsalmChordsViewContent = ({ fontSize, mainKey }: PsalmChordsViewContent) =
     psalmData,
     handleLinkChords,
     toggleCoupletHighlighting,
+    handleMoveChord,
   } = useEditableChordsData();
 
   const handleNextLinkingChord = useCallback(
@@ -84,13 +86,22 @@ const PsalmChordsViewContent = ({ fontSize, mainKey }: PsalmChordsViewContent) =
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.code === 'ArrowRight') {
-        handleNextLinkingChord();
+        if (isLinkingChordSelected) {
+          handleNextLinkingChord();
+        } else if (isChordMoving && movingChordData) {
+          handleMoveChord(movingChordData.coupletIdx, movingChordData.coupletContentIdx, false);
+        } else {
+          return null;
+        }
+        event.preventDefault();
       } else if (event.code === 'ArrowLeft') {
-        handlePrevLinkingChord();
-      } else {
-        return null;
-      }
-      if (isLinkingChordSelected) {
+        if (isLinkingChordSelected) {
+          handlePrevLinkingChord();
+        } else if (isChordMoving && movingChordData) {
+          handleMoveChord(movingChordData.coupletIdx, movingChordData.coupletContentIdx, true);
+        } else {
+          return null;
+        }
         event.preventDefault();
       }
     };
@@ -100,7 +111,7 @@ const PsalmChordsViewContent = ({ fontSize, mainKey }: PsalmChordsViewContent) =
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [handleNextLinkingChord, handlePrevLinkingChord, isLinkingChordSelected]);
+  }, [handleNextLinkingChord, handlePrevLinkingChord, isLinkingChordSelected, movingChordData]);
 
   const onLinkChord = (
     coupletId: string,
@@ -114,13 +125,14 @@ const PsalmChordsViewContent = ({ fontSize, mainKey }: PsalmChordsViewContent) =
   };
 
   useEffect(() => {
-    if (linkingChordData && psalmData && !getChordByLinkingChordData(psalmData, linkingChordData)) {
+    if (psalmData && linkingChordData && !getChordByMovingLinkingChordData(psalmData, linkingChordData)) {
       setLinkingChordData(null);
     }
   }, [psalmData, linkingChordData, setLinkingChordData]);
 
   const linkingChordId = useMemo(
-    () => (linkingChordData && psalmData && getChordByLinkingChordData(psalmData, linkingChordData)?.id) ?? undefined,
+    () =>
+      (linkingChordData && psalmData && getChordByMovingLinkingChordData(psalmData, linkingChordData)?.id) ?? undefined,
     [psalmData, linkingChordData],
   );
 
@@ -143,11 +155,15 @@ const PsalmChordsViewContent = ({ fontSize, mainKey }: PsalmChordsViewContent) =
             onLinkChord(id, coupletContentId, charPosition, chord)
           }
           onStartLinkingChord={(coupletContentIdx) => setLinkingChordData({ coupletIdx, coupletContentIdx })}
+          onStartMovingChord={(coupletContentIdx) => setMovingChordData({ coupletIdx, coupletContentIdx })}
           linkingChordId={linkingChordId}
           currentLinkingChordIdx={
             linkingChordData && linkingChordData.coupletIdx === coupletIdx
               ? linkingChordData.coupletContentIdx
               : undefined
+          }
+          currentMovingChordIdx={
+            movingChordData && movingChordData.coupletIdx === coupletIdx ? movingChordData.coupletContentIdx : undefined
           }
           onHighLightCouplet={() => toggleCoupletHighlighting(id)}
           styling={styling}

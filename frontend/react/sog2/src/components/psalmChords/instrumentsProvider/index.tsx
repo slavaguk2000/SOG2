@@ -22,13 +22,14 @@ import { Box, ButtonGroup, Tooltip } from '@mui/material';
 import { v4 as uuidv4 } from 'uuid';
 
 import EditChordIcon from '../../../icons/EditChordIcon';
+import MoveChordIcon from '../../../icons/MoveChordIcon';
 import { CoupletContentChord } from '../../../utils/gql/types';
 import { GlueWithNextLineIcon, NewLineIcon, SelectableButton } from '../styled';
 
 import ChordEditorDialog, { ChordDialogState } from './ChordEditorDialog';
 import useLowerInstruments, { ChordsEditLowerInstruments } from './useLowerInstruments';
 
-export interface LinkingChordData {
+export interface LinkingMovingChordData {
   coupletIdx: number;
   coupletContentIdx: number;
 }
@@ -38,6 +39,7 @@ type ChordsEditInstrumentsContextType = {
   isGluing: boolean;
   isChordEditing: boolean;
   isChordDeleting: boolean;
+  isChordMoving: boolean;
   isChordAdding: boolean;
   isChordCopying: boolean;
   isChordLinking: boolean;
@@ -52,8 +54,10 @@ type ChordsEditInstrumentsContextType = {
       top: number;
     },
   ) => void;
-  linkingChordData?: LinkingChordData | null;
-  setLinkingChordData: Dispatch<SetStateAction<LinkingChordData | null>>;
+  linkingChordData?: LinkingMovingChordData | null;
+  setLinkingChordData: Dispatch<SetStateAction<LinkingMovingChordData | null>>;
+  movingChordData?: LinkingMovingChordData | null;
+  setMovingChordData: Dispatch<SetStateAction<LinkingMovingChordData | null>>;
   copyingChordData?: CoupletContentChord | null;
   setCopyingChordData: Dispatch<SetStateAction<CoupletContentChord | null>>;
   setEditingTextContentId: Dispatch<SetStateAction<string | null>>;
@@ -70,8 +74,10 @@ const defaultValue: ChordsEditInstrumentsContextType = {
   isTextEditing: false,
   isChordCopying: false,
   isCoupletHighlighting: false,
+  isChordMoving: false,
   openChordEditorDialog: () => true,
   setLinkingChordData: () => true,
+  setMovingChordData: () => true,
   setCopyingChordData: () => true,
   setEditingTextContentId: () => true,
   editingTextContentId: null,
@@ -89,6 +95,7 @@ export enum ChordsEditInstruments {
   CUT_TO_NEXT_LINE = 'cut',
   GLUE_WITH_NEXT_LINE = 'glue',
   EDIT_CHORD = 'editChord',
+  MOVE_CHORD = 'moveChord',
   REMOVE_CHORD = 'removeChord',
   ADD_CHORD = 'addChord',
   LINK_CHORDS = 'linkChords',
@@ -123,6 +130,11 @@ const upperInstruments: Array<UpperInstrument> = [
     key: ChordsEditInstruments.EDIT_CHORD,
     icon: <EditChordIcon />,
     tooltip: 'Edit chord',
+  },
+  {
+    key: ChordsEditInstruments.MOVE_CHORD,
+    icon: <MoveChordIcon />,
+    tooltip: 'Move chord',
   },
   {
     key: ChordsEditInstruments.ADD_CHORD,
@@ -171,7 +183,8 @@ const lowerInstruments = [
 
 const ChordsEditInstrumentsProvider = ({ children }: PropsWithChildren) => {
   const [selectedInstrument, setSelectedInstrument] = useState<string | null>(null);
-  const [linkingChordData, setLinkingChordData] = useState<LinkingChordData | null>(null);
+  const [linkingChordData, setLinkingChordData] = useState<LinkingMovingChordData | null>(null);
+  const [movingChordData, setMovingChordData] = useState<LinkingMovingChordData | null>(null);
   const [copyingChordData, setCopyingChordData] = useState<CoupletContentChord | null>(null);
   const [editingTextContentId, setEditingTextContentId] = useState<string | null>(null);
   const [chordEditorDialogState, setChordEditorDialogState] = useState<ChordDialogState>({
@@ -189,6 +202,7 @@ const ChordsEditInstrumentsProvider = ({ children }: PropsWithChildren) => {
     setLinkingChordData(null);
     setEditingTextContentId(null);
     setCopyingChordData(null);
+    setMovingChordData(null);
     setSelectedInstrument((p) => {
       if (key === p) {
         return null;
@@ -201,13 +215,19 @@ const ChordsEditInstrumentsProvider = ({ children }: PropsWithChildren) => {
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.code === 'Escape') {
-        setLinkingChordData((p) => {
-          if (!p) {
-            setEditingTextContentId((etp) => {
-              if (!etp) {
-                setCopyingChordData((ccp) => {
-                  if (!ccp) {
-                    setSelectedInstrument(null);
+        setMovingChordData((mp) => {
+          if (!mp) {
+            setLinkingChordData((lp) => {
+              if (!lp) {
+                setEditingTextContentId((etp) => {
+                  if (!etp) {
+                    setCopyingChordData((ccp) => {
+                      if (!ccp) {
+                        setSelectedInstrument(null);
+                      }
+
+                      return null;
+                    });
                   }
 
                   return null;
@@ -258,6 +278,7 @@ const ChordsEditInstrumentsProvider = ({ children }: PropsWithChildren) => {
         isGluing: selectedInstrument === ChordsEditInstruments.GLUE_WITH_NEXT_LINE,
         isChordEditing: selectedInstrument === ChordsEditInstruments.EDIT_CHORD,
         isChordDeleting: selectedInstrument === ChordsEditInstruments.REMOVE_CHORD,
+        isChordMoving: selectedInstrument === ChordsEditInstruments.MOVE_CHORD,
         isChordAdding: selectedInstrument === ChordsEditInstruments.ADD_CHORD,
         isChordLinking: selectedInstrument === ChordsEditInstruments.LINK_CHORDS,
         isTextEditing: selectedInstrument === ChordsEditInstruments.EDIT_TEXT,
@@ -266,6 +287,8 @@ const ChordsEditInstrumentsProvider = ({ children }: PropsWithChildren) => {
         openChordEditorDialog: handleOpenChordEditorDialog,
         linkingChordData,
         setLinkingChordData,
+        movingChordData,
+        setMovingChordData,
         editingTextContentId,
         setEditingTextContentId,
         copyingChordData,

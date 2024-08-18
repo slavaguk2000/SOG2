@@ -1,4 +1,4 @@
-import { LinkingChordData } from '../components/psalmChords/instrumentsProvider';
+import { LinkingMovingChordData } from '../components/psalmChords/instrumentsProvider';
 import { keyToScaleDegree, scaleDegreeToKey } from '../components/psalmChords/utils';
 
 import { CoupletContentChord, Maybe, MusicalKey, PsalmData } from './gql/types';
@@ -8,8 +8,10 @@ export const getChordText = (chord: CoupletContentChord, mainKey: number) =>
     typeof chord.bassNote === 'number' ? `/${scaleDegreeToKey[(mainKey + chord.bassNote) % 12] ?? ''}` : ''
   }`;
 
-export const getChordByLinkingChordData = (psalmData: PsalmData, { coupletIdx, coupletContentIdx }: LinkingChordData) =>
-  psalmData.couplets[coupletIdx]?.coupletContent[coupletContentIdx]?.chord ?? null;
+export const getChordByMovingLinkingChordData = (
+  psalmData: PsalmData,
+  { coupletIdx, coupletContentIdx }: LinkingMovingChordData,
+) => psalmData.couplets[coupletIdx]?.coupletContent[coupletContentIdx]?.chord ?? null;
 
 export const isChordsEquals = (chordA: CoupletContentChord | null, chordB: CoupletContentChord | null) =>
   !!(chordA && chordB) &&

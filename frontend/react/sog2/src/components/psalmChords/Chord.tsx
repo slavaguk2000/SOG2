@@ -15,6 +15,7 @@ interface ChordProps {
   isLinkDestinationChordChoosing?: boolean;
   isSameChordLinking?: boolean;
   isCurrentChordLinking?: boolean;
+  isCurrentChordMoving?: boolean;
   contentFontSize?: number;
   onClick: React.MouseEventHandler<HTMLSpanElement>;
   onLinkedChordMenu: (anchor: HTMLElement) => void;
@@ -32,6 +33,7 @@ const Chord = ({
   isCurrentChordLinking,
   contentFontSize,
   onLinkedChordMenu,
+  isCurrentChordMoving,
 }: ChordProps) => {
   const handleContextMenu = (event: React.MouseEvent<HTMLSpanElement>) => {
     if (isSameChordLinking) {
@@ -40,7 +42,7 @@ const Chord = ({
     }
   };
 
-  const { isChordDeleting, isChordEditing } = useChordsEditInstrumentsContext();
+  const { isChordDeleting, isChordEditing, isChordMoving } = useChordsEditInstrumentsContext();
 
   return (
     <ChordWrapper
@@ -55,6 +57,8 @@ const Chord = ({
       isCurrentChordLinking={isCurrentChordLinking}
       onClick={onClick}
       onContextMenu={handleContextMenu}
+      isChordMoving={isChordMoving}
+      isCurrentChordMoving={isCurrentChordMoving}
     >
       {getChordText(chordData, mainKey)}
     </ChordWrapper>

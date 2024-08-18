@@ -22,8 +22,10 @@ interface PsalmCoupletViewProps {
   onAddChord?: (coupletContentId: string, charPosition: number, chord: CoupletContentChord) => void;
   onLinkChord?: (coupletContentId: string, charPosition: number, chord: CoupletContentChord) => void;
   onStartLinkingChord?: (coupletContentIdx: number) => void;
+  onStartMovingChord?: (coupletContentIdx: number) => void;
   linkingChordId?: string;
   currentLinkingChordIdx?: number;
+  currentMovingChordIdx?: number;
   onHighLightCouplet?: () => void;
   styling?: number;
   coupletMarker?: string;
@@ -49,8 +51,10 @@ const PsalmCoupletView = ({
   onAddChord,
   onLinkChord,
   onStartLinkingChord,
+  onStartMovingChord,
   linkingChordId,
   currentLinkingChordIdx,
+  currentMovingChordIdx,
   onHighLightCouplet,
   styling,
   coupletMarker,
@@ -174,8 +178,10 @@ const PsalmCoupletView = ({
           onAddChord={onAddChord && ((newChordData, charPosition) => onAddChord(contentId, charPosition, newChordData))}
           onLinkChord={onLinkChord && ((chordData, charPosition) => onLinkChord(contentId, charPosition, chordData))}
           onStartLinkingChord={onStartLinkingChord && (() => onStartLinkingChord(idx))}
+          onStartMovingChord={onStartMovingChord && (() => onStartMovingChord(idx))}
           linkingChordId={linkingChordId}
           currentChordLinking={currentLinkingChordIdx !== undefined && currentLinkingChordIdx === idx}
+          currentChordMoving={currentMovingChordIdx !== undefined && currentMovingChordIdx === idx}
           onContentClick={isTextEditing ? () => setEditingTextContentId(contentId) : undefined}
           textContentEditing={isTextEditing && contentId === editingTextContentId}
           onTextChange={(newText) => handleEditText(contentId, newText)}
