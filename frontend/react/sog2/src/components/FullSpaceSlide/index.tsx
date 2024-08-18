@@ -42,6 +42,7 @@ const FullSpaceSlide = ({
     }),
     [maxContentFontSize],
   );
+
   const [fontSizeState, setFontSizeState] = useState<FontSizeState>(defaultValue);
 
   const recalculate = useCallback(() => setFontSizeState(defaultValue), [setFontSizeState, defaultValue]);
@@ -55,7 +56,7 @@ const FullSpaceSlide = ({
   }, [content, title, recalculate]);
 
   useEffect(() => {
-    if (contentRef.current) {
+    if (contentRef.current && content) {
       const { clientHeight, scrollHeight } = contentRef.current;
       if (fontSizeState.state === FontSelectionState.FAST_DECREASE) {
         setFontSizeState(
@@ -90,7 +91,7 @@ const FullSpaceSlide = ({
         }
       }
     }
-  }, [fontSizeState, setFontSizeState, recalculate]);
+  }, [fontSizeState, setFontSizeState, recalculate, content]);
 
   useEffect(() => {
     const observer = new ResizeObserver((entries) => {
