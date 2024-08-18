@@ -167,20 +167,34 @@ def get_favourite_psalm_book(session: Session) -> PsalmBook:
     return session.query(PsalmBook).filter(PsalmBook.is_favourite == True).first()
 
 
+def is_psalm_in_psalm_book(psalm_id: str, psalm_book_id: str) -> bool:
+    with Session(engine) as session:
+        return bool(
+            session.query(
+                exists().where(
+                    psalms_book_psalms.c.psalm_id == psalm_id,
+                    psalms_book_psalms.c.psalms_book_id == psalm_book_id
+                )
+            ).scalar()
+        )
+
+
+def is_psalm_in_favourite(psalm_id: str) -> bool:
+    with Session(engine) as session:
+        favourite_psalm_book = get_favourite_psalm_book(session)
+        if not favourite_psalm_book:
+            raise ValueError("No favourite psalm book found")
+
+        return is_psalm_in_psalm_book(psalm_id, favourite_psalm_book.id)
+
+
 def add_psalm_to_favourites(psalm_id: str, transposition: int) -> bool:
     with Session(engine) as session:
         favourite_psalm_book = get_favourite_psalm_book(session)
         if not favourite_psalm_book:
             raise ValueError("No favourite psalm book found")
 
-        already_favourite = session.query(
-            exists().where(
-                psalms_book_psalms.c.psalm_id == psalm_id,
-                psalms_book_psalms.c.psalms_book_id == favourite_psalm_book.id
-            )
-        ).scalar()
-
-        if already_favourite:
+        if is_psalm_in_favourite(psalm_id):
             return False
 
         max_order = session.query(

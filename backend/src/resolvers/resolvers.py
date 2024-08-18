@@ -7,7 +7,7 @@ from src.services.database_helpers.bible import get_bible_books_by_bible_id, get
 from src.services.database_helpers.psalm.psalm import get_psalms_books, get_psalms_dicts, get_psalm_by_id, \
     PsalmsSortingKeys, \
     add_psalm_to_favourites, remove_psalm_from_favourites, delete_psalm_book, update_psalm_transposition, \
-    get_psalm_slide_by_id, reorder_psalms_in_psalms_book, get_favourite_psalms_dicts
+    get_psalm_slide_by_id, reorder_psalms_in_psalms_book, get_favourite_psalms_dicts, is_psalm_in_favourite
 from src.services.database_helpers.psalm.update_psalm import update_psalm
 from src.services.database_helpers.sermon import get_sermons, get_sermon_by_id, get_sermon_paragraph_by_id, \
     add_slide_audio_mapping
@@ -247,6 +247,9 @@ def resolve_update_psalm_transposition(*_, psalms_book_id: str, psalm_id: str, t
             and current_active_psalm_chords["psalm_data"]["psalms_book_id"] == psalms_book_id:
         current_active_psalm_chords["root_transposition"] = transposition
         notify_psalm_chords_subscribers()
+
+    if is_psalm_in_favourite(psalm_id):
+        notify_favourite_changed()
 
     return res
 

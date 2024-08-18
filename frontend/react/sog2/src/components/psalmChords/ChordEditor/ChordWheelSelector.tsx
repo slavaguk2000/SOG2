@@ -1,5 +1,7 @@
 import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 
+import { debounce } from 'lodash';
+
 import { ChordWheelSelectorContentWrapper, ChordWheelSelectorWrapper, ChordWheelSelectorItemWrapper } from './styled';
 
 type Value<T> =
@@ -66,7 +68,7 @@ const ChordWheelSelector = <T extends { toString: () => string }>({
   useEffect(() => {
     if (containerRef?.current) {
       const anchor = containerRef.current;
-      anchor.onscrollend = () => {
+      const onScrollEnd = () => {
         const rawChoise = anchor.scrollTop / height;
         const currentChoice = lastDownWheel
           ? Math.ceil(rawChoise - realThresholdPercentage)
@@ -74,6 +76,12 @@ const ChordWheelSelector = <T extends { toString: () => string }>({
         anchor.scrollTop = currentChoice * height;
         onChange?.(valueToKey(values[currentChoice]));
       };
+
+      if ('onscrollend' in anchor) {
+        anchor.onscrollend = onScrollEnd;
+      } else {
+        (anchor as unknown as { onscroll: () => void }).onscroll = debounce(onScrollEnd, 100);
+      }
     }
   }, [containerRef, height, lastDownWheel, onChange, realThresholdPercentage, values]);
 

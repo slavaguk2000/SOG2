@@ -105,6 +105,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   addBibleFromSog?: Maybe<Scalars['Boolean']['output']>;
   addPsalmToFavourite?: Maybe<Scalars['Boolean']['output']>;
+  addPsalmsFromNavaPiesnJSONPL?: Maybe<Scalars['Boolean']['output']>;
   addPsalmsFromSog?: Maybe<Scalars['Boolean']['output']>;
   deletePsalmsBook?: Maybe<Scalars['Boolean']['output']>;
   importSongImages: Scalars['Boolean']['output'];
@@ -133,6 +134,12 @@ export type MutationAddBibleFromSogArgs = {
 export type MutationAddPsalmToFavouriteArgs = {
   psalmId: Scalars['ID']['input'];
   transposition?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type MutationAddPsalmsFromNavaPiesnJsonplArgs = {
+  fileSrc: Scalars['String']['input'];
+  language: Scalars['String']['input'];
 };
 
 

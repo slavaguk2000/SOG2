@@ -7,7 +7,7 @@ export const PsalmChordsViewWrapper = styled(Box)`
   flex-direction: column;
   align-items: center;
   width: 100%;
-  padding: 10px;
+  padding: 10px 3%;
   background: white;
   color: black;
   user-select: none;
