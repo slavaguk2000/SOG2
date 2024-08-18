@@ -21,9 +21,11 @@ interface ChordAndContentProps {
   onAddChord?: (newChordData: CoupletContentChord, charPosition: number) => void;
   onLinkChord?: (chordData: CoupletContentChord, charPosition: number) => void;
   onStartLinkingChord?: () => void;
+  onStartMovingChord?: () => void;
   onContentClick?: () => void;
   linkingChordId?: string;
   currentChordLinking?: boolean;
+  currentChordMoving?: boolean;
   textContentEditing?: boolean;
   onTextChange: (newText: string) => void;
   onLinkedChordMenu: (anchor: HTMLElement) => void;
@@ -40,8 +42,10 @@ const ChordAndContent = ({
   onAddChord,
   onLinkChord,
   onStartLinkingChord,
+  onStartMovingChord,
   linkingChordId,
   currentChordLinking,
+  currentChordMoving,
   onContentClick,
   textContentEditing,
   onTextChange,
@@ -53,6 +57,7 @@ const ChordAndContent = ({
     isChordCopying,
     isChordDeleting,
     isChordEditing,
+    isChordMoving,
     openChordEditorDialog,
     isChordLinking,
     linkingChordData,
@@ -99,6 +104,8 @@ const ChordAndContent = ({
         onStartLinkingChord?.();
       } else if (isLinkDestinationChordChoosing && existingChordData) {
         onLinkChord?.(existingChordData.chord, 0);
+      } else if (isChordMoving) {
+        onStartMovingChord?.();
       }
       if (isCopySourceChordChoosing) {
         setCopyingChordData(chord);
@@ -133,6 +140,7 @@ const ChordAndContent = ({
           isLinkDestinationChordChoosing={isLinkDestinationChordChoosing}
           isSameChordLinking={!!(linkingChordId && linkingChordId === chord.id)}
           isCurrentChordLinking={currentChordLinking}
+          isCurrentChordMoving={currentChordMoving}
           mainKey={mainKey}
           onLinkedChordMenu={onLinkedChordMenu}
         />
