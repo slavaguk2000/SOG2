@@ -1,7 +1,7 @@
 import { LinkingChordData } from '../components/psalmChords/instrumentsProvider';
-import { scaleDegreeToKey } from '../components/psalmChords/utils';
+import { keyToScaleDegree, scaleDegreeToKey } from '../components/psalmChords/utils';
 
-import { CoupletContentChord, MusicalKey, PsalmData } from './gql/types';
+import { CoupletContentChord, Maybe, MusicalKey, PsalmData } from './gql/types';
 
 export const getChordText = (chord: CoupletContentChord, mainKey: number) =>
   `${chord.chordTemplate.replace('$', scaleDegreeToKey[(mainKey + chord.rootNote) % 12] ?? '')}${
@@ -21,3 +21,10 @@ export const allPossibleTonalities = Object.values(MusicalKey).map((key) => ({
   key,
   label: key.replace('Sharp', '#'),
 }));
+
+export const getTonality = (defaultTonality?: Maybe<MusicalKey>, transpositionSteps?: number) =>
+  defaultTonality && transpositionSteps
+    ? (scaleDegreeToKey[
+        keyToScaleDegree[defaultTonality.replace('Sharp', '#')] + (transpositionSteps % 12)
+      ] as MusicalKey)
+    : defaultTonality;

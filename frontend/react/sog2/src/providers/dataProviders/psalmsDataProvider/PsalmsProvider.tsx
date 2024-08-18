@@ -2,16 +2,9 @@ import React, { createContext, PropsWithChildren, useContext, useMemo } from 're
 
 import { useQuery } from '@apollo/client';
 
-import { keyToScaleDegree, scaleDegreeToKey } from '../../../components/psalmChords/utils';
+import { getTonality } from '../../../utils/chordUtils';
 import { psalms } from '../../../utils/gql/queries';
-import {
-  MusicalKey,
-  PsalmsBookItem,
-  PsalmsSortingKeys,
-  Query,
-  QueryPsalmsArgs,
-  SortingDirection,
-} from '../../../utils/gql/types';
+import { PsalmsBookItem, PsalmsSortingKeys, Query, QueryPsalmsArgs, SortingDirection } from '../../../utils/gql/types';
 import { PsalmsContextType } from '../../types';
 
 import { usePsalmsSelectionData } from './index';
@@ -32,12 +25,7 @@ export const usePsalms = () => {
 export const psalmDataMapper = ({ psalm, transpositionSteps }: PsalmsBookItem) => ({
   ...psalm,
   defaultTonality: psalm.defaultTonality,
-  tonality:
-    psalm.defaultTonality && transpositionSteps
-      ? (scaleDegreeToKey[
-          keyToScaleDegree[psalm.defaultTonality.replace('Sharp', '#')] + (transpositionSteps % 12)
-        ] as MusicalKey)
-      : psalm.defaultTonality,
+  tonality: getTonality(psalm.defaultTonality, transpositionSteps),
   transposition: transpositionSteps,
 });
 

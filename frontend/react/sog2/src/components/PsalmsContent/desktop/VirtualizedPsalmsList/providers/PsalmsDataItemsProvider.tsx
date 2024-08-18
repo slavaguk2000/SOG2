@@ -5,6 +5,7 @@ import { Box } from '@mui/material';
 import { useCurrentPsalms } from '../../../../../providers/dataProviders/psalmsDataProvider/CurrentPsalmProvider';
 import { useFavouriteData } from '../../../../../providers/dataProviders/psalmsDataProvider/FavouriteProvider';
 import { usePsalms } from '../../../../../providers/dataProviders/psalmsDataProvider/PsalmsProvider';
+import { getTonality } from '../../../../../utils/chordUtils';
 import ItemsDataProvider from '../../../../VirtualizedScroll/Providers/ItemsDataProvider';
 import { usePsalmsContextMenu } from '../../PsalmsContextMenuProvider';
 import PsalmSelectItem from '../../PsalmSelectItem';
@@ -29,7 +30,11 @@ const PsalmsDataItemsProvider = ({ children }: PropsWithChildren) => {
       return currentPsalm ? (
         <Box width="100%" onContextMenu={(e) => handleContextMenu(e, currentPsalm.id, currentPsalm.defaultTonality)}>
           <PsalmSelectItem
-            psalmName={`${currentPsalm.psalmNumber ? `${currentPsalm.psalmNumber} ` : ''}${currentPsalm.name}`}
+            psalmName={`${currentPsalm.psalmNumber ? `${currentPsalm.psalmNumber} ` : ''}${currentPsalm.name}${
+              currentPsalm.defaultTonality
+                ? ` (${getTonality(currentPsalm.defaultTonality, currentPsalm.transposition)})`
+                : ''
+            }`}
             selected={currentPsalm.id === selectedPsalm?.id}
             onClick={() => handlePsalmSelect(currentPsalm.id)}
             psalmId={currentPsalm.id}
