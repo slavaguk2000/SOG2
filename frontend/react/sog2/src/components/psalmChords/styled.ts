@@ -137,7 +137,7 @@ export const ChordWrapper = styled('span', {
     (isChordMoving && !isCurrentChordMoving)
       ? `
       &:hover {
-        cursor: pointer;
+        cursor: ${isChordMoving ? 'ew-resize' : 'pointer'};
         scale: 1.2;
         ${isDestinationChordChoosing ? 'color: #37f;' : ''}
       }
