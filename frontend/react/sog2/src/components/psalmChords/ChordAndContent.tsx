@@ -67,6 +67,7 @@ const ChordAndContent = ({
   } = useChordsEditInstrumentsContext();
   const { psalmData, handleEditChord } = useEditableChordsData();
   const [editingData, setEditingData] = useState<string>('');
+  const [editorWidth, setEditorWidth] = useState<number>(200);
 
   const isLinkSourceChordChoosing = isChordLinking && !linkingChordData;
   const isLinkDestinationChordChoosing = isChordLinking && !!linkingChordData;
@@ -113,9 +114,11 @@ const ChordAndContent = ({
     }
   };
 
-  const handleClick = () => {
+  const handleClick = (e: React.MouseEvent<HTMLSpanElement>) => {
     if (isTextEditing && !textContentEditing) {
       setEditingData(textContent);
+      const spanWidth = (e.target as unknown as { offsetWidth: number }).offsetWidth;
+      setEditorWidth(spanWidth);
     }
 
     onContentClick?.();
@@ -158,6 +161,7 @@ const ChordAndContent = ({
         />
       ) : textContentEditing ? (
         <TextContentEditor
+          width={editorWidth}
           value={editingData}
           onChange={setEditingData}
           fontSize={fontSize}

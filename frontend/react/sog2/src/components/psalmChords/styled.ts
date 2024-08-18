@@ -207,11 +207,13 @@ export const GlueWithNextLineIcon = styled(UTurnLeftIcon)`
 
 export const TextContentEditingField = styled('input', {
   shouldForwardProp(propName: PropertyKey) {
-    return propName !== 'fontSize';
+    return !(['fontSize', 'width'] as PropertyKey[]).includes(propName);
   },
 })<{ fontSize?: number }>`
   font-family: 'Times New Roman', sans-serif;
   ${({ fontSize }) => (fontSize ? `font-size: ${fontSize}px` : '')};
   padding: 8.5px 5px;
   border-radius: 10px;
+  max-width: 90vw;
+  width: ${({ width }) => width}px;
 `;
