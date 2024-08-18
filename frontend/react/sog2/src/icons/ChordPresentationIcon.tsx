@@ -1,10 +1,8 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck
 import React from 'react';
 
 import { SvgIcon, SvgIconProps } from '@mui/material';
 
-const ChordPresentationIcon = ({ props }: SvgIconProps) => {
+const ChordPresentationIcon = (props: SvgIconProps) => {
   return (
     <SvgIcon {...props}>
       <svg focusable="false" aria-hidden="true" viewBox="0 0 24 24">
