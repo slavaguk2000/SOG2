@@ -34,6 +34,18 @@ export interface LinkingMovingChordData {
   coupletContentIdx: number;
 }
 
+export interface EditingTextData {
+  contentId: string | null;
+  number: true | null;
+  title: true | null;
+}
+
+const defaultEditingTextData: EditingTextData = {
+  contentId: null,
+  number: null,
+  title: null,
+};
+
 type ChordsEditInstrumentsContextType = {
   isCutting: boolean;
   isGluing: boolean;
@@ -60,8 +72,11 @@ type ChordsEditInstrumentsContextType = {
   setMovingChordData: Dispatch<SetStateAction<LinkingMovingChordData | null>>;
   copyingChordData?: CoupletContentChord | null;
   setCopyingChordData: Dispatch<SetStateAction<CoupletContentChord | null>>;
-  setEditingTextContentId: Dispatch<SetStateAction<string | null>>;
-  editingTextContentId: string | null;
+  setEditingTextContentId: (contentId: string | null) => void;
+  setEditingTextTitleEdit: () => void;
+  setEditingTextNumberEdit: () => void;
+  clearEditingTextState: () => void;
+  editingTextData: EditingTextData;
 };
 
 const defaultValue: ChordsEditInstrumentsContextType = {
@@ -80,7 +95,10 @@ const defaultValue: ChordsEditInstrumentsContextType = {
   setMovingChordData: () => true,
   setCopyingChordData: () => true,
   setEditingTextContentId: () => true,
-  editingTextContentId: null,
+  setEditingTextTitleEdit: () => true,
+  setEditingTextNumberEdit: () => true,
+  clearEditingTextState: () => true,
+  editingTextData: defaultEditingTextData,
 };
 
 export const ChordsEditInstrumentsContext = createContext<ChordsEditInstrumentsContextType>(defaultValue);
@@ -186,7 +204,7 @@ const ChordsEditInstrumentsProvider = ({ children }: PropsWithChildren) => {
   const [linkingChordData, setLinkingChordData] = useState<LinkingMovingChordData | null>(null);
   const [movingChordData, setMovingChordData] = useState<LinkingMovingChordData | null>(null);
   const [copyingChordData, setCopyingChordData] = useState<CoupletContentChord | null>(null);
-  const [editingTextContentId, setEditingTextContentId] = useState<string | null>(null);
+  const [editingTextData, setEditingTextData] = useState<EditingTextData>(defaultEditingTextData);
   const [chordEditorDialogState, setChordEditorDialogState] = useState<ChordDialogState>({
     open: false,
     chordData: {
@@ -198,9 +216,13 @@ const ChordsEditInstrumentsProvider = ({ children }: PropsWithChildren) => {
     cb: () => true,
   });
 
+  const clearEditingTextState = () => {
+    setEditingTextData(defaultEditingTextData);
+  };
+
   const handleUpperInstrumentClick = (key: string) => {
     setLinkingChordData(null);
-    setEditingTextContentId(null);
+    clearEditingTextState();
     setCopyingChordData(null);
     setMovingChordData(null);
     setSelectedInstrument((p) => {
@@ -219,8 +241,8 @@ const ChordsEditInstrumentsProvider = ({ children }: PropsWithChildren) => {
           if (!mp) {
             setLinkingChordData((lp) => {
               if (!lp) {
-                setEditingTextContentId((etp) => {
-                  if (!etp) {
+                setEditingTextData((etd) => {
+                  if (Object.values(etd).every((v) => v === null)) {
                     setCopyingChordData((ccp) => {
                       if (!ccp) {
                         setSelectedInstrument(null);
@@ -230,7 +252,7 @@ const ChordsEditInstrumentsProvider = ({ children }: PropsWithChildren) => {
                     });
                   }
 
-                  return null;
+                  return defaultEditingTextData;
                 });
               }
 
@@ -271,6 +293,30 @@ const ChordsEditInstrumentsProvider = ({ children }: PropsWithChildren) => {
 
   const { lowerInstrumentsWithHandlers } = useLowerInstruments(lowerInstruments);
 
+  const setEditingTextContentId = (contentId: string | null) => {
+    setEditingTextData({
+      contentId,
+      title: null,
+      number: null,
+    });
+  };
+
+  const setEditingTextTitleEdit = () => {
+    setEditingTextData({
+      contentId: null,
+      title: true,
+      number: null,
+    });
+  };
+
+  const setEditingTextNumberEdit = () => {
+    setEditingTextData({
+      contentId: null,
+      title: null,
+      number: true,
+    });
+  };
+
   return (
     <ChordsEditInstrumentsContext.Provider
       value={{
@@ -289,8 +335,11 @@ const ChordsEditInstrumentsProvider = ({ children }: PropsWithChildren) => {
         setLinkingChordData,
         movingChordData,
         setMovingChordData,
-        editingTextContentId,
+        editingTextData,
         setEditingTextContentId,
+        setEditingTextNumberEdit,
+        setEditingTextTitleEdit,
+        clearEditingTextState,
         copyingChordData,
         setCopyingChordData,
       }}

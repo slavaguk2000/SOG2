@@ -111,7 +111,14 @@ const PsalmChordsViewContent = ({ fontSize, mainKey }: PsalmChordsViewContent) =
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [handleNextLinkingChord, handlePrevLinkingChord, isLinkingChordSelected, movingChordData]);
+  }, [
+    handleNextLinkingChord,
+    handlePrevLinkingChord,
+    isLinkingChordSelected,
+    movingChordData,
+    handleMoveChord,
+    isChordMoving,
+  ]);
 
   const onLinkChord = (
     coupletId: string,

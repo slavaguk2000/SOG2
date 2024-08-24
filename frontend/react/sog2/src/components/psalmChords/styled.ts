@@ -217,3 +217,21 @@ export const TextContentEditingField = styled('input', {
   max-width: 90vw;
   width: ${({ width }) => width}px;
 `;
+
+export const ClickableSpan = styled('span', {
+  shouldForwardProp(propName: PropertyKey) {
+    return !(['clickable'] as PropertyKey[]).includes(propName);
+  },
+})<{ clickable?: boolean }>`
+  ${({ clickable }) =>
+    clickable
+      ? `
+    cursor: pointer;
+    
+    &:hover {
+      border-radius: 5px;
+      background-color: #adf;
+    }
+  `
+      : ''}
+`;

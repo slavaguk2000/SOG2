@@ -35,6 +35,8 @@ type ChordsDataContextType = {
   ) => void;
   handleEditChord: (chord: CoupletContentChord) => void;
   handleEditText: (coupletContentId: string, newText: string) => void;
+  handleEditTitle: (newTitle: string) => void;
+  handleEditNumber: (newNumber: string) => void;
   handleUnlinkChord: (coupletContentId: string) => void;
   handleMoveChord: (coupletIdx: number, coupletContentIdx: number, isLeft: boolean) => void;
   mainKey: number;
@@ -54,6 +56,8 @@ const defaultValue: ChordsDataContextType = {
   handleEditChord: () => true,
   handleLinkChords: () => true,
   handleEditText: () => true,
+  handleEditTitle: () => true,
+  handleEditNumber: () => true,
   handleUnlinkChord: () => true,
   handleMoveChord: () => true,
   mainKey: 0,
@@ -178,6 +182,30 @@ const EditableChordsDataProvider = ({
     }));
   };
 
+  const handleEditTitle = (newTitle: string) => {
+    if (newTitle.length) {
+      setChordsData((p) => ({
+        ...p,
+        psalm: {
+          ...p.psalm,
+          name: newTitle,
+        },
+      }));
+    }
+  };
+
+  const handleEditNumber = (newNumber: string) => {
+    if (newNumber.length) {
+      setChordsData((p) => ({
+        ...p,
+        psalm: {
+          ...p.psalm,
+          psalmNumber: newNumber,
+        },
+      }));
+    }
+  };
+
   return (
     <ChordsDataContextTypeContext.Provider
       value={{
@@ -191,6 +219,8 @@ const EditableChordsDataProvider = ({
         handleEditChord,
         handleEditText,
         handleUnlinkChord,
+        handleEditNumber,
+        handleEditTitle,
         toggleCoupletHighlighting,
         mainKey,
         hasUndo,

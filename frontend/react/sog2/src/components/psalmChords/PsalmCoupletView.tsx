@@ -70,7 +70,7 @@ const PsalmCoupletView = ({
     isTextEditing,
     isCoupletHighlighting,
     setEditingTextContentId,
-    editingTextContentId,
+    editingTextData,
   } = useChordsEditInstrumentsContext();
   const { handleEditText, handleGlueWithNextLine } = useEditableChordsData();
   const [preGlueLine, setPreGlueLine] = useState<null | number>(null);
@@ -183,7 +183,7 @@ const PsalmCoupletView = ({
           currentChordLinking={currentLinkingChordIdx !== undefined && currentLinkingChordIdx === idx}
           currentChordMoving={currentMovingChordIdx !== undefined && currentMovingChordIdx === idx}
           onContentClick={isTextEditing ? () => setEditingTextContentId(contentId) : undefined}
-          textContentEditing={isTextEditing && contentId === editingTextContentId}
+          textContentEditing={isTextEditing && contentId === editingTextData.contentId}
           onTextChange={(newText) => handleEditText(contentId, newText)}
           onLinkedChordMenu={(anchor) => setMenuAnchorChordData({ anchor, contentId })}
         />
