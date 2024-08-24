@@ -9,10 +9,12 @@ import ChordAndContent from './ChordAndContent';
 import { useEditableChordsData } from './editableChordsDataProvider';
 import { useChordsEditInstrumentsContext } from './instrumentsProvider';
 import LinkChordMenu, { MenuAnchorChordData } from './LinkChordMenu';
+import RemoveCoupletButton from './RemoveCoupletButton';
 import { PsalmChordsViewCoupletWrapper } from './styled';
 
 interface PsalmCoupletViewProps {
   coupletId?: string;
+  editing?: boolean;
   coupletContent: CoupletContent[];
   fontSize?: number;
   mainKey?: number;
@@ -58,6 +60,7 @@ const PsalmCoupletView = ({
   onHighLightCouplet,
   styling,
   coupletMarker,
+  editing,
 }: PsalmCoupletViewProps) => {
   const [menuAnchorChordData, setMenuAnchorChordData] = useState<null | MenuAnchorChordData>(null);
   const {
@@ -198,6 +201,7 @@ const PsalmCoupletView = ({
       hoverable={isCoupletHighlighting}
       onClick={handleCoupletClick}
     >
+      {editing && coupletId ? <RemoveCoupletButton coupletId={coupletId} /> : null}
       {isCoupletHighlighting ? <ButtonBase component="div">{contentLinesJSX}</ButtonBase> : contentLinesJSX}
       <LinkChordMenu menuAnchorChordData={menuAnchorChordData} onClose={() => setMenuAnchorChordData(null)} />
     </PsalmChordsViewCoupletWrapper>

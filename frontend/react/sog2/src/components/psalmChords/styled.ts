@@ -1,6 +1,6 @@
 import ShortcutIcon from '@mui/icons-material/Shortcut';
 import UTurnLeftIcon from '@mui/icons-material/UTurnLeft';
-import { Box, Button, styled } from '@mui/material';
+import { Box, Button, IconButton, styled } from '@mui/material';
 
 export const PsalmChordsViewWrapper = styled(Box)`
   display: flex;
@@ -11,6 +11,11 @@ export const PsalmChordsViewWrapper = styled(Box)`
   background: white;
   color: black;
   user-select: none;
+  height: 100%;
+
+  & > div {
+    height: min-content;
+  }
 `;
 
 export const PsalmChordsViewTitleWrapper = styled(Box)`
@@ -33,6 +38,9 @@ export const PsalmChordsViewCoupletWrapper = styled(Box, {
     return !(['hoverable', 'styling'] as PropertyKey[]).includes(propName);
   },
 })<{ hoverable: boolean; styling?: number }>`
+  position: relative;
+  width: 100%;
+
   ${({ styling }) =>
     styling
       ? `
@@ -234,4 +242,21 @@ export const ClickableSpan = styled('span', {
     }
   `
       : ''}
+`;
+
+export const NewCoupletButtonWrapper = styled(Button)`
+  display: flex;
+  width: 100%;
+  border-radius: 16px;
+`;
+
+export const RemoveCoupletButtonWrapper = styled(IconButton)`
+  display: flex;
+  position: absolute;
+  top: 20px;
+  left: -30px;
+
+  & > svg {
+    fill: red;
+  }
 `;

@@ -11,7 +11,7 @@ const useAdaptiveFontSize = ({ maxFontSize, deps }: AdaptiveFontSizeProp) => {
   const [fontSize, setFontSize] = useState(maxFontSize);
 
   useLayoutEffect(() => {
-    if (viewRef.current && viewRef.current.clientHeight < viewRef.current.scrollHeight) {
+    if (viewRef.current && viewRef.current.clientHeight < viewRef.current.scrollHeight && fontSize > 1) {
       setFontSize(fontSize - 1);
     }
     // eslint-disable-next-line

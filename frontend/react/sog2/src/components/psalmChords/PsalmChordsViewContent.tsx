@@ -5,15 +5,17 @@ import { CoupletContentChord } from '../../utils/gql/types';
 
 import { useEditableChordsData } from './editableChordsDataProvider';
 import { useChordsEditInstrumentsContext } from './instrumentsProvider';
+import NewCoupletButton from './NewCoupletButton';
 import PsalmCoupletView from './PsalmCoupletView';
 import { PsalmChordsViewContentWrapper } from './styled';
 
 interface PsalmChordsViewContent {
   fontSize: number;
   mainKey: number;
+  editing?: boolean;
 }
 
-const PsalmChordsViewContent = ({ fontSize, mainKey }: PsalmChordsViewContent) => {
+const PsalmChordsViewContent = ({ fontSize, mainKey, editing }: PsalmChordsViewContent) => {
   const { setLinkingChordData, linkingChordData, setMovingChordData, movingChordData, isChordLinking, isChordMoving } =
     useChordsEditInstrumentsContext();
   const {
@@ -174,8 +176,10 @@ const PsalmChordsViewContent = ({ fontSize, mainKey }: PsalmChordsViewContent) =
           }
           onHighLightCouplet={() => toggleCoupletHighlighting(id)}
           styling={styling}
+          editing={editing}
         />
       ))}
+      {editing ? <NewCoupletButton /> : null}
     </PsalmChordsViewContentWrapper>
   );
 };
