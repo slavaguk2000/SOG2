@@ -11,7 +11,7 @@ interface MustProvideDefaultTonalityDialogProps extends DialogProps {
 }
 
 const MustProvideDefaultTonalityDialog = ({ open, setNewTonality }: MustProvideDefaultTonalityDialogProps) => {
-  const [currentKey, setCurrentKey] = useState(allPossibleTonalities[0].key);
+  const [currentKey, setCurrentKey] = useState<MusicalKey>(allPossibleTonalities[0].key as MusicalKey);
 
   const handleClose = () => {
     setNewTonality(currentKey);

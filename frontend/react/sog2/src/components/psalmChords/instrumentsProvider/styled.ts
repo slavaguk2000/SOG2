@@ -1,4 +1,4 @@
-import { Box, Dialog, DialogProps, styled } from '@mui/material';
+import { Dialog, DialogContent, DialogProps, styled } from '@mui/material';
 
 interface StyledDialogProps extends DialogProps {
   position?: {
@@ -36,12 +36,11 @@ export const StyledDialog = styled(Dialog, {
       : ''}
 `;
 
-export const DialogContentWrapper = styled(Box)`
+export const DialogContentWrapper = styled(DialogContent)`
   display: flex;
   align-items: center;
 
   .MuiInputBase-input {
-    color: #61dafb;
     font-size: 40px;
     font-family: 'Times New Roman', sans-serif;
     font-weight: bold;

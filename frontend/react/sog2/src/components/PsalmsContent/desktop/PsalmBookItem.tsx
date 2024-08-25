@@ -6,6 +6,7 @@ import { useFavouriteData } from '../../../providers/dataProviders/psalmsDataPro
 import { PsalmsBook } from '../../../utils/gql/types';
 import PsalmsBookAvatar from '../common/PsalmsBookAvatar';
 
+import { usePsalmBooksContextMenu } from './PsalmBooksContextMenuProvider';
 import { PsalmBookItemWrapper } from './styled';
 
 interface PsalmBookItemProps {
@@ -16,6 +17,7 @@ interface PsalmBookItemProps {
 
 const PsalmBookItem = ({ psalmsBookData, selected, onClick }: PsalmBookItemProps) => {
   const { favouritePsalmsData } = useFavouriteData();
+  const { handleContextMenu } = usePsalmBooksContextMenu();
   const isFavourite = !!psalmsBookData?.isFavourite;
 
   const psalmsCount = isFavourite ? favouritePsalmsData.length : psalmsBookData?.psalmsCount;
@@ -29,6 +31,7 @@ const PsalmBookItem = ({ psalmsBookData, selected, onClick }: PsalmBookItemProps
               name={psalmsBookData.name}
               isFavourite={isFavourite}
               iconSrc={psalmsBookData?.iconSrc ?? undefined}
+              onContextMenu={isFavourite ? undefined : (e) => handleContextMenu(e, psalmsBookData.id)}
             />
           </PsalmBookItemWrapper>
         </Tooltip>

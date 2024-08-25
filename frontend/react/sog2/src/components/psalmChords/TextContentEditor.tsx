@@ -8,9 +8,10 @@ interface TextContentEditorProps {
   onChange: (newValue: string) => void;
   onSubmit: () => void;
   fontSize?: number;
+  width: number;
 }
 
-const TextContentEditor = ({ value, onChange, fontSize, onSubmit }: TextContentEditorProps) => {
+const TextContentEditor = ({ value, onChange, fontSize, onSubmit, width }: TextContentEditorProps) => {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const { setEditingTextContentId } = useChordsEditInstrumentsContext();
 
@@ -30,6 +31,7 @@ const TextContentEditor = ({ value, onChange, fontSize, onSubmit }: TextContentE
 
   return (
     <TextContentEditingField
+      width={width}
       ref={inputRef}
       onKeyPress={handleKeyPress}
       fontSize={fontSize}

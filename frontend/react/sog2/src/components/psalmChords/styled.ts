@@ -1,6 +1,6 @@
 import ShortcutIcon from '@mui/icons-material/Shortcut';
 import UTurnLeftIcon from '@mui/icons-material/UTurnLeft';
-import { Box, Button, styled } from '@mui/material';
+import { Box, Button, IconButton, styled } from '@mui/material';
 
 export const PsalmChordsViewWrapper = styled(Box)`
   display: flex;
@@ -11,6 +11,11 @@ export const PsalmChordsViewWrapper = styled(Box)`
   background: white;
   color: black;
   user-select: none;
+  height: 100%;
+
+  & > div {
+    height: min-content;
+  }
 `;
 
 export const PsalmChordsViewTitleWrapper = styled(Box)`
@@ -33,6 +38,9 @@ export const PsalmChordsViewCoupletWrapper = styled(Box, {
     return !(['hoverable', 'styling'] as PropertyKey[]).includes(propName);
   },
 })<{ hoverable: boolean; styling?: number }>`
+  position: relative;
+  width: 100%;
+
   ${({ styling }) =>
     styling
       ? `
@@ -137,7 +145,7 @@ export const ChordWrapper = styled('span', {
     (isChordMoving && !isCurrentChordMoving)
       ? `
       &:hover {
-        cursor: pointer;
+        cursor: ${isChordMoving ? 'ew-resize' : 'pointer'};
         scale: 1.2;
         ${isDestinationChordChoosing ? 'color: #37f;' : ''}
       }
@@ -207,11 +215,49 @@ export const GlueWithNextLineIcon = styled(UTurnLeftIcon)`
 
 export const TextContentEditingField = styled('input', {
   shouldForwardProp(propName: PropertyKey) {
-    return propName !== 'fontSize';
+    return !(['fontSize', 'width'] as PropertyKey[]).includes(propName);
   },
 })<{ fontSize?: number }>`
   font-family: 'Times New Roman', sans-serif;
   ${({ fontSize }) => (fontSize ? `font-size: ${fontSize}px` : '')};
   padding: 8.5px 5px;
   border-radius: 10px;
+  max-width: 90vw;
+  width: ${({ width }) => width}px;
+`;
+
+export const ClickableSpan = styled('span', {
+  shouldForwardProp(propName: PropertyKey) {
+    return !(['clickable'] as PropertyKey[]).includes(propName);
+  },
+})<{ clickable?: boolean }>`
+  ${({ clickable }) =>
+    clickable
+      ? `
+    cursor: pointer;
+    
+    &:hover {
+      border-radius: 5px;
+      background-color: #adf;
+    }
+  `
+      : ''}
+`;
+
+export const NewCoupletButtonWrapper = styled(Button)`
+  display: flex;
+  width: 100%;
+  border-radius: 16px;
+`;
+
+export const RemoveCoupletButtonWrapper = styled(IconButton)`
+  display: flex;
+  position: absolute;
+  top: 50%;
+  left: -30px;
+  transform: translateY(-50%);
+
+  & > svg {
+    fill: red;
+  }
 `;

@@ -104,6 +104,7 @@ export enum MusicalKey {
 export type Mutation = {
   __typename?: 'Mutation';
   addBibleFromSog?: Maybe<Scalars['Boolean']['output']>;
+  addPsalm: Scalars['ID']['output'];
   addPsalmToFavourite?: Maybe<Scalars['Boolean']['output']>;
   addPsalmsFromNavaPiesnJSONPL?: Maybe<Scalars['Boolean']['output']>;
   addPsalmsFromSog?: Maybe<Scalars['Boolean']['output']>;
@@ -128,6 +129,14 @@ export type MutationAddBibleFromSogArgs = {
   language: Scalars['String']['input'];
   sogFileSrc: Scalars['String']['input'];
   translation: Scalars['String']['input'];
+};
+
+
+export type MutationAddPsalmArgs = {
+  psalmName: Scalars['String']['input'];
+  psalmNumber: Scalars['String']['input'];
+  psalmsBookId: Scalars['ID']['input'];
+  tonality: MusicalKey;
 };
 
 

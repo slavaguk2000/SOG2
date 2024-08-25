@@ -259,6 +259,12 @@ export const reorderPsalmsInPsalmsBook = gql`
   }
 `;
 
+export const addPsalm = gql`
+  mutation addPsalm($psalmsBookId: ID!, $psalmNumber: String!, $psalmName: String!, $tonality: MusicalKey!) {
+    addPsalm(psalmsBookId: $psalmsBookId, psalmNumber: $psalmNumber, psalmName: $psalmName, tonality: $tonality)
+  }
+`;
+
 export const activePsalmChordsSubscription = gql`
   subscription activePsalmChordsSubscription {
     activePsalmChordsSubscription {

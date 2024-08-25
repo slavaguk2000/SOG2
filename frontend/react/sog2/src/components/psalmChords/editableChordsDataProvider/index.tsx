@@ -1,5 +1,7 @@
 import React, { createContext, PropsWithChildren, SetStateAction, useContext, useState } from 'react';
 
+import { v4 as uuidv4 } from 'uuid';
+
 import usePreviousVersions from '../../../hooks/usePreviousVersions';
 import { Couplet, CoupletContentChord, MusicalKey, Psalm, PsalmData } from '../../../utils/gql/types';
 import { keyToScaleDegree } from '../utils';
@@ -35,6 +37,8 @@ type ChordsDataContextType = {
   ) => void;
   handleEditChord: (chord: CoupletContentChord) => void;
   handleEditText: (coupletContentId: string, newText: string) => void;
+  handleEditTitle: (newTitle: string) => void;
+  handleEditNumber: (newNumber: string) => void;
   handleUnlinkChord: (coupletContentId: string) => void;
   handleMoveChord: (coupletIdx: number, coupletContentIdx: number, isLeft: boolean) => void;
   mainKey: number;
@@ -43,6 +47,8 @@ type ChordsDataContextType = {
   handleUndo: () => void;
   handleRedo: () => void;
   toggleCoupletHighlighting: (coupletId: string) => void;
+  addCouplet: () => void;
+  removeCouplet: (coupletId: string) => void;
   clearLocalStorage: () => void;
 };
 
@@ -54,6 +60,8 @@ const defaultValue: ChordsDataContextType = {
   handleEditChord: () => true,
   handleLinkChords: () => true,
   handleEditText: () => true,
+  handleEditTitle: () => true,
+  handleEditNumber: () => true,
   handleUnlinkChord: () => true,
   handleMoveChord: () => true,
   mainKey: 0,
@@ -62,6 +70,8 @@ const defaultValue: ChordsDataContextType = {
   handleUndo: () => true,
   handleRedo: () => true,
   toggleCoupletHighlighting: () => true,
+  addCouplet: () => true,
+  removeCouplet: () => true,
   clearLocalStorage: () => true,
 };
 
@@ -169,12 +179,70 @@ const EditableChordsDataProvider = ({
     ((currentData.psalm && keyToScaleDegree[currentData.psalm.defaultTonality as string]) ?? 0) + rootTransposition;
 
   const handleSetNewTonality = (newTonality: MusicalKey) => {
-    setChordsData((p) => ({
+    setNewChordsData((p) => ({
       ...p,
       psalm: {
         ...p.psalm,
         defaultTonality: newTonality,
       },
+    }));
+  };
+
+  const handleEditTitle = (newTitle: string) => {
+    if (newTitle.length) {
+      setNewChordsData((p) => ({
+        ...p,
+        psalm: {
+          ...p.psalm,
+          name: newTitle,
+        },
+      }));
+    }
+  };
+
+  const handleEditNumber = (newNumber: string) => {
+    if (newNumber.length) {
+      setNewChordsData((p) => ({
+        ...p,
+        psalm: {
+          ...p.psalm,
+          psalmNumber: newNumber,
+        },
+      }));
+    }
+  };
+
+  const addCouplet = (text?: string) => {
+    setNewChordsData((p) => ({
+      ...p,
+      couplets: [
+        ...p.couplets,
+        {
+          id: uuidv4(),
+          coupletContent: [
+            {
+              id: uuidv4(),
+              chord: {
+                id: uuidv4(),
+                chordTemplate: '$',
+                rootNote: 0,
+              },
+              line: 0,
+              text: text ?? 'New couplet',
+            },
+          ],
+          initialOrder: p.couplets.length,
+          marker: '',
+          styling: 0,
+        },
+      ],
+    }));
+  };
+
+  const removeCouplet = (coupletId: string) => {
+    setNewChordsData((p) => ({
+      ...p,
+      couplets: p.couplets.filter(({ id }) => id !== coupletId),
     }));
   };
 
@@ -191,7 +259,11 @@ const EditableChordsDataProvider = ({
         handleEditChord,
         handleEditText,
         handleUnlinkChord,
+        handleEditNumber,
+        handleEditTitle,
         toggleCoupletHighlighting,
+        addCouplet,
+        removeCouplet,
         mainKey,
         hasUndo,
         hasRedo,

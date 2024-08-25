@@ -7,7 +7,8 @@ from src.services.database_helpers.bible import get_bible_books_by_bible_id, get
 from src.services.database_helpers.psalm.psalm import get_psalms_books, get_psalms_dicts, get_psalm_by_id, \
     PsalmsSortingKeys, \
     add_psalm_to_favourites, remove_psalm_from_favourites, delete_psalm_book, update_psalm_transposition, \
-    get_psalm_slide_by_id, reorder_psalms_in_psalms_book, get_favourite_psalms_dicts, is_psalm_in_favourite
+    get_psalm_slide_by_id, reorder_psalms_in_psalms_book, get_favourite_psalms_dicts, is_psalm_in_favourite, \
+    create_psalm
 from src.services.database_helpers.psalm.update_psalm import update_psalm
 from src.services.database_helpers.sermon import get_sermons, get_sermon_by_id, get_sermon_paragraph_by_id, \
     add_slide_audio_mapping
@@ -303,6 +304,12 @@ def resolve_import_song_images(*_, psalms_book_id: str):
 @convert_kwargs_to_snake_case
 def resolve_reorder_psalms_in_psalms_book(*_, psalms_book_id: str, psalms_ids: List[str]):
     return reorder_psalms_in_psalms_book(psalms_book_id, psalms_ids)
+
+
+@mutation.field("addPsalm")
+@convert_kwargs_to_snake_case
+def resolve_add_psalm(*_, psalms_book_id: str, psalm_number: str, psalm_name: str, tonality):
+    return create_psalm(psalms_book_id, psalm_number, psalm_name, tonality)
 
 
 @subscription.source("activeSlideSubscription")

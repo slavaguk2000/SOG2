@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { Box } from '@mui/material';
+
 import useAdaptiveFontSize from '../../hooks/useAdaptiveFontSize';
 import { PsalmData } from '../../utils/gql/types';
 import PsalmTitle from '../PsalmsContent/common/PsalmTitle';
@@ -10,11 +12,12 @@ import { PsalmChordsViewTitleWrapper, PsalmChordsViewWrapper } from './styled';
 
 export interface PsalmChordsViewProps {
   data?: PsalmData;
+  editing?: boolean;
 }
 
 const maxFontSize = 35;
 
-const PsalmChordsView = ({ data }: PsalmChordsViewProps) => {
+const PsalmChordsView = ({ data, editing }: PsalmChordsViewProps) => {
   const { mainKey, psalmData } = useEditableChordsData();
 
   const currentData = data ?? psalmData;
@@ -30,17 +33,19 @@ const PsalmChordsView = ({ data }: PsalmChordsViewProps) => {
 
   return (
     <PsalmChordsViewWrapper ref={viewRef}>
-      <PsalmChordsViewTitleWrapper>
-        <PsalmTitle
-          fontSize={fontSize * 0.9}
-          psalm={currentData.psalm}
-          typographyProps={{
-            variant: 'h4',
-          }}
-        />
-      </PsalmChordsViewTitleWrapper>
+      <Box>
+        <PsalmChordsViewTitleWrapper>
+          <PsalmTitle
+            fontSize={fontSize * 0.9}
+            psalm={currentData.psalm}
+            typographyProps={{
+              variant: 'h4',
+            }}
+          />
+        </PsalmChordsViewTitleWrapper>
 
-      <PsalmChordsViewContent fontSize={fontSize} mainKey={mainKey} />
+        <PsalmChordsViewContent editing={editing} fontSize={fontSize} mainKey={mainKey} />
+      </Box>
     </PsalmChordsViewWrapper>
   );
 };
