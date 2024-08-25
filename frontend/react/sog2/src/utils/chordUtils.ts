@@ -19,7 +19,7 @@ export const isChordsEquals = (chordA: CoupletContentChord | null, chordB: Coupl
     (key) => chordA[key] === chordB[key],
   );
 
-export const allPossibleTonalities = Object.values(MusicalKey).map((key) => ({
+export const allPossibleTonalities = Object.keys(MusicalKey).map((key) => ({
   key,
   label: key.replace('Sharp', '#'),
 }));

@@ -35,9 +35,10 @@ interface PsalmsBookAvatarProps {
   name: string;
   iconSrc?: string;
   isFavourite: boolean;
+  onContextMenu?: React.MouseEventHandler<HTMLDivElement>;
 }
 
-const PsalmsBookAvatar = ({ name, isFavourite, iconSrc }: PsalmsBookAvatarProps) => {
+const PsalmsBookAvatar = ({ name, isFavourite, iconSrc, onContextMenu }: PsalmsBookAvatarProps) => {
   const initials = useMemo(() => {
     if (!name) return '';
     const nameArray = name.split(' ');
@@ -46,7 +47,7 @@ const PsalmsBookAvatar = ({ name, isFavourite, iconSrc }: PsalmsBookAvatarProps)
   }, [name]);
 
   return (
-    <Avatar {...avatarBGProps((!isFavourite && name) || undefined)} src={iconSrc}>
+    <Avatar {...avatarBGProps((!isFavourite && name) || undefined)} src={iconSrc} onContextMenu={onContextMenu}>
       {isFavourite ? <BookmarkBorderIcon /> : initials}
     </Avatar>
   );

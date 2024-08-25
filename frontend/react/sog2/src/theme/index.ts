@@ -1,6 +1,7 @@
 import { createTheme } from '@mui/material';
 
 import { MuiAutocomplete } from './overrides/MuiAutocomplete';
+import MuiDialogContent from './overrides/MuiDialogContent';
 import { MuiInputLabel } from './overrides/MuiInputLabel';
 import { MuiOutlinedInput } from './overrides/MuiOutlinedInput';
 import MuiPaper from './overrides/MuiPaper';
@@ -16,6 +17,7 @@ export const theme = createTheme({
     MuiTab,
     MuiTabs,
     MuiPaper,
+    MuiDialogContent,
   },
   palette,
 });

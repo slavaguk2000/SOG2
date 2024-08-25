@@ -4,6 +4,7 @@ import useSelectIntent from '../../../hooks/useSelectIntent';
 import { usePsalmsBooksData } from '../../../providers/dataProviders/psalmsDataProvider/PsalmsBooksProvider';
 
 import PsalmBookItem from './PsalmBookItem';
+import PsalmBooksContextMenuProvider from './PsalmBooksContextMenuProvider';
 import { PsalmBookSelectWrapper } from './styled';
 
 interface PsalmBookSelectProps {
@@ -28,14 +29,16 @@ const PsalmBookSelect = ({ setIsCurrentBookFavourite, isCurrentBookFavouriteStat
 
   return (
     <PsalmBookSelectWrapper>
-      {psalmsBooksData?.map((data) => (
-        <PsalmBookItem
-          psalmsBookData={data}
-          key={data.id}
-          selected={softSelected === data.id}
-          onClick={() => data.id && setSoftSelected(data.id)}
-        />
-      ))}
+      <PsalmBooksContextMenuProvider>
+        {psalmsBooksData?.map((data) => (
+          <PsalmBookItem
+            psalmsBookData={data}
+            key={data.id}
+            selected={softSelected === data.id}
+            onClick={() => data.id && setSoftSelected(data.id)}
+          />
+        ))}
+      </PsalmBooksContextMenuProvider>
     </PsalmBookSelectWrapper>
   );
 };
