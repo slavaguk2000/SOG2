@@ -253,8 +253,9 @@ export const NewCoupletButtonWrapper = styled(Button)`
 export const RemoveCoupletButtonWrapper = styled(IconButton)`
   display: flex;
   position: absolute;
-  top: 20px;
+  top: 50%;
   left: -30px;
+  transform: translateY(-50%);
 
   & > svg {
     fill: red;

@@ -10,7 +10,7 @@ const NewCoupletButton = () => {
 
   return (
     <NewCoupletButtonWrapper variant="contained" onClick={() => addCouplet()}>
-      <AddIcon />
+      <AddIcon /> Add couplet
     </NewCoupletButtonWrapper>
   );
 };
