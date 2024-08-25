@@ -75,7 +75,7 @@ const PsalmBooksContextMenuProvider = ({ children }: PropsWithChildren) => {
         )}
       </Menu>
       <AddPsalmDialog
-        psalmBookId={addPsalmDialogData?.psalmBookId}
+        psalmsBookId={addPsalmDialogData?.psalmBookId}
         open={!!addPsalmDialogData}
         onClose={() => setAddPsalmDialogData(null)}
       />

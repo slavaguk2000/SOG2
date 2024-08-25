@@ -359,3 +359,34 @@ def reorder_psalms_in_psalms_book(psalms_book_id: str, psalms_ids: List[str]):
         session.commit()
 
     return True
+
+
+def create_psalm(psalms_book_id: str, psalm_number: str, psalm_name: str, tonality):
+    if not (psalms_book_id and psalm_number and psalm_name and tonality):
+        return None
+
+    with Session(engine) as session:
+        psalms_book = session.query(PsalmBook).filter(PsalmBook.id == psalms_book_id).first()
+        new_psalm = Psalm(
+            psalm_number=psalm_number,
+            name=psalm_name,
+            default_tonality=tonality,
+            couplets=[Couplet(
+                styling=0,
+                marker='',
+                couplet_content=[
+                    CoupletContent(
+                        text_content="First couplet",
+                        chord=CoupletContentChord(
+                            chord_template='$',
+                            root_note=0
+                        )
+                    )
+                ],
+                initial_order=0,
+            )],
+            psalm_books=[psalms_book],
+        )
+        session.add(new_psalm)
+        session.commit()
+        return new_psalm.id

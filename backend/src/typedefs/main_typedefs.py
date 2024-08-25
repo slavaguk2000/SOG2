@@ -220,6 +220,7 @@ type_defs = gql("""
       updatePsalmTransposition(psalmsBookId: ID!, psalmId: ID!, transposition: Int!): PsalmsBookItem!
       importSongImages(psalmsBookId: ID!): Boolean!
       reorderPsalmsInPsalmsBook(psalmsBookId: ID!, psalmsIds: [ID!]!): Boolean!
+      addPsalm(psalmsBookId: ID!, psalmNumber: String!, psalmName: String!, tonality: MusicalKey!): ID!
     }
     
     type Subscription {

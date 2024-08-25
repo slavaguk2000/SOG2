@@ -7,6 +7,7 @@ import { Maybe, MusicalKey } from '../../../utils/gql/types';
 
 import SongTransposer from './SongTransposer';
 import useTransposeSong from './useTransposeSong';
+import { openChordEditor } from './utils';
 
 interface MenuAnchorData {
   anchor: HTMLElement;
@@ -45,8 +46,7 @@ const PsalmsContextMenuProvider = ({ children }: PropsWithChildren) => {
 
   const handleEditChords = () => {
     if (menuAnchorData) {
-      const url = `/psalms/chords-edit?psalmId=${menuAnchorData.psalmId}`;
-      window.open(url, '_blank');
+      openChordEditor(menuAnchorData.psalmId);
     }
     handleMenuClose();
   };
