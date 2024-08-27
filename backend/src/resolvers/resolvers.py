@@ -22,6 +22,7 @@ from asyncio import Queue
 
 from src.services.elasticsearch.search.sermon.sermon import sermon_search
 from src.services.elasticsearch.sync.bible import sync_bible
+from src.services.parsers.psalmsParsers.importer import PsalmsJsonImporter
 from src.services.parsers.psalmsParsers.nova_piesn_parser import NovaPiesnPsalmParser
 from src.services.parsers.psalmsParsers.sog_parser import SimplePsalmParser
 from src.services.parsers.psalmsParsers.utils import import_song_images
@@ -210,6 +211,12 @@ def resolve_add_psalms_from_sog(*_, sog_file_src: str, language: str):
 @convert_kwargs_to_snake_case
 def resolve_add_psalms_from_sog(*_, file_src: str, language: str):
     return NovaPiesnPsalmParser.parse(file_src, language)
+
+
+@mutation.field("importPsalms")
+@convert_kwargs_to_snake_case
+def resolve_import_psalms(*_, file_src: str, language: str):
+    return PsalmsJsonImporter.import_psalms(file_src, language)
 
 
 def notify_favourite_changed():
