@@ -30,6 +30,7 @@ from src.models.couplet_content_chord import CoupletContentChord
 from src.models.psalm import Psalm
 from src.models.psalms_book import PsalmBook
 from src.models.psalms_book_psalms import psalms_book_psalms
+from src.models.bible_book_mapping import BibleBooksMapping
 target_metadata = Base.metadata
 for table in Base.metadata.tables.items():
     print(table)

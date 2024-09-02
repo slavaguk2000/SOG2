@@ -53,6 +53,7 @@ type_defs = gql("""
         psalmsBooks: [PsalmsBook!]!
         psalms(psalmsBookId: ID!, psalmsSorting: PsalmsSorting): [PsalmsBookItem!]!
         psalm(psalmId: ID!): PsalmDataWithSlides!
+        slideMappings(slideId: ID!): [Slide!]!
     }
     
     type Bible {

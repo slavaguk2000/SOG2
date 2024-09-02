@@ -4,7 +4,7 @@ from ariadne import convert_kwargs_to_snake_case, ObjectType, QueryType, Mutatio
 
 from src.services.bible_helper import update_bible_slide_usage
 from src.services.database_helpers.bible import get_bible_books_by_bible_id, get_chapter_verses, get_bible_slide_by_id, \
-    get_bibles
+    get_bibles, get_bible_slide_mappings
 from src.services.database_helpers.psalm.psalm import get_psalms_books, get_psalms_dicts, get_psalm_by_id, \
     PsalmsSortingKeys, \
     add_psalm_to_favourites, remove_psalm_from_favourites, delete_psalm_book, update_psalm_transposition, \
@@ -111,6 +111,12 @@ def resolve_bible_verses(*_, bible_id: str, book_id: str | None, chapter: int):
 @convert_kwargs_to_snake_case
 def resolve_bible_history(*_, bible_id: str, **kwargs):
     return get_bible_history(bible_id, **kwargs)
+
+
+@query.field("slideMappings")
+@convert_kwargs_to_snake_case
+def resolve_slide_mappings(*_, slide_id: str):
+    return get_bible_slide_mappings(slide_id)
 
 
 @mutation.field("setActiveSlide")
