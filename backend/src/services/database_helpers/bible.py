@@ -1,13 +1,23 @@
 from sqlalchemy.orm import Session
 from src.services.database import engine
+from src.models.bible import Bible
 from src.models.bible_book import BibleBook
 from src.models.verse import Verse
 from datetime import datetime, timezone
 
 
-def get_bible_books_by_bible_id(bible_id: str):
+def get_bibles():
     with Session(engine) as session:
-        books = session.query(BibleBook).filter(BibleBook.bible_id == bible_id).all()
+        bibles = session.query(Bible).all()
+        return [{'id': bible.id} for bible in bibles]
+
+
+def get_bible_books_by_bible_id(bible_id: str | None):
+    with Session(engine) as session:
+        books_req = session.query(BibleBook)
+        if bible_id:
+            books_req = books_req.filter(BibleBook.bible_id == bible_id)
+        books = books_req.all()
         return [{'id': book.id, 'name': book.name, 'chapter_count': book.chapters_count} for book in books]
 
 
@@ -26,13 +36,17 @@ def get_slide_by_verse(verse: Verse):
     }
 
 
-def get_chapter_verses(bible_id: str, book_id: str, chapter: int):
+def get_chapter_verses(bible_id: str, book_id: str | None, chapter: int):
     with Session(engine) as session:
-        verses = session.query(Verse).filter(
-            Verse.bible_id == bible_id,
+        verses_req = session.query(Verse).filter(
             Verse.bible_book_id == book_id,
             Verse.chapter == chapter
-        ).all()
+        )
+
+        if bible_id:
+            verses_req = verses_req.filter(Verse.bible_id == bible_id)
+
+        verses = verses_req.all()
 
         return [get_slide_by_verse(verse) for verse in verses]
 

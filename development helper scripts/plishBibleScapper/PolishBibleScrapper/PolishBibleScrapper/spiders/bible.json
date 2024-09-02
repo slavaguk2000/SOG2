@@ -1,0 +1,32 @@
+[
+  {
+    "name": "1 Mojżeszowa - Rodzaju",
+    "href": "01/1.htm",
+    "order": 0,
+    "chapters": [
+      {
+        "title": "1 Mojżeszowa - Rodzaju 2 :  POLSKIE Biblia",
+        "chapter_num": 2
+      },
+      {
+        "title": "1 Mojżeszowa - Rodzaju 3 :  POLSKIE Biblia",
+        "chapter_num": 3
+      }
+    ]
+  },
+  {
+    "name": "2 Mojżeszowa - Wyjścia",
+    "href": "02/1.htm",
+    "order": 1,
+    "chapters": [
+      {
+        "title": "  Stary Testament - Wyjścia 3 :  POLSKIE Biblia",
+        "chapter_num": 3
+      },
+      {
+        "title": "  Stary Testament - Wyjścia 2 :  POLSKIE Biblia",
+        "chapter_num": 2
+      }
+    ]
+  }
+]

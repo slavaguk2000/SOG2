@@ -3,7 +3,8 @@ from typing import List
 from ariadne import convert_kwargs_to_snake_case, ObjectType, QueryType, MutationType, SubscriptionType
 
 from src.services.bible_helper import update_bible_slide_usage
-from src.services.database_helpers.bible import get_bible_books_by_bible_id, get_chapter_verses, get_bible_slide_by_id
+from src.services.database_helpers.bible import get_bible_books_by_bible_id, get_chapter_verses, get_bible_slide_by_id, \
+    get_bibles
 from src.services.database_helpers.psalm.psalm import get_psalms_books, get_psalms_dicts, get_psalm_by_id, \
     PsalmsSortingKeys, \
     add_psalm_to_favourites, remove_psalm_from_favourites, delete_psalm_book, update_psalm_transposition, \
@@ -88,15 +89,21 @@ def resolve_psalm(*_, psalm_id: str):
     return get_psalm_by_id(psalm_id)
 
 
+@query.field("bibles")
+@convert_kwargs_to_snake_case
+def resolve_bibles(*_):
+    return get_bibles()
+
+
 @query.field("bibleBooks")
 @convert_kwargs_to_snake_case
-def resolve_bible_books(*_, bible_id: str):
+def resolve_bible_books(*_, bible_id: str | None):
     return get_bible_books_by_bible_id(bible_id)
 
 
 @query.field("bibleVerses")
 @convert_kwargs_to_snake_case
-def resolve_bible_verses(*_, bible_id: str, book_id: str, chapter: int):
+def resolve_bible_verses(*_, bible_id: str, book_id: str | None, chapter: int):
     return get_chapter_verses(bible_id, book_id, chapter)
 
 
@@ -196,7 +203,7 @@ def resolve_set_active_free_slide(*_, text: str, title: str):
 
 @mutation.field("addBibleFromSog")
 @convert_kwargs_to_snake_case
-def resolve_set_active_slide(*_, sog_file_src: str, language: str, translation: str):
+def resolve_add_bible_from_sog(*_, sog_file_src: str, language: str, translation: str):
     SimpleBibleParser.parse(sog_file_src, language, translation)
     return True
 
