@@ -51,6 +51,7 @@ const BibleDataProvider = ({ children }: PropsWithChildren) => {
     variables: {
       bibleId,
     },
+    skip: !bibleId,
     fetchPolicy: 'cache-first',
   });
 
