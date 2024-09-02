@@ -42,7 +42,7 @@ const SermonDataProvider: FC<PropsWithChildren> = ({ children }) => {
   }, [sermonId, currentSermonId, setSermonId]);
 
   useEffect(() => {
-    if (!currentSermonId && sermons) {
+    if (!currentSermonId && sermons?.[0]) {
       handleSermonSelect(sermons[0].id);
     }
   }, [currentSermonId, handleSermonSelect, sermons]);
