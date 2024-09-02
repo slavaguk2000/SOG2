@@ -20,6 +20,11 @@ export type AudioMapping = {
   id: Scalars['ID']['output'];
 };
 
+export type Bible = {
+  __typename?: 'Bible';
+  id: Scalars['ID']['output'];
+};
+
 export type BibleBook = {
   __typename?: 'BibleBook';
   chapterCount: Scalars['Int']['output'];
@@ -109,6 +114,7 @@ export type Mutation = {
   addPsalmsFromNavaPiesnJSONPL?: Maybe<Scalars['Boolean']['output']>;
   addPsalmsFromSog?: Maybe<Scalars['Boolean']['output']>;
   deletePsalmsBook?: Maybe<Scalars['Boolean']['output']>;
+  importPsalms?: Maybe<Scalars['Boolean']['output']>;
   importSongImages: Scalars['Boolean']['output'];
   parseSermonsFromBranhamRu?: Maybe<Scalars['Boolean']['output']>;
   removePsalmFromFavourite?: Maybe<Scalars['Boolean']['output']>;
@@ -160,6 +166,12 @@ export type MutationAddPsalmsFromSogArgs = {
 
 export type MutationDeletePsalmsBookArgs = {
   psalmsBookId: Scalars['ID']['input'];
+};
+
+
+export type MutationImportPsalmsArgs = {
+  fileSrc: Scalars['String']['input'];
+  language: Scalars['String']['input'];
 };
 
 
@@ -290,6 +302,7 @@ export type Query = {
   bibleBooks: Array<BibleBook>;
   bibleHistory: Array<Slide>;
   bibleVerses: Array<Slide>;
+  bibles: Array<Bible>;
   psalm: PsalmDataWithSlides;
   psalms: Array<PsalmsBookItem>;
   psalmsBooks: Array<PsalmsBook>;
@@ -300,7 +313,7 @@ export type Query = {
 
 
 export type QueryBibleBooksArgs = {
-  bibleId: Scalars['ID']['input'];
+  bibleId?: InputMaybe<Scalars['ID']['input']>;
 };
 
 
@@ -312,7 +325,7 @@ export type QueryBibleHistoryArgs = {
 
 
 export type QueryBibleVersesArgs = {
-  bibleId: Scalars['ID']['input'];
+  bibleId?: InputMaybe<Scalars['ID']['input']>;
   bookId: Scalars['ID']['input'];
   chapter: Scalars['Int']['input'];
 };

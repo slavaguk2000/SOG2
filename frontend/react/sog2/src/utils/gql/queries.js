@@ -42,8 +42,16 @@ export const sermons = gql`
   }
 `;
 
+export const bibles = gql`
+  query bibles {
+    bibles {
+      id
+    }
+  }
+`;
+
 export const bibleBooks = gql`
-  query bibleBooks($bibleId: ID!) {
+  query bibleBooks($bibleId: ID) {
     bibleBooks(bibleId: $bibleId) {
       id
       name
@@ -63,7 +71,7 @@ export const bibleHistory = gql`
 `;
 
 export const bibleVerses = gql`
-  query bibleVerses($bibleId: ID!, $bookId: ID!, $chapter: Int!) {
+  query bibleVerses($bibleId: ID, $bookId: ID!, $chapter: Int!) {
     bibleVerses(bibleId: $bibleId, bookId: $bookId, chapter: $chapter) {
       id
       content

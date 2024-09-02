@@ -3,7 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 
 import { useQuery } from '@apollo/client';
 
-import { bibleBooks, bibleVerses } from 'src/utils/gql/queries';
+import { bibles, bibleBooks, bibleVerses } from 'src/utils/gql/queries';
 import { BibleBook, Query, QueryBibleBooksArgs, QueryBibleVersesArgs, Slide } from 'src/utils/gql/types';
 
 import { useInstrumentsField } from '../../instrumentsFieldProvider';
@@ -25,15 +25,6 @@ const BibleDataProvider = ({ children }: PropsWithChildren) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const bibleId = searchParams.get('bibleId') ?? '';
 
-  useEffect(() => {
-    if (!bibleId) {
-      setSearchParams((prev) => ({
-        ...prev,
-        bibleId: 'fcd38411-5f94-4bda-9a2a-cd5624b3dac2',
-      }));
-    }
-  });
-
   const [currentChapter, setCurrentChapter] = useState<ChapterSelector>({
     bookIdx: undefined,
     chapterId: undefined,
@@ -41,11 +32,25 @@ const BibleDataProvider = ({ children }: PropsWithChildren) => {
 
   const [lastSlide, setLastSlide] = useState<Slide | undefined>(undefined);
 
+  const { data: biblesData } = useQuery<Pick<Query, 'bibles'>>(bibles, {
+    fetchPolicy: 'cache-first',
+  });
+
+  const firstBible = biblesData?.bibles?.[0];
+
+  useEffect(() => {
+    if (!bibleId && firstBible) {
+      setSearchParams((prev) => ({
+        ...prev,
+        bibleId: firstBible.id,
+      }));
+    }
+  }, [firstBible]);
+
   const { data } = useQuery<Pick<Query, 'bibleBooks'>, QueryBibleBooksArgs>(bibleBooks, {
     variables: {
       bibleId,
     },
-    skip: !bibleId,
     fetchPolicy: 'cache-first',
   });
 

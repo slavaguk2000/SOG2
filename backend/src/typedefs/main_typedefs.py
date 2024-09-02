@@ -44,14 +44,19 @@ type_defs = gql("""
 
     type Query {
         search(searchPattern: String!, tabType: TabType!, id: ID): [Slide!]!
-        bibleBooks(bibleId: ID!): [BibleBook!]!
-        bibleVerses(bibleId: ID!, bookId: ID!, chapter: Int!): [Slide!]!
+        bibles: [Bible!]!
+        bibleBooks(bibleId: ID): [BibleBook!]!
+        bibleVerses(bibleId: ID, bookId: ID!, chapter: Int!): [Slide!]!
         bibleHistory(bibleId: ID!, start: Int, size: Int): [Slide!]!
         sermon(sermonId: ID!): [Slide!]!
         sermons(sermonsCollectionId: ID!): [Sermon!]!
         psalmsBooks: [PsalmsBook!]!
         psalms(psalmsBookId: ID!, psalmsSorting: PsalmsSorting): [PsalmsBookItem!]!
         psalm(psalmId: ID!): PsalmDataWithSlides!
+    }
+    
+    type Bible {
+        id: ID!
     }
     
     type PsalmsBook {
