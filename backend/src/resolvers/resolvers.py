@@ -9,7 +9,7 @@ from src.services.database_helpers.psalm.psalm import get_psalms_books, get_psal
     PsalmsSortingKeys, \
     add_psalm_to_favourites, remove_psalm_from_favourites, delete_psalm_book, update_psalm_transposition, \
     get_psalm_slide_by_id, reorder_psalms_in_psalms_book, get_favourite_psalms_dicts, is_psalm_in_favourite, \
-    create_psalm
+    create_psalm, get_psalm_with_transposition
 from src.services.database_helpers.psalm.update_psalm import update_psalm
 from src.services.database_helpers.sermon import get_sermons, get_sermon_by_id, get_sermon_paragraph_by_id, \
     add_slide_audio_mapping
@@ -134,6 +134,12 @@ def resolve_set_active_slide(*_, slide_id=None, **kwargs):
             update_bible_slide_usage(slide_id)
         elif kwargs.get('type') == 'Psalm':
             active_slide = get_psalm_slide_by_id(slide_id)
+            if 'location' in active_slide and len(active_slide['location']) > 1:
+                [psalms_book_id, psalm_id] = active_slide['location'][:2]
+                if current_active_psalm_chords and psalm_id and psalms_book_id \
+                        and current_active_psalm_chords["psalm_data"]["id"] != psalm_id:
+                    transposition_steps = get_psalm_with_transposition(psalm_id, psalms_book_id)[1]
+                    resolve_set_active_psalm(psalm_id=psalm_id, psalms_book_id=psalms_book_id, transposition=transposition_steps)
 
     current_active_slide = active_slide
 
@@ -165,7 +171,6 @@ def resolve_set_active_psalm(*_, psalm_id: str | None = None, psalms_book_id: st
         }
 
     current_active_psalm_chords = active_psalm_chords
-    print(current_active_psalm_chords)
 
     notify_psalm_chords_subscribers()
 
@@ -255,8 +260,6 @@ def resolve_update_psalm_transposition(*_, psalms_book_id: str, psalm_id: str, t
     global current_active_psalm_chords
     res = update_psalm_transposition(psalms_book_id, psalm_id, transposition)
 
-    print(current_active_psalm_chords)
-    print(psalms_book_id, psalm_id, transposition)
     if current_active_psalm_chords is not None \
             and current_active_psalm_chords["psalm_data"]["id"] == psalm_id \
             and current_active_psalm_chords["psalm_data"]["psalms_book_id"] == psalms_book_id:

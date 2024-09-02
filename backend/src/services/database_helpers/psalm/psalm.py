@@ -82,6 +82,19 @@ def get_psalms(
         return session.execute(psalms_query).all()
 
 
+def get_psalm_with_transposition(psalm_id: str, psalms_book_id: str) -> dict:
+    with Session(engine) as session:
+        psalms_query = select(
+            Psalm,
+            psalms_book_psalms.c.transposition_steps,
+        ) \
+            .join(psalms_book_psalms, Psalm.id == psalms_book_psalms.c.psalm_id) \
+            .join(PsalmBook, PsalmBook.id == psalms_book_psalms.c.psalms_book_id) \
+            .filter(Psalm.id == psalm_id, PsalmBook.id == psalms_book_id)
+
+        return session.execute(psalms_query).first()
+
+
 def get_psalms_dicts(
         psalms_book_id: str,
         sort_key: PsalmsSortingKeys | None = None,
