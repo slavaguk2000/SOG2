@@ -9,7 +9,7 @@ from src.services.database_helpers.psalm.psalm import get_psalms_books, get_psal
     PsalmsSortingKeys, \
     add_psalm_to_favourites, remove_psalm_from_favourites, delete_psalm_book, update_psalm_transposition, \
     get_psalm_slide_by_id, reorder_psalms_in_psalms_book, get_favourite_psalms_dicts, is_psalm_in_favourite, \
-    create_psalm, get_psalm_with_transposition, get_real_transposition
+    create_psalm, get_psalm_with_transposition, get_transposition, get_real_transposition
 from src.services.database_helpers.psalm.update_psalm import update_psalm
 from src.services.database_helpers.sermon import get_sermons, get_sermon_by_id, get_sermon_paragraph_by_id, \
     add_slide_audio_mapping
@@ -162,18 +162,29 @@ def notify_psalm_chords_subscribers():
 
 @mutation.field("setActivePsalm")
 @convert_kwargs_to_snake_case
-def resolve_set_active_psalm(*_, psalm_id: str | None = None, psalms_book_id: str | None = None, transposition: int = 0):
+def resolve_set_active_psalm(
+        *_,
+        psalm_id: str | None = None,
+        psalms_book_id: str | None = None,
+        transposition: int | None = None
+):
     global current_active_psalm_chords
     active_psalm_chords = None
     if psalm_id:
         raw_active_psalm_chords = get_psalm_by_id(psalm_id)
+        current_transposition = transposition \
+            if transposition is not None \
+            else get_transposition(psalms_book_id, psalm_id) \
+            if (psalm_id is not None and psalms_book_id is not None) \
+            else 0
+
         active_psalm_chords = {
             "psalm_data": {
                 "psalms_book_id": psalms_book_id,
                 **raw_active_psalm_chords,
                 "couplets": [item["couplet"] for item in raw_active_psalm_chords["couplets"]],
             },
-            "root_transposition": transposition
+            "root_transposition": current_transposition
         }
 
     current_active_psalm_chords = active_psalm_chords

@@ -293,6 +293,22 @@ def delete_psalm_book(psalm_book_id: str):
         return True
 
 
+def get_transposition(psalm_book_id: str, psalm_id: str):
+    with Session(engine) as session:
+        result = session.execute(
+            select(psalms_book_psalms.c.transposition_steps)
+            .where(
+                psalms_book_psalms.c.psalms_book_id == psalm_book_id,
+                psalms_book_psalms.c.psalm_id == psalm_id
+            )
+        ).first()
+
+        if not result:
+            raise "Invalid ids"
+
+        return result.transposition_steps
+
+
 def update_psalm_transposition(psalm_book_id: str, psalm_id: str, transposition: int):
     with Session(engine) as session:
         session.execute(
