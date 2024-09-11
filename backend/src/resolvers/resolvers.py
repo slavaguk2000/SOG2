@@ -353,7 +353,8 @@ def resolve_add_psalm(*_, psalms_book_id: str, psalm_number: str, psalm_name: st
 
 
 @subscription.source("activeSlideSubscription")
-async def resolve_active_slide_subscription(*_):
+@convert_kwargs_to_snake_case
+async def resolve_active_slide_subscription(*_, **__):
     queue = Queue()
     slide_subscribers_queues.append(queue)
     yield current_active_slide
@@ -367,8 +368,16 @@ async def resolve_active_slide_subscription(*_):
 
 
 @subscription.field("activeSlideSubscription")
-def resolve_active_slide_subscription_slide(active_slide, *_):
-    return active_slide
+@convert_kwargs_to_snake_case
+def resolve_active_slide_subscription_slide(active_slide, *_, **kwargs):
+    if not active_slide:
+        return []
+
+    mappings_languages = kwargs.get("mappings_languages", [])
+
+    mappings = get_bible_slide_mappings(active_slide['id'], mappings_languages) if 'id' in active_slide else []
+
+    return [active_slide, *mappings]
 
 
 @subscription.source("activePsalmChordsSubscription")

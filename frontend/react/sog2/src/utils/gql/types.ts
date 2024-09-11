@@ -310,6 +310,7 @@ export type Query = {
   search: Array<Slide>;
   sermon: Array<Slide>;
   sermons: Array<Sermon>;
+  slideMappings: Array<Slide>;
 };
 
 
@@ -357,6 +358,11 @@ export type QuerySermonArgs = {
 
 export type QuerySermonsArgs = {
   sermonsCollectionId: Scalars['ID']['input'];
+};
+
+
+export type QuerySlideMappingsArgs = {
+  slideId: Scalars['ID']['input'];
 };
 
 export type Sermon = {
@@ -411,8 +417,13 @@ export type SubscriptingPsalmData = {
 export type Subscription = {
   __typename?: 'Subscription';
   activePsalmChordsSubscription?: Maybe<SubscriptingPsalmData>;
-  activeSlideSubscription?: Maybe<Slide>;
+  activeSlideSubscription?: Maybe<Array<Maybe<Slide>>>;
   favouritePsalms: Array<PsalmsBookItem>;
+};
+
+
+export type SubscriptionActiveSlideSubscriptionArgs = {
+  mappingsLanguages?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
 };
 
 export enum TabType {

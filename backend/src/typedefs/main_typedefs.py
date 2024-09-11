@@ -231,7 +231,7 @@ type_defs = gql("""
     }
     
     type Subscription {
-      activeSlideSubscription: Slide
+      activeSlideSubscription(mappingsLanguages: [String]): [Slide]
       activePsalmChordsSubscription: SubscriptingPsalmData
       favouritePsalms: [PsalmsBookItem!]!
     }

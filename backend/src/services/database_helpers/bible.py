@@ -75,7 +75,14 @@ def get_bible_slide_by_id(verse_id: str):
     return None
 
 
-def get_bible_slide_mappings(verse_id: str):
+def get_bible_slide_mappings(
+        verse_id: str,
+        # TODO : make filtration by language and selected bibles
+        mappings_languages: [str]
+):
+    if not len(mappings_languages):
+        return []
+
     with Session(engine) as session:
         BBM1 = aliased(BibleBooksMapping)
         BBM2 = aliased(BibleBooksMapping)
