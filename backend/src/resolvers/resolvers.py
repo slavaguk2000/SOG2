@@ -9,7 +9,7 @@ from src.services.database_helpers.psalm.psalm import get_psalms_books, get_psal
     PsalmsSortingKeys, \
     add_psalm_to_favourites, remove_psalm_from_favourites, delete_psalm_book, update_psalm_transposition, \
     get_psalm_slide_by_id, reorder_psalms_in_psalms_book, get_favourite_psalms_dicts, is_psalm_in_favourite, \
-    create_psalm, get_psalm_with_transposition
+    create_psalm, get_psalm_with_transposition, get_real_transposition
 from src.services.database_helpers.psalm.update_psalm import update_psalm
 from src.services.database_helpers.sermon import get_sermons, get_sermon_by_id, get_sermon_paragraph_by_id, \
     add_slide_audio_mapping
@@ -241,8 +241,14 @@ def notify_favourite_changed():
 
 @mutation.field("addPsalmToFavourite")
 @convert_kwargs_to_snake_case
-def resolve_add_psalm_to_favourite(*_, psalm_id: str, transposition: int = 0):
-    res = add_psalm_to_favourites(psalm_id, transposition)
+def resolve_add_psalm_to_favourite(
+        *_,
+        psalm_id: str,
+        psalms_book_id: str | None = None,
+        transposition: int | None = None
+):
+    res = add_psalm_to_favourites(psalm_id, get_real_transposition(psalm_id, transposition, psalms_book_id))
+
     if res:
         notify_favourite_changed()
     return res

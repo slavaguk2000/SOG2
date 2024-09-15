@@ -237,6 +237,7 @@ def remove_psalm_from_favourites(psalm_id: str) -> bool:
             raise ValueError("No favourite psalm book found")
 
         # Check if the psalm is in favourites
+        # TODO : replace with is_psalm_in_psalm_book
         in_favourites = session.query(
             exists().where(
                 psalms_book_psalms.c.psalm_id == psalm_id,
@@ -403,3 +404,23 @@ def create_psalm(psalms_book_id: str, psalm_number: str, psalm_name: str, tonali
         session.add(new_psalm)
         session.commit()
         return new_psalm.id
+
+
+def get_real_transposition(
+    psalm_id: str,
+    transposition: int | None = None,
+    psalms_book_id: str | None = None
+) -> int:
+    if transposition is None and psalms_book_id is not None:
+        with Session(engine) as session:
+            result = session.execute(
+                select(psalms_book_psalms.c.transposition_steps)
+                .where(
+                    psalms_book_psalms.c.psalms_book_id == psalms_book_id,
+                    psalms_book_psalms.c.psalm_id == psalm_id
+                )
+            ).first()
+
+            if result:
+                return result.transposition_steps
+    return transposition or 0
