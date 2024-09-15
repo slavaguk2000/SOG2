@@ -125,7 +125,7 @@ const FullSpaceSlide = ({
 
   return (
     <FullSpaceSlideWrapper ref={containerRef}>
-      <ContentWrapper overflow="auto" ref={contentRef}>
+      <ContentWrapper ref={contentRef}>
         <Typography
           color={fontSizeState.state === FontSelectionState.SLOW_DECREASE ? 'white' : 'black'}
           lineHeight={1.2}
