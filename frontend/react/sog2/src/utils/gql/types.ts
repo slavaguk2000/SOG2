@@ -148,6 +148,7 @@ export type MutationAddPsalmArgs = {
 
 export type MutationAddPsalmToFavouriteArgs = {
   psalmId: Scalars['ID']['input'];
+  psalmsBookId?: InputMaybe<Scalars['ID']['input']>;
   transposition?: InputMaybe<Scalars['Int']['input']>;
 };
 

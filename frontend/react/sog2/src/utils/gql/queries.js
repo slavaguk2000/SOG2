@@ -191,8 +191,8 @@ export const psalm = gql`
 `;
 
 export const addPsalmToFavourite = gql`
-  mutation addPsalmToFavourite($psalmId: ID!, $transposition: Int) {
-    addPsalmToFavourite(psalmId: $psalmId, transposition: $transposition)
+  mutation addPsalmToFavourite($psalmId: ID!, $psalmsBookId: ID, $transposition: Int) {
+    addPsalmToFavourite(psalmId: $psalmId, psalmsBookId: $psalmsBookId, transposition: $transposition)
   }
 `;
 
