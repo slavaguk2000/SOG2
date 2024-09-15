@@ -25,17 +25,21 @@ const ActiveSlidePage = () => {
 
   return (
     <Box
+      bgcolor="black"
       height="100%"
       width="100%"
       display="grid"
-      gridTemplateRows={`repeat(${slides.length}, ${Math.floor(100 / slides.length)}vh)`}
+      padding="min(3vh, 3vw)"
+      gap="min(1vh, 1vw)"
+      boxSizing="border-box"
+      gridTemplateRows={`repeat(${slides.length}, ${Math.floor(100 / slides.length)}%)`}
     >
       {slides.map((slide, idx) => (
         <FullSpaceSlide
           key={`${slide?.id ?? ''}${idx}`}
           content={`${slide?.contentPrefix ?? ''}${slide?.content ?? ''}`}
           title={slide?.title ?? ''}
-          minTitleFontSize={1}
+          minTitleFontSize={0.5}
           maxTitleFontSize={3}
           maxContentFontSize={10}
           additionalRecalculateDeps={[slides.length]}
