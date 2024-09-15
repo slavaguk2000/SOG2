@@ -3,10 +3,19 @@ import { useMutation } from '@apollo/client';
 import { addPsalmToFavourite, removePsalmFromFavourite } from '../utils/gql/queries';
 import { Mutation, MutationAddPsalmToFavouriteArgs, MutationRemovePsalmFromFavouriteArgs } from '../utils/gql/types';
 
-const useAddRemoveFavourite = ({ psalmId, transposition }: { psalmId: string; transposition: number }) => {
+const useAddRemoveFavourite = ({
+  psalmId,
+  psalmsBookId,
+  transposition,
+}: {
+  psalmId: string;
+  psalmsBookId?: string;
+  transposition?: number;
+}) => {
   const commonOptions = {
     variables: {
       psalmId,
+      psalmsBookId,
       transposition,
     },
   };

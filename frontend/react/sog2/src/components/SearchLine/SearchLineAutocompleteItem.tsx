@@ -3,6 +3,7 @@ import React, { useEffect, useRef } from 'react';
 import { Slide } from 'src/utils/gql/types';
 
 import SearchLineAutocompleteItemContent from './SearchLineAutocompleteItemContent';
+import SearchLineFavourite from './SearchLineFavourite';
 import { SearchLineAutocompleteItemWrapper } from './styled';
 
 interface SearchLineAutocompleteItemProps {
@@ -17,7 +18,7 @@ interface SearchLineAutocompleteItemProps {
 }
 
 const SearchLineAutocompleteItem = ({
-  slide: { searchContent, content },
+  slide: { searchContent, content, location },
   onClick,
   onPlaceClick,
   onPlaceBlur,
@@ -44,6 +45,7 @@ const SearchLineAutocompleteItem = ({
       onMouseEnter={setSelected}
       ref={itemRef}
     >
+      {location && <SearchLineFavourite location={location} />}
       {searchContent ? (
         <SearchLineAutocompleteItemContent
           onPlaceHover={onPlaceHover}

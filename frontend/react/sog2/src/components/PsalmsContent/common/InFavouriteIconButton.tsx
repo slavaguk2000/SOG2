@@ -25,8 +25,9 @@ export const FavouriteIconButtonBody = ({ currentState, onClick, sx }: Favourite
 
 export interface FavouriteIconButtonProps {
   psalmId: string;
+  psalmsBookId?: string;
   inFavourite?: boolean;
-  transposition: number;
+  transposition?: number;
   value?: boolean;
   onChange?: Dispatch<SetStateAction<boolean>>;
   sx?: SxProps<Theme>;
@@ -35,6 +36,7 @@ export interface FavouriteIconButtonProps {
 
 const FavouriteIconButton = ({
   psalmId,
+  psalmsBookId,
   transposition,
   value,
   onChange,
@@ -55,6 +57,7 @@ const FavouriteIconButton = ({
 
   const { addPsalmToFavouriteMutation, removePsalmFromFavouriteMutation } = useAddRemoveFavourite({
     psalmId,
+    psalmsBookId,
     transposition,
   });
 
