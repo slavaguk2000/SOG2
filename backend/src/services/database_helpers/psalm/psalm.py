@@ -293,22 +293,6 @@ def delete_psalm_book(psalm_book_id: str):
         return True
 
 
-def get_transposition(psalm_book_id: str, psalm_id: str):
-    with Session(engine) as session:
-        result = session.execute(
-            select(psalms_book_psalms.c.transposition_steps)
-            .where(
-                psalms_book_psalms.c.psalms_book_id == psalm_book_id,
-                psalms_book_psalms.c.psalm_id == psalm_id
-            )
-        ).first()
-
-        if not result:
-            raise "Invalid ids"
-
-        return result.transposition_steps
-
-
 def update_psalm_transposition(psalm_book_id: str, psalm_id: str, transposition: int):
     with Session(engine) as session:
         session.execute(
@@ -422,21 +406,30 @@ def create_psalm(psalms_book_id: str, psalm_number: str, psalm_name: str, tonali
         return new_psalm.id
 
 
+def get_transposition(psalm_book_id: str, psalm_id: str):
+    with Session(engine) as session:
+        result = session.execute(
+            select(psalms_book_psalms.c.transposition_steps)
+            .where(
+                psalms_book_psalms.c.psalms_book_id == psalm_book_id,
+                psalms_book_psalms.c.psalm_id == psalm_id
+            )
+        ).first()
+
+        if not result:
+            raise "Invalid ids"
+
+        return result.transposition_steps
+
+
 def get_real_transposition(
     psalm_id: str,
     transposition: int | None = None,
     psalms_book_id: str | None = None
 ) -> int:
     if transposition is None and psalms_book_id is not None:
-        with Session(engine) as session:
-            result = session.execute(
-                select(psalms_book_psalms.c.transposition_steps)
-                .where(
-                    psalms_book_psalms.c.psalms_book_id == psalms_book_id,
-                    psalms_book_psalms.c.psalm_id == psalm_id
-                )
-            ).first()
-
-            if result:
-                return result.transposition_steps
+        try:
+            return get_transposition(psalms_book_id, psalm_id)
+        except:
+            pass
     return transposition or 0
