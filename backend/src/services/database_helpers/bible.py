@@ -86,20 +86,30 @@ def get_bible_slide_mappings(
     with Session(engine) as session:
         BBM1 = aliased(BibleBooksMapping)
         BBM2 = aliased(BibleBooksMapping)
-        V2 = aliased(Verse)
 
-        query = (
-            select(V2)
+        mappings_cte = (
+            select(
+                Verse.chapter,
+                Verse.verse_number,
+                BBM2.bible_book_id.label("bible_book_id")
+            )
             .select_from(Verse)
             .outerjoin(BBM1, Verse.bible_book_id == BBM1.bible_book_id)
-            .outerjoin(BBM2, and_(BBM1.global_bible_book_id == BBM2.global_bible_book_id,
-                                  BBM2.bible_book_id != Verse.bible_book_id))
-            .outerjoin(V2, and_(
-                V2.chapter == Verse.chapter,
-                V2.verse_number == Verse.verse_number,
-                V2.bible_book_id == BBM2.bible_book_id
+            .outerjoin(BBM2, and_(
+                BBM1.global_bible_book_id == BBM2.global_bible_book_id,
+                BBM2.bible_book_id != Verse.bible_book_id
             ))
             .where(Verse.id == verse_id)
+            .cte("mappings")
+        )
+
+        query = (
+            select(Verse)
+            .join(mappings_cte, and_(
+                Verse.bible_book_id == mappings_cte.c.bible_book_id,
+                Verse.chapter == mappings_cte.c.chapter,
+                Verse.verse_number == mappings_cte.c.verse_number
+            ))
         )
 
         verses = session.execute(query).scalars().all()
