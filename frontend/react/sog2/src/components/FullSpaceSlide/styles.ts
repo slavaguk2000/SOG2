@@ -6,8 +6,7 @@ export const FullSpaceSlideWrapper = styled(Box)`
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 3%;
-  gap: 3%;
+  gap: min(0.5vh, 0.5vw);
   box-sizing: border-box;
   background: black;
 `;
@@ -18,6 +17,16 @@ export const ContentWrapper = styled(Box)`
   width: 100%;
   justify-content: center;
   align-items: center;
+  overflow: auto;
+
+  * {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  ::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 export const TitleWrapper = styled(Box)`

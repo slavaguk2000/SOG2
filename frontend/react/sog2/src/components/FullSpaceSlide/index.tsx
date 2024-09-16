@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { DependencyList, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { Typography } from '@mui/material';
 import ResizeObserver from 'resize-observer-polyfill';
@@ -12,6 +12,7 @@ interface FullSpaceSlideProps {
   maxContentFontSize: number;
   minTitleFontSize: number;
   maxTitleFontSize: number;
+  additionalRecalculateDeps?: DependencyList;
 }
 
 enum FontSelectionState {
@@ -31,6 +32,7 @@ const FullSpaceSlide = ({
   minTitleFontSize,
   maxTitleFontSize,
   maxContentFontSize,
+  additionalRecalculateDeps = [],
 }: FullSpaceSlideProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -53,7 +55,7 @@ const FullSpaceSlide = ({
 
   useEffect(() => {
     recalculate();
-  }, [content, title, recalculate]);
+  }, [content, title, recalculate, ...additionalRecalculateDeps]);
 
   useEffect(() => {
     if (contentRef.current && content) {
@@ -123,7 +125,7 @@ const FullSpaceSlide = ({
 
   return (
     <FullSpaceSlideWrapper ref={containerRef}>
-      <ContentWrapper overflow="auto" ref={contentRef}>
+      <ContentWrapper ref={contentRef}>
         <Typography
           color={fontSizeState.state === FontSelectionState.SLOW_DECREASE ? 'white' : 'black'}
           lineHeight={1.2}

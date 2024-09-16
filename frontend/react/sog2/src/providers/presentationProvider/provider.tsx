@@ -24,7 +24,7 @@ enum ScreenMessages {
   MultiScreenPreviewData = 'MultiScreenPreviewData',
 }
 
-const presUrls = ['receiver/index.html'];
+const presUrls = [process.env.REACT_APP_TEMPORARY_SEND_ACTIVE_SLIDE ? '/active-slide' : 'receiver/index.html'];
 const presChordsUrls = ['/active-psalm/chords'];
 
 const setTextInSession = (
