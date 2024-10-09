@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from ariadne import convert_kwargs_to_snake_case, ObjectType, QueryType, MutationType, SubscriptionType
 
@@ -97,13 +97,13 @@ def resolve_bibles(*_):
 
 @query.field("bibleBooks")
 @convert_kwargs_to_snake_case
-def resolve_bible_books(*_, bible_id: str | None):
+def resolve_bible_books(*_, bible_id: Optional[str]):
     return get_bible_books_by_bible_id(bible_id)
 
 
 @query.field("bibleVerses")
 @convert_kwargs_to_snake_case
-def resolve_bible_verses(*_, bible_id: str, book_id: str | None, chapter: int):
+def resolve_bible_verses(*_, bible_id: str, book_id: Optional[str], chapter: int):
     return get_chapter_verses(bible_id, book_id, chapter)
 
 
@@ -164,9 +164,9 @@ def notify_psalm_chords_subscribers():
 @convert_kwargs_to_snake_case
 def resolve_set_active_psalm(
         *_,
-        psalm_id: str | None = None,
-        psalms_book_id: str | None = None,
-        transposition: int | None = None
+        psalm_id: Optional[str] = None,
+        psalms_book_id: Optional[str] = None,
+        transposition: Optional[int] = None
 ):
     global current_active_psalm_chords
     active_psalm_chords = None
@@ -261,8 +261,8 @@ def notify_favourite_changed():
 def resolve_add_psalm_to_favourite(
         *_,
         psalm_id: str,
-        psalms_book_id: str | None = None,
-        transposition: int | None = None
+        psalms_book_id: Optional[str] = None,
+        transposition: Optional[int] = None
 ):
     res = add_psalm_to_favourites(psalm_id, get_real_transposition(psalm_id, transposition, psalms_book_id))
 
