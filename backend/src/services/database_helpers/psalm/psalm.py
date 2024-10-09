@@ -1,5 +1,5 @@
 import enum
-from typing import Type, List
+from typing import Type, List, Union
 
 from sqlalchemy.orm import Session
 from sqlalchemy import select, desc, func, exists, literal_column, update
@@ -43,7 +43,7 @@ def get_psalms_books():
         ]
 
 
-def get_psalm_dict_from_psalm(psalm: Type[Psalm] | Psalm):
+def get_psalm_dict_from_psalm(psalm: Union[Type[Psalm], Psalm]):
     return {
         'id': psalm.id,
         'name': psalm.name,
@@ -53,7 +53,7 @@ def get_psalm_dict_from_psalm(psalm: Type[Psalm] | Psalm):
     }
 
 
-def get_psalm_book_item_dict_from_psalm(psalm: Type[Psalm] | Psalm, psalms_book_id: str, transposition_steps: int):
+def get_psalm_book_item_dict_from_psalm(psalm: Union[Type[Psalm], Psalm], psalms_book_id: str, transposition_steps: int):
     return {
         'id': f"{psalms_book_id}{psalm.id}",
         "psalm": get_psalm_dict_from_psalm(psalm),
@@ -63,9 +63,9 @@ def get_psalm_book_item_dict_from_psalm(psalm: Type[Psalm] | Psalm, psalms_book_
 
 def get_psalms(
         psalms_book_id: str,
-        sort_key: PsalmsSortingKeys | None = None,
+        sort_key: Union[PsalmsSortingKeys, None] = None,
         sort_direction: SortingDirection = SortingDirection.ASC,
-        current_session: Session | None = None
+        current_session: Union[Session, None] = None
 ) -> List[dict]:
     current_sort_key = f'psalms.{sort_key.value}' if sort_key else '"order"'
 
@@ -97,9 +97,9 @@ def get_psalm_with_transposition(psalm_id: str, psalms_book_id: str) -> dict:
 
 def get_psalms_dicts(
         psalms_book_id: str,
-        sort_key: PsalmsSortingKeys | None = None,
+        sort_key: Union[PsalmsSortingKeys, None] = None,
         sort_direction: SortingDirection = SortingDirection.ASC,
-        current_session: Session | None = None
+        current_session: Union[Session, None] = None
 ):
     psalms = get_psalms(psalms_book_id, sort_key, sort_direction, current_session)
 
@@ -348,7 +348,7 @@ def get_psalm_slide_by_id(couplet_id: str):
     return None
 
 
-def get_psalms_book_by_id(psalm_book_id: str) -> PsalmBook | None:
+def get_psalms_book_by_id(psalm_book_id: str) -> Union[PsalmBook, None]:
     with Session(engine) as session:
         psalm_book = session.query(PsalmBook).filter(PsalmBook.id == psalm_book_id).first()
         if psalm_book:
@@ -424,8 +424,8 @@ def get_transposition(psalm_book_id: str, psalm_id: str):
 
 def get_real_transposition(
     psalm_id: str,
-    transposition: int | None = None,
-    psalms_book_id: str | None = None
+    transposition: Union[int, None] = None,
+    psalms_book_id: Union[str, None] = None
 ) -> int:
     if transposition is None and psalms_book_id is not None:
         try:
