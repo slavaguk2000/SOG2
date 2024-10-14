@@ -8,7 +8,7 @@ export const FullSpaceSlideWrapper = styled(Box)`
   align-items: center;
   gap: min(0.5vh, 0.5vw);
   box-sizing: border-box;
-  background: black;
+  background: white;
 `;
 
 export const ContentWrapper = styled(Box)`

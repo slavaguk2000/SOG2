@@ -127,7 +127,7 @@ const FullSpaceSlide = ({
     <FullSpaceSlideWrapper ref={containerRef}>
       <ContentWrapper ref={contentRef}>
         <Typography
-          color={fontSizeState.state === FontSelectionState.SLOW_DECREASE ? 'white' : 'black'}
+          color={fontSizeState.state === FontSelectionState.SLOW_DECREASE ? 'black' : 'white'}
           lineHeight={1.2}
           fontSize={`${fontSizeState.size}vw`}
           align="center"
@@ -137,7 +137,7 @@ const FullSpaceSlide = ({
       </ContentWrapper>
       <TitleWrapper>
         <Typography
-          color="white"
+          color="black"
           lineHeight={1}
           fontSize={`${Math.max(Math.min(fontSizeState.size, maxTitleFontSize), minTitleFontSize)}vw`}
           align="center"
