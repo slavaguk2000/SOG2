@@ -149,14 +149,14 @@ def get_sermons(sermons_collection_id: str):
             result["aggregations"]["unique_sermon_ids"]["buckets"]]
 
 
-def search(search_request: str, providers: List[SearchProvider], current_sermon_id: str | None) -> SearchQuery:
+def search(search_request: str, providers: List[SearchProvider], current_sermon_id: Union[str, None]) -> SearchQuery:
     for provider in providers:
         if provider.match(search_request):
             return provider.get_query(search_request, [current_sermon_id] if current_sermon_id else None)
     return SearchQuery()
 
 
-def sermon_search(search_pattern: str, sermon_collection_id: str, current_sermon_id: str | None):
+def sermon_search(search_pattern: str, sermon_collection_id: str, current_sermon_id: Union[str, None]):
     search_query = search(search_pattern.strip(), [
         SermonChapterContentSearchProvider(),
         NewDefaultSearchProvider(),

@@ -1,4 +1,7 @@
-def get_phrase_queries(search_request: str, field: str | None, max_slop: int = 10, **kwargs):
+from typing import Union
+
+
+def get_phrase_queries(search_request: str, field: Union[str, None], max_slop: int = 10, **kwargs):
     phrase_queries = []
 
     phrase_function = "match_phrase_prefix" if kwargs.get("prefix") else "match_phrase"
@@ -20,7 +23,7 @@ def get_phrase_queries(search_request: str, field: str | None, max_slop: int = 1
     return phrase_queries
 
 
-def get_span_near_phrase_queries(search_request: str, field: str | None, max_slop: int = 10, **kwargs):
+def get_span_near_phrase_queries(search_request: str, field: Union[str, None], max_slop: int = 10, **kwargs):
     phrase_queries = []
 
     search_request_words = search_request.split()
