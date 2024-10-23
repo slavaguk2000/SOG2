@@ -1,5 +1,5 @@
 import enum
-from typing import Type, List, Union
+from typing import Type, List, Union, Optional
 
 from sqlalchemy.orm import Session
 from sqlalchemy import select, desc, func, exists, literal_column, update
@@ -176,8 +176,14 @@ def get_psalm_by_id(psalm_id: str):
         }
 
 
-def get_favourite_psalm_book(session: Session) -> PsalmBook:
+
+def get_favourite_psalm_book(session: Session) -> Optional[Type[PsalmBook]]:
     return session.query(PsalmBook).filter(PsalmBook.is_favourite == True).first()
+
+
+def get_favourite_psalm_book_without_session() -> Optional[Type[PsalmBook]]:
+    with Session(engine) as session:
+        return get_favourite_psalm_book(session)
 
 
 def is_psalm_in_psalm_book(psalm_id: str, psalm_book_id: str) -> bool:
