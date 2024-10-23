@@ -9,7 +9,8 @@ from src.services.database_helpers.psalm.psalm import get_psalms_books, get_psal
     PsalmsSortingKeys, \
     add_psalm_to_favourites, remove_psalm_from_favourites, delete_psalm_book, update_psalm_transposition, \
     get_psalm_slide_by_id, reorder_psalms_in_psalms_book, get_favourite_psalms_dicts, is_psalm_in_favourite, \
-    create_psalm, get_psalm_with_transposition, get_transposition, get_real_transposition
+    create_psalm, get_psalm_with_transposition, get_transposition, get_real_transposition, get_favourite_psalm_book, \
+    get_favourite_psalm_book_without_session
 from src.services.database_helpers.psalm.update_psalm import update_psalm
 from src.services.database_helpers.sermon import get_sermons, get_sermon_by_id, get_sermon_paragraph_by_id, \
     add_slide_audio_mapping
@@ -343,7 +344,11 @@ def resolve_import_song_images(*_, psalms_book_id: str):
 @mutation.field("reorderPsalmsInPsalmsBook")
 @convert_kwargs_to_snake_case
 def resolve_reorder_psalms_in_psalms_book(*_, psalms_book_id: str, psalms_ids: List[str]):
-    return reorder_psalms_in_psalms_book(psalms_book_id, psalms_ids)
+    res = reorder_psalms_in_psalms_book(psalms_book_id, psalms_ids)
+    favourite_psalms_book = get_favourite_psalm_book_without_session()
+    if favourite_psalms_book.id == psalms_book_id:
+        notify_favourite_changed()
+    return res
 
 
 @mutation.field("addPsalm")
