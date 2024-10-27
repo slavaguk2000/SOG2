@@ -9,10 +9,19 @@ export const BibleContentWrapper = styled(Box)`
 `;
 
 export const BibleEntitySelectWrapper = styled(Box)`
-  display: flex;
   flex-direction: column;
-  height: 100%;
   overflow-y: scroll;
+  display: flex;
+  height: 100%;
+
+  * {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  ::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 export const BibleBookSelectWrapper = styled(BibleEntitySelectWrapper)`

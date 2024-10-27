@@ -1,15 +1,16 @@
-from typing import List
+from typing import List, Optional
 
 from ariadne import convert_kwargs_to_snake_case, ObjectType, QueryType, MutationType, SubscriptionType
 
 from src.services.bible_helper import update_bible_slide_usage
 from src.services.database_helpers.bible import get_bible_books_by_bible_id, get_chapter_verses, get_bible_slide_by_id, \
-    get_bibles
+    get_bibles, get_bible_slide_mappings
 from src.services.database_helpers.psalm.psalm import get_psalms_books, get_psalms_dicts, get_psalm_by_id, \
     PsalmsSortingKeys, \
     add_psalm_to_favourites, remove_psalm_from_favourites, delete_psalm_book, update_psalm_transposition, \
     get_psalm_slide_by_id, reorder_psalms_in_psalms_book, get_favourite_psalms_dicts, is_psalm_in_favourite, \
-    create_psalm, get_psalm_with_transposition, get_real_transposition
+    create_psalm, get_psalm_with_transposition, get_transposition, get_real_transposition, get_favourite_psalm_book, \
+    get_favourite_psalm_book_without_session
 from src.services.database_helpers.psalm.update_psalm import update_psalm
 from src.services.database_helpers.sermon import get_sermons, get_sermon_by_id, get_sermon_paragraph_by_id, \
     add_slide_audio_mapping
@@ -97,13 +98,13 @@ def resolve_bibles(*_):
 
 @query.field("bibleBooks")
 @convert_kwargs_to_snake_case
-def resolve_bible_books(*_, bible_id: str | None):
+def resolve_bible_books(*_, bible_id: Optional[str]):
     return get_bible_books_by_bible_id(bible_id)
 
 
 @query.field("bibleVerses")
 @convert_kwargs_to_snake_case
-def resolve_bible_verses(*_, bible_id: str, book_id: str | None, chapter: int):
+def resolve_bible_verses(*_, bible_id: str, book_id: Optional[str], chapter: int):
     return get_chapter_verses(bible_id, book_id, chapter)
 
 
@@ -111,6 +112,12 @@ def resolve_bible_verses(*_, bible_id: str, book_id: str | None, chapter: int):
 @convert_kwargs_to_snake_case
 def resolve_bible_history(*_, bible_id: str, **kwargs):
     return get_bible_history(bible_id, **kwargs)
+
+
+@query.field("slideMappings")
+@convert_kwargs_to_snake_case
+def resolve_slide_mappings(*_, slide_id: str):
+    return get_bible_slide_mappings(slide_id)
 
 
 @mutation.field("setActiveSlide")
@@ -156,18 +163,29 @@ def notify_psalm_chords_subscribers():
 
 @mutation.field("setActivePsalm")
 @convert_kwargs_to_snake_case
-def resolve_set_active_psalm(*_, psalm_id: str | None = None, psalms_book_id: str | None = None, transposition: int = 0):
+def resolve_set_active_psalm(
+        *_,
+        psalm_id: Optional[str] = None,
+        psalms_book_id: Optional[str] = None,
+        transposition: Optional[int] = None
+):
     global current_active_psalm_chords
     active_psalm_chords = None
     if psalm_id:
         raw_active_psalm_chords = get_psalm_by_id(psalm_id)
+        current_transposition = transposition \
+            if transposition is not None \
+            else get_transposition(psalms_book_id, psalm_id) \
+            if (psalm_id is not None and psalms_book_id is not None) \
+            else 0
+
         active_psalm_chords = {
             "psalm_data": {
                 "psalms_book_id": psalms_book_id,
                 **raw_active_psalm_chords,
                 "couplets": [item["couplet"] for item in raw_active_psalm_chords["couplets"]],
             },
-            "root_transposition": transposition
+            "root_transposition": current_transposition
         }
 
     current_active_psalm_chords = active_psalm_chords
@@ -244,8 +262,8 @@ def notify_favourite_changed():
 def resolve_add_psalm_to_favourite(
         *_,
         psalm_id: str,
-        psalms_book_id: str | None = None,
-        transposition: int | None = None
+        psalms_book_id: Optional[str] = None,
+        transposition: Optional[int] = None
 ):
     res = add_psalm_to_favourites(psalm_id, get_real_transposition(psalm_id, transposition, psalms_book_id))
 
@@ -326,7 +344,11 @@ def resolve_import_song_images(*_, psalms_book_id: str):
 @mutation.field("reorderPsalmsInPsalmsBook")
 @convert_kwargs_to_snake_case
 def resolve_reorder_psalms_in_psalms_book(*_, psalms_book_id: str, psalms_ids: List[str]):
-    return reorder_psalms_in_psalms_book(psalms_book_id, psalms_ids)
+    res = reorder_psalms_in_psalms_book(psalms_book_id, psalms_ids)
+    favourite_psalms_book = get_favourite_psalm_book_without_session()
+    if favourite_psalms_book.id == psalms_book_id:
+        notify_favourite_changed()
+    return res
 
 
 @mutation.field("addPsalm")
@@ -336,7 +358,8 @@ def resolve_add_psalm(*_, psalms_book_id: str, psalm_number: str, psalm_name: st
 
 
 @subscription.source("activeSlideSubscription")
-async def resolve_active_slide_subscription(*_):
+@convert_kwargs_to_snake_case
+async def resolve_active_slide_subscription(*_, **__):
     queue = Queue()
     slide_subscribers_queues.append(queue)
     yield current_active_slide
@@ -350,8 +373,16 @@ async def resolve_active_slide_subscription(*_):
 
 
 @subscription.field("activeSlideSubscription")
-def resolve_active_slide_subscription_slide(active_slide, *_):
-    return active_slide
+@convert_kwargs_to_snake_case
+def resolve_active_slide_subscription_slide(active_slide, *_, **kwargs):
+    if not active_slide:
+        return []
+
+    mappings_languages = kwargs.get("mappings_languages", [])
+
+    mappings = get_bible_slide_mappings(active_slide['id'], mappings_languages) if 'id' in active_slide else []
+
+    return [active_slide, *mappings]
 
 
 @subscription.source("activePsalmChordsSubscription")
