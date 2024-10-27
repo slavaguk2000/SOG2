@@ -1,9 +1,11 @@
+from typing import Union
+
 from src.services.elasticsearch.search.sermon.sermon import sermon_search
 from src.services.database_helpers.sermon import get_sermons
 import re
 
 
-def sermon_search_test(search_line: str, expected_locations: [[int | str]]):
+def sermon_search_test(search_line: str, expected_locations: [[Union[int, str]]]):
     result = sermon_search(search_line, "0", None)
 
     for i, expected_location in enumerate(expected_locations):
