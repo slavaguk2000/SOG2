@@ -128,7 +128,8 @@ const FullSpaceSlide = ({
       <ContentWrapper ref={contentRef}>
         <Typography
           color={fontSizeState.state === FontSelectionState.SLOW_DECREASE ? 'black' : 'white'}
-          lineHeight={1.2}
+          lineHeight={0.95}
+          letterSpacing="-0.02em"
           fontSize={`${fontSizeState.size}vw`}
           align="center"
         >

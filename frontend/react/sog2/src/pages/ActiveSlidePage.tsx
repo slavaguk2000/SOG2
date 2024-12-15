@@ -23,9 +23,11 @@ const ActiveSlidePage = () => {
 
   const slides = useMemo(() => (activeSlides?.filter((slide) => slide) as Slide[]) ?? [], [activeSlides]);
 
-  return (
+  const isContent = !!slides[0]?.content?.length;
+
+  return isContent ? (
     <Box
-      bgcolor="black"
+      bgcolor="white"
       height="100%"
       width="100%"
       display="grid"
@@ -46,6 +48,16 @@ const ActiveSlidePage = () => {
         />
       ))}
     </Box>
+  ) : (
+    <Box
+      sx={{
+        height: '100%',
+        width: '100%',
+        background: 'url("/background.jpg")',
+        backgroundSize: 'cover',
+        backgroundPosition: 'bottom right',
+      }}
+    />
   );
 };
 
