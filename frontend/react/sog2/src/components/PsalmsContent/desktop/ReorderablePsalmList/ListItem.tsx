@@ -24,7 +24,7 @@ const ListItem = ({ id, name, transposition, defaultTonality }: PsalmSelectItemT
     <Box
       // TODO : only for new
       // className={isCurrentBookFavourite ? 'animate__animated animate__backInUp' : ''}
-      onContextMenu={(e) => handleContextMenu(e, id, defaultTonality)}
+      onContextMenu={(e) => handleContextMenu(e, id, defaultTonality, transposition)}
     >
       <PsalmSelectItem
         psalmName={name}

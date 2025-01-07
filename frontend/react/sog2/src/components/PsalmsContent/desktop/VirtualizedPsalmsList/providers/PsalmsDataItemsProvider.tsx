@@ -28,7 +28,12 @@ const PsalmsDataItemsProvider = ({ children }: PropsWithChildren) => {
       const inFavourite = !!(currentPsalm && favouritePsalmsDataMap[currentPsalm?.id]);
 
       return currentPsalm ? (
-        <Box width="100%" onContextMenu={(e) => handleContextMenu(e, currentPsalm.id, currentPsalm.defaultTonality)}>
+        <Box
+          width="100%"
+          onContextMenu={(e) =>
+            handleContextMenu(e, currentPsalm.id, currentPsalm.defaultTonality, currentPsalm?.transposition)
+          }
+        >
           <PsalmSelectItem
             psalmName={`${currentPsalm.psalmNumber ? `${currentPsalm.psalmNumber} ` : ''}${currentPsalm.name}${
               currentPsalm.defaultTonality

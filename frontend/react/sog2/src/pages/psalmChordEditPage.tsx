@@ -11,6 +11,7 @@ import { Query, QueryPsalmArgs } from '../utils/gql/types';
 const PsalmChordEditPage = () => {
   const [searchParams] = useSearchParams();
   const psalmId = searchParams.get('psalmId') ?? '';
+  const transpositionString = searchParams.get('transposition');
   const navigate = useNavigate();
 
   const { data: currentPsalmData, loading } = useQuery<Pick<Query, 'psalm'>, QueryPsalmArgs>(psalm, {
@@ -37,9 +38,14 @@ const PsalmChordEditPage = () => {
     [currentPsalmData],
   );
 
+  const transposition = useMemo(
+    () => (isNaN(transpositionString as unknown as number) ? 0 : Number(transpositionString)),
+    [transpositionString],
+  );
+
   return (
     initialData && (
-      <EditableChordsDataProvider initialData={initialData}>
+      <EditableChordsDataProvider initialData={initialData} rootTransposition={transposition}>
         <PsalmChordsEdit />
       </EditableChordsDataProvider>
     )
