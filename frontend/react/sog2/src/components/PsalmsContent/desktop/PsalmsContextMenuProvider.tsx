@@ -12,6 +12,7 @@ import { openChordEditor } from './utils';
 interface MenuAnchorData {
   anchor: HTMLElement;
   psalmId: string;
+  transposition?: number;
   defaultTonality?: Maybe<MusicalKey>;
 }
 
@@ -21,6 +22,7 @@ interface PsalmsContextMenuProviderType {
     event: React.MouseEvent<T>,
     psalmId: string,
     defaultTonality?: Maybe<MusicalKey>,
+    transposition?: number,
   ) => void;
 }
 
@@ -46,7 +48,7 @@ const PsalmsContextMenuProvider = ({ children }: PropsWithChildren) => {
 
   const handleEditChords = () => {
     if (menuAnchorData) {
-      openChordEditor(menuAnchorData.psalmId);
+      openChordEditor(menuAnchorData.psalmId, menuAnchorData.transposition);
     }
     handleMenuClose();
   };
@@ -64,9 +66,10 @@ const PsalmsContextMenuProvider = ({ children }: PropsWithChildren) => {
     event: React.MouseEvent<T>,
     psalmId: string,
     defaultTonality?: Maybe<MusicalKey>,
+    transposition?: number,
   ) => {
     event.preventDefault();
-    setMenuAnchorData({ anchor: event.currentTarget, psalmId, defaultTonality });
+    setMenuAnchorData({ anchor: event.currentTarget, psalmId, defaultTonality, transposition });
   };
 
   return (
