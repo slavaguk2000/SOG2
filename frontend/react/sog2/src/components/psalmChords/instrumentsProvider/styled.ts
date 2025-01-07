@@ -29,8 +29,8 @@ export const StyledDialog = styled(Dialog, {
         & > * > .MuiDialog-paper {
           margin: 5px;
           position: absolute;
-          top: ${Math.max(0, position.top - 100)}px;
-          left: ${Math.max(0, position.left - 100)}px;
+          top: min(${Math.max(0, position.top - 100)}px, calc(100vh - 100px));
+          left: min(${Math.max(0, position.left - 100)}px, calc(100vw - 550px));
         }
       `
       : ''}
