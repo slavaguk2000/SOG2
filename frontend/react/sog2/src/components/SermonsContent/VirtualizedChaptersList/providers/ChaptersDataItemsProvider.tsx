@@ -71,7 +71,7 @@ const ChaptersDataItemsProvider = ({ children }: PropsWithChildren) => {
         }
       }
 
-      resultNumberToSlideMap[i] = serviceNumberToSlideMap[i].slide;
+      resultNumberToSlideMap[i] = serviceNumberToSlideMap[i]?.slide;
     }
 
     return {
