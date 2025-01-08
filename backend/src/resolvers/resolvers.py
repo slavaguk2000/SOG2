@@ -27,6 +27,7 @@ from src.services.parsers.psalmsParsers.importer import PsalmsJsonImporter
 from src.services.parsers.psalmsParsers.nova_piesn_parser import NovaPiesnPsalmParser
 from src.services.parsers.psalmsParsers.sog_parser import SimplePsalmParser
 from src.services.parsers.psalmsParsers.utils import import_song_images
+from src.services.parsers.sermonParsers.tableJSONParser import TableJSONParser
 from src.types.commonTypes import SortingDirection
 
 active_slide_queue = Queue()
@@ -229,6 +230,12 @@ def resolve_add_psalms_from_sog(*_, file_src: str, language: str):
 @convert_kwargs_to_snake_case
 def resolve_import_psalms(*_, file_src: str, language: str):
     return PsalmsJsonImporter.import_psalms(file_src, language)
+
+
+@mutation.field("importSermons")
+@convert_kwargs_to_snake_case
+def resolve_import_sermons(*_):
+    return TableJSONParser().parse(delete_previous=True)
 
 
 def notify_favourite_changed():

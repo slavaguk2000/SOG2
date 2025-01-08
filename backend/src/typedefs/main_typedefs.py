@@ -219,6 +219,7 @@ type_defs = gql("""
       addPsalmsFromSog(sogFileSrc: String!, language: String!): Boolean
       addPsalmsFromNavaPiesnJSONPL(fileSrc: String!, language: String!): Boolean
       importPsalms(fileSrc: String!, language: String!): Boolean
+      importSermons: Boolean
       deletePsalmsBook(psalmsBookId: ID!): Boolean
       addPsalmToFavourite(psalmId: ID!, psalmsBookId: ID, transposition: Int): Boolean
       removePsalmFromFavourite(psalmId: ID!): Boolean
