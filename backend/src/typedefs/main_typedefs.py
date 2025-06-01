@@ -53,6 +53,7 @@ type_defs = gql("""
         psalmsBooks: [PsalmsBook!]!
         psalms(psalmsBookId: ID!, psalmsSorting: PsalmsSorting): [PsalmsBookItem!]!
         psalm(psalmId: ID!): PsalmDataWithSlides!
+        slideMappings(slideId: ID!): [Slide!]!
     }
     
     type Bible {
@@ -232,7 +233,7 @@ type_defs = gql("""
     }
     
     type Subscription {
-      activeSlideSubscription: Slide
+      activeSlideSubscription(mappingsLanguages: [String]): [Slide]
       activePsalmChordsSubscription: SubscriptingPsalmData
       favouritePsalms: [PsalmsBookItem!]!
     }

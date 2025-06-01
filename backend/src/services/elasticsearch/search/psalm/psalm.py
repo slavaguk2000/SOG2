@@ -5,7 +5,7 @@ from src.services.elasticsearch.search.SearchQuery import SearchQuery
 from src.services.elasticsearch.search.psalm.psalms_elastic_constant import sort_priority
 from src.services.elasticsearch.search.psalm.search_providers.abstract_seacrh_provider import SearchProvider
 from src.services.elasticsearch.search.psalm.search_providers.default_search_provider import DefaultSearchProvider
-from typing import List
+from typing import List, Union
 
 from src.services.elasticsearch.utils import insert_highlights_into_original_str
 
@@ -76,7 +76,7 @@ def search(search_request: str, providers: List[SearchProvider]) -> SearchQuery:
     return SearchQuery()
 
 
-def psalm_search(search_pattern: str, psalm_book_id: str | None):
+def psalm_search(search_pattern: str, psalm_book_id: Union[str, None]):
     search_query = search(search_pattern.strip(), [DefaultSearchProvider()])
 
     query = {

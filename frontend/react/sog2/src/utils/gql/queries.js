@@ -105,8 +105,8 @@ export const setFreeSlide = gql`
 `;
 
 export const ActiveSlideSubscription = gql`
-  subscription ActiveSlideSubscription {
-    activeSlideSubscription {
+  subscription ActiveSlideSubscription($mappingsLanguages: [String]) {
+    activeSlideSubscription(mappingsLanguages: $mappingsLanguages) {
       id
       content
       contentPrefix
@@ -186,6 +186,17 @@ export const psalm = gql`
           location
         }
       }
+    }
+  }
+`;
+
+export const slideMappings = gql`
+  query slideMappings($slideId: ID!) {
+    slideMappings(slideId: $slideId) {
+      id
+      content
+      contentPrefix
+      title
     }
   }
 `;

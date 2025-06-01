@@ -45,12 +45,13 @@ const BibleDataProvider = ({ children }: PropsWithChildren) => {
         bibleId: firstBible.id,
       }));
     }
-  }, [firstBible]);
+  }, [bibleId, firstBible, setSearchParams]);
 
   const { data } = useQuery<Pick<Query, 'bibleBooks'>, QueryBibleBooksArgs>(bibleBooks, {
     variables: {
       bibleId,
     },
+    skip: !bibleId,
     fetchPolicy: 'cache-first',
   });
 
