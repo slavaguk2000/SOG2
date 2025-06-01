@@ -23,6 +23,7 @@ from asyncio import Queue
 
 from src.services.elasticsearch.search.sermon.sermon import sermon_search
 from src.services.elasticsearch.sync.bible import sync_bible
+from src.services.parsers.bibleParsers.sqlite_parser import SqliteBibleParser
 from src.services.parsers.psalmsParsers.importer import PsalmsJsonImporter
 from src.services.parsers.psalmsParsers.nova_piesn_parser import NovaPiesnPsalmParser
 from src.services.parsers.psalmsParsers.sog_parser import SimplePsalmParser
@@ -211,6 +212,13 @@ def resolve_set_active_free_slide(*_, text: str, title: str):
 @convert_kwargs_to_snake_case
 def resolve_add_bible_from_sog(*_, sog_file_src: str, language: str, translation: str):
     SimpleBibleParser.parse(sog_file_src, language, translation)
+    return True
+
+
+@mutation.field("addBibleFromSqlite")
+@convert_kwargs_to_snake_case
+def resolve_add_bible_from_sqlite(*_, sqlite_file_src: str, language: str, translation: str):
+    SqliteBibleParser.parse(sqlite_file_src, language, translation)
     return True
 
 

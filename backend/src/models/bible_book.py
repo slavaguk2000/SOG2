@@ -16,3 +16,9 @@ class BibleBook(Base):
 
     verses = relationship('Verse', back_populates='bible_book')
     bible = relationship('Bible', back_populates='books')
+
+    def __str__(self):
+        return f"BibleBook(o:{self.book_order} n:{self.name} c:{self.chapters_count})"
+
+    def __repr__(self):
+        return self.__str__()
