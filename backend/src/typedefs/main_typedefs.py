@@ -212,6 +212,7 @@ type_defs = gql("""
       setActiveSlideOffset(slideId: ID!, type: TabType!, slideAudioMapping: SlideMappingInput, offset: Float!): Boolean
       setFreeSlide(text: String!, title: String!): Boolean
       addBibleFromSog(sogFileSrc: String!, language: String!, translation: String!): Boolean
+      addBibleFromSqlite(sqlite_file_src: String!, language: String!, translation: String!): Boolean
       syncBibleToElastic(bibleId: ID): Boolean
       syncSermonsToElastic: Boolean
       syncPsalmsToElastic: Boolean

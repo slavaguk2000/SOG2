@@ -1,3 +1,5 @@
+from typing import Optional
+
 from sqlalchemy.orm import Session
 from src.services.database import engine
 from src.models.bible import Bible
@@ -12,7 +14,7 @@ def get_bibles():
         return [{'id': bible.id} for bible in bibles]
 
 
-def get_bible_books_by_bible_id(bible_id: str | None):
+def get_bible_books_by_bible_id(bible_id: Optional[str]):
     with Session(engine) as session:
         books_req = session.query(BibleBook)
         if bible_id:
@@ -36,7 +38,7 @@ def get_slide_by_verse(verse: Verse):
     }
 
 
-def get_chapter_verses(bible_id: str, book_id: str | None, chapter: int):
+def get_chapter_verses(bible_id: str, book_id: Optional[str], chapter: int):
     with Session(engine) as session:
         verses_req = session.query(Verse).filter(
             Verse.bible_book_id == book_id,
